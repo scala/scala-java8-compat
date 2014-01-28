@@ -30,8 +30,9 @@ one specialized apply and redirect the unspecialized apply to it.
 Here's how they could look:
 
  - `scala.Function1`
- - [`runtime.F1`](https://github.com/retronym/java-8-function1/blob/master/src/main/java/scala/runtime/F1.java)
- - [`runtime.F1$mcII$sps`](https://github.com/retronym/java-8-function1/blob/master/src/main/java/scala/runtime/F1%24mcII%24sp.java)
+   - [`runtime.F1`](https://github.com/retronym/java-8-function1/blob/master/src/main/java/scala/runtime/F1.java)
+     - [`runtime.F1$mcII$sps`](https://github.com/retronym/java-8-function1/blob/master/src/main/java/scala/runtime/F1%24mcII%24sp.java)
+     - ... (other specialized variants)
 
 We will then need to modify the backend of scalac to emit
 `invokedynamic` against the `LambdaMetafactory`, passing a method
