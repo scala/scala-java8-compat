@@ -13,6 +13,12 @@ There are two goals:
 Benefits: smaller bytecode, profit from ongoing JVM optimizations
 for lambda elision, inlining, etc.
 
+    scala.Function1
+    `
+     `- [runtime.F1](https://github.com/retronym/java-8-function1/blob/master/src/main/java/scala/runtime/F1.java)
+        `
+         - [runtime.F1$mcII$sp](https://github.com/retronym/java-8-function1/blob/master/src/main/java/scala/runtime/F1%24mcII%24sp.java)
+   
 This requires a functional interface for FunctionN, which is a bit
 harder than it sounds in the face of specialized variants of apply,
 as well as compose/andThen. But, without changing our library at all,
