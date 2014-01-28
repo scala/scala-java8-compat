@@ -1,11 +1,14 @@
-## Functional Interfaces for (specialized) scala.Function1
+## Functional Interfaces for (specialized) Scala functions
 
-An exploration of Java8 friendly encoding of Scala Function1.
+An exploration of Java8 friendly encoding of Scala `FunctionN`.
 
-There are two goals:
+There are two goals: 
 
-## Encode anonymous functions in the same manner as Java 8 lambdas
-without losing the benefits of specialization.
+  - Encode anonymous functions in the same manner as Java 8 lambdas
+(LambdaMetafactory) without losing the benefits of specialization.
+  - Enable Java code to treat `scala.Function1` as an functional interface
+
+## `Function1` via `LambdaMetafactory`
 
 Benefits: smaller bytecode, profit from ongoing JVM optimizations
 for lambda elision, inlining, etc.
@@ -24,19 +27,45 @@ the generic apply is abstract, and all of the specialized variants forward
 to it. This way, each specialized functional interface need only reabstract
 one specialized apply and redirect the unspecialized apply to it.
 
-## Enable Java code to treat scala.Function1 as an functional interface
+We will then need to modify the backend of scalac to emit
+`invokedynamic` against the `LambdaMetafactory`, passing a method
+handle to the function-body-in-a-method that results from `-Ydelambdafy:method`
+lifted method body.
+
+### Bridges
+
+Today, in Scala:
+
+```
+scala> ((s: String) => s).getClass.getDeclaredMethods.mkString("\n")
+res2: String =
+public final java.lang.String $anonfun$1.apply(java.lang.String)
+public final java.lang.Object $anonfun$1.apply(java.lang.Object)
+```
+
+In Java8, the the metafactory just spins up a class with *just* the generic
+signature. This is safe as the class is anonymous and only ever
+called through invoke-interface, so no harm done. Seems like a leaner
+representation.
+
+LamdaMetaFactory does have an [advanced API](http://download.java.net/jdk8/docs/api/java/lang/invoke/LambdaMetafactory.html#FLAG_BRIDGES)
+that allows to create additional bridges, if needed. We can also mark
+the closure as serializable, which should be done to be compatible
+with what we do today.
+
+## `scala.Function1` as a functional interface
 
 To do this, we would need to pull up the defender methods from s.r.F1
 directly to the trait interface class in the standard library. We can
 definitely do this when we mandate Java 8. But is it safe to do it earlier?
 
-
 I notice that `Function.{andThen, compose}` are still generated in
 specialized droves, despite the attempt to mark them as @unspecialized.
 This looks like a bug in scalac.
 
+## `invokedynamic` calls, courtesy of javac
 
-Test.java decompiles to:
+`Test.java` decompiles to:
 
 ```
 % `java_home -v 1.8`/bin/javap -v -p -classpath target/scala-2.11.0-M7/classes Test
