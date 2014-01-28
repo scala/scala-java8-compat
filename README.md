@@ -4,8 +4,11 @@ An exploration of Java8 friendly encoding of Scala Function1.
 
 There are two goals:
 
-1. Encode anonymous functions in the same manner as Java 8 lambdas
+## Encode anonymous functions in the same manner as Java 8 lambdas
 without losing the benefits of specialization.
+
+Benefits: smaller bytecode, profit from ongoing JVM optimizations
+for lambda elision, inlining, etc.
 
 This requires a functional interface for FunctionN, which is a bit
 harder than it sounds in the face of specialized variants of apply,
@@ -21,7 +24,7 @@ the generic apply is abstract, and all of the specialized variants forward
 to it. This way, each specialized functional interface need only reabstract
 one specialized apply and redirect the unspecialized apply to it.
 
-2. Enable Java code to treat scala.Function1 as an functional interface
+## Enable Java code to treat scala.Function1 as an functional interface
 
 To do this, we would need to pull up the defender methods from s.r.F1
 directly to the trait interface class in the standard library. We can
