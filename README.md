@@ -12,12 +12,6 @@ There are two goals:
 
 Benefits: smaller bytecode, profit from ongoing JVM optimizations
 for lambda elision, inlining, etc.
-
-`scala.Function1`
-`
- `- [`runtime.F1`](https://github.com/retronym/java-8-function1/blob/master/src/main/java/scala/runtime/F1.java)
-    `
-     - [`runtime.F1$mcII$sps](https://github.com/retronym/java-8-function1/blob/master/src/main/java/scala/runtime/F1%24mcII%24sp.java)
    
 This requires a functional interface for FunctionN, which is a bit
 harder than it sounds in the face of specialized variants of apply,
@@ -32,6 +26,12 @@ To emit smaller code, we can create a base functional interface in which
 the generic apply is abstract, and all of the specialized variants forward
 to it. This way, each specialized functional interface need only reabstract
 one specialized apply and redirect the unspecialized apply to it.
+
+Here's how they could look:
+
+ - `scala.Function1`
+ - [`runtime.F1`](https://github.com/retronym/java-8-function1/blob/master/src/main/java/scala/runtime/F1.java)
+ - [`runtime.F1$mcII$sps`](https://github.com/retronym/java-8-function1/blob/master/src/main/java/scala/runtime/F1%24mcII%24sp.java)
 
 We will then need to modify the backend of scalac to emit
 `invokedynamic` against the `LambdaMetafactory`, passing a method
