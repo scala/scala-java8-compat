@@ -37,7 +37,16 @@ Here's how they could look:
 We will then need to modify the backend of scalac to emit
 `invokedynamic` against the `LambdaMetafactory`, passing a method
 handle to the function-body-in-a-method that results from `-Ydelambdafy:method`
-lifted method body.
+lifted method body. This behaviour would be conditional on a flag, and require
+that you have `F1*` on the classpath at runtime. These could be shipped in a
+separate JAR.
+
+We could actually do all of this without needing to emit any default methods ourselves; we can simply use a code generator and javac to generate `F1*`!
+
+### Optimizer
+
+We will need to modify `GenBCodeOpt`'s to understand `indy` calls to spin
+up lambdas so it can still recognize opportunities for closure inlining.
 
 ### Bridges
 
@@ -54,6 +63,9 @@ In Java8, the the metafactory just spins up a class with *just* the generic
 signature. This is safe as the class is anonymous and only ever
 called through invoke-interface, so no harm done. Seems like a leaner
 representation.
+
+Furthermore, by *only* creating the generic signature for anonymous functions,
+we would avoid the rather brutal limitation imposed by erasure for value classes, [SI-6260](https://issues.scala-lang.org/browse/SI-6260).
 
 LamdaMetaFactory does have an [advanced API](http://download.java.net/jdk8/docs/api/java/lang/invoke/LambdaMetafactory.html#FLAG_BRIDGES)
 that allows to create additional bridges, if needed. We can also mark
@@ -72,7 +84,9 @@ This looks like a bug in scalac.
 
 ## `invokedynamic` calls, courtesy of javac
 
-`Test.java` decompiles to:
+[`Test.java`](https://github.com/retronym/java-8-function1/blob/master/src/main/java/scala/runtime/Test.java) contains Java 8 lambdas against `F1` and `F1$mcII$sp`. 
+
+In the following decompilation, you can see the invokedynamic calls:
 
 ```
 % `java_home -v 1.8`/bin/javap -v -p -classpath target/scala-2.11.0-M7/classes Test
