@@ -28,3 +28,19 @@ class Test {
 ```
 % (export JAVA_HOME=`java_home 1.8`; export PATH=$JAVA_HOME/bin:$PATH; sbt 'test:runMain scala.runtime.test.Test')
 ```
+
+### Future work
+
+  - Augment the code generator to also generate specialized variants of the functional interface and
+    modify scalac to emit lambdas as calls to the lambda MetaFactory against them.
+
+```java
+package scala.runtime;
+
+@FunctionalInterface
+public interface F1$mcII$sp extends F1 {
+    abstract int apply$mcII$sp(int v1);
+
+    default Object apply(Object s) { return (Integer) apply$mcII$sp((Integer) s); }
+}
+```
