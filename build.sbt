@@ -1,7 +1,5 @@
 scalaVersion := "2.11.0-RC1"
 
-javaHome := Some(file("/Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home"))
-
 sourceGenerators in Compile <+= sourceManaged in Compile map { dir =>
   def write(name: String, content: String) = {
     val f = dir / "scala" / "runtime" / s"${name}.java"
