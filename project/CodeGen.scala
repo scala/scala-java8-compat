@@ -17,6 +17,7 @@ object Type {
 }
 
 object CodeGen {
+  def packaging = "package scala.runtime.jfunc;"
   case class arity(n: Int) {
     val ns = (1 to n).toList
 
@@ -28,10 +29,10 @@ object CodeGen {
       s"""
       |$copyright
       |
-      |package scala.runtime;
+      |$packaging
       |
       |@FunctionalInterface
-      |public interface F0<R> extends scala.Function0<R> {
+      |public interface JFunction0<R> extends scala.Function0<R> {
       |    default void $initName() {
       |    };
       |""".stripMargin
@@ -39,10 +40,10 @@ object CodeGen {
       s"""
       |$copyright
       |
-      |package scala.runtime;
+      |$packaging
       |
       |@FunctionalInterface
-      |public interface F1<T1, R> extends scala.Function1<T1, R> {
+      |public interface JFunction1<T1, R> extends scala.Function1<T1, R> {
       |    default void $initName() {
       |    };
       |
@@ -65,10 +66,10 @@ object CodeGen {
       s"""
        |$copyright
        |
-       |package scala.runtime;
+       |$packaging
        |
        |@FunctionalInterface
-       |public interface F$n<$tparams, R> extends scala.Function$n<$tparams, R> {
+       |public interface JFunction$n<$tparams, R> extends scala.Function$n<$tparams, R> {
        |    default void $initName() {
        |    };
        |
@@ -93,16 +94,16 @@ object CodeGen {
     def pN: String = {
       val vparams = csv(n => s"T$n t$n")
       val vparamRefs = csv(n => s"t$n")
-      val parent = "F" + n
+      val parent = "JFunction" + n
       s"""
       |$copyright
       |
-      |package scala.runtime;
+      |$packaging
       |
       |import scala.runtime.BoxedUnit;
       |
       |@FunctionalInterface
-      |public interface P${n}<${tparams}> extends ${parent}<$tparams, BoxedUnit> {
+      |public interface JProcedure${n}<${tparams}> extends ${parent}<$tparams, BoxedUnit> {
       |    default void $initName() {
       |    }
       |
@@ -118,8 +119,8 @@ object CodeGen {
 
     def factory: String = {
       s"""
-      |public static <$tparams, R> scala.Function$n<$tparams, R> func(F$n<$tparams, R> f) { return f; }
-      |public static <$tparams> scala.Function$n<$tparams, BoxedUnit> proc(P$n<$tparams> p) { return p; }
+      |public static <$tparams, R> scala.Function$n<$tparams, R> func(JFunction$n<$tparams, R> f) { return f; }
+      |public static <$tparams> scala.Function$n<$tparams, BoxedUnit> proc(JProcedure$n<$tparams> p) { return p; }
       |""".stripMargin.trim
     }
 
@@ -220,13 +221,13 @@ object CodeGen {
     s"""
     |$copyright
     |
-    |package scala.runtime;
+    |$packaging
     |
     |import scala.runtime.BoxedUnit;
     |
-    |public final class F {
-    |    private F() {}
-    |    public static <R> scala.Function0<R> f0(F0<R> f) { return f; }
+    |public final class JFunc {
+    |    private JFunc() {}
+    |    public static <R> scala.Function0<R> func(JFunction0<R> f) { return f; }
     |${indent(ms)}
     |}
     |
@@ -237,7 +238,7 @@ object CodeGen {
     s"""
     |$copyright
     |
-    |package scala.runtime.test;
+    |$packaging
     |
     |final class TestAPI {
     |${(1 to 22).map(n => arity(n).accept).map(indent).mkString("\n\n")}

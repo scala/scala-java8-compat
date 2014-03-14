@@ -8,7 +8,7 @@ using Java 8 lambda syntax.
 
 ```java
 import scala.concurrent.*;
-import static scala.runtime.F.func;
+import static scala.runtime.jfunc.JFunc.*;
 
 class Test {
 	private static Future<Integer> futureExample(Future<String> future, ExecutionContext ec) {
@@ -17,7 +17,7 @@ class Test {
 }
 ```
 
-[More Examples / Documentation](https://github.com/retronym/java-8-function1/blob/master/src/test/java/scala/runtime/test/Test.java)
+[More Examples / Documentation](https://github.com/retronym/java-8-function1/blob/master/src/test/java/scala/runtime/jfunc/Test.java)
 
 ### Hacking
 
@@ -38,7 +38,7 @@ class Test {
 package scala.runtime;
 
 @FunctionalInterface
-public interface F1$mcII$sp extends F1 {
+public interface JFunction1$mcII$sp extends JFunction1 {
     abstract int apply$mcII$sp(int v1);
 
     default Object apply(Object s) { return (Integer) apply$mcII$sp((Integer) s); }
