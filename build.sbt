@@ -2,7 +2,7 @@ scalaVersion := "2.11.0-RC1"
 
 sourceGenerators in Compile <+= sourceManaged in Compile map { dir =>
   def write(name: String, content: String) = {
-    val f = dir / "scala" / "runtime" / s"${name}.java"
+    val f = dir / "java" / "scala" / "runtime" / s"${name}.java"
     IO.write(f, content)
     f
   }
@@ -11,7 +11,7 @@ sourceGenerators in Compile <+= sourceManaged in Compile map { dir =>
 
 sourceGenerators in Test <+= sourceManaged in Test map { dir =>
   def write(name: String, content: String) = {
-    val f = dir / "scala" / "runtime" / "test" / s"${name}.java"
+    val f = dir / "java" / "scala" / "runtime" / "test" / s"${name}.java"
     IO.write(f, content)
     f
   }
