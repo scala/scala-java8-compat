@@ -1,4 +1,4 @@
-scalaVersion := "2.11.0-RC1"
+scalaVersion := "2.10.3"
 
 sourceGenerators in Compile <+= sourceManaged in Compile map { dir =>
   def write(name: String, content: String) = {
