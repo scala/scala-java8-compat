@@ -154,7 +154,7 @@ default ${r.prim} $name(${t1.prim} v1, ${t2.prim} v2) {
     case x => fNHeader(arity) + "\n}\n"
   }
 
-  def pN(arity: Int) = {
+  def pN(arity: Int): String = {
     def csv(f: Int => String): String = 
       (1 to arity).map(f).mkString(", ")
     val tparams = (1 to arity).map("T" + _).mkString(", ")
@@ -174,6 +174,7 @@ public interface P${arity}<${tparams}> extends ${parent}<$tparams, BoxedUnit> {
     }
 
     void applyVoid($vparams);
+
     default BoxedUnit apply($vparams) {
         applyVoid($vparamRefs);
         return BoxedUnit.UNIT;
@@ -182,7 +183,7 @@ public interface P${arity}<${tparams}> extends ${parent}<$tparams, BoxedUnit> {
 """
 }
 
-  def factory = {
+  def factory: String = {
     def factory0(n: Int) = {
       val tparams = (1 to n).map("T" + _).mkString(", ")
 s"""
@@ -221,7 +222,7 @@ static void acceptFunction${n}Unit(scala.Function$n<$targs, scala.runtime.BoxedU
 """
   }
 
-  def testApi = {
+  def testApi: String = {
 s"""
 $copyright
 

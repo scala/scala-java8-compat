@@ -5,8 +5,7 @@ package scala.runtime.test;
 
 import scala.runtime.*;
 import static scala.runtime.test.TestAPI.*;
-import static scala.runtime.F.func;
-import static scala.runtime.F.proc;
+import static scala.runtime.F.*;
 
 public class Test {
     public static void main(String[] args) {
@@ -61,7 +60,7 @@ public class Test {
         // as are `curried`, `tupled`, `compose`, `andThen`.
         f3.compose(f3).andThen(f3).apply("");
         scala.Function2<String, String, String> f6 = func((s1, s2) -> join(s1, s2));
-        assert(f6.curried().apply("1").apply("2") == "12");
+        assert(f6.curried().apply("1").apply("2").equals("12"));
 
         // Functions returning unit must use the `P1`, ... functional interfaces
         // in order to convert a void lamdba return to Scala's Unit.
@@ -76,20 +75,20 @@ public class Test {
 
         // Function0 is also available
         scala.Function0<String> f9 = F.f0(() -> "42");
-        assert(f9.apply() == "42");
+        assert(f9.apply().equals("42"));
 
         // You can go up to 22 (the highest arity function defined in the Scala standard library.)
-        assert(acceptFunction1(func(v1 -> v1.toUpperCase())) == "1");
+        assert(acceptFunction1(func(v1 -> v1.toUpperCase())).equals("1"));
         acceptFunction1Unit(proc(v1 -> sideEffect()));
         acceptFunction1Unit(proc(v1 -> {v1.toUpperCase(); return;}));
 
-        assert(acceptFunction2(func((v1, v2) -> join(v1, v2))) == "12");
+        assert(acceptFunction2(func((v1, v2) -> join(v1, v2))).equals("12"));
         acceptFunction2Unit(proc((v1, v2) -> {v1.toUpperCase(); return;}));
 
-        assert(acceptFunction3(func((v1, v2, v3) -> join(v1, v2, v3))) == "123");
+        assert(acceptFunction3(func((v1, v2, v3) -> join(v1, v2, v3))).equals("123"));
         acceptFunction3Unit(proc((v1, v2, v3) -> {v1.toUpperCase(); return;}));
 
-        assert(acceptFunction22(func((v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22) -> join(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22))) == "12345678910111213141516171819202122");
+        assert(acceptFunction22(func((v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22) -> join(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22))).equals("12345678910111213141516171819202122"));
         acceptFunction22Unit(   proc((v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22) -> {v1.toUpperCase(); return;}));
     }
 
