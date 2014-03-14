@@ -141,6 +141,7 @@ object CodeGen {
 
   private val initName = "$init$"
   private val function1ImplClass = "scala.Function1$class"
+  private val function2ImplClass = "scala.Function2$class"
   private val copyright =
     """
     |/*
@@ -164,6 +165,9 @@ object CodeGen {
     methods.map(indent).mkString("\n\n")
   }
 
+  val function1SpecTs = List(Type.Int, Type.Long, Type.Float, Type.Double)
+  val function1SpecRs = List(Type.Void, Type.Boolean, Type.Int, Type.Float, Type.Long, Type.Double)
+
   private def apply1MethodSpec(t1: Type, r: Type): String = {
     val name = "apply$mc" + s"${r.code}${t1.code}" + "$sp"
     val applyCall = s"apply((T1) ((${t1.ref}) v1));"
@@ -177,11 +181,30 @@ object CodeGen {
   }
 
   private def apply1SpecMethods = {
-    val ts = List(Type.Int, Type.Long, Type.Float, Type.Double)
-    val rs = List(Type.Void, Type.Boolean, Type.Int, Type.Float, Type.Long, Type.Double)
-    val methods = for (t1 <- ts; r <- rs) yield apply1MethodSpec(t1, r)
+    val methods = for (t1 <- function1SpecTs; r <- function1SpecRs) yield apply1MethodSpec(t1, r)
     methods.map(indent).mkString("\n\n")
   }
+
+  private def andThenComposeMethodSpec(t1: Type, r: Type): String = {
+    val suffix = "$mc" + s"${r.code}${t1.code}" + "$sp"
+    s"""
+    |default scala.Function1 compose$suffix(scala.Function1 g) {
+    |    return compose(g);
+    |}
+    |default scala.Function1 andThen$suffix(scala.Function1 g) {
+    |    return andThen(g);
+    |}
+    |""".stripMargin.trim
+  }
+
+  // No longer needed under 2.11 (@unspecialized has been fixed), but harmless to keep around to avoid cross-publishing this artifact.
+  private def andThenComposeSpecMethods = {
+    val methods = for (t1 <- function1SpecTs; r <- function1SpecRs) yield andThenComposeMethodSpec(t1, r)
+    methods.map(indent).mkString("\n\n")
+  }
+
+  val function2SpecTs = List(Type.Int, Type.Long, Type.Double)
+  val function2SpecRs = function1SpecRs
 
   private def apply2MethodSpec(t1: Type, t2: Type, r: Type): String = {
     val name = "apply$mc" + s"${r.code}${t1.code}${t2.code}" + "$sp"
@@ -196,22 +219,38 @@ object CodeGen {
   }
 
   private def apply2SpecMethods = {
-    val ts = List(Type.Int, Type.Long, Type.Double)
-    val rs = List(Type.Void, Type.Boolean, Type.Int, Type.Float, Type.Long, Type.Double)
-    val methods = for (t1 <- ts; t2 <- ts; r <- rs) yield apply2MethodSpec(t1, t2, r)
+    val methods = for (t1 <- function2SpecTs; t2 <- function2SpecTs; r <- function2SpecRs) yield apply2MethodSpec(t1, t2, r)
+    methods.map(indent).mkString("\n\n")
+  }
+
+  private def curriedTupled2MethodSpec(t1: Type, t2: Type, r: Type): String = {
+    val suffix = "$mc" + s"${r.code}${t1.code}${t2.code}" + "$sp"
+    s"""
+    |default scala.Function1 curried$suffix() {
+    |    return curried();
+    |}
+    |default scala.Function1 tupled$suffix() {
+    |    return tupled();
+    |}
+    |""".stripMargin.trim
+  }
+
+  // No longer needed under 2.11 (@unspecialized has been fixed), but harmless to keep around to avoid cross-publishing this artifact.
+  private def curriedTupled2SpecMethods = {
+    val methods = for (t1 <- function2SpecTs; t2 <- function2SpecTs; r <- function2SpecRs) yield curriedTupled2MethodSpec(t1, t2, r)
     methods.map(indent).mkString("\n\n")
   }
 
   def fN(n: Int) = {
     val header = arity(n).fHeader
-    val applyMethods = n match {
+    val specializedVariants = n match {
       case 0 => apply0SpecMethods
-      case 1 => apply1SpecMethods
-      case 2 => apply2SpecMethods
+      case 1 => apply1SpecMethods + "\n\n" + andThenComposeSpecMethods
+      case 2 => apply2SpecMethods + "\n\n" + curriedTupled2SpecMethods
       case x => ""
     }
     val trailer = "}\n"
-    List(header, applyMethods, trailer).mkString
+    List(header, specializedVariants, trailer).mkString
   }
 
   def pN(n: Int) = arity(n).pN
