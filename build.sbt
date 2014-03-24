@@ -12,6 +12,8 @@ organization := "org.scala-lang.modules"
 
 name := "scala-java8-compat"
 
+version := "0.1.0-SNAPSHOT"
+
 // important!! must come here (why?)
 scalaModuleOsgiSettings
 
