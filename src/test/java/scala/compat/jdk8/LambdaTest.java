@@ -1,13 +1,13 @@
 /*
  * Copyright (C) 2012-2014 Typesafe Inc. <http://www.typesafe.com>
  */
-package scala.runtime.jfunc;
+package scala.compat.jdk8;
 
 import scala.runtime.*;
-import static scala.runtime.jfunc.TestAPI.*;
-import static scala.runtime.jfunc.JFunc.*;
+import static scala.compat.jdk8.TestAPI.*;
+import static scala.compat.jdk8.JFunc.*;
 
-public class Test {
+public class LambdaTest {
     public static void main(String[] args) {
         // Not allowed with Scala 2.10 nor 2.11
         // "incompatible types: Function1 is not a functional interface"
@@ -108,3 +108,4 @@ public class Test {
         return result;
     }
 }
+

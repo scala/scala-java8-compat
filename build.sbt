@@ -1,8 +1,12 @@
 scalaVersion := "2.10.3"
 
+organization := "org.scala-lang.modules"
+
+name := "scala-compat-jdk8"
+
 sourceGenerators in Compile <+= sourceManaged in Compile map { dir =>
   def write(name: String, content: String) = {
-    val f = dir / "java" / "scala" / "runtime" / "jfunc" / s"${name}.java"
+    val f = dir / "java" / "scala" / "compat" / "jdk8" / s"${name}.java"
     IO.write(f, content)
     f
   }
@@ -11,7 +15,7 @@ sourceGenerators in Compile <+= sourceManaged in Compile map { dir =>
 
 sourceGenerators in Test <+= sourceManaged in Test map { dir =>
   def write(name: String, content: String) = {
-    val f = dir / "java" / "scala" / "runtime" / "jfunc" / s"${name}.java"
+    val f = dir / "java" / "scala" / "compat" / "jdk8" / s"${name}.java"
     IO.write(f, content)
     f
   }
