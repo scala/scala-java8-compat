@@ -1,14 +1,16 @@
-## Functional Interfaces for Scala functions
+## JDK8 Compatibility Kit for Scala
+
+### Functional Interfaces for Scala functions
 
 A set of [Functional Interfaces](http://download.java.net/jdk8/docs/api/java/lang/FunctionalInterface.html)
 for `scala.FunctionN`. These are designed for convenient construction of Scala functions
 using Java 8 lambda syntax.
 
-### Usage
+#### Usage
 
 ```java
 import scala.concurrent.*;
-import static scala.runtime.jfunc.JFunc.*;
+import static scala.compat.java8.JFunction.*;
 
 class Test {
 	private static Future<Integer> futureExample(Future<String> future, ExecutionContext ec) {
@@ -17,16 +19,28 @@ class Test {
 }
 ```
 
-[More Examples / Documentation](https://github.com/retronym/java-8-function1/blob/master/src/test/java/scala/runtime/jfunc/Test.java)
+[More Examples / Documentation](src/test/java/scala/compat/java8/LambdaTest.java)
+
+### Converters between `s.u.concurrent` and `j.u.concurrent`
+
+TODO
+
+### Converters for `j.u.function`
+
+TODO
+
+### Converters for `j.u.Stream`
+
+TODO
 
 ### Hacking
 
-[Code Generator](https://github.com/retronym/java-8-function1/blob/master/project/CodeGen.scala)
+[Code Generator](project/CodeGen.scala)
 
 #### Running Examples
 
 ```
-% (export JAVA_HOME=`java_home 1.8`; export PATH=$JAVA_HOME/bin:$PATH; sbt 'test:runMain scala.runtime.test.Test')
+% (export JAVA_HOME=`java_home 1.8`; export PATH=$JAVA_HOME/bin:$PATH; sbt test)
 ```
 
 ### Future work
@@ -35,8 +49,6 @@ class Test {
     modify scalac to emit lambdas as calls to the lambda MetaFactory against them.
 
 ```java
-package scala.runtime;
-
 @FunctionalInterface
 public interface JFunction1$mcII$sp extends JFunction1 {
     abstract int apply$mcII$sp(int v1);
