@@ -6,9 +6,11 @@ package scala.compat.jdk8;
 import scala.runtime.*;
 import static scala.compat.jdk8.TestAPI.*;
 import static scala.compat.jdk8.JFunction.*;
+import org.junit.Test;
 
 public class LambdaTest {
-    public static void main(String[] args) {
+    @Test
+    public static void lambdaDemo() {
         // Not allowed with Scala 2.10 nor 2.11
         // "incompatible types: Function1 is not a functional interface"
         // scala.Function1<String, String> f = (String s) -> s;

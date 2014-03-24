@@ -40,7 +40,7 @@ TODO
 #### Running Examples
 
 ```
-% (export JAVA_HOME=`java_home 1.8`; export PATH=$JAVA_HOME/bin:$PATH; sbt 'test:runMain scala.compat.jdk8.LambdaTest')
+% (export JAVA_HOME=`java_home 1.8`; export PATH=$JAVA_HOME/bin:$PATH; sbt test)
 ```
 
 ### Future work
