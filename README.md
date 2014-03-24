@@ -1,4 +1,4 @@
-## JDK8 Compatibility Kit for Scala
+## Java 8 Compatibility Kit for Scala
 
 ### Functional Interfaces for Scala functions
 
