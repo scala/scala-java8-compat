@@ -19,7 +19,7 @@ class Test {
 }
 ```
 
-[More Examples / Documentation](https://github.com/scala/scala-compat-jdk8/blob/master/src/test/java/scala/compat/jdk8/LambdaTest.java)
+[More Examples / Documentation](src/test/java/scala/compat/jdk8/LambdaTest.java)
 
 ### Converters between `s.u.concurrent` and `j.u.concurrent`
 
@@ -35,7 +35,7 @@ TODO
 
 ### Hacking
 
-[Code Generator](https://github.com/scala/scala-compat-jdk8/blob/master/project/CodeGen.scala)
+[Code Generator](project/CodeGen.scala)
 
 #### Running Examples
 
