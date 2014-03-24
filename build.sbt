@@ -50,7 +50,9 @@ sourceGenerators in Test <+= sourceManaged in Test map { dir =>
 }
 
 initialize := {
-  val _ = initialize.value
+  // Run previously configured inialization...
+  initialize.value
+  // ... and then check the Java version.
   val specVersion = sys.props("java.specification.version")
   if (Set("1.5", "1.6", "1.7") contains specVersion)
     sys.error("Java 8 or higher is required for this project.")
