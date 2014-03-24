@@ -5,7 +5,7 @@ package scala.compat.jdk8;
 
 import scala.runtime.*;
 import static scala.compat.jdk8.TestAPI.*;
-import static scala.compat.jdk8.JFunc.*;
+import static scala.compat.jdk8.JFunction.*;
 
 public class LambdaTest {
     public static void main(String[] args) {
@@ -40,7 +40,7 @@ public class LambdaTest {
         // F1 is a subclass of Function1:
         scala.Function1<String, String> f2 = f1;
 
-        // Factory methods in `JFunc` can reduce the verbosity a little:
+        // Factory methods in `JFunction` can reduce the verbosity a little:
         // `func` is actually just an identity method; it only exists to
         // trigger lambda creation using the `JFunction1` functional interface.
         scala.Function1<String, String> f3 = func((String s) -> s);
@@ -65,7 +65,7 @@ public class LambdaTest {
         // Functions returning unit must use the `JProcedure1`, ... functional interfaces
         // in order to convert a void lamdba return to Scala's Unit.
         //
-        // The easiest way to do this is via `JFunc.proc`, ....
+        // The easiest way to do this is via `JFunction.proc`, ....
         //
         // Note that the lambda has a return type of `void` if the last
         // statement is a call to a `void` returning method, or if it is
@@ -108,4 +108,3 @@ public class LambdaTest {
         return result;
     }
 }
-

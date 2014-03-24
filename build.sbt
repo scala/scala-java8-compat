@@ -10,7 +10,7 @@ sourceGenerators in Compile <+= sourceManaged in Compile map { dir =>
     IO.write(f, content)
     f
   }
-  Seq(write("JFunc", CodeGen.factory)) ++ (0 to 22).map(n => write("JFunction" + n, CodeGen.fN(n))) ++ (1 to 22).map(n => write("JProcedure" + n, CodeGen.pN(n)))
+  Seq(write("JFunction", CodeGen.factory)) ++ (0 to 22).map(n => write("JFunction" + n, CodeGen.fN(n))) ++ (1 to 22).map(n => write("JProcedure" + n, CodeGen.pN(n)))
 }
 
 sourceGenerators in Test <+= sourceManaged in Test map { dir =>

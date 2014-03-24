@@ -278,8 +278,8 @@ object CodeGen {
     |
     |import scala.runtime.BoxedUnit;
     |
-    |public final class JFunc {
-    |    private JFunc() {}
+    |public final class JFunction {
+    |    private JFunction() {}
     |    public static <R> scala.Function0<R> func(JFunction0<R> f) { return f; }
     |${indent(ms)}
     |}
