@@ -17,7 +17,7 @@ object Type {
 }
 
 object CodeGen {
-  def packaging = "package scala.compat.jdk8;"
+  def packaging = "package scala.compat.java8;"
   case class arity(n: Int) {
     val ns = (1 to n).toList
 

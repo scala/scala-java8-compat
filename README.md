@@ -10,7 +10,7 @@ using Java 8 lambda syntax.
 
 ```java
 import scala.concurrent.*;
-import static scala.compat.jdk8.JFunc.*;
+import static scala.compat.java8.JFunction.*;
 
 class Test {
 	private static Future<Integer> futureExample(Future<String> future, ExecutionContext ec) {
@@ -19,7 +19,7 @@ class Test {
 }
 ```
 
-[More Examples / Documentation](src/test/java/scala/compat/jdk8/LambdaTest.java)
+[More Examples / Documentation](src/test/java/scala/compat/java8/LambdaTest.java)
 
 ### Converters between `s.u.concurrent` and `j.u.concurrent`
 

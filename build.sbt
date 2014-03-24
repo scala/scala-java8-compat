@@ -10,12 +10,12 @@ snapshotScalaBinaryVersion := "2.10.4"
 
 organization := "org.scala-lang.modules"
 
-name := "scala-compat-jdk8"
+name := "scala-java8-compat"
 
 // important!! must come here (why?)
 scalaModuleOsgiSettings
 
-OsgiKeys.exportPackage := Seq(s"scala.compat.jdk8.*;version=${version.value}")
+OsgiKeys.exportPackage := Seq(s"scala.compat.java8.*;version=${version.value}")
 
 libraryDependencies += "junit" % "junit" % "4.11" % "test"
 
@@ -33,7 +33,7 @@ test in Test := {
 
 sourceGenerators in Compile <+= sourceManaged in Compile map { dir =>
   def write(name: String, content: String) = {
-    val f = dir / "java" / "scala" / "compat" / "jdk8" / s"${name}.java"
+    val f = dir / "java" / "scala" / "compat" / "java8" / s"${name}.java"
     IO.write(f, content)
     f
   }
@@ -42,7 +42,7 @@ sourceGenerators in Compile <+= sourceManaged in Compile map { dir =>
 
 sourceGenerators in Test <+= sourceManaged in Test map { dir =>
   def write(name: String, content: String) = {
-    val f = dir / "java" / "scala" / "compat" / "jdk8" / s"${name}.java"
+    val f = dir / "java" / "scala" / "compat" / "java8" / s"${name}.java"
     IO.write(f, content)
     f
   }

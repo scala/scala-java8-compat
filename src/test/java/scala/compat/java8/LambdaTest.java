@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2012-2014 Typesafe Inc. <http://www.typesafe.com>
  */
-package scala.compat.jdk8;
+package scala.compat.java8;
 
 import scala.runtime.*;
-import static scala.compat.jdk8.TestAPI.*;
-import static scala.compat.jdk8.JFunction.*;
+import static scala.compat.java8.TestAPI.*;
+import static scala.compat.java8.JFunction.*;
 import org.junit.Test;
 
 public class LambdaTest {
