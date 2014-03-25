@@ -33,11 +33,6 @@ test in Test := {
   (test in Test).value
 }
 
-libraryDependencies ++= Seq(
-  "junit" % "junit" % "4.10" % "test",
-  "com.novocode" % "junit-interface" % "0.8" % "test"
-  )
-
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-a")
 
 sourceGenerators in Compile <+= sourceManaged in Compile map { dir =>
@@ -77,7 +72,7 @@ inConfig(JavaDoc)(Defaults.configSettings) ++ Seq(
   javacOptions in JavaDoc := Seq(),
   artifactName in packageDoc in JavaDoc := ((sv, mod, art) => "" + mod.name + "_" + sv.binary + "-" + mod.revision + "-javadoc.jar"),
   libraryDependencies += compilerPlugin("com.typesafe.genjavadoc" %% "genjavadoc-plugin" % "0.5" cross CrossVersion.full),
-  scalacOptions <+= target map (t => "-P:genjavadoc:out=" + (t / "java"))
+  scalacOptions in Compile <+= target map (t => "-P:genjavadoc:out=" + (t / "java"))
 )
 
 initialCommands :=
