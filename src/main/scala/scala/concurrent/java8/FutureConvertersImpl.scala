@@ -7,7 +7,8 @@ import java.util.concurrent.{ CompletionStage, Executor, ExecutorService, Comple
 import scala.util.{ Try, Success, Failure }
 import java.util.function.{ BiConsumer, Function ⇒ JF, Consumer, BiFunction }
 
-private[scala] object FuturesConvertersImpl {
+// TODO: make thie private[scala] when genjavadoc allows for that.
+object FuturesConvertersImpl {
   def InternalCallbackExecutor = Future.InternalCallbackExecutor
 
   class CF[T] extends CompletableFuture[T] with (Try[T] => Unit) {
