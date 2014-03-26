@@ -64,14 +64,20 @@ initialize := {
 
 lazy val JavaDoc = config("genjavadoc") extend Compile
 
+sources in (Compile, doc) := {
+  val orig = (sources in (Compile, doc)).value
+  orig.filterNot(_.getName.endsWith(".java")) // raw types not cooked by scaladoc: https://issues.scala-lang.org/browse/SI-8449
+}
+
 inConfig(JavaDoc)(Defaults.configSettings) ++ Seq(
   packageDoc in Compile <<= packageDoc in JavaDoc,
-  sources in JavaDoc <<= (target, compile in Compile, sources in Compile) map ((t, c, s) =>
-    (t / "java" ** "*.java").get ++ s.filter(_.getName.endsWith(".java"))
-  ),
+  sources in JavaDoc <<= (target, compile in Compile, sources in Compile) map {(t, c, s) =>
+    val allJavaSources = (t / "java" ** "*.java").get ++ s.filter(_.getName.endsWith(".java"))
+    allJavaSources.filterNot(_.getName.contains("FuturesConvertersImpl.java")) // this file triggers bugs in genjavadoc
+  },
   javacOptions in JavaDoc := Seq(),
   artifactName in packageDoc in JavaDoc := ((sv, mod, art) => "" + mod.name + "_" + sv.binary + "-" + mod.revision + "-javadoc.jar"),
-  libraryDependencies += compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin_2.10.4" % "0.5"),
+  libraryDependencies += compilerPlugin("com.typesafe.genjavadoc" %% "genjavadoc-plugin" % "0.5" cross CrossVersion.full),
   scalacOptions in Compile <+= target map (t => "-P:genjavadoc:out=" + (t / "java"))
 )
 
