@@ -1,7 +1,7 @@
 target
-.cache
-.classpath
-.project
-.settings/
-.target/
-bin/
+/.cache
+/.classpath
+/.project
+/.settings
+/.target
+/bin
