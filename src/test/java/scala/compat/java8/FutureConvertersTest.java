@@ -1,4 +1,4 @@
-package scala.concurrent.java8;
+package scala.compat.java8;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -12,9 +12,9 @@ import org.junit.Test;
 
 import scala.concurrent.Future;
 import scala.concurrent.Promise;
-import static scala.concurrent.java8.FutureConverter.*;
+import static scala.compat.java8.FutureConverters.*;
 
-public class BridgeTest {
+public class FutureConvertersTest {
 
   @Test
   public void testToScalaSuccess() {
