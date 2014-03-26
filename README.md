@@ -21,16 +21,16 @@ class Test {
 
 [More Examples / Documentation](src/test/java/scala/compat/java8/LambdaTest.java)
 
-### Converters between `s.u.concurrent` and `j.u.concurrent`
+### Converters between `scala.concurrent` and `java.util.concurrent`
 
 [API](src/test/java/scala/compat/java8/FutureConverters.java)
 [Test Cases](src/test/java/scala/compat/java8/FutureConvertersTest.java)
 
-### Converters for `j.u.function`
+### Converters for `java.util.function`
 
 TODO
 
-### Converters for `j.u.Stream`
+### Converters for `java.util.stream`
 
 TODO
 
