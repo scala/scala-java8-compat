@@ -23,7 +23,8 @@ class Test {
 
 ### Converters between `s.u.concurrent` and `j.u.concurrent`
 
-TODO
+[API](src/test/java/scala/compat/java8/FutureConverters.java)
+[Test Cases](src/test/java/scala/compat/java8/FutureConvertersTest.java)
 
 ### Converters for `j.u.function`
 
