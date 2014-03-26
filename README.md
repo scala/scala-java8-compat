@@ -1,6 +1,6 @@
 ## scala-java8-compat [<img src="https://api.travis-ci.org/scala/scala-java8-compat.png"/>](https://travis-ci.org/scala/scala-java8-compat)
 
-A Java 8 compatibility Kit for Scala.
+A Java 8 compatibility kit for Scala.
 
 ### Functional Interfaces for Scala functions
 
