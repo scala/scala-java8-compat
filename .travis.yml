@@ -1,6 +1,6 @@
 language: scala
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION clean test
+  - sbt ++$TRAVIS_SCALA_VERSION clean test publishLocal
 scala:
   - 2.10.4
   - 2.11.0-RC3
@@ -9,5 +9,3 @@ jdk:
 notifications:
   email:
     - jason.zaugg@typesafe.com
-
-# TODO add publishLocal to the commands to exercise doc generation (currently borked)
