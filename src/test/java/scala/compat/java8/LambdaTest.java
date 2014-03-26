@@ -4,8 +4,9 @@
 package scala.compat.java8;
 
 import scala.runtime.*;
-import static scala.compat.java8.TestAPI.*;
 import static scala.compat.java8.JFunction.*;
+import static scala.compat.java8.TestAPI.*;
+
 import org.junit.Test;
 
 public class LambdaTest {
