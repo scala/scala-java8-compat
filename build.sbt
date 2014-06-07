@@ -2,9 +2,9 @@ import com.typesafe.tools.mima.plugin.{MimaPlugin, MimaKeys}
 
 scalaModuleSettings
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.4"
 
-snapshotScalaBinaryVersion := "2.10.4"
+snapshotScalaBinaryVersion := "2.11.4"
 
 // TODO this project can be cross build against 2.11 and 2.10, express that here.
 
@@ -37,16 +37,23 @@ testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-a")
 
 sourceGenerators in Compile <+= sourceManaged in Compile map { dir =>
   def write(name: String, content: String) = {
-    val f = dir / "java" / "scala" / "compat" / "java8" / s"${name}.java"
+    val f = dir / "scala" / "compat" / "java8" / s"${name}.java"
     IO.write(f, content)
     f
   }
-  Seq(write("JFunction", CodeGen.factory)) ++ (0 to 22).map(n => write("JFunction" + n, CodeGen.fN(n))) ++ (1 to 22).map(n => write("JProcedure" + n, CodeGen.pN(n)))
+  (
+    Seq(write("JFunction", CodeGen.factory)) ++
+    (0 to 22).map(n => write("JFunction" + n, CodeGen.fN(n))) ++
+    (0 to 22).map(n => write("JProcedure" + n, CodeGen.pN(n))) ++
+    CodeGen.specializedF0.map((write _).tupled) ++
+    CodeGen.specializedF1.map((write _).tupled) ++
+    CodeGen.specializedF2.map((write _).tupled)
+  )
 }
 
 sourceGenerators in Test <+= sourceManaged in Test map { dir =>
   def write(name: String, content: String) = {
-    val f = dir / "java" / "scala" / "compat" / "java8" / s"${name}.java"
+    val f = dir / "scala" / "compat" / "java8" / s"${name}.java"
     IO.write(f, content)
     f
   }
@@ -77,7 +84,7 @@ inConfig(JavaDoc)(Defaults.configSettings) ++ Seq(
   },
   javacOptions in JavaDoc := Seq(),
   artifactName in packageDoc in JavaDoc := ((sv, mod, art) => "" + mod.name + "_" + sv.binary + "-" + mod.revision + "-javadoc.jar"),
-  libraryDependencies += compilerPlugin("com.typesafe.genjavadoc" %% "genjavadoc-plugin" % "0.5" cross CrossVersion.full),
+  libraryDependencies += compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.8" cross CrossVersion.full),
   scalacOptions in Compile <+= target map (t => "-P:genjavadoc:out=" + (t / "java"))
 )
 
