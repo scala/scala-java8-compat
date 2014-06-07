@@ -69,6 +69,10 @@ initialize := {
     sys.error("Java 8 or higher is required for this project.")
 }
 
+val disableDocs = sys.props("nodocs") == "true"
+
+publishArtifact in packageDoc := !disableDocs
+
 lazy val JavaDoc = config("genjavadoc") extend Compile
 
 sources in (Compile, doc) := {
@@ -76,7 +80,7 @@ sources in (Compile, doc) := {
   orig.filterNot(_.getName.endsWith(".java")) // raw types not cooked by scaladoc: https://issues.scala-lang.org/browse/SI-8449
 }
 
-inConfig(JavaDoc)(Defaults.configSettings) ++ Seq(
+inConfig(JavaDoc)(Defaults.configSettings) ++ (if (disableDocs) Nil else Seq(
   packageDoc in Compile <<= packageDoc in JavaDoc,
   sources in JavaDoc <<= (target, compile in Compile, sources in Compile) map {(t, c, s) =>
     val allJavaSources = (t / "java" ** "*.java").get ++ s.filter(_.getName.endsWith(".java"))
@@ -86,7 +90,7 @@ inConfig(JavaDoc)(Defaults.configSettings) ++ Seq(
   artifactName in packageDoc in JavaDoc := ((sv, mod, art) => "" + mod.name + "_" + sv.binary + "-" + mod.revision + "-javadoc.jar"),
   libraryDependencies += compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.8" cross CrossVersion.full),
   scalacOptions in Compile <+= target map (t => "-P:genjavadoc:out=" + (t / "java"))
-)
+))
 
 initialCommands :=
 """|import scala.concurrent._
