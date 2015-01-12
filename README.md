@@ -25,8 +25,8 @@ class Test {
 
 ### Converters between `scala.concurrent` and `java.util.concurrent`
 
-[API](src/main/java/scala/compat/java8/FutureConverters.java)
-[Test Cases](src/test/java/scala/compat/java8/FutureConvertersTest.java)
+ - [API](src/main/java/scala/compat/java8/FutureConverters.java)
+ - [Test Cases](src/test/java/scala/compat/java8/FutureConvertersTest.java)
 
 ### Future work
   - Converters for `java.util.function`, `java.util.stream`
