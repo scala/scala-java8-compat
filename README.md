@@ -25,37 +25,9 @@ class Test {
 
 ### Converters between `scala.concurrent` and `java.util.concurrent`
 
-[API](src/test/java/scala/compat/java8/FutureConverters.java)
+[API](src/main/java/scala/compat/java8/FutureConverters.java)
 [Test Cases](src/test/java/scala/compat/java8/FutureConvertersTest.java)
 
-### Converters for `java.util.function`
-
-TODO
-
-### Converters for `java.util.stream`
-
-TODO
-
-### Hacking
-
-[Code Generator](project/CodeGen.scala)
-
-#### Running Examples
-
-```
-% (export JAVA_HOME=`java_home 1.8`; export PATH=$JAVA_HOME/bin:$PATH; sbt test)
-```
-
 ### Future work
-
-  - Augment the code generator to also generate specialized variants of the functional interface and
-    modify scalac to emit lambdas as calls to the lambda MetaFactory against them.
-
-```java
-@FunctionalInterface
-public interface JFunction1$mcII$sp extends JFunction1 {
-    abstract int apply$mcII$sp(int v1);
-
-    default Object apply(Object s) { return (Integer) apply$mcII$sp((Integer) s); }
-}
-```
+  - Converters for `java.util.function`, `java.util.stream`
+  - [`Spliterator`](https://docs.oracle.com/javase/8/docs/api/java/util/Spliterator.html)s for Scala collections
