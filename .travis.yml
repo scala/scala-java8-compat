@@ -1,11 +1,13 @@
 language: scala
 env:
   global:
-    - PUBLISH_JDK=oraclejdk8 # admin/build.sh only publishes when running on this jdk
-# Don't commit sensitive files, instead commit a version encrypted with $SECRET,
-# this environment variable is encrypted with this repo's private key and stored below:
-# (See http://docs.travis-ci.com/user/environment-variables/#Secure-Variables.)
-  secure: "sGB53QddmPmQ4ftCGYxT0gaJcFt0bpMJoGxJRJCFTxdzg6nNMqJ9qDWbyJo7vDFx30axNQlyBH928pUiS5KfsmvzVdoVHUBEUJlF1lBurlpx06tGLuBdcFDwUF5ybi7SGRNdUPuX/6uLdgK5clpcW16/pcfT5Qr5vo/0mvPY85s="
+    - PUBLISH_JDK=oraclejdk8
+    # PGP_PASSPHRASE
+    - secure: "BzgzRZLYa52rS/hBfzf43b++CfDhdcd3Mmu8tsyBHgThSQOd2YBLbV5kWD8aYVFKVHfW7XX0PTe3F+rR/fFZqGItE6o8Px0Y7Vzb5pqjlaQdxFEJ+WrsnshS0xuAKZ7OwVHRp+d+jznaCwRxEo2vpW3ko1OPAJ8cxfhVL/4C1I0="
+    # SONA_USER
+    - secure: "lx2qFeFxh9AFmyHR7hH4Qf9flIEx8VgYj6ebzuxp1cc1ZZiXHC1256x0bHFDUH9bhJACOazOrco/+v6MBAriBkWxLBc98FrC6OkVeQMFW2ffWSBuHRclilKsQA/Lsgc81Wg+WV105hOqUNAkTXgroblInNt+KS+DhC/8FVoh9ZY="
+    # SONA_PASS
+    - secure: "FZC+FZnBNeklA150vW5QDZJ5J7t+DExJrgyXWM46Wh0MobjH8cvydgC3qatItb0rDBV8l7zO1LDwl2KEi92aefw2a8E49z6qVOHgUXiI3SAx7M0UO0FFeKPmTXCLcBlbnGLcUqNjIZfuIEufQvPblKTl8qN4eMmcMn9jsNzJr28="
 script:
   - admin/build.sh
 scala:
