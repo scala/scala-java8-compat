@@ -41,6 +41,8 @@ form:
 If Sonatype credentials change in the future, step 3 can be repeated
 without generating a new key.
 
+Be sure to use SBT 0.13.7 or higher to avoid [#1430](https://github.com/sbt/sbt/issues/1430)!
+
 ### Testing
 
   1. Follow the release process below to create a dummy release (e.g. 0.1.0-TEST1).
