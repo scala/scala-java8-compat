@@ -2,11 +2,9 @@ import com.typesafe.tools.mima.plugin.{MimaPlugin, MimaKeys}
 
 scalaModuleSettings
 
-scalaVersion := "2.11.4"
+scalaVersion := "2.11.5"
 
-snapshotScalaBinaryVersion := "2.11.4"
-
-// TODO this project can be cross build against 2.11 and 2.10, express that here.
+snapshotScalaBinaryVersion := "2.11.5"
 
 organization := "org.scala-lang.modules"
 
