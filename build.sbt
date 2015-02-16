@@ -19,6 +19,8 @@ scalaModuleOsgiSettings
 
 OsgiKeys.exportPackage := Seq(s"scala.compat.java8.*;version=${version.value}")
 
+OsgiKeys.privatePackage := List("scala.concurrent.java8.*")
+
 libraryDependencies += "junit" % "junit" % "4.11" % "test"
 
 libraryDependencies += "com.novocode" % "junit-interface" % "0.10" % "test"
@@ -96,6 +98,6 @@ initialCommands :=
 """|import scala.concurrent._
    |import ExecutionContext.Implicits.global
    |import java.util.concurrent.{CompletionStage,CompletableFuture}
-   |import scala.concurrent.java8.FutureConverter._
+   |import scala.compat.java8.FutureConverter._
    |""".stripMargin
 
