@@ -2,6 +2,8 @@ package scala.compat.java8
 
 import language.implicitConversions
 
+import scala.collection.java8._
+
 package converterImpls {
   import StepConverters.SplitFlags._
   
@@ -150,6 +152,30 @@ package converterImpls {
     @inline def stepper: Stepper[Float, StepperGeneric[Float]] = new StepperArrayGenFloat(underlying, 0, underlying.length)
   }
   
+  private[java8] class StepperStringCodePoint(underlying: String, var i0: Int, var iN: Int) extends StepperInt {
+    def characteristics() = NonNull
+    def estimateSize = iN - i0
+    def hasNext = i0 < iN
+    def nextInt() = {
+      if (hasNext()) {
+        val cp = underlying.codePointAt(i0)
+        i0 += java.lang.Character.charCount(cp)
+        cp
+      }
+      else throw new NoSuchElementException("Empty Stepper")
+    }
+    def substep() = {
+      if (iN-3 > i0) {
+        var half = (i0+iN) >>> 1
+        if (java.lang.Character.isLowSurrogate(underlying.charAt(half))) half -= 1
+        val ans = new StepperStringCodePoint(underlying, i0, half)
+        i0 = half
+        ans
+      }
+      else null
+    }
+  }
+  
   trait Priority3StepConverters {
     implicit def richArrayAnyCanStep[A](underlying: Array[A]) = new RichArrayAnyCanStep[A](underlying)
   }
@@ -180,14 +206,18 @@ object StepConverters extends converterImpls.Priority2StepConverters {
   import converterImpls._
 
   implicit class RichArrayDoubleCanStep(val underlying: Array[Double]) extends AnyVal {
-    def stepper: Stepper[Double, StepperDouble] = new StepperArrayDouble(underlying, 0, underlying.length)
+    @inline def stepper: Stepper[Double, StepperDouble] = new StepperArrayDouble(underlying, 0, underlying.length)
   }
 
   implicit class RichArrayIntCanStep(val underlying: Array[Int]) extends AnyVal {
-    def stepper: Stepper[Int, StepperInt] = new StepperArrayInt(underlying, 0, underlying.length)
+    @inline def stepper: Stepper[Int, StepperInt] = new StepperArrayInt(underlying, 0, underlying.length)
   }
   
   implicit class RichArrayLongCanStep(val underlying: Array[Long]) extends AnyVal {
-    def stepper: Stepper[Long, StepperLong] = new StepperArrayLong(underlying, 0, underlying.length)
+    @inline def stepper: Stepper[Long, StepperLong] = new StepperArrayLong(underlying, 0, underlying.length)
+  }
+  
+  implicit class RichStringCanStep(val underlying: String) extends AnyVal {
+    @inline def stepper: Stepper[Int, StepperInt] = new StepperStringCodePoint(underlying, 0, underlying.length)
   }
 }

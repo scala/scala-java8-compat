@@ -1,4 +1,4 @@
-package scala.compat.java8
+package scala.collection.java8
 
 trait Stepper[@specialized(Double, Int, Long) A, CC] extends Any {
   def characteristics: Int
@@ -6,17 +6,71 @@ trait Stepper[@specialized(Double, Int, Long) A, CC] extends Any {
   def knownSize: Long
   def nextStep: A
   def tryStep(f: A => Unit): Boolean
-  def substep(): Stepper[A, CC]
+  def substep(): CC
   def typedPrecisely: CC
 
-  // Terminal operations that do not produce another Stepper
+  // Terminal operations (do not produce another Stepper)
   def count(): Long = { var n = 0L; while (hasStep) { nextStep; n += 1 }; n }
   def count(p: A => Boolean): Long = { var n = 0L; while (hasStep) { if (p(nextStep)) n += 1 }; n }
   def exists(p: A => Boolean): Boolean = { while(hasStep) { if (p(nextStep)) return true }; false }
   def find(p: A => Boolean): Option[A] = { while (hasStep) { val a = nextStep; if (p(a)) return Some(a) }; None }
   def fold[@specialized(Double, Int, Long) B](zero: B)(op: (B, A) => B) = { var b = zero; while (hasStep) { b = op(b, nextStep) }; b }
+  def foldUntil[@specialized(Double, Int, Long) B](zero: B)(op: (B, A) => B)(p: B => Boolean) = { var b = zero; while (p(b) && hasStep) { b = op(b, nextStep) }; b }
   def foreach(f: A => Unit) { while (hasStep) f(nextStep) }
   def reduce(f: (A, A) => A): A = { var a = nextStep; while (hasStep) { a = f(a, nextStep) }; a }
+}
+object Stepper {
+  class OfSpliterator[A] private[java8] (sp: java.util.Spliterator[A]) extends StepperGeneric[A] with java.util.function.Consumer[A] {
+    private var cache: A = null.asInstanceOf[A]
+    private var cached: Boolean = false
+    def accept(a: A) { cache = a; cached = true }
+    
+    private def loadCache: Boolean = sp.tryAdvance(this)
+    private def useCache(c: java.util.function.Consumer[_ >: A]): Boolean = {
+      if (cached) {
+        c.accept(cache)
+        cache = null.asInstanceOf[A]
+        cached = false
+        true
+      }
+      else false
+    }
+    
+    def characteristics = sp.characteristics
+    def estimateSize = {
+      val sz = sp.estimateSize
+      if (cached && sz < Long.MaxValue && sz >= 0) sz + 1
+      else sz
+    }
+    override def forEachRemaining(c: java.util.function.Consumer[_ >: A]) {
+      useCache(c)
+      sp.forEachRemaining(c)
+    }
+    def hasNext = cached || loadCache
+    def next = {
+      if (!hasNext) throw new NoSuchElementException("Empty Spliterator in Stepper")
+      val ans = cache
+      cache = null.asInstanceOf[A]
+      cached = false
+      ans
+    }
+    def substep(): StepperGeneric[A] = {
+      val subSp = sp.trySplit()
+      if (subSp eq null) null
+      else {
+        val sub = new OfSpliterator(subSp)
+        if (cached) {
+          sub.cache = cache
+          sub.cached = true
+          cache = null.asInstanceOf[A]
+          cached = false
+        }
+        sub
+      }
+    }
+    override def tryAdvance(c: java.util.function.Consumer[_ >: A]) = useCache(c) || sp.tryAdvance(c)
+  }
+  def ofSpliterator[A](sp: java.util.Spliterator[A]) = new OfSpliterator[A](sp)
 }
 
 trait StepperGeneric[A] extends Stepper[A, StepperGeneric[A]] with java.util.Iterator[A] with java.util.Spliterator[A] {
