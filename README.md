@@ -28,6 +28,29 @@ class Test {
  - [API](src/main/java/scala/compat/java8/FutureConverters.java)
  - [Test Cases](src/test/java/scala/compat/java8/FutureConvertersTest.java)
 
+## Converters between `scala.Option` and `java.util` classes `Optional`, `OptionalDouble`, `OptionalInt`, and `OptionalLong`.
+
+A set of extension methods to enable explicit conversion between [Scala Option](http://www.scala-lang.org/files/archive/api/2.11.6/#scala.Option) and the Java 8
+optional types, [Optional](https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html),
+[OptionalDouble](https://docs.oracle.com/javase/8/docs/api/java/util/OptionalDouble.html),
+[OptionalInt](https://docs.oracle.com/javase/8/docs/api/java/util/OptionalInt.html),
+and [OptionalLong](https://docs.oracle.com/javase/8/docs/api/java/util/OptionalLong.html).
+
+Note that the four Java classes have no inheritance relationship despite all encoding optional types.
+
+#### Usage example
+
+```scala
+import scala.compat.java8.OptionConverters._
+
+class Test {
+  val o = Option(2.7)
+  val oj = o.asJava        // Optional[Double]
+  val ojd = o.asPrimitive  // OptionalDouble
+  val ojds = ojd.asScala   // Option(2.7) again
+}
+```
+
 ## Adding an SBT dependency
 To depend on scala-xml in SBT, add something like this to your build.sbt:
 
