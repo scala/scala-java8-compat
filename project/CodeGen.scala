@@ -4,6 +4,12 @@
 
 sealed abstract class Type(val code: Char, val prim: String, val ref: String) {
   def boxed: String = ref
+  def unbox(expr: String) = {
+    s"scala.runtime.BoxesRunTime.unboxTo${prim.head.toUpper + prim.tail}($expr)"
+  }
+  def box(expr: String) = {
+    s"scala.runtime.BoxesRunTime.boxTo${ref.head.toUpper + ref.tail}($expr)"
+  }
 }
 object Type {
   case object Boolean extends Type('Z', "boolean", "Boolean")
@@ -218,7 +224,7 @@ object CodeGen {
     val suffix = specializedSuffix(tparamNames, tps)
     val List(r) = tps
     val applyMethodBody = if (r == Type.Void) s"apply$suffix(); return scala.runtime.BoxedUnit.UNIT;"
-      else s"return (${r.ref}) apply$suffix();"
+      else s"return ${r.box(s"apply$suffix()")};"
     val code = s"""
      |$copyright
      |
@@ -239,8 +245,8 @@ object CodeGen {
     val tparamNames = function1Spec.map(_._1)
     val suffix = specializedSuffix(tparamNames, tps)
     val List(t, r) = tps
-    val applyMethodBody = if (r == Type.Void) s"apply$suffix((${t.ref}) t); return scala.runtime.BoxedUnit.UNIT;"
-      else s"return (${r.ref}) apply$suffix((${t.ref}) t);"
+    val applyMethodBody = if (r == Type.Void) s"apply$suffix(${t.unbox("t")}); return scala.runtime.BoxedUnit.UNIT;"
+      else s"return ${r.box(s"apply$suffix(${t.unbox("t")})")};"
     val code = s"""
      |$copyright
      |
@@ -260,8 +266,8 @@ object CodeGen {
     val tparamNames = function2Spec.map(_._1)
     val suffix = specializedSuffix(tparamNames, tps)
     val List(t1, t2, r) = tps
-    val applyMethodBody = if (r == Type.Void) s"apply$suffix((${t1.ref}) v1, (${t2.ref}) v2); return scala.runtime.BoxedUnit.UNIT;"
-      else s"return (${r.ref}) apply$suffix((${t1.ref}) v1, (${t2.ref}) v2);"
+    val applyMethodBody = if (r == Type.Void) s"apply$suffix(${t1.unbox("v1")}, ${t2.unbox("v2")}); return scala.runtime.BoxedUnit.UNIT;"
+      else s"return ${r.box(s"apply$suffix(${t1.unbox("v1")}, ${t2.unbox("v2")}")});"
     val code = s"""
      |$copyright
      |
@@ -288,11 +294,11 @@ object CodeGen {
   private def function0SpecMethods = {
     val apply = specialized("apply", function0Spec) {
       case (name, List(r)) =>
-        val applyCall = s"apply();"
-        def body = if (r == Type.Void) applyCall else s"return (${r.ref}) $applyCall"
+        val applyCall = s"apply()"
+        def body = if (r == Type.Void) applyCall else s"return ${r.unbox(applyCall)}"
         s"""
         |default ${r.prim} $name() {
-        |    $body
+        |    $body;
         |}
         |""".stripMargin.trim
     }
@@ -317,11 +323,11 @@ object CodeGen {
   private def function1SpecMethods = {
     val apply = specialized("apply", function1Spec) {
       case (name, List(t1, r)) =>
-        val applyCall = s"apply((T1) ((${t1.ref}) v1));"
-        def body = if (r == Type.Void) applyCall else s"return (${r.ref}) $applyCall"
+        val applyCall = s"apply((T1) ${t1.box("v1")})"
+        def body = if (r == Type.Void) applyCall else s"return ${r.unbox(applyCall)}"
         s"""
         |default ${r.prim} $name(${t1.prim} v1) {
-        |    $body
+        |    $body;
         |}
         |""".stripMargin.trim
     }
@@ -348,12 +354,12 @@ object CodeGen {
   private def function2SpecMethods = {
     val apply = specialized("apply", function2Spec) {
       case (name, List(t1, t2, r)) =>
-        val applyCall = s"apply((T1) ((${t1.ref}) v1), (T2) ((${t2.ref}) v2));"
-        def body = if (r == Type.Void) applyCall else s"return (${r.ref}) $applyCall"
+        val applyCall = s"apply((T1) ${t1.box("v1")}, (T2) ${t2.box("v2")})"
+        def body = if (r == Type.Void) applyCall else s"return ${r.unbox(applyCall)}"
 
         s"""
         |default ${r.prim} $name(${t1.prim} v1, ${t2.prim} v2) {
-        |    $body
+        |    $body;
         |}
         |""".stripMargin.trim
     }
