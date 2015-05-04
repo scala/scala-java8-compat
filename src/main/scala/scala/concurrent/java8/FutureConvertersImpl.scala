@@ -1,3 +1,6 @@
+/*
+ * Copyright (C) 2012-2015 Typesafe Inc. <http://www.typesafe.com>
+ */
 package scala.concurrent.java8
 
 // Located in this package to access private[concurrent] members

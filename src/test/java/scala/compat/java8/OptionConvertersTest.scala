@@ -1,3 +1,6 @@
+/*
+ * Copyright (C) 2012-2015 Typesafe Inc. <http://www.typesafe.com>
+ */
 package scala.compat.java8
 
 import org.junit.Test
