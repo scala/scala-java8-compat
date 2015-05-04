@@ -232,7 +232,7 @@ object CodeGen {
      |
      |@FunctionalInterface
      |public interface JFunction0$suffix extends JFunction0 {
-     |    abstract ${r.prim} apply$suffix();
+     |    ${r.prim} apply$suffix();
      |
      |    default Object apply() { $applyMethodBody }
      |}
@@ -254,7 +254,7 @@ object CodeGen {
      |
      |@FunctionalInterface
      |public interface JFunction1$suffix extends JFunction1 {
-     |    abstract ${r.prim} apply$suffix(${t.prim} v1);
+     |    ${r.prim} apply$suffix(${t.prim} v1);
      |
      |    default Object apply(Object t) { $applyMethodBody }
      |}
@@ -275,7 +275,7 @@ object CodeGen {
      |
      |@FunctionalInterface
      |public interface JFunction2$suffix extends JFunction2 {
-     |    abstract ${r.prim} apply$suffix(${t1.prim} v1, ${t2.prim} v2);
+     |    ${r.prim} apply$suffix(${t1.prim} v1, ${t2.prim} v2);
      |
      |    default Object apply(Object v1, Object v2) { $applyMethodBody }
      |}
