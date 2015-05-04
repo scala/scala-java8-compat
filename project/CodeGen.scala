@@ -288,7 +288,7 @@ object CodeGen {
   private val copyright =
     """
     |/*
-    | * Copyright (C) 2012-2014 Typesafe Inc. <http://www.typesafe.com>
+    | * Copyright (C) 2012-2015 Typesafe Inc. <http://www.typesafe.com>
     | */""".stripMargin.trim
 
   private def function0SpecMethods = {

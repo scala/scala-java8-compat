@@ -1,3 +1,6 @@
+/*
+ * Copyright (C) 2012-2015 Typesafe Inc. <http://www.typesafe.com>
+ */
 package scala.compat.java8
 
 import language.implicitConversions
@@ -104,5 +107,3 @@ object PrimitiveIteratorConverters {
     def asPrimitive[That](implicit specOp: SpecializerOfIterators[A, That]): That = specOp.fromScala(underlying)
   }
 }
-
-
