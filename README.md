@@ -1,6 +1,8 @@
-## scala-java8-compat [<img src="https://api.travis-ci.org/scala/scala-java8-compat.png"/>](https://travis-ci.org/scala/scala-java8-compat)
+## scala-java8-compat [<img src="https://api.travis-ci.org/scala/scala-java8-compat.png"/>](https://travis-ci.org/scala/scala-java8-compat) [![Maven Central 2.11](https://maven-badges.herokuapp.com/maven-central/org.scala-lang.modules/scala-java8-compat_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.scala-lang.modules/scala-java8-compat_2.11)
 
 A Java 8 compatibility kit for Scala.
+
+The API is currently still experimental: we do not yet guarantee source or binary compatibility with future releases.
 
 ## Functional Interfaces for Scala functions
 
@@ -50,17 +52,6 @@ class Test {
   val ojds = ojd.asScala   // Option(2.7) again
 }
 ```
-
-## Adding an SBT dependency
-To depend on scala-xml in SBT, add something like this to your build.sbt:
-
-```
-libraryDependencies += "org.scala-lang.modules" %% "scala-java8-compat" % "0.2.0"
-```
-
-Maven users, or sbt users looking to support multiple Scala versions, please see the more elaborate example in https://github.com/scala/scala-module-dependency-sample.
-
-The API is currently still experimental: we do not yet guarantee source or binary compatibility with future releases.
 
 ## Future work
   - Converters for `java.util.function`, `java.util.stream`
