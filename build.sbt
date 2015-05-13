@@ -1,10 +1,6 @@
-import com.typesafe.tools.mima.plugin.{MimaPlugin, MimaKeys}
-
 scalaModuleSettings
 
-scalaVersion := "2.11.5"
-
-snapshotScalaBinaryVersion := "2.11.5"
+scalaVersion := "2.11.6"
 
 organization := "org.scala-lang.modules"
 
@@ -23,15 +19,7 @@ libraryDependencies += "junit" % "junit" % "4.11" % "test"
 
 libraryDependencies += "com.novocode" % "junit-interface" % "0.10" % "test"
 
-MimaPlugin.mimaDefaultSettings
-
-MimaKeys.previousArtifact := None
-
-// run mima during tests
-test in Test := {
-  MimaKeys.reportBinaryIssues.value
-  (test in Test).value
-}
+mimaPreviousVersion := None
 
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-a")
 
