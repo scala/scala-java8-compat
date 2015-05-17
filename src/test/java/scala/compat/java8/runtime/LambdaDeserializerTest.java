@@ -70,6 +70,18 @@ public final class LambdaDeserializerTest {
     }
 
     @Test
+    public void cachedStatic() {
+        HashMap<String, MethodHandle> cache = new HashMap<>();
+        F1<Boolean, String> f1 = lambdaHost.lambdaBackedByStaticImplMethod();
+        // Check that deserialization of a static lambda always returns the
+        // same instance.
+        Assert.assertSame(reconstitute(f1, cache), reconstitute(f1, cache));
+
+        // (as is the case with regular invocation.)
+        Assert.assertSame(f1, lambdaHost.lambdaBackedByStaticImplMethod());
+    }
+
+    @Test
     public void implMethodNameChanged() {
         F1<Boolean, String> f1 = lambdaHost.lambdaBackedByStaticImplMethod();
         SerializedLambda sl = writeReplace(f1);
