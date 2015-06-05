@@ -27,7 +27,7 @@ class Test {
 
 ## Converters between `scala.concurrent` and `java.util.concurrent`
 
- - [API](src/main/java/scala/compat/java8/FutureConverters.java)
+ - [API](src/main/scala/scala/compat/java8/FutureConverters.scala)
  - [Test Cases](src/test/java/scala/compat/java8/FutureConvertersTest.java)
 
 ## Converters between `scala.Option` and `java.util` classes `Optional`, `OptionalDouble`, `OptionalInt`, and `OptionalLong`.
