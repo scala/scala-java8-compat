@@ -3,11 +3,15 @@
  */
 package scala.compat.java8;
 
+import org.apache.commons.lang3.SerializationUtils;
 import scala.runtime.*;
+
+import static junit.framework.Assert.assertEquals;
 import static scala.compat.java8.JFunction.*;
 import static scala.compat.java8.TestAPI.*;
 
 import org.junit.Test;
+
 
 public class LambdaTest {
     @Test
@@ -93,6 +97,21 @@ public class LambdaTest {
 
         assert(acceptFunction22(func((v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22) -> join(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22))).equals("12345678910111213141516171819202122"));
         acceptFunction22Unit(   proc((v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22) -> {v1.toUpperCase(); return;}));
+    }
+
+    @Test
+    public void isSerializable() {
+        scala.compat.java8.JFunction0<String> f0 = () -> "foo";
+        assertEquals("foo", SerializationUtils.clone(f0).apply());
+
+        scala.compat.java8.JFunction1<String, String> f1 = (a) -> a.toUpperCase();
+        assertEquals("FOO", SerializationUtils.clone(f1).apply("foo"));
+
+        scala.compat.java8.JFunction2<String, String, String> f2 = (a, b) -> a + b;
+        assertEquals("foobar", SerializationUtils.clone(f2).apply("foo", "bar"));
+
+        scala.compat.java8.JFunction3<String, String, String, String> f3 = (a, b, c) -> a + b + c;
+        assertEquals("foobarbaz", SerializationUtils.clone(f3).apply("foo", "bar", "baz"));
     }
 
     private static scala.concurrent.Future<Integer> futureExample(
