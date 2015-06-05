@@ -331,26 +331,9 @@ object CodeGen {
         |}
         |""".stripMargin.trim
     }
-    // andThen / compose variants are no longer needed under 2.11 (@unspecialized has been fixed),
-    // but harmless. With them, we can use the same artifact for 2.10 and 2.11
-    val compose = specialized("compose", function1Spec) {
-      case (name, List(t1, r1)) =>
-        s"""
-        |default scala.Function1 $name(scala.Function1 g) {
-        |    return compose(g);
-        |}""".stripMargin.trim
-    }
-    val andThen = specialized("andThen", function1Spec) {
-      case (name, List(t1, r1)) =>
-        s"""
-        |default scala.Function1 $name(scala.Function1 g) {
-        |    return andThen(g);
-        |}""".stripMargin.trim
-    }
-    indent(List(apply, compose, andThen).mkString("\n\n"))
+    indent(List(apply).mkString("\n\n"))
   }
 
-  // No longer needed under 2.11 (@unspecialized has been fixed), but harmless to keep around to avoid cross-publishing this artifact.
   private def function2SpecMethods = {
     val apply = specialized("apply", function2Spec) {
       case (name, List(t1, t2, r)) =>
@@ -363,21 +346,7 @@ object CodeGen {
         |}
         |""".stripMargin.trim
     }
-    val curried = specialized("curried", function2Spec) {
-      case (name, List(t1, t2, r)) =>
-        s"""
-        |default scala.Function1 $name() {
-        |    return curried();
-        |}""".stripMargin.trim
-    }
-    val tupled = specialized("tupled", function2Spec) {
-      case (name, List(t1, t2, r)) =>
-        s"""
-        |default scala.Function1 $name() {
-        |    return tupled();
-        |}""".stripMargin.trim
-    }
-    indent(List(apply, curried, tupled).mkString("\n\n"))
+    indent(List(apply).mkString("\n\n"))
   }
 
   def specializedSuffix(tparamNames: List[String], tps: List[Type]): String = {

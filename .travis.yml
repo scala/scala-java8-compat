@@ -11,8 +11,7 @@ env:
 script:
   - admin/build.sh
 scala:
-  - 2.10.4
-  - 2.11.5
+  - 2.11.6
 jdk:
   - oraclejdk8
 notifications:
