@@ -74,6 +74,7 @@ object WrapFnGen {
   case class SamConversionCode(
     base: String,
     wrappedAsScala: Vector[String],
+    asScalaAnyVal: Vector[String],
     implicitToScala: Vector[String],
     asScalaDef: Vector[String],
     wrappedAsJava: Vector[String],
@@ -81,9 +82,8 @@ object WrapFnGen {
     implicitToJava: Prioritized,
     asJavaDef: Vector[String]
   ) {
-    def impls: Vector[Vector[String]] = Vector(wrappedAsScala, wrappedAsJava, asJavaAnyVal)
+    def impls: Vector[Vector[String]] = Vector(wrappedAsScala, asScalaAnyVal, wrappedAsJava, asJavaAnyVal)
     def defs: Vector[Vector[String]] = Vector(asScalaDef, asJavaDef)
-    def convs: Vector[Vector[String]] = Vector(implicitToScala, implicitToJava.lines)
     def withPriority(i: Int): SamConversionCode = copy(implicitToJava = implicitToJava.withPriority(i))
   }
   object SamConversionCode {
@@ -100,19 +100,19 @@ object WrapFnGen {
       def priorityName(n: Int, pure: Boolean = false): String = {
         val pre = 
           if (n <= 0)
-            if (pure) "functionConverters"
+            if (pure) "FunctionConverters"
             else s"package object ${priorityName(n, pure = true)}"
           else
             if (pure) s"Priority${n}FunctionConverters"
             else s"trait ${priorityName(n, pure = true)}"
-        if (!pure && n < sccDepthSet.size) s"$pre extends ${priorityName(n+1, pure = true)}" else pre
+        if (!pure && n < (sccDepthSet.size-1)) s"$pre extends ${priorityName(n+1, pure = true)}" else pre
       }
       val impls = 
         "package functionConverterImpls {" +: {
           codes.map(_.impls).mkVecVec().indent
         } :+ "}"
       val traits = codes.filter(_.implicitToJava.priority > 0).groupBy(_.implicitToJava.priority).toVector.sortBy(- _._1).map{ case (k,vs) =>
-        s"trait Priority${k}FunctionConverters {" +:
+        s"${priorityName(k)} {" +:
         s"  import functionConverterImpls._" +:
         s"  " +:
         vs.map(_.implicitToJava.lines).mkVec().indent :+
@@ -125,7 +125,10 @@ object WrapFnGen {
         s"  " +:
         {
           explicitDefs.indent ++
-          codes.filter(_.implicitToJava.priority == 0).map(_.convs).mkVecVec().indent
+          Vector.fill(3)("  ") ++
+          codes.filter(_.implicitToJava.priority == 0).map(_.implicitToJava.lines).mkVec().indent ++
+          Vector.fill(3)("  ") ++
+          codes.map(_.implicitToScala).mkVec().indent
         } :+ "}"
       (impls, traits :+ packageObj)
     }
@@ -165,12 +168,13 @@ object WrapFnGen {
       // (1) The wrapper class that wraps a Java SAM as Scala function, or vice versa (ClassN)
       // (2) A value class that provides .asJava or .asScala to request the conversion (ValCN)
       // (3) A name for an explicit conversion method (DefN)
-      // (4) If nested-trait lookup is needed to pick types, an implicit conversion method name (ImpN)
+      // (4) An implicit conversion method name (ImpN) that invokes the value class
       
       // Names for Java conversions to Scala
       val j2sClassN = TypeName("FromJava" + jfn.title)
       val j2sValCN = TypeName("Rich" + jfn.title + "As" + scalaType.name.encoded)
       val j2sDefN = TermName("asScalaFrom" + jfn.title)
+      val j2sImpN = TermName("enrichAsScalaFrom" + jfn.title)
       
       // Names for Scala conversions to Java
       val s2jClassN = TypeName("AsJava" + jfn.title)
@@ -190,12 +194,15 @@ object WrapFnGen {
         }"""
       
       val j2sValCTree =
-        q"""implicit class $j2sValCN[..$tdParams](private val underlying: $javaType[..$javaTargs]) extends AnyVal {
+        q"""class $j2sValCN[..$tdParams](private val underlying: $javaType[..$javaTargs]) extends AnyVal {
           @inline def asScala: $scalaType[..$scalaTargs] = new $j2sClassN[..$tnParams](underlying)
         }"""
       
       val j2sDefTree =
-        q"""def $j2sDefN[..$tdParams](jf: $javaType[..$javaTargs]): $scalaType[..$scalaTargs] = new $j2sClassN[..$tnParams](jf)"""
+        q"""@inline def $j2sDefN[..$tdParams](jf: $javaType[..$javaTargs]): $scalaType[..$scalaTargs] = new $j2sClassN[..$tnParams](jf)"""
+      
+      val j2sImpTree =
+        q"""@inline implicit def $j2sImpN[..$tdParams](jf: $javaType[..$javaTargs]): $j2sValCN[..$tnParams] = new $j2sValCN[..$tnParams](jf)"""
       
       val s2jClassTree =
         q"""class $s2jClassN[..$tdParams](sf: $scalaType[..$scalaTargs]) extends $javaType[..$javaTargs] {
@@ -208,14 +215,14 @@ object WrapFnGen {
         }"""
       
       val s2jDefTree =
-        q"""def $s2jDefN[..$tdParams](sf: $scalaType[..$scalaTargs]): $javaType[..$javaTargs] = new $s2jClassN[..$tnParams](sf)"""
+        q"""@inline def $s2jDefN[..$tdParams](sf: $scalaType[..$scalaTargs]): $javaType[..$javaTargs] = new $s2jClassN[..$tnParams](sf)"""
       
       // This is especially tricky because functions are contravariant in their arguments
       // Need to prevent e.g. Any => String from "downcasting" itself to Int => String; we want the more exact conversion
       val s2jImpTree: (Tree, Int) =
         if (jfn.pTypes.forall(! _.isFinalType) && jfn.sig == jfn.sam.typeSignature)
           (
-            q"""implicit def $s2jImpN[..$tdParams](sf: $scalaType[..$scalaTargs]): $s2jValCN[..$tnParams] = new $s2jValCN[..$tnParams](sf)""",
+            q"""@inline implicit def $s2jImpN[..$tdParams](sf: $scalaType[..$scalaTargs]): $s2jValCN[..$tnParams] = new $s2jValCN[..$tnParams](sf)""",
             tdParams.length
           )
         else {
@@ -243,7 +250,7 @@ object WrapFnGen {
             dropRight(if (jfn.rType.isFinalType) 1 else 0)
           val evs = evidences.map{ case (generic, specific) => ValDef(NoMods, TermName("ev"+generic.toString), tq"$generic =:= $specific", EmptyTree) }
           val tree = 
-            q"""implicit def $s2jImpN[..$scalafnTdefs](sf: $scalaType[..$scalafnTnames])(implicit ..$evs): $s2jValCN[..$tnParams] = 
+            q"""@inline implicit def $s2jImpN[..$scalafnTdefs](sf: $scalaType[..$scalafnTnames])(implicit ..$evs): $s2jValCN[..$tnParams] = 
               new $s2jValCN[..$tnParams](sf.asInstanceOf[$scalaType[..$scalaTargs]])
             """
           val depth = numberedA.size
@@ -253,7 +260,8 @@ object WrapFnGen {
       SamConversionCode(
         base = jfn.title,
         wrappedAsScala = j2sClassTree.text,
-        implicitToScala = j2sValCTree.text,
+        asScalaAnyVal = j2sValCTree.text,
+        implicitToScala = j2sImpTree.text,
         asScalaDef = j2sDefTree.text,
         wrappedAsJava = s2jClassTree.text,
         asJavaAnyVal = s2jValCTree.text,
