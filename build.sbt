@@ -10,7 +10,7 @@ def jwrite(dir: java.io.File)(name: String, content: String) = {
 
 lazy val commonSettings = Seq(
   scalaVersion := "2.11.7",
-  crossScalaVersions := List("2.11.7", "2.12.0-M2"),
+  crossScalaVersions := List("2.11.7" /* TODO, "2.12.0-M3"*/),
   organization := "org.scala-lang.modules",
   version := "0.6.0-SNAPSHOT",
   libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,

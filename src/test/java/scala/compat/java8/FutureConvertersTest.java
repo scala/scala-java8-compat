@@ -12,6 +12,7 @@ import java.util.concurrent.*;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertSame;
 import static scala.compat.java8.FutureConverters.*;
 
 public class FutureConvertersTest {
@@ -397,5 +398,23 @@ public class FutureConvertersTest {
         } catch (UnsupportedOperationException iae) {
             // okay
         }
+    }
+
+    @Test
+    public void testToJavaAndBackAvoidsWrappers() {
+        final Promise<String> p = promise();
+        final Future<String> sf = p.future();
+        final CompletionStage<String> cs = toJava(sf);
+        Future<String> sf1 = toScala(cs);
+        assertSame(sf, sf1);
+    }
+
+    @Test
+    public void testToScalaAndBackAvoidsWrappers() {
+        final CompletableFuture<String> cf = new CompletableFuture<>();
+        final Future<String> f = toScala(cf);
+        CompletionStage<String> cs1 = toJava(f);
+        assertSame(cf, cs1);
+
     }
 }

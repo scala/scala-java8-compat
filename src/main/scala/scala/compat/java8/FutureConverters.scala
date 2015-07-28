@@ -54,10 +54,14 @@ object FutureConverters {
    * not support the CompletableFuture interface
    */
   def toJava[T](f: Future[T]): CompletionStage[T] = {
-    val cf = new CF[T]
-    implicit val ec = InternalCallbackExecutor
-    f onComplete cf
-    cf
+    f match {
+      case p: P[T] => p.wrapped
+      case _ =>
+        val cf = new CF[T](f)
+        implicit val ec = InternalCallbackExecutor
+        f onComplete cf
+        cf
+    }
   }
 
   /**
@@ -71,15 +75,13 @@ object FutureConverters {
    * @return a Scala Future that represents the CompletionStage's completion
    */
   def toScala[T](cs: CompletionStage[T]): Future[T] = {
-    val p = Promise[T]()
-    val bc = new BiConsumer[T, Throwable] {
-      override def accept(v: T, e: Throwable): Unit = {
-        if (e == null) p.complete(Success(v))
-        else p.complete(Failure(e))
-      }
+    cs match {
+      case cf: CF[T] => cf.wrapped
+      case _ =>
+        val p = new P[T](cs)
+        cs whenComplete p
+        p.future
     }
-    cs whenComplete bc
-    p.future
   }
 
   /**

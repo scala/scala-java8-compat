@@ -5,8 +5,9 @@ package scala.concurrent.java8
 
 // Located in this package to access private[concurrent] members
 
-import scala.concurrent.{ Future, Promise, ExecutionContext, ExecutionContextExecutorService, ExecutionContextExecutor, impl }
+import scala.concurrent.{ Future, ExecutionContext }
 import java.util.concurrent._
+import scala.concurrent.impl.Promise.DefaultPromise
 import scala.util.{ Try, Success, Failure }
 import java.util.function.{ BiConsumer, Function ⇒ JF, Consumer, BiFunction }
 
@@ -14,7 +15,7 @@ import java.util.function.{ BiConsumer, Function ⇒ JF, Consumer, BiFunction }
 object FuturesConvertersImpl {
   def InternalCallbackExecutor = Future.InternalCallbackExecutor
 
-  class CF[T] extends CompletableFuture[T] with (Try[T] => Unit) {
+  class CF[T](val wrapped: Future[T]) extends CompletableFuture[T] with (Try[T] => Unit) {
     override def apply(t: Try[T]): Unit = t match {
       case Success(v) ⇒ complete(v)
       case Failure(e) ⇒ completeExceptionally(e)
@@ -83,5 +84,14 @@ object FuturesConvertersImpl {
     override def get(timeout: Long, unit: TimeUnit): T = scala.concurrent.blocking(super.get(timeout, unit))
 
     override def toString: String = super[CompletableFuture].toString
+  }
+
+  class P[T](val wrapped: CompletionStage[T]) extends DefaultPromise[T] with BiConsumer[T, Throwable] {
+    override def onSuccess[U](pf: PartialFunction[T, U])(implicit executor: ExecutionContext): Unit = super.onSuccess(pf)
+
+    override def accept(v: T, e: Throwable): Unit = {
+      if (e == null) complete(Success(v))
+      else complete(Failure(e))
+    }
   }
 }
