@@ -66,8 +66,15 @@ object FuturesConvertersImpl {
       cf
     }
 
-    override def toCompletableFuture(): CompletableFuture[T] =
-      throw new UnsupportedOperationException("this CompletionStage represents a read-only Scala Future")
+    /**
+     * @inheritdoc
+     *
+     * WARNING: completing the result of this method will not complete the underlying
+     *          Scala Future or Promise.
+     */
+    override def toCompletableFuture(): CompletableFuture[T] = {
+      this // TODO or maybe `thenApply(JF.identity())`
+    }
 
     override def toString: String = super[CompletableFuture].toString
   }

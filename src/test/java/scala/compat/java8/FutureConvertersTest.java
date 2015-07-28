@@ -318,4 +318,27 @@ public class FutureConvertersTest {
         latch.countDown();
         assertEquals("Hello", second.toCompletableFuture().get());
     }
+
+    @Test
+    public void testToJavaToCompletableFuture() throws ExecutionException, InterruptedException {
+        final Promise<String> p = promise();
+        final CompletionStage<String> cs = toJava(p.future());
+        CompletableFuture<String> cf = cs.toCompletableFuture();
+        assertEquals("notyet", cf.getNow("notyet"));
+        p.success("done");
+        assertEquals("done", cf.get());
+    }
+
+    @Test
+    public void testToJavaToCompletableFutureDoesNotMutateUnderlyingPromise() throws ExecutionException, InterruptedException {
+        final Promise<String> p = promise();
+        Future<String> sf = p.future();
+        final CompletionStage<String> cs = toJava(sf);
+        CompletableFuture<String> cf = cs.toCompletableFuture();
+        assertEquals("notyet", cf.getNow("notyet"));
+        cf.complete("done");
+        assertEquals("done", cf.get());
+        assertFalse(sf.isCompleted());
+        assertFalse(p.isCompleted());
+    }
 }
