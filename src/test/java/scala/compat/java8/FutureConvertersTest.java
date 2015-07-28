@@ -7,11 +7,9 @@ import org.junit.Test;
 import scala.concurrent.Future;
 import scala.concurrent.Promise;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.*;
 import static scala.compat.java8.FutureConverters.*;
@@ -317,6 +315,30 @@ public class FutureConvertersTest {
         p.failure(new RuntimeException("Hello"));
         latch.countDown();
         assertEquals("Hello", second.toCompletableFuture().get());
+    }
+
+    @Test
+    public void testToJavaThenComposeWithToJavaThenAccept() throws InterruptedException,
+            ExecutionException, TimeoutException {
+        final Promise<String> p1 = promise();
+        final CompletableFuture<String> future = new CompletableFuture<>();
+
+        final CompletionStage<String> second =
+                CompletableFuture.supplyAsync(() -> "Hello").
+                        thenCompose(x -> toJava(p1.future()));
+
+        second.handle((x, t) -> {
+            if (t != null) {
+                t.printStackTrace();
+                future.completeExceptionally(t);
+            } else {
+                future.complete(x);
+            }
+            return null;
+        });
+
+        p1.success("Hello");
+        assertEquals("Hello", future.get(1000, MILLISECONDS));
     }
 
     @Test
