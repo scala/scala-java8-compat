@@ -17,6 +17,8 @@ OsgiKeys.privatePackage := List("scala.concurrent.java8.*")
 
 libraryDependencies += "junit" % "junit" % "4.11" % "test"
 
+libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.4" % "test"
+
 libraryDependencies += "com.novocode" % "junit-interface" % "0.10" % "test"
 
 mimaPreviousVersion := None

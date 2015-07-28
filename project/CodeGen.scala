@@ -40,7 +40,7 @@ object CodeGen {
       |$packaging
       |
       |@FunctionalInterface
-      |public interface JFunction0<R> extends scala.Function0<R> {
+      |public interface JFunction0<R> extends scala.Function0<R>, java.io.Serializable {
       |    default void $initName() {
       |    };
       |""".stripMargin
@@ -51,7 +51,7 @@ object CodeGen {
       |$packaging
       |
       |@FunctionalInterface
-      |public interface JFunction1<T1, R> extends scala.Function1<T1, R> {
+      |public interface JFunction1<T1, R> extends scala.Function1<T1, R>, java.io.Serializable {
       |    default void $initName() {
       |    };
       |
@@ -77,7 +77,7 @@ object CodeGen {
        |$packaging
        |
        |@FunctionalInterface
-       |public interface JFunction$n<$tparams, R> extends scala.Function$n<$tparams, R> {
+       |public interface JFunction$n<$tparams, R> extends scala.Function$n<$tparams, R>, java.io.Serializable {
        |    default void $initName() {
        |    };
        |
