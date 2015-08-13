@@ -6,7 +6,7 @@ package scala.concurrent.java8
 // Located in this package to access private[concurrent] members
 
 import scala.concurrent.{ Future, Promise, ExecutionContext, ExecutionContextExecutorService, ExecutionContextExecutor, impl }
-import java.util.concurrent.{ CompletionStage, Executor, ExecutorService, CompletableFuture }
+import java.util.concurrent._
 import scala.util.{ Try, Success, Failure }
 import java.util.function.{ BiConsumer, Function ⇒ JF, Consumer, BiFunction }
 
@@ -75,6 +75,10 @@ object FuturesConvertersImpl {
     override def toCompletableFuture(): CompletableFuture[T] = {
       this
     }
+
+    override def get(): T = scala.concurrent.blocking(super.get())
+
+    override def get(timeout: Long, unit: TimeUnit): T = scala.concurrent.blocking(super.get(timeout, unit))
 
     override def toString: String = super[CompletableFuture].toString
   }
