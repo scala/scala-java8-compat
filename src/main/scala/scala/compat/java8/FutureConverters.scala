@@ -71,8 +71,14 @@ object FutureConverters {
    * @return a Scala Future that represents the CompletionStage's completion
    */
   def toScala[T](cs: CompletionStage[T]): Future[T] = {
-    val p = new P[T]
-    cs whenComplete p
+    val p = Promise[T]()
+    val bc = new BiConsumer[T, Throwable] {
+      override def accept(v: T, e: Throwable): Unit = {
+        if (e == null) p.complete(Success(v))
+        else p.complete(Failure(e))
+      }
+    }
+    cs whenComplete bc
     p.future
   }
 

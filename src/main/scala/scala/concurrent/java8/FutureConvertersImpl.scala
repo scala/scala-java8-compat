@@ -71,11 +71,4 @@ object FuturesConvertersImpl {
 
     override def toString: String = super[CompletableFuture].toString
   }
-
-  class P[T] extends impl.Promise.DefaultPromise[T] with BiConsumer[T, Throwable] {
-    override def accept(v: T, e: Throwable): Unit = {
-      if (e == null) complete(Success(v))
-      else complete(Failure(e))
-    }
-  }
 }
