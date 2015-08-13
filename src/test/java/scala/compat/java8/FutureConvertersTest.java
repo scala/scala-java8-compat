@@ -354,7 +354,7 @@ public class FutureConvertersTest {
     }
 
     @Test
-    public void testToJavaToCompletableFutureJavaCompleteCallledAfterScalaComplete() throws ExecutionException, InterruptedException {
+    public void testToJavaToCompletableFutureJavaCompleteCalledAfterScalaComplete() throws ExecutionException, InterruptedException {
         final Promise<String> p = promise();
         Future<String> sf = p.future();
         final CompletionStage<String> cs = toJava(sf);
@@ -364,5 +364,18 @@ public class FutureConvertersTest {
         assertEquals("scaladone", cf.get());
         cf.complete("javadone");
         assertEquals("scaladone", cf.get());
+    }
+
+    @Test
+    public void testToJavaToCompletableFutureJavaCompleteCalledBeforeScalaComplete() throws ExecutionException, InterruptedException {
+        final Promise<String> p = promise();
+        Future<String> sf = p.future();
+        final CompletionStage<String> cs = toJava(sf);
+        CompletableFuture<String> cf = cs.toCompletableFuture();
+        assertEquals("notyet", cf.getNow("notyet"));
+        cf.complete("javadone");
+        assertEquals("javadone", cf.get());
+        p.success("scaladone");
+        assertEquals("javadone", cf.get());
     }
 }
