@@ -73,7 +73,7 @@ object FuturesConvertersImpl {
      *          Scala Future or Promise (ie, the one that that was passed to `toJava`.)
      */
     override def toCompletableFuture(): CompletableFuture[T] = {
-      this // TODO or maybe `thenApply(JF.identity())`
+      this
     }
 
     override def toString: String = super[CompletableFuture].toString
