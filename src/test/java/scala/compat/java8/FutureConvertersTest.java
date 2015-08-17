@@ -378,4 +378,24 @@ public class FutureConvertersTest {
         p.success("scaladone");
         assertEquals("javadone", cf.get());
     }
+
+    @Test
+    public void testToJavaToCompletableFutureJavaObtrudeCalledBeforeScalaComplete() throws ExecutionException, InterruptedException {
+        final Promise<String> p = promise();
+        Future<String> sf = p.future();
+        final CompletionStage<String> cs = toJava(sf);
+        CompletableFuture<String> cf = cs.toCompletableFuture();
+        try {
+            cf.obtrudeValue("");
+            fail();
+        } catch (UnsupportedOperationException iae) {
+            // okay
+        }
+        try {
+            cf.obtrudeException(new Exception());
+            fail();
+        } catch (UnsupportedOperationException iae) {
+            // okay
+        }
+    }
 }

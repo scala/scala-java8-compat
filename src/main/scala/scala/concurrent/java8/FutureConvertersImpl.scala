@@ -72,9 +72,11 @@ object FuturesConvertersImpl {
      * WARNING: completing the result of this method will not complete the underlying
      *          Scala Future or Promise (ie, the one that that was passed to `toJava`.)
      */
-    override def toCompletableFuture(): CompletableFuture[T] = {
-      this
-    }
+    override def toCompletableFuture(): CompletableFuture[T] = this
+
+    override def obtrudeValue(value: T): Unit = throw new UnsupportedOperationException("obtrudeValue may not be used on the result of toJava(scalaFuture)")
+
+    override def obtrudeException(ex: Throwable): Unit = throw new UnsupportedOperationException("obtrudeException may not be used on the result of toJava(scalaFuture)")
 
     override def get(): T = scala.concurrent.blocking(super.get())
 
