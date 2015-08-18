@@ -6,7 +6,7 @@ package scala.concurrent.java8
 // Located in this package to access private[concurrent] members
 
 import scala.concurrent.{ Future, Promise, ExecutionContext, ExecutionContextExecutorService, ExecutionContextExecutor, impl }
-import java.util.concurrent.{ CompletionStage, Executor, ExecutorService, CompletableFuture }
+import java.util.concurrent._
 import scala.util.{ Try, Success, Failure }
 import java.util.function.{ BiConsumer, Function ⇒ JF, Consumer, BiFunction }
 
@@ -66,8 +66,21 @@ object FuturesConvertersImpl {
       cf
     }
 
-    override def toCompletableFuture(): CompletableFuture[T] =
-      throw new UnsupportedOperationException("this CompletionStage represents a read-only Scala Future")
+    /**
+     * @inheritdoc
+     *
+     * WARNING: completing the result of this method will not complete the underlying
+     *          Scala Future or Promise (ie, the one that that was passed to `toJava`.)
+     */
+    override def toCompletableFuture(): CompletableFuture[T] = this
+
+    override def obtrudeValue(value: T): Unit = throw new UnsupportedOperationException("obtrudeValue may not be used on the result of toJava(scalaFuture)")
+
+    override def obtrudeException(ex: Throwable): Unit = throw new UnsupportedOperationException("obtrudeException may not be used on the result of toJava(scalaFuture)")
+
+    override def get(): T = scala.concurrent.blocking(super.get())
+
+    override def get(timeout: Long, unit: TimeUnit): T = scala.concurrent.blocking(super.get(timeout, unit))
 
     override def toString: String = super[CompletableFuture].toString
   }

@@ -7,11 +7,9 @@ import org.junit.Test;
 import scala.concurrent.Future;
 import scala.concurrent.Promise;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.*;
 import static scala.compat.java8.FutureConverters.*;
@@ -317,5 +315,87 @@ public class FutureConvertersTest {
         p.failure(new RuntimeException("Hello"));
         latch.countDown();
         assertEquals("Hello", second.toCompletableFuture().get());
+    }
+
+    @Test
+    public void testToJavaThenComposeWithToJavaThenAccept() throws InterruptedException,
+            ExecutionException, TimeoutException {
+        // Test case from https://github.com/scala/scala-java8-compat/issues/29
+        final Promise<String> p1 = promise();
+        final CompletableFuture<String> future = new CompletableFuture<>();
+
+        CompletableFuture.supplyAsync(() -> "Hello").
+                        thenCompose(x -> toJava(p1.future())).handle((x, t) -> future.complete(x));
+        p1.success("Hello");
+        assertEquals("Hello", future.get(1000, MILLISECONDS));
+    }
+
+    @Test
+    public void testToJavaToCompletableFuture() throws ExecutionException, InterruptedException {
+        final Promise<String> p = promise();
+        final CompletionStage<String> cs = toJava(p.future());
+        CompletableFuture<String> cf = cs.toCompletableFuture();
+        assertEquals("notyet", cf.getNow("notyet"));
+        p.success("done");
+        assertEquals("done", cf.get());
+    }
+
+    @Test
+    public void testToJavaToCompletableFutureDoesNotMutateUnderlyingPromise() throws ExecutionException, InterruptedException {
+        final Promise<String> p = promise();
+        Future<String> sf = p.future();
+        final CompletionStage<String> cs = toJava(sf);
+        CompletableFuture<String> cf = cs.toCompletableFuture();
+        assertEquals("notyet", cf.getNow("notyet"));
+        cf.complete("done");
+        assertEquals("done", cf.get());
+        assertFalse(sf.isCompleted());
+        assertFalse(p.isCompleted());
+    }
+
+    @Test
+    public void testToJavaToCompletableFutureJavaCompleteCalledAfterScalaComplete() throws ExecutionException, InterruptedException {
+        final Promise<String> p = promise();
+        Future<String> sf = p.future();
+        final CompletionStage<String> cs = toJava(sf);
+        CompletableFuture<String> cf = cs.toCompletableFuture();
+        assertEquals("notyet", cf.getNow("notyet"));
+        p.success("scaladone");
+        assertEquals("scaladone", cf.get());
+        cf.complete("javadone");
+        assertEquals("scaladone", cf.get());
+    }
+
+    @Test
+    public void testToJavaToCompletableFutureJavaCompleteCalledBeforeScalaComplete() throws ExecutionException, InterruptedException {
+        final Promise<String> p = promise();
+        Future<String> sf = p.future();
+        final CompletionStage<String> cs = toJava(sf);
+        CompletableFuture<String> cf = cs.toCompletableFuture();
+        assertEquals("notyet", cf.getNow("notyet"));
+        cf.complete("javadone");
+        assertEquals("javadone", cf.get());
+        p.success("scaladone");
+        assertEquals("javadone", cf.get());
+    }
+
+    @Test
+    public void testToJavaToCompletableFutureJavaObtrudeCalledBeforeScalaComplete() throws ExecutionException, InterruptedException {
+        final Promise<String> p = promise();
+        Future<String> sf = p.future();
+        final CompletionStage<String> cs = toJava(sf);
+        CompletableFuture<String> cf = cs.toCompletableFuture();
+        try {
+            cf.obtrudeValue("");
+            fail();
+        } catch (UnsupportedOperationException iae) {
+            // okay
+        }
+        try {
+            cf.obtrudeException(new Exception());
+            fail();
+        } catch (UnsupportedOperationException iae) {
+            // okay
+        }
     }
 }
