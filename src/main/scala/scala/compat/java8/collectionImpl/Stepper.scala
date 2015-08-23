@@ -1,4 +1,4 @@
-package scala.collection.java8
+package scala.compat.java8.collectionImpl
 
 trait Stepper[@specialized(Double, Int, Long) A, CC] extends Any {
   def characteristics: Int
@@ -20,7 +20,8 @@ trait Stepper[@specialized(Double, Int, Long) A, CC] extends Any {
   def reduce(f: (A, A) => A): A = { var a = nextStep; while (hasStep) { a = f(a, nextStep) }; a }
 }
 object Stepper {
-  class OfSpliterator[A] private[java8] (sp: java.util.Spliterator[A]) extends StepperGeneric[A] with java.util.function.Consumer[A] {
+  class OfSpliterator[A] private[java8] (sp: java.util.Spliterator[A])
+  extends StepperGeneric[A] with java.util.function.Consumer[A] {
     private var cache: A = null.asInstanceOf[A]
     private var cached: Boolean = false
     def accept(a: A) { cache = a; cached = true }
@@ -70,7 +71,154 @@ object Stepper {
     }
     override def tryAdvance(c: java.util.function.Consumer[_ >: A]) = useCache(c) || sp.tryAdvance(c)
   }
+  class OfDoubleSpliterator private[java8] (sp: java.util.Spliterator.OfDouble)
+  extends StepperDouble with java.util.function.DoubleConsumer {
+    private var cache: Double = Double.NaN
+    private var cached: Boolean = false
+    def accept(d: Double) { cache = d; cached = true }
+    
+    private def loadCache: Boolean = sp.tryAdvance(this)
+    private def useCache(c: java.util.function.DoubleConsumer): Boolean = {
+      if (cached) {
+        c.accept(cache)
+        cached = false
+        true
+      }
+      else false
+    }
+    
+    def characteristics = sp.characteristics
+    def estimateSize = {
+      val sz = sp.estimateSize
+      if (cached && sz < Long.MaxValue && sz >= 0) sz + 1
+      else sz
+    }
+    override def forEachRemaining(c: java.util.function.DoubleConsumer) {
+      useCache(c)
+      sp.forEachRemaining(c)
+    }
+    def hasNext = cached || loadCache
+    def nextDouble = {
+      if (!hasNext) throw new NoSuchElementException("Empty Spliterator in Stepper")
+      val ans = cache
+      cached = false
+      ans
+    }
+    def substep(): StepperDouble = {
+      val subSp = sp.trySplit()
+      if (subSp eq null) null
+      else {
+        val sub = new OfDoubleSpliterator(subSp)
+        if (cached) {
+          sub.cache = cache
+          sub.cached = true
+          cached = false
+        }
+        sub
+      }
+    }
+    override def tryAdvance(c: java.util.function.DoubleConsumer) = useCache(c) || sp.tryAdvance(c)
+  }
+  class OfIntSpliterator private[java8] (sp: java.util.Spliterator.OfInt)
+  extends StepperInt with java.util.function.IntConsumer {
+    private var cache: Int = 0
+    private var cached: Boolean = false
+    def accept(i: Int) { cache = i; cached = true }
+    
+    private def loadCache: Boolean = sp.tryAdvance(this)
+    private def useCache(c: java.util.function.IntConsumer): Boolean = {
+      if (cached) {
+        c.accept(cache)
+        cached = false
+        true
+      }
+      else false
+    }
+    
+    def characteristics = sp.characteristics
+    def estimateSize = {
+      val sz = sp.estimateSize
+      if (cached && sz < Long.MaxValue && sz >= 0) sz + 1
+      else sz
+    }
+    override def forEachRemaining(c: java.util.function.IntConsumer) {
+      useCache(c)
+      sp.forEachRemaining(c)
+    }
+    def hasNext = cached || loadCache
+    def nextInt = {
+      if (!hasNext) throw new NoSuchElementException("Empty Spliterator in Stepper")
+      val ans = cache
+      cached = false
+      ans
+    }
+    def substep(): StepperInt = {
+      val subSp = sp.trySplit()
+      if (subSp eq null) null
+      else {
+        val sub = new OfIntSpliterator(subSp)
+        if (cached) {
+          sub.cache = cache
+          sub.cached = true
+          cached = false
+        }
+        sub
+      }
+    }
+    override def tryAdvance(c: java.util.function.IntConsumer) = useCache(c) || sp.tryAdvance(c)
+  }
+  class OfLongSpliterator private[java8] (sp: java.util.Spliterator.OfLong)
+  extends StepperLong with java.util.function.LongConsumer {
+    private var cache: Long = 0L
+    private var cached: Boolean = false
+    def accept(l: Long) { cache = l; cached = true }
+    
+    private def loadCache: Boolean = sp.tryAdvance(this)
+    private def useCache(c: java.util.function.LongConsumer): Boolean = {
+      if (cached) {
+        c.accept(cache)
+        cached = false
+        true
+      }
+      else false
+    }
+    
+    def characteristics = sp.characteristics
+    def estimateSize = {
+      val sz = sp.estimateSize
+      if (cached && sz < Long.MaxValue && sz >= 0) sz + 1
+      else sz
+    }
+    override def forEachRemaining(c: java.util.function.LongConsumer) {
+      useCache(c)
+      sp.forEachRemaining(c)
+    }
+    def hasNext = cached || loadCache
+    def nextLong = {
+      if (!hasNext) throw new NoSuchElementException("Empty Spliterator in Stepper")
+      val ans = cache
+      cached = false
+      ans
+    }
+    def substep(): StepperLong = {
+      val subSp = sp.trySplit()
+      if (subSp eq null) null
+      else {
+        val sub = new OfLongSpliterator(subSp)
+        if (cached) {
+          sub.cache = cache
+          sub.cached = true
+          cached = false
+        }
+        sub
+      }
+    }
+    override def tryAdvance(c: java.util.function.LongConsumer) = useCache(c) || sp.tryAdvance(c)
+  }
   def ofSpliterator[A](sp: java.util.Spliterator[A]) = new OfSpliterator[A](sp)
+  def ofSpliterator(sp: java.util.Spliterator.OfDouble) = new OfDoubleSpliterator(sp)
+  def ofSpliterator(sp: java.util.Spliterator.OfInt) = new OfIntSpliterator(sp)
+  def ofSpliterator(sp: java.util.Spliterator.OfLong) = new OfLongSpliterator(sp)
 }
 
 trait StepperGeneric[A] extends Stepper[A, StepperGeneric[A]] with java.util.Iterator[A] with java.util.Spliterator[A] {

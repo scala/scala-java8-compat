@@ -2,7 +2,7 @@ package scala.compat.java8
 
 import language.implicitConversions
 
-import scala.collection.java8._
+import scala.compat.java8.collectionImpl._
 
 package converterImpls {
   import StepConverters.SplitFlags._
