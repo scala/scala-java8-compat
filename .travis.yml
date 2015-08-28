@@ -13,7 +13,7 @@ script:
   - admin/build.sh
 scala:
   - 2.11.7
-  - 2.12.0-M2
+  # - 2.12.0-M3
 jdk:
   - oraclejdk8
 notifications:
