@@ -1,4 +1,4 @@
-## scala-java8-compat [<img src="https://img.shields.io/travis/scala/async.svg"/>](https://travis-ci.org/scala/async) [<img src="https://img.shields.io/maven-central/v/org.scala-lang.modules/scala-java8-compat_2.11*.svg?label=latest%20release%20for%202.11"/>](http://search.maven.org/#search%7Cga%7C1%7Cg%3Aorg.scala-lang.modules%20a%3Ascala-java8-compat_2.11*)
+## scala-java8-compat [<img src="https://img.shields.io/travis/scala/scala-java8-compat.svg"/>](https://travis-ci.org/scala/scala-java8-compat) [<img src="https://img.shields.io/maven-central/v/org.scala-lang.modules/scala-java8-compat_2.11*.svg?label=latest%20release%20for%202.11"/>](http://search.maven.org/#search%7Cga%7C1%7Cg%3Aorg.scala-lang.modules%20a%3Ascala-java8-compat_2.11*)
 
 A Java 8 compatibility kit for Scala.
 
