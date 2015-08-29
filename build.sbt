@@ -24,7 +24,6 @@ lazy val fnGen = (project in file("fnGen")).
   )
 
 lazy val root = (project in file(".")).
-  dependsOn(fnGen).
   settings(scalaModuleSettings: _*).
   settings(commonSettings: _*).
   settings(
