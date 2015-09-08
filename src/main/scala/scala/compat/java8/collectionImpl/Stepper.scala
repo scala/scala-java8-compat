@@ -36,8 +36,11 @@ import java.util.Spliterator
   * println(s.hasStep)                      //  Prints `false`
   * }}}
   */
+trait Stepper[@specialized(Double, Int, Long) A] extends StepperLike[A, Stepper[A]] {}
 
-trait Stepper[@specialized(Double, Int, Long) A, CC] { self =>
+/** Provides functionality for Stepper while keeping track of a more precise type of the collection.
+  */
+trait StepperLike[@specialized(Double, Int, Long) A, +CC] { self =>
   /** Characteristics are bit flags that indicate runtime characteristics of this Stepper.
     *
     * - `Distinct` means that no duplicates exist
@@ -146,12 +149,12 @@ trait Stepper[@specialized(Double, Int, Long) A, CC] { self =>
 }
 
 /** This trait indicates that a `Stepper` will implement `tryStep` in terms of `hasNext` and `nextStep`. */
-trait NextStepper[@specialized(Double, Int, Long) A, CC] extends Stepper[A, CC] {
+trait NextStepper[@specialized(Double, Int, Long) A] extends Stepper[A] with StepperLike[A, NextStepper[A]] {
   def tryStep(f: A => Unit) = if (hasStep) { f(nextStep()); true } else false
 }
 
 /** This trait indicates that a `Stepper` will implement `hasNext` and `nextStep` by caching applications of `tryStep`. */
-trait TryStepper[@specialized(Double, Int, Long) A, CC] extends Stepper[A, CC] {
+trait TryStepper[@specialized(Double, Int, Long) A] extends Stepper[A] with StepperLike[A, TryStepper[A]] {
   private var myCache: A = null.asInstanceOf[A]
   private var myCacheIsFull = false
   private def load(): Boolean = {
@@ -173,7 +176,7 @@ trait TryStepper[@specialized(Double, Int, Long) A, CC] extends Stepper[A, CC] {
 }
 
 /** Any `AnyStepper` combines the functionality of a Java `Iterator`, a Java `Spliterator`, and a `Stepper`. */
-trait AnyStepper[A] extends Stepper[A, AnyStepper[A]] with java.util.Iterator[A] with Spliterator[A] {
+trait AnyStepper[A] extends Stepper[A] with java.util.Iterator[A] with Spliterator[A] with StepperLike[A, AnyStepper[A]] {
   def forEachRemaining(c: java.util.function.Consumer[_ >: A]) { while (hasNext) { c.accept(next) } }
   def hasStep = hasNext()
   def knownSize = getExactSizeIfKnown
@@ -186,7 +189,7 @@ trait AnyStepper[A] extends Stepper[A, AnyStepper[A]] with java.util.Iterator[A]
 }
 
 /** A `DoubleStepper` combines the functionality of a Java `PrimitiveIterator`, a Java `Spliterator`, and a `Stepper`, all specialized for `Double` values. */
-trait DoubleStepper extends Stepper[Double, DoubleStepper] with java.util.PrimitiveIterator.OfDouble with Spliterator.OfDouble {
+trait DoubleStepper extends Stepper[Double] with java.util.PrimitiveIterator.OfDouble with Spliterator.OfDouble with StepperLike[Double, DoubleStepper] {
   def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Double]) { while (hasNext) { c.accept(java.lang.Double.valueOf(nextDouble)) } }
   def forEachRemaining(c: java.util.function.DoubleConsumer) { while (hasNext) { c.accept(nextDouble) } }
   def hasStep = hasNext()
@@ -201,7 +204,7 @@ trait DoubleStepper extends Stepper[Double, DoubleStepper] with java.util.Primit
 }
 
 /** An `IntStepper` combines the functionality of a Java `PrimitiveIterator`, a Java `Spliterator`, and a `Stepper`, all specialized for `Int` values. */
-trait IntStepper extends Stepper[Int, IntStepper] with java.util.PrimitiveIterator.OfInt with Spliterator.OfInt {
+trait IntStepper extends Stepper[Int] with java.util.PrimitiveIterator.OfInt with Spliterator.OfInt with StepperLike[Int, IntStepper] {
   def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Integer]) { while (hasNext) { c.accept(java.lang.Integer.valueOf(nextInt)) } }
   def forEachRemaining(c: java.util.function.IntConsumer) { while (hasNext) { c.accept(nextInt) } }
   def hasStep = hasNext()
@@ -216,7 +219,7 @@ trait IntStepper extends Stepper[Int, IntStepper] with java.util.PrimitiveIterat
 }
 
 /** A `LongStepper` combines the functionality of a Java `PrimitiveIterator`, a Java `Spliterator`, and a `Stepper`, all specialized for `Long` values. */
-trait LongStepper extends Stepper[Long, LongStepper] with java.util.PrimitiveIterator.OfLong with Spliterator.OfLong {
+trait LongStepper extends Stepper[Long] with java.util.PrimitiveIterator.OfLong with Spliterator.OfLong with StepperLike[Long, LongStepper] {
   def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Long]) { while (hasNext) { c.accept(java.lang.Long.valueOf(nextLong)) } }
   def forEachRemaining(c: java.util.function.LongConsumer) { while (hasNext) { c.accept(nextLong) } }
   def hasStep = hasNext()

@@ -121,35 +121,35 @@ package converterImpls {
   }
   
   final class RichArrayAnyCanStep[A](val underlying: Array[A]) extends AnyVal {
-    @inline def stepper: Stepper[A, AnyStepper[A]] = new StepperArrayGenAny[A](underlying, 0, underlying.length)
+    @inline def stepper: AnyStepper[A] = new StepperArrayGenAny[A](underlying, 0, underlying.length)
   }
   
   final class RichArrayObjectCanStep[A <: Object](val underlying: Array[A]) extends AnyVal{
-    @inline def stepper: Stepper[A, AnyStepper[A]] = new StepperArrayGenObject[A](underlying, 0, underlying.length)
+    @inline def stepper: AnyStepper[A] = new StepperArrayGenObject[A](underlying, 0, underlying.length)
   }
   
   final class RichArrayUnitCanStep(val underlying: Array[Unit]) extends AnyVal{
-    @inline def stepper: Stepper[Unit, AnyStepper[Unit]] = new StepperArrayGenUnit(underlying, 0, underlying.length)
+    @inline def stepper: AnyStepper[Unit] = new StepperArrayGenUnit(underlying, 0, underlying.length)
   }
   
   final class RichArrayBooleanCanStep(val underlying: Array[Boolean]) extends AnyVal{
-    @inline def stepper: Stepper[Boolean, AnyStepper[Boolean]] = new StepperArrayGenBoolean(underlying, 0, underlying.length)
+    @inline def stepper: AnyStepper[Boolean] = new StepperArrayGenBoolean(underlying, 0, underlying.length)
   }
   
   final class RichArrayByteCanStep(val underlying: Array[Byte]) extends AnyVal{
-    @inline def stepper: Stepper[Byte, AnyStepper[Byte]] = new StepperArrayGenByte(underlying, 0, underlying.length)
+    @inline def stepper: AnyStepper[Byte] = new StepperArrayGenByte(underlying, 0, underlying.length)
   }
   
   final class RichArrayCharCanStep(val underlying: Array[Char]) extends AnyVal{
-    @inline def stepper: Stepper[Char, AnyStepper[Char]] = new StepperArrayGenChar(underlying, 0, underlying.length)
+    @inline def stepper: AnyStepper[Char] = new StepperArrayGenChar(underlying, 0, underlying.length)
   }
   
   final class RichArrayShortCanStep(val underlying: Array[Short]) extends AnyVal{
-    @inline def stepper: Stepper[Short, AnyStepper[Short]] = new StepperArrayGenShort(underlying, 0, underlying.length)
+    @inline def stepper: AnyStepper[Short] = new StepperArrayGenShort(underlying, 0, underlying.length)
   }
   
   final class RichArrayFloatCanStep(val underlying: Array[Float]) extends AnyVal{
-    @inline def stepper: Stepper[Float, AnyStepper[Float]] = new StepperArrayGenFloat(underlying, 0, underlying.length)
+    @inline def stepper: AnyStepper[Float] = new StepperArrayGenFloat(underlying, 0, underlying.length)
   }
   
   private[java8] class StepperStringCodePoint(underlying: String, var i0: Int, var iN: Int) extends IntStepper {
@@ -206,18 +206,18 @@ object StepConverters extends converterImpls.Priority2StepConverters {
   import converterImpls._
 
   implicit class RichArrayDoubleCanStep(val underlying: Array[Double]) extends AnyVal {
-    @inline def stepper: Stepper[Double, DoubleStepper] = new StepperArrayDouble(underlying, 0, underlying.length)
+    @inline def stepper: DoubleStepper = new StepperArrayDouble(underlying, 0, underlying.length)
   }
 
   implicit class RichArrayIntCanStep(val underlying: Array[Int]) extends AnyVal {
-    @inline def stepper: Stepper[Int, IntStepper] = new StepperArrayInt(underlying, 0, underlying.length)
+    @inline def stepper: IntStepper = new StepperArrayInt(underlying, 0, underlying.length)
   }
   
   implicit class RichArrayLongCanStep(val underlying: Array[Long]) extends AnyVal {
-    @inline def stepper: Stepper[Long, LongStepper] = new StepperArrayLong(underlying, 0, underlying.length)
+    @inline def stepper: LongStepper = new StepperArrayLong(underlying, 0, underlying.length)
   }
   
   implicit class RichStringCanStep(val underlying: String) extends AnyVal {
-    @inline def stepper: Stepper[Int, IntStepper] = new StepperStringCodePoint(underlying, 0, underlying.length)
+    @inline def stepper: IntStepper = new StepperStringCodePoint(underlying, 0, underlying.length)
   }
 }
