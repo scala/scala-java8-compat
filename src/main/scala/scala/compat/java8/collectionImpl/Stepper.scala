@@ -155,7 +155,8 @@ trait NextStepper[@specialized(Double, Int, Long) A] extends Stepper[A] with Ste
 
 /** This trait indicates that a `Stepper` will implement `hasNext` and `nextStep` by caching applications of `tryStep`. */
 trait TryStepper[@specialized(Double, Int, Long) A] extends Stepper[A] with StepperLike[A, TryStepper[A]] {
-  private var myCache: A = null.asInstanceOf[A]
+  protected def myCache: A
+  protected def myCache_=(a: A): Unit
   private var myCacheIsFull = false
   private def load(): Boolean = {
     myCacheIsFull = tryStep(myCache = _)

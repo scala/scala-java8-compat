@@ -5,15 +5,16 @@ import org.junit.Assert._
 
 import collectionImpl._
 
+
 class IncStepperA(private val size0: Long) extends NextStepper[Int] {
   if (size0 < 0) throw new IllegalArgumentException("Size must be >= 0L")
   private var i = 0L
   def characteristics = 0
   def knownSize = math.max(0L, size0 - i)
-  def hasStep = i < knownSize
+  def hasStep = i < size0
   def nextStep() = { i += 1; (i - 1).toInt }
   def substep() = if ((knownSize - i) <= 1) null else {
-    val sub = new IncStepperA(size0 - (size0 - i)/2)
+    val sub = new IncStepperA(i + (size0 - i)/2)
     sub.i = i
     i = sub.size0
     sub
@@ -24,6 +25,7 @@ class IncStepperA(private val size0: Long) extends NextStepper[Int] {
 
 class IncStepperB(private val size0: Long) extends TryStepper[Int] {
   if (size0 < 0) throw new IllegalArgumentException("Size must be >= 0L")
+  protected var myCache: Int = 0
   private var i = 0L
   def characteristics = 0
   def knownSize = math.max(0L, size0 - i)
@@ -55,5 +57,44 @@ class StepperTest {
   def count_only() {
     sources.foreach{ case (i, s) => assertEquals(i, s.count) }
     sources.foreach{ case (i, s) => assertEquals(i, subs(0)(s)(_.count.toInt, _ + _)) }
+  }
+
+  @Test
+  def count_conditionally() {
+    sources.foreach{ case (i, s) => assertEquals((0 until i).count(_ % 3 == 0), s.count(_ % 3 == 0)) }
+    sources.foreach{ case (i, s) => assertEquals((0 until i).count(_ % 3 == 0), subs(0)(s)(_.count(_ % 3 == 0).toInt, _ + _)) }
+  }
+
+  @Test
+  def existence() {
+    sources.foreach{ case (i, s) => assert(i > 0 == s.exists(_ >= 0)) }
+    sources.foreach{ case (i, s) => assert(i > 16 == s.exists(_ % 17 == 16)) }
+    sources.foreach{ case (i, s) => assert(i > 0 == subs(false)(s)(_.exists(_ >= 0), _ || _)) }
+    sources.foreach{ case (i, s) => assert(i > 16 == subs(false)(s)(_.exists(_ % 17 == 16), _ || _)) }
+  }
+
+  @Test
+  def finding() {
+    for (k <- 0 until 100) {
+      (sources zip sources).foreach{ case ((i,s), (j,t)) =>
+        val x = util.Random.nextInt(math.min(i,j)+3)
+        val a = s.find(_ == x)
+        val b = subs(None: Option[Int])(t)(_.find(_ == x), _ orElse _)
+        assertEquals(a, b)
+        assertEquals(a.isDefined, x < math.min(i,j))
+      }      
+    }
+  }
+
+  @Test
+  def folding() {
+    sources.foreach{ case (i,s) => assertEquals((0 until i).mkString, s.fold("")(_ + _.toString)) }
+    sources.foreach{ case (i,s) => assertEquals((0 until i).mkString, subs("")(s)(_.fold("")(_ + _.toString), _ + _)) }
+    sources.foreach{ case (i,s) => assertEquals((0 until i).map(_.toDouble).sum, s.fold(0.0)(_ + _), 1e-10) }
+    sources.foreach{ case (i,s) => assertEquals((0 until i).map(_.toDouble).sum, subs(0.0)(s)(_.fold(0.0)(_ + _), _ + _), 1e-10) }
+  }
+
+  @Test
+  def partialFolding() {
   }
 }
