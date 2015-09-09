@@ -115,7 +115,7 @@ trait StepperLike[@specialized(Double, Int, Long) A, +CC] { self =>
     * If `p` is never met, the result of the last operation is returned.
     * This is a terminal operation.
     */
-  def foldUntil[@specialized(Double, Int, Long) B](zero: B)(op: (B, A) => B)(p: B => Boolean) = { var b = zero; while (p(b) && hasStep) { b = op(b, nextStep) }; b }
+  def foldTo[@specialized(Double, Int, Long) B](zero: B)(op: (B, A) => B)(p: B => Boolean) = { var b = zero; while (!p(b) && hasStep) { b = op(b, nextStep) }; b }
 
   /** Applies `f` to every remaining element in the collection.
     * This is a terminal operation.

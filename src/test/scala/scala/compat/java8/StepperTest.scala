@@ -95,6 +95,45 @@ class StepperTest {
   }
 
   @Test
-  def partialFolding() {
+  def foldingUntil() {
+    def expected(i: Int) = (0 until i).scan(0)(_ + _).dropWhile(_ < 6*i).headOption.getOrElse((0 until i).sum)
+    sources.foreach{ case (i,s) => assertEquals(expected(i), s.foldTo(0)(_ + _)(_ >= 6*i)) }
+    sources.foreach{ case (_,s) => assertEquals(-1, s.foldTo(-1)(_ * _)(_ => true)) }
+    sources.foreach{ case (i,s) =>
+      val ss = s.substep
+      val x = s.foldTo( if (ss == null) 0 else ss.foldTo(0)(_ + _)(_ >= 6*i) )(_ + _)(_ >= 6*i)
+      assertEquals(expected(i), x)
+    }
+  }
+
+  @Test
+  def foreaching() {
+    sources.foreach{ case (i,s) =>
+      val clq = new java.util.concurrent.ConcurrentLinkedQueue[String]
+      s.foreach( clq add _.toString )
+      assertEquals((0 until i).map(_.toString).toSet, Iterator.continually(if (!clq.isEmpty) Some(clq.poll) else None).takeWhile(_.isDefined).toSet.flatten)
+    }
+    sources.foreach{ case (i,s) =>
+      val clq = new java.util.concurrent.ConcurrentLinkedQueue[String]
+      subs(())(s)(_.foreach( clq add _.toString ), (_, _) => ())
+      assertEquals((0 until i).map(_.toString).toSet, Iterator.continually(if (!clq.isEmpty) Some(clq.poll) else None).takeWhile(_.isDefined).toSet.flatten)
+    }
+  }
+
+  @Test
+  def reducing() {
+    sources.foreach{ case (i,s) => 
+      if (i==0) assertEquals(s.hasStep, false)
+      else assertEquals((0 until i).sum, s.reduce(_ + _))
+    }
+    sources.foreach{ case (i,s) =>
+      assertEquals((0 until i).sum, subs(0)(s)(x => if (!x.hasStep) 0 else x.reduce(_ + _), _ + _))
+    }
+  }
+
+  @Test
+  def iterating() {
+    sources.foreach{ case (i, s) => assert(Iterator.range(0,i) sameElements s.iterator) }
   }
 }
+
