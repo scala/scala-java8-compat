@@ -20,7 +20,6 @@ class IncStepperA(private val size0: Long) extends NextStepper[Int] {
     sub
   }
   def typedPrecisely = this
-  def spliterator = ???
 }
 
 class IncStepperB(private val size0: Long) extends TryStepper[Int] {
@@ -37,7 +36,6 @@ class IncStepperB(private val size0: Long) extends TryStepper[Int] {
     sub
   }
   def typedPrecisely = this
-  def spliterator = ???
 }
 
 class StepperTest {
@@ -134,6 +132,19 @@ class StepperTest {
   @Test
   def iterating() {
     sources.foreach{ case (i, s) => assert(Iterator.range(0,i) sameElements s.iterator) }
+  }
+
+  @Test
+  def spliterating() {
+    sources.foreach{ case (i,s) => 
+      var sum = 0
+      s.spliterator.forEachRemaining(new java.util.function.Consumer[Int]{ def accept(i: Int) { sum += i } })
+      assertEquals(sum, (0 until i).sum)
+    }
+    sources.foreach{ case (i,s) => 
+      val sum = subs(0)(s)(x => { var sm = 0; x.spliterator.forEachRemaining(new java.util.function.Consumer[Int]{ def accept(i: Int) { sm += i } }); sm }, _ + _)
+      assertEquals(sum, (0 until i).sum)
+    }
   }
 }
 

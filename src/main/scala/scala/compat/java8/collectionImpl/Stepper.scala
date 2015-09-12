@@ -149,12 +149,19 @@ trait StepperLike[@specialized(Double, Int, Long) A, +CC] { self =>
 }
 
 /** This trait indicates that a `Stepper` will implement `tryStep` in terms of `hasNext` and `nextStep`. */
-trait NextStepper[@specialized(Double, Int, Long) A] extends Stepper[A] with StepperLike[A, NextStepper[A]] {
+trait NextStepper[@specialized(Double, Int, Long) A] extends Stepper[A] with StepperLike[A, NextStepper[A]] { 
   def tryStep(f: A => Unit) = if (hasStep) { f(nextStep()); true } else false
+  def spliterator: Spliterator[A] = new ProxySpliteratorViaNext[A](this)
+}
+private[collectionImpl] class ProxySpliteratorViaNext[A](underlying: NextStepper[A]) extends Spliterator[A] {
+  def characteristics() = underlying.characteristics
+  def estimateSize() = underlying.knownSize
+  def tryAdvance(f: java.util.function.Consumer[_ >: A]): Boolean = if (underlying.hasStep) { f.accept(underlying.nextStep()); true } else false
+  def trySplit() = underlying.substep() match { case null => null; case x => new ProxySpliteratorViaNext[A](x) }
 }
 
 /** This trait indicates that a `Stepper` will implement `hasNext` and `nextStep` by caching applications of `tryStep`. */
-trait TryStepper[@specialized(Double, Int, Long) A] extends Stepper[A] with StepperLike[A, TryStepper[A]] {
+trait TryStepper[@specialized(Double, Int, Long) A] extends Stepper[A] with StepperLike[A, TryStepper[A]] { 
   protected def myCache: A
   protected def myCache_=(a: A): Unit
   private var myCacheIsFull = false
@@ -174,6 +181,14 @@ trait TryStepper[@specialized(Double, Int, Long) A] extends Stepper[A] with Step
     ans
   }
   override def foreach(f: A => Unit) { while(tryStep(f)) {} }
+  def spliterator: Spliterator[A] = new ProxySpliteratorViaTry[A](this)
+}
+private[collectionImpl] class ProxySpliteratorViaTry[A](underlying: TryStepper[A]) extends Spliterator[A] {
+  def characteristics() = underlying.characteristics
+  def estimateSize() = underlying.knownSize
+  def tryAdvance(f: java.util.function.Consumer[_ >: A]): Boolean = underlying.tryStep(a => f.accept(a))
+  override def forEachRemaining(f: java.util.function.Consumer[_ >: A]) { underlying.foreach(a => f.accept(a)) }
+  def trySplit() = underlying.substep() match { case null => null; case x => new ProxySpliteratorViaTry[A](x) }
 }
 
 /** Any `AnyStepper` combines the functionality of a Java `Iterator`, a Java `Spliterator`, and a `Stepper`. */
