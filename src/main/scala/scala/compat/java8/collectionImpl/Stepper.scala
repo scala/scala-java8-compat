@@ -160,17 +160,20 @@ private[collectionImpl] class ProxySpliteratorViaNext[A](underlying: NextStepper
   def trySplit() = underlying.substep() match { case null => null; case x => new ProxySpliteratorViaNext[A](x) }
 }
 
-/** This trait indicates that a `Stepper` will implement `hasNext` and `nextStep` by caching applications of `tryStep`. */
+/** This trait indicates that a `Stepper` will implement `hasNext` and `nextStep` by caching applications of `tryStep`. 
+  * Subclasses must implement `tryUncached` instead of `tryStep`, and should leave it protected.
+  * For speed, `foreachUncached` may also be overridden.
+  */
 trait TryStepper[@specialized(Double, Int, Long) A] extends Stepper[A] with StepperLike[A, TryStepper[A]] { 
   protected def myCache: A
   protected def myCache_=(a: A): Unit
-  private var myCacheIsFull = false
+  protected final var myCacheIsFull = false
   private def load(): Boolean = {
     myCacheIsFull = tryStep(myCache = _)
     myCacheIsFull
   }
-  def hasStep = myCacheIsFull || load()
-  def nextStep = {
+  final def hasStep = myCacheIsFull || load()
+  final def nextStep = {
     if (!myCacheIsFull) {
       load()
       if (!myCacheIsFull) throw new NoSuchElementException("nextStep in TryStepper")
@@ -180,7 +183,10 @@ trait TryStepper[@specialized(Double, Int, Long) A] extends Stepper[A] with Step
     myCache = null.asInstanceOf[A]
     ans
   }
-  override def foreach(f: A => Unit) { while(tryStep(f)) {} }
+  final def tryStep(f: A => Unit): Boolean = if (myCacheIsFull) { f(myCache); myCacheIsFull = false; true } else tryUncached(f)
+  protected def tryUncached(f: A => Unit): Boolean
+  final override def foreach(f: A => Unit) { if (myCacheIsFull) { f(myCache); myCacheIsFull = false }; foreachUncached(f) }
+  protected def foreachUncached(f: A => Unit) { while (tryUncached(f)) {} }
   def spliterator: Spliterator[A] = new ProxySpliteratorViaTry[A](this)
 }
 private[collectionImpl] class ProxySpliteratorViaTry[A](underlying: TryStepper[A]) extends Spliterator[A] {
@@ -470,14 +476,29 @@ object Stepper {
   }
   
   /** Creates a `Stepper` over a generic `Spliterator`. */
-  def ofSpliterator[A](sp: Spliterator[A]): AnyStepper[A] = new OfSpliterator[A](sp)
+  def ofSpliterator[A](sp: Spliterator[A]): AnyStepper[A] = sp match {
+    case as: AnyStepper[A] => as
+    case _ => new OfSpliterator[A](sp)
+  }
+
 
   /** Creates a `Stepper` over a `DoubleSpliterator`. */
-  def ofSpliterator(sp: Spliterator.OfDouble): DoubleStepper = new OfDoubleSpliterator(sp)
+  def ofSpliterator(sp: Spliterator.OfDouble): DoubleStepper = sp match {
+    case ds: DoubleStepper => ds
+    case _ => new OfDoubleSpliterator(sp)
+  }
 
   /** Creates a `Stepper` over an `IntSpliterator`. */
-  def ofSpliterator(sp: Spliterator.OfInt): IntStepper = new OfIntSpliterator(sp)
+  def ofSpliterator(sp: Spliterator.OfInt): IntStepper = sp match {
+    case is: IntStepper => is
+    case _ => new OfIntSpliterator(sp)
+  }
+
 
   /** Creates a `Stepper` over a `LongSpliterator`. */
-  def ofSpliterator(sp: Spliterator.OfLong): LongStepper = new OfLongSpliterator(sp)
+  def ofSpliterator(sp: Spliterator.OfLong): LongStepper = sp match {
+    case ls: LongStepper => ls
+    case _ => new OfLongSpliterator(sp)
+  }
+
 }

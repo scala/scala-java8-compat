@@ -30,7 +30,7 @@ class IncStepperB(private val size0: Long) extends TryStepper[Int] {
   private var i = 0L
   def characteristics = Stepper.Sized | Stepper.SubSized | Stepper.Ordered
   def knownSize = math.max(0L, size0 - i)
-  def tryStep(f: Int => Unit): Boolean = if (i >= size0) false else { f(i.toInt); i += 1; true }
+  protected def tryUncached(f: Int => Unit): Boolean = if (i >= size0) false else { f(i.toInt); i += 1; true }
   def substep() = if ((knownSize - i) <= 1) null else {
     val sub = new IncStepperB(size0 - (size0 - i)/2)
     sub.i = i
@@ -132,6 +132,56 @@ class StepperTest {
     i -> new MappingStepper[Double, Int](Stepper.ofSpliterator(new IntToDoubleSpliterator(new IncSpliterator(i), _.toDouble)), _.toInt),
     i -> new MappingStepper[String, Int](Stepper.ofSpliterator(new IntToGenericSpliterator[String](new IncSpliterator(i), _.toString)), _.toInt)
   ))
+
+  @Test
+  def stepping() {
+    sources.foreach{ case (i, s) => assert((0 until i).forall{ j => s.hasStep && s.nextStep == j } && !s.hasStep) }
+    sources.foreach{ case (i, s) => 
+      val set = collection.mutable.BitSet.empty
+      subs(0)(s)(
+        { x => 
+          while (x.hasStep) { val y = x.nextStep; assert(!(set contains y)); set += y }
+          0
+        },
+        _ + _
+      )
+      assert((0 until i).toSet == set)
+    }
+  }
+
+  @Test
+  def trying() {
+    sources.foreach{ case (i,s) => 
+      val set = collection.mutable.BitSet.empty
+      while (s.tryStep{ y => assert(!(set contains y)); set += y }) {}
+      assert((0 until i).toSet == set)
+    }
+    sources.foreach{ case (i,s) =>
+      val set = collection.mutable.BitSet.empty
+      subs(0)(s)(
+        { x =>
+          while(x.tryStep{ y => assert(!(set contains y)); set += y }) {}
+          0
+        },
+        _ + _
+      )
+      assertTrue(s.getClass.getName + s" said [0, $i) was " + set.mkString("{", " ", "}"), (0 until i).toSet == set)
+    }
+  }
+
+  @Test
+  def substepping() {
+    sources.foreach{ case (i,s) =>
+      val ss = s.substep
+      assertEquals(ss == null, i < 2)
+      if (ss != null) {
+        assertTrue(s.hasStep)
+        assertTrue(ss.hasStep)
+        assertEquals(i, s.count + ss.count)
+      }
+      else assertEquals(i, s.count)
+    }
+  }
 
   @Test
   def count_only() {
