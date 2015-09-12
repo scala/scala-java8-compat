@@ -3,13 +3,15 @@ package scala.compat.java8
 import org.junit.Test
 import org.junit.Assert._
 
+import java.util.Spliterator
+
 import collectionImpl._
 
 
 class IncStepperA(private val size0: Long) extends NextStepper[Int] {
   if (size0 < 0) throw new IllegalArgumentException("Size must be >= 0L")
   private var i = 0L
-  def characteristics = 0
+  def characteristics = Stepper.Sized | Stepper.SubSized | Stepper.Ordered
   def knownSize = math.max(0L, size0 - i)
   def hasStep = i < size0
   def nextStep() = { i += 1; (i - 1).toInt }
@@ -26,7 +28,7 @@ class IncStepperB(private val size0: Long) extends TryStepper[Int] {
   if (size0 < 0) throw new IllegalArgumentException("Size must be >= 0L")
   protected var myCache: Int = 0
   private var i = 0L
-  def characteristics = 0
+  def characteristics = Stepper.Sized | Stepper.SubSized | Stepper.Ordered
   def knownSize = math.max(0L, size0 - i)
   def tryStep(f: Int => Unit): Boolean = if (i >= size0) false else { f(i.toInt); i += 1; true }
   def substep() = if ((knownSize - i) <= 1) null else {
@@ -37,6 +39,78 @@ class IncStepperB(private val size0: Long) extends TryStepper[Int] {
   }
   def typedPrecisely = this
 }
+
+class IncSpliterator(private val size0: Long) extends Spliterator.OfInt {
+  private var i = 0L
+  def characteristics() = Stepper.Sized | Stepper.SubSized | Stepper.Ordered
+  def estimateSize() = math.max(0L, size0 - i)
+  def tryAdvance(f: java.util.function.IntConsumer): Boolean = if (i >= size0) false else { f.accept(i.toInt); i += 1; true }
+  def trySplit(): Spliterator.OfInt = if (i+1 >= size0) null else {
+    val sub = new IncSpliterator(size0 - (size0 - i)/2)
+    sub.i = i
+    i = sub.size0
+    sub
+  }
+  override def forEachRemaining(f: java.util.function.IntConsumer) { while (i < size0) { f.accept(i.toInt); i += 1 } }
+}
+
+class MappingStepper[@specialized (Double, Int, Long) A, @specialized(Double, Int, Long) B](underlying: Stepper[A], mapping: A => B) extends Stepper[B] {
+  def characteristics = underlying.characteristics
+  def knownSize = underlying.knownSize
+  def hasStep = underlying.hasStep
+  def nextStep() = mapping(underlying.nextStep())
+  def tryStep(f: B => Unit): Boolean = underlying.tryStep(a => f(mapping(a)))
+  override def foreach(f: B => Unit) { underlying.foreach(a => f(mapping(a))) }
+  def substep() = {
+    val undersub = underlying.substep()
+    if (undersub == null) null
+    else new MappingStepper(undersub, mapping)
+  }
+  def typedPrecisely = this
+  def spliterator: Spliterator[B] = new MappingSpliterator[A, B](underlying.spliterator, mapping)
+}
+
+class MappingSpliterator[A, B](private val underlying: Spliterator[A], mapping: A => B) extends Spliterator[B] {
+  def characteristics = underlying.characteristics
+  def estimateSize() = underlying.estimateSize()
+  def tryAdvance(f: java.util.function.Consumer[_ >: B]): Boolean = underlying.tryAdvance(new java.util.function.Consumer[A]{ def accept(a: A) { f.accept(mapping(a)) } })
+  def trySplit(): Spliterator[B] = {
+    val undersplit = underlying.trySplit()
+    if (undersplit == null) null
+    else new MappingSpliterator(undersplit, mapping)
+  }
+}
+class IntToGenericSpliterator[A](private val underlying: Spliterator.OfInt, mapping: Int => A) extends Spliterator[A] {
+  def characteristics = underlying.characteristics
+  def estimateSize() = underlying.estimateSize()
+  def tryAdvance(f: java.util.function.Consumer[_ >: A]): Boolean = underlying.tryAdvance(new java.util.function.IntConsumer{ def accept(a: Int) { f.accept(mapping(a)) } })
+  def trySplit(): Spliterator[A] = {
+    val undersplit = underlying.trySplit()
+    if (undersplit == null) null
+    else new IntToGenericSpliterator[A](undersplit, mapping)
+  }
+}
+class IntToDoubleSpliterator(private val underlying: Spliterator.OfInt, mapping: Int => Double) extends Spliterator.OfDouble {
+  def characteristics = underlying.characteristics
+  def estimateSize() = underlying.estimateSize()
+  def tryAdvance(f: java.util.function.DoubleConsumer): Boolean = underlying.tryAdvance(new java.util.function.IntConsumer{ def accept(a: Int) { f.accept(mapping(a)) } })
+  def trySplit(): Spliterator.OfDouble = {
+    val undersplit = underlying.trySplit()
+    if (undersplit == null) null
+    else new IntToDoubleSpliterator(undersplit, mapping)
+  }
+}
+class IntToLongSpliterator(private val underlying: Spliterator.OfInt, mapping: Int => Long) extends Spliterator.OfLong {
+  def characteristics = underlying.characteristics
+  def estimateSize() = underlying.estimateSize()
+  def tryAdvance(f: java.util.function.LongConsumer): Boolean = underlying.tryAdvance(new java.util.function.IntConsumer{ def accept(a: Int) { f.accept(mapping(a)) } })
+  def trySplit(): Spliterator.OfLong = {
+    val undersplit = underlying.trySplit()
+    if (undersplit == null) null
+    else new IntToLongSpliterator(undersplit, mapping)
+  }
+}
+
 
 class StepperTest {
   def subs[Z, A, CC <: Stepper[A]](zero: Z)(s: Stepper[A])(f: Stepper[A] => Z, op: (Z, Z) => Z): Z = {
@@ -49,7 +123,15 @@ class StepperTest {
   }
 
   val sizes = Vector(0, 1, 2, 4, 15, 17, 2512)
-  def sources: Vector[(Int, Stepper[Int])] = sizes.flatMap(i => Vector(i -> new IncStepperA(i), i -> new IncStepperB(i)))
+  def sources: Vector[(Int, Stepper[Int])] = sizes.flatMap(i => Vector(
+    i -> new IncStepperA(i),
+    i -> new IncStepperB(i),
+    i -> Stepper.ofSpliterator(new IncSpliterator(i)),
+    i -> new MappingStepper[Int,Int](new IncStepperA(i), x => x),
+    i -> new MappingStepper[Long, Int](Stepper.ofSpliterator(new IntToLongSpliterator(new IncSpliterator(i), _.toLong)), _.toInt),
+    i -> new MappingStepper[Double, Int](Stepper.ofSpliterator(new IntToDoubleSpliterator(new IncSpliterator(i), _.toDouble)), _.toInt),
+    i -> new MappingStepper[String, Int](Stepper.ofSpliterator(new IntToGenericSpliterator[String](new IncSpliterator(i), _.toString)), _.toInt)
+  ))
 
   @Test
   def count_only() {
