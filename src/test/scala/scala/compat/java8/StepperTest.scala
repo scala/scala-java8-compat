@@ -15,8 +15,8 @@ class IncStepperA(private val size0: Long) extends NextStepper[Int] {
   def knownSize = math.max(0L, size0 - i)
   def hasStep = i < size0
   def nextStep() = { i += 1; (i - 1).toInt }
-  def substep() = if ((knownSize - i) <= 1) null else {
-    val sub = new IncStepperA(i + (size0 - i)/2)
+  def substep() = if (knownSize <= 1) null else {
+    val sub = new IncStepperA(size0 - (size0 - i)/2)
     sub.i = i
     i = sub.size0
     sub
@@ -29,9 +29,9 @@ class IncStepperB(private val size0: Long) extends TryStepper[Int] {
   protected var myCache: Int = 0
   private var i = 0L
   def characteristics = Stepper.Sized | Stepper.SubSized | Stepper.Ordered
-  def knownSize = math.max(0L, size0 - i)
+  def knownUncachedSize = math.max(0L, size0 - i)
   protected def tryUncached(f: Int => Unit): Boolean = if (i >= size0) false else { f(i.toInt); i += 1; true }
-  def substep() = if ((knownSize - i) <= 1) null else {
+  def substep() = if (knownSize <= 1) null else {
     val sub = new IncStepperB(size0 - (size0 - i)/2)
     sub.i = i
     i = sub.size0
@@ -41,6 +41,7 @@ class IncStepperB(private val size0: Long) extends TryStepper[Int] {
 }
 
 class IncSpliterator(private val size0: Long) extends Spliterator.OfInt {
+  if (size0 < 0) throw new IllegalArgumentException("Size must be >= 0L")
   private var i = 0L
   def characteristics() = Stepper.Sized | Stepper.SubSized | Stepper.Ordered
   def estimateSize() = math.max(0L, size0 - i)
@@ -123,15 +124,27 @@ class StepperTest {
   }
 
   val sizes = Vector(0, 1, 2, 4, 15, 17, 2512)
-  def sources: Vector[(Int, Stepper[Int])] = sizes.flatMap(i => Vector(
-    i -> new IncStepperA(i),
-    i -> new IncStepperB(i),
-    i -> Stepper.ofSpliterator(new IncSpliterator(i)),
-    i -> new MappingStepper[Int,Int](new IncStepperA(i), x => x),
-    i -> new MappingStepper[Long, Int](Stepper.ofSpliterator(new IntToLongSpliterator(new IncSpliterator(i), _.toLong)), _.toInt),
-    i -> new MappingStepper[Double, Int](Stepper.ofSpliterator(new IntToDoubleSpliterator(new IncSpliterator(i), _.toDouble)), _.toInt),
-    i -> new MappingStepper[String, Int](Stepper.ofSpliterator(new IntToGenericSpliterator[String](new IncSpliterator(i), _.toString)), _.toInt)
-  ))
+  def sources: Vector[(Int, Stepper[Int])] = sizes.flatMap{ i => 
+    Vector(
+      i -> new IncStepperA(i),
+      i -> new IncStepperB(i),
+      i -> Stepper.ofSpliterator(new IncSpliterator(i)),
+      i -> new MappingStepper[Int,Int](new IncStepperA(i), x => x),
+      i -> new MappingStepper[Long, Int](Stepper.ofSpliterator(new IntToLongSpliterator(new IncSpliterator(i), _.toLong)), _.toInt),
+      i -> new MappingStepper[Double, Int](Stepper.ofSpliterator(new IntToDoubleSpliterator(new IncSpliterator(i), _.toDouble)), _.toInt),
+      i -> new MappingStepper[String, Int](Stepper.ofSpliterator(new IntToGenericSpliterator[String](new IncSpliterator(i), _.toString)), _.toInt)
+    ) ++
+    {
+      // Implicitly converted instead of explicitly
+      import SpliteratorConverters._
+      Vector[(Int, Stepper[Int])](
+        i -> (new IncSpliterator(i)).stepper,
+        i -> new MappingStepper[Long, Int]((new IntToLongSpliterator(new IncSpliterator(i), _.toLong)).stepper, _.toInt),
+        i -> new MappingStepper[Double, Int]((new IntToDoubleSpliterator(new IncSpliterator(i), _.toDouble)).stepper, _.toInt),
+        i -> new MappingStepper[String, Int]((new IntToGenericSpliterator[String](new IncSpliterator(i), _.toString)).stepper, _.toInt)
+      )
+    }
+  }
 
   @Test
   def stepping() {
@@ -177,10 +190,31 @@ class StepperTest {
       if (ss != null) {
         assertTrue(s.hasStep)
         assertTrue(ss.hasStep)
-        assertEquals(i, s.count + ss.count)
+        val c1 = s.count
+        val c2 = ss.count
+        assertEquals(s"$i != $c1 + $c2 from ${s.getClass.getName}", i, c1 + c2)
       }
       else assertEquals(i, s.count)
     }
+  }
+
+  @Test
+  def characteristically() {
+    val expected = Stepper.Sized | Stepper.SubSized | Stepper.Ordered
+    sources.foreach{ case (_,s) => assertEquals(s.characteristics, expected)}
+    sources.foreach{ case (_,s) => subs(0)(s)(x => { assertEquals(x.characteristics, expected); 0 }, _ + _) }
+  }
+
+  @Test
+  def knownSizes() {
+    sources.foreach{ case (i,s) => assertEquals(i.toLong, s.knownSize) }
+    sources.foreach{ case (i,s) => if (i > 0) subs(0)(s)(x => { assertEquals(x.knownSize, 1L); 0 }, _ + _) }
+  }
+
+  @Test
+  def consistentPrecision() {
+    sources.foreach{ case (_,s) => assert(s eq s.typedPrecisely) }
+    sources.foreach{ case (_,s) => subs(0)(s)(x => { assert(x eq x.typedPrecisely); 0}, _ + _) }
   }
 
   @Test

@@ -86,9 +86,13 @@ trait StepperLike[@specialized(Double, Int, Long) A, +CC] { self =>
   ////
 
   /** Consumes all remaining elements in this `Stepper` and counts how many there are.
-    * This is a terminal operation.
+    * This is a terminal operation, though if `knownSize` is non-negative, it won't actually
+    * iterate over the elements.
     */
-  def count(): Long = { var n = 0L; while (hasStep) { nextStep; n += 1 }; n }
+  def count(): Long = knownSize match {
+    case x if x < 0 => var n = 0L; while (hasStep) { nextStep; n += 1 }; n
+    case x => x
+  }
 
   /** Consumes all remaining elements in this `Stepper` and counts how many satisfy condition `p`.
     * This is a terminal operation.
@@ -161,8 +165,9 @@ private[collectionImpl] class ProxySpliteratorViaNext[A](underlying: NextStepper
 }
 
 /** This trait indicates that a `Stepper` will implement `hasNext` and `nextStep` by caching applications of `tryStep`. 
-  * Subclasses must implement `tryUncached` instead of `tryStep`, and should leave it protected.
-  * For speed, `foreachUncached` may also be overridden.
+  * Subclasses must implement `tryUncached` instead of `tryStep`, and should leave it protected, and must implement
+  * `knownUncachedSize` instead of `knownSize`. For speed, `foreachUncached` may also be overridden.  It is recommended
+  * that all of the `Uncached` methods be left protected.
   */
 trait TryStepper[@specialized(Double, Int, Long) A] extends Stepper[A] with StepperLike[A, TryStepper[A]] { 
   protected def myCache: A
@@ -183,6 +188,8 @@ trait TryStepper[@specialized(Double, Int, Long) A] extends Stepper[A] with Step
     myCache = null.asInstanceOf[A]
     ans
   }
+  final def knownSize = knownUncachedSize + (if (myCacheIsFull) 1 else 0)
+  protected def knownUncachedSize: Long
   final def tryStep(f: A => Unit): Boolean = if (myCacheIsFull) { f(myCache); myCacheIsFull = false; true } else tryUncached(f)
   protected def tryUncached(f: A => Unit): Boolean
   final override def foreach(f: A => Unit) { if (myCacheIsFull) { f(myCache); myCacheIsFull = false }; foreachUncached(f) }
