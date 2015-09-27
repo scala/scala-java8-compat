@@ -55,52 +55,22 @@ package converterImpls {
     def semiclone(half: Int) = new StepsBoxedFloatArray(underlying, i0, half)
   }
   
-  private[java8] class StepsDoubleArray(underlying: Array[Double], var i0: Int, var iN: Int) extends DoubleStepper {
-    def characteristics() = NonNull + Sized + SubSized
-    def estimateSize() = iN - i0
-    def hasNext() = i0 < iN
+  private[java8] class StepsDoubleArray(underlying: Array[Double], _i0: Int, _iN: Int)
+  extends StepsDoubleLikeIndexed[Array[Double], StepsDoubleArray](underlying, _i0, _iN) {
     def nextDouble() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
-    def substep() = {
-      if (iN-1 > i0) {
-        val half = (i0+iN) >>> 1
-        val ans = new StepsDoubleArray(underlying, i0, half)
-        i0 = half
-        ans
-      }
-      else null
-    }
+    def semiclone(half: Int) = new StepsDoubleArray(underlying, i0, half)
   }
 
-  private[java8] class StepsIntArray(underlying: Array[Int], var i0: Int, var iN: Int) extends IntStepper {
-    def characteristics() = NonNull + Sized + SubSized
-    def estimateSize() = iN - i0
-    def hasNext() = i0 < iN
+  private[java8] class StepsIntArray(underlying: Array[Int], _i0: Int, _iN: Int)
+  extends StepsIntLikeIndexed[Array[Int], StepsIntArray](underlying, _i0, _iN) {
     def nextInt() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
-    def substep() = {
-      if (iN-1 > i0) {
-        val half = (i0+iN) >>> 1
-        val ans = new StepsIntArray(underlying, i0, half)
-        i0 = half
-        ans
-      }
-      else null
-    }
+    def semiclone(half: Int) = new StepsIntArray(underlying, i0, half)
   }
 
-  private[java8] class StepsLongArray(underlying: Array[Long], var i0: Int, var iN: Int) extends LongStepper {
-    def characteristics() = NonNull + Sized + SubSized
-    def estimateSize() = iN - i0
-    def hasNext() = i0 < iN
+  private[java8] class StepsLongArray(underlying: Array[Long], _i0: Int, _iN: Int)
+  extends StepsLongLikeIndexed[Array[Long], StepsLongArray](underlying, _i0, _iN) {
     def nextLong() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
-    def substep() = {
-      if (iN-1 > i0) {
-        val half = (i0+iN) >>> 1
-        val ans = new StepsLongArray(underlying, i0, half)
-        i0 = half
-        ans
-      }
-      else null
-    }
+    def semiclone(half: Int) = new StepsLongArray(underlying, i0, half)
   }
   
   final class RichArrayAnyCanStep[A](val underlying: Array[A]) extends AnyVal {
