@@ -103,43 +103,67 @@ class StreamConvertersTest {
     assert(newIntStream(1).boxed.unboxed.isInstanceOf[IntStream])
     assert(newLongStream(1).boxed.unboxed.isInstanceOf[LongStream])
   }
+
+  import collection.mutable.{ArrayBuffer, WrappedArray }
+  def abufO(n: Int) = { val ab = new ArrayBuffer[String]; arrayO(n).foreach(ab += _); ab }
+  def abufD(n: Int) = { val ab = new ArrayBuffer[Double]; arrayD(n).foreach(ab += _); ab }
+  def abufI(n: Int) = { val ab = new ArrayBuffer[Int]; arrayI(n).foreach(ab += _); ab }
+  def abufL(n: Int) = { val ab = new ArrayBuffer[Long]; arrayL(n).foreach(ab += _); ab }
   
   @Test
   def scalaToStream() {
     for (n <- ns) {
       val arrO = arrayO(n)
       val seqO = arrO.toSeq
+      val abO = abufO(n)
       assertEq(seqO, seqO.seqStream.toScala[Seq])
       assertEq(seqO, seqO.parStream.toScala[Seq])
       assertEq(seqO, arrO.seqStream.toScala[Seq])
       assertEq(seqO, arrO.parStream.toScala[Seq])
+      assertEq(seqO, abO.seqStream.toScala[Seq])
+      assertEq(seqO, abO.parStream.toScala[Seq])
       
       val arrD = arrayD(n)
       val seqD = arrD.toSeq
+      val abD = abufD(n)
       assertEq(seqD, seqD.seqStream.toScala[Seq])
       assertEq(seqD, seqD.parStream.toScala[Seq])
       assertEq(seqD, arrD.seqStream.toScala[Seq])
       assertEq(seqD, arrD.parStream.toScala[Seq])
       assert(arrD.seqStream.isInstanceOf[DoubleStream])
       assert(arrD.parStream.isInstanceOf[DoubleStream])
+      assertEq(seqD, abD.seqStream.toScala[Seq])
+      assertEq(seqD, abD.parStream.toScala[Seq])
+      assert(abD.seqStream.isInstanceOf[DoubleStream])
+      assert(abD.parStream.isInstanceOf[DoubleStream])
       
       val arrI = arrayI(n)
       val seqI = arrI.toSeq
+      val abI = abufI(n)
       assertEq(seqI, seqI.seqStream.toScala[Seq])
       assertEq(seqI, seqI.parStream.toScala[Seq])
       assertEq(seqI, arrI.seqStream.toScala[Seq])
       assertEq(seqI, arrI.parStream.toScala[Seq])
       assert(arrI.seqStream.isInstanceOf[IntStream])
       assert(arrI.parStream.isInstanceOf[IntStream])
+      assertEq(seqI, abI.seqStream.toScala[Seq])
+      assertEq(seqI, abI.parStream.toScala[Seq])
+      assert(abI.seqStream.isInstanceOf[IntStream])
+      assert(abI.parStream.isInstanceOf[IntStream])
       
       val arrL = arrayL(n)
       val seqL = arrL.toSeq
+      val abL = abufL(n)
       assertEq(seqL, seqL.seqStream.toScala[Seq])
       assertEq(seqL, seqL.parStream.toScala[Seq])
       assertEq(seqL, arrL.seqStream.toScala[Seq])
       assertEq(seqL, arrL.parStream.toScala[Seq])
       assert(arrL.seqStream.isInstanceOf[LongStream])
       assert(arrL.parStream.isInstanceOf[LongStream])
+      assertEq(seqL, abL.seqStream.toScala[Seq])
+      assertEq(seqL, abL.parStream.toScala[Seq])
+      assert(abL.seqStream.isInstanceOf[LongStream])
+      assert(abL.parStream.isInstanceOf[LongStream])
     }
   }
 }

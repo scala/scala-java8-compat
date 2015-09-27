@@ -72,37 +72,77 @@ package converterImpls {
     def nextLong() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def semiclone(half: Int) = new StepsLongArray(underlying, i0, half)
   }
+
+  private[java8] class StepsAnyIndexedSeqOptimized[A, CC <: collection.IndexedSeqOptimized[A, _]](underlying: CC, _i0: Int, _iN: Int)
+  extends StepsLikeIndexed[A, CC, StepsAnyIndexedSeqOptimized[A, CC]](underlying, _i0, _iN) {
+    def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
+    def semiclone(half: Int) = new StepsAnyIndexedSeqOptimized[A, CC](underlying, i0, half)
+  }
+
+  private[java8] class StepsDoubleIndexedSeqOptimized[CC <: collection.IndexedSeqOptimized[Double, _]](underlying: CC, _i0: Int, _iN: Int)
+  extends StepsDoubleLikeIndexed[CC, StepsDoubleIndexedSeqOptimized[CC]](underlying, _i0, _iN) {
+    def nextDouble() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
+    def semiclone(half: Int) = new StepsDoubleIndexedSeqOptimized[CC](underlying, i0, half)
+  }
   
-  final class RichArrayAnyCanStep[A](val underlying: Array[A]) extends AnyVal {
+  private[java8] class StepsIntIndexedSeqOptimized[CC <: collection.IndexedSeqOptimized[Int, _]](underlying: CC, _i0: Int, _iN: Int)
+  extends StepsIntLikeIndexed[CC, StepsIntIndexedSeqOptimized[CC]](underlying, _i0, _iN) {
+    def nextInt() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
+    def semiclone(half: Int) = new StepsIntIndexedSeqOptimized[CC](underlying, i0, half)
+  }
+  
+  private[java8] class StepsLongIndexedSeqOptimized[CC <: collection.IndexedSeqOptimized[Long, _]](underlying: CC, _i0: Int, _iN: Int)
+  extends StepsLongLikeIndexed[CC, StepsLongIndexedSeqOptimized[CC]](underlying, _i0, _iN) {
+    def nextLong() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
+    def semiclone(half: Int) = new StepsLongIndexedSeqOptimized[CC](underlying, i0, half)
+  }
+  
+  final class RichArrayAnyCanStep[A](private val underlying: Array[A]) extends AnyVal {
     @inline def stepper: AnyStepper[A] = new StepsAnyArray[A](underlying, 0, underlying.length)
   }
   
-  final class RichArrayObjectCanStep[A <: Object](val underlying: Array[A]) extends AnyVal{
+  final class RichArrayObjectCanStep[A <: Object](private val underlying: Array[A]) extends AnyVal{
     @inline def stepper: AnyStepper[A] = new StepsObjectArray[A](underlying, 0, underlying.length)
   }
   
-  final class RichArrayUnitCanStep(val underlying: Array[Unit]) extends AnyVal{
+  final class RichArrayUnitCanStep(private val underlying: Array[Unit]) extends AnyVal{
     @inline def stepper: AnyStepper[Unit] = new StepsUnitArray(underlying, 0, underlying.length)
   }
   
-  final class RichArrayBooleanCanStep(val underlying: Array[Boolean]) extends AnyVal{
+  final class RichArrayBooleanCanStep(private val underlying: Array[Boolean]) extends AnyVal{
     @inline def stepper: AnyStepper[Boolean] = new StepsBoxedBooleanArray(underlying, 0, underlying.length)
   }
   
-  final class RichArrayByteCanStep(val underlying: Array[Byte]) extends AnyVal{
+  final class RichArrayByteCanStep(private val underlying: Array[Byte]) extends AnyVal{
     @inline def stepper: AnyStepper[Byte] = new StepsBoxedByteArray(underlying, 0, underlying.length)
   }
   
-  final class RichArrayCharCanStep(val underlying: Array[Char]) extends AnyVal{
+  final class RichArrayCharCanStep(private val underlying: Array[Char]) extends AnyVal {
     @inline def stepper: AnyStepper[Char] = new StepsBoxedCharArray(underlying, 0, underlying.length)
   }
   
-  final class RichArrayShortCanStep(val underlying: Array[Short]) extends AnyVal{
+  final class RichArrayShortCanStep(private val underlying: Array[Short]) extends AnyVal{
     @inline def stepper: AnyStepper[Short] = new StepsBoxedShortArray(underlying, 0, underlying.length)
   }
   
-  final class RichArrayFloatCanStep(val underlying: Array[Float]) extends AnyVal{
+  final class RichArrayFloatCanStep(private val underlying: Array[Float]) extends AnyVal {
     @inline def stepper: AnyStepper[Float] = new StepsBoxedFloatArray(underlying, 0, underlying.length)
+  }
+
+  final class RichIndexedSeqOptimizedCanStep[A, CC <: collection.IndexedSeqOptimized[A, _]](private val underlying: CC) extends AnyVal {
+    @inline def stepper: AnyStepper[A] = new StepsAnyIndexedSeqOptimized[A, CC](underlying, 0, underlying.length)
+  }
+  
+  final class RichDoubleIndexedSeqOptimizedCanStep[CC <: collection.IndexedSeqOptimized[Double, _]](private val underlying: CC) extends AnyVal {
+    @inline def stepper: DoubleStepper = new StepsDoubleIndexedSeqOptimized[CC](underlying, 0, underlying.length)
+  }
+  
+  final class RichIntIndexedSeqOptimizedCanStep[CC <: collection.IndexedSeqOptimized[Int, _]](private val underlying: CC) extends AnyVal {
+    @inline def stepper: IntStepper = new StepsIntIndexedSeqOptimized[CC](underlying, 0, underlying.length)
+  }
+  
+  final class RichLongIndexedSeqOptimizedCanStep[CC <: collection.IndexedSeqOptimized[Long, _]](private val underlying: CC) extends AnyVal {
+    @inline def stepper: LongStepper = new StepsLongIndexedSeqOptimized[CC](underlying, 0, underlying.length)
   }
   
   private[java8] class StepperStringCodePoint(underlying: String, var i0: Int, var iN: Int) extends IntStepper {
@@ -131,6 +171,7 @@ package converterImpls {
   
   trait Priority3StepConverters {
     implicit def richArrayAnyCanStep[A](underlying: Array[A]) = new RichArrayAnyCanStep[A](underlying)
+    implicit def richIndexedSeqOptimizedCanStep[A, CC <: collection.IndexedSeqOptimized[A, _]](underlying: CC) = new RichIndexedSeqOptimizedCanStep[A, CC](underlying)
   }
   
   trait Priority2StepConverters extends Priority3StepConverters {
@@ -141,6 +182,12 @@ package converterImpls {
     implicit def richArrayCharCanStep(underlying: Array[Char]) = new RichArrayCharCanStep(underlying)
     implicit def richArrayShortCanStep(underlying: Array[Short]) = new RichArrayShortCanStep(underlying)
     implicit def richArrayFloatCanStep(underlying: Array[Float]) = new RichArrayFloatCanStep(underlying)
+    implicit def richDoubleIndexedSeqOptimizedCanStep[CC <: collection.IndexedSeqOptimized[Double, _]](underlying: CC) =
+      new RichDoubleIndexedSeqOptimizedCanStep[CC](underlying)
+    implicit def richIntIndexedSeqOptimizedCanStep[CC <: collection.IndexedSeqOptimized[Int, _]](underlying: CC) =
+      new RichIntIndexedSeqOptimizedCanStep[CC](underlying)
+    implicit def richLongIndexedSeqOptimizedCanStep[CC <: collection.IndexedSeqOptimized[Long, _]](underlying: CC) =
+      new RichLongIndexedSeqOptimizedCanStep[CC](underlying)
   }
 }
 

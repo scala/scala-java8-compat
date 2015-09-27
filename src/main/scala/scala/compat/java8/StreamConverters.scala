@@ -13,7 +13,7 @@ trait PrimitiveStreamUnboxer[A, S] {
   def apply(boxed: Stream[A]): S
 }
 
-trait Priority2StreamConverters {
+trait Priority3StreamConverters {
   implicit class EnrichAnyScalaCollectionWithStream[A](t: TraversableOnce[A]) {
     private def mkAcc() = {
       val acc = new Accumulator[A]
@@ -24,8 +24,27 @@ trait Priority2StreamConverters {
     def seqStream: Stream[A] = mkAcc().seqStream
     
     def parStream: Stream[A] = mkAcc().parStream
+  }  
+}
+
+trait Priority2StreamConverters extends Priority3StreamConverters {
+  implicit class EnrichScalaCollectionWithStream[A <: AnyRef](t: TraversableOnce[A]) {
+    private def mkArr()(implicit tag: reflect.ClassTag[A]): Array[A] = {
+      if (t.isTraversableAgain && t.hasDefiniteSize) {
+        val sz = t.size
+        val a = new Array[A](sz)
+        t.copyToArray(a, 0, sz)
+        a
+      }
+      else t.toArray[A]
+    }
+    
+    def seqStream(implicit tag: reflect.ClassTag[A]): Stream[A] =
+      java.util.Arrays.stream(mkArr())
+      
+    def parStream(implicit tag: reflect.ClassTag[A]): Stream[A] = seqStream.parallel
   }
-  
+
   implicit class EnrichMissingPrimitiveArrayWithStream[A](a: Array[A]) {
     private def mkAcc() = {
       val acc = new Accumulator[A]
@@ -44,23 +63,13 @@ trait Priority2StreamConverters {
 }
 
 trait Priority1StreamConverters extends Priority2StreamConverters {
-  implicit class EnrichScalaCollectionWithStream[A <: AnyRef](t: TraversableOnce[A]) {
-    private def mkArr()(implicit tag: reflect.ClassTag[A]): Array[A] = {
-      if (t.isTraversableAgain && t.hasDefiniteSize) {
-        val sz = t.size
-        val a = new Array[A](sz)
-        t.copyToArray(a, 0, sz)
-        a
-      }
-      else t.toArray[A]
-    }
-    
-    def seqStream(implicit tag: reflect.ClassTag[A]): Stream[A] =
-      java.util.Arrays.stream(mkArr())
-      
-    def parStream(implicit tag: reflect.ClassTag[A]): Stream[A] = seqStream.parallel
+  implicit class EnrichGenericIndexedSeqOptimizedWithStream[A, CC <: collection.IndexedSeqOptimized[A, _]](c: CC) {
+    private def someStream(parallel: Boolean): Stream[A] =
+      StreamSupport.stream(new converterImpls.StepsAnyIndexedSeqOptimized[A, CC](c, 0, c.length), parallel)
+    def seqStream: Stream[A] = someStream(false)
+    def parStream: Stream[A] = someStream(true)
   }
-  
+
   implicit class EnrichGenericArrayWithStream[A <: AnyRef](a: Array[A]) {
     def seqStream: Stream[A] = java.util.Arrays.stream(a)
     def parStream: Stream[A] = seqStream.parallel
@@ -122,6 +131,27 @@ trait Priority1StreamConverters extends Priority2StreamConverters {
   * ```
   */
 object StreamConverters extends Priority1StreamConverters {
+  implicit class EnrichDoubleIndexedSeqOptimizedWithStream[CC <: collection.IndexedSeqOptimized[Double, _]](c: CC) {
+    private def someStream(parallel: Boolean): DoubleStream =
+      StreamSupport.doubleStream(new converterImpls.StepsDoubleIndexedSeqOptimized[CC](c, 0, c.length), parallel)
+    def seqStream: DoubleStream = someStream(false)
+    def parStream: DoubleStream = someStream(true)
+  }
+
+  implicit class EnrichIntIndexedSeqOptimizedWithStream[CC <: collection.IndexedSeqOptimized[Int, _]](c: CC) {
+    private def someStream(parallel: Boolean): IntStream =
+      StreamSupport.intStream(new converterImpls.StepsIntIndexedSeqOptimized[CC](c, 0, c.length), parallel)
+    def seqStream: IntStream = someStream(false)
+    def parStream: IntStream = someStream(true)
+  }
+
+  implicit class EnrichLongIndexedSeqOptimizedWithStream[CC <: collection.IndexedSeqOptimized[Long, _]](c: CC) {
+    private def someStream(parallel: Boolean): LongStream =
+      StreamSupport.longStream(new converterImpls.StepsLongIndexedSeqOptimized[CC](c, 0, c.length), parallel)
+    def seqStream: LongStream = someStream(false)
+    def parStream: LongStream = someStream(true)
+  }
+
   implicit class EnrichDoubleArrayWithStream(a: Array[Double]) {
     def seqStream: DoubleStream = java.util.Arrays.stream(a)
     def parStream: DoubleStream = seqStream.parallel
