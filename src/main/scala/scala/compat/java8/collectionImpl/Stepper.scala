@@ -181,7 +181,7 @@ trait TryStepper[@specialized(Double, Int, Long) A] extends Stepper[A] with Step
   final def nextStep = {
     if (!myCacheIsFull) {
       load()
-      if (!myCacheIsFull) throw new NoSuchElementException("nextStep in TryStepper")
+      if (!myCacheIsFull) Stepper.throwNSEE
     }
     val ans = myCache
     myCacheIsFull = false
@@ -282,6 +282,8 @@ object Stepper {
   /** Indicates that a Stepper's children (created with substep()) will all know their size.  Steppers that are SubSized must also be Sized. */
   val SubSized = Spliterator.SUBSIZED
 
+  private[java8] final def throwNSEE: Nothing = throw new NoSuchElementException("Empty Stepper")
+
 
   private class OfSpliterator[A](sp: Spliterator[A])
   extends AnyStepper[A] with java.util.function.Consumer[A] {
@@ -312,7 +314,7 @@ object Stepper {
     }
     def hasNext = cached || loadCache
     def next = {
-      if (!hasNext) throw new NoSuchElementException("Empty Spliterator in Stepper")
+      if (!hasNext) throwNSEE
       val ans = cache
       cache = null.asInstanceOf[A]
       cached = false
@@ -363,7 +365,7 @@ object Stepper {
     }
     def hasNext = cached || loadCache
     def nextDouble = {
-      if (!hasNext) throw new NoSuchElementException("Empty Spliterator in Stepper")
+      if (!hasNext) throwNSEE
       val ans = cache
       cached = false
       ans
@@ -412,7 +414,7 @@ object Stepper {
     }
     def hasNext = cached || loadCache
     def nextInt = {
-      if (!hasNext) throw new NoSuchElementException("Empty Spliterator in Stepper")
+      if (!hasNext) throwNSEE
       val ans = cache
       cached = false
       ans
@@ -461,7 +463,7 @@ object Stepper {
     }
     def hasNext = cached || loadCache
     def nextLong = {
-      if (!hasNext) throw new NoSuchElementException("Empty Spliterator in Stepper")
+      if (!hasNext) throwNSEE
       val ans = cache
       cached = false
       ans

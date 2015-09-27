@@ -5,82 +5,65 @@ import language.implicitConversions
 import scala.compat.java8.collectionImpl._
 
 package converterImpls {
-  import StepConverters.SplitFlags._
+  import Stepper._
+    
+  private[java8] class StepsObjectArray[A <: Object](underlying: Array[A], _i0: Int, _iN: Int)
+  extends StepsLikeIndexed[A, Array[A], StepsObjectArray[A]](underlying, _i0, _iN) {
+    def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
+    def semiclone(half: Int) = new StepsObjectArray[A](underlying, i0, half)
+  }
   
-  private[java8] abstract class StepperArrayAny[A, AA, STA >: Null <: StepperArrayAny[A, AA, _]](underlying: AA, var i0: Int, var iN: Int)
-  extends AnyStepper[A] {
-    def semiclone(half: Int): STA
-    def characteristics() = NonNull + Sized + Subsized
+  private[java8] class StepsAnyArray[A](underlying: Array[A], _i0: Int, _iN: Int)
+  extends StepsLikeIndexed[A, Array[A], StepsAnyArray[A]](underlying, _i0, _iN) {
+    def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
+    def semiclone(half: Int) = new StepsAnyArray[A](underlying, i0, half)
+  }
+  
+  private[java8] class StepsUnitArray(underlying: Array[Unit], _i0: Int, _iN: Int)
+  extends StepsLikeIndexed[Unit, Array[Unit], StepsUnitArray](underlying, _i0, _iN) {
+    def next() = if (hasNext()) { val j = i0; i0 += 1; () } else throwNSEE
+    def semiclone(half: Int) = new StepsUnitArray(underlying, i0, half)
+  }
+  
+  private[java8] class StepsBoxedBooleanArray(underlying: Array[Boolean], _i0: Int, _iN: Int)
+  extends StepsLikeIndexed[Boolean, Array[Boolean], StepsBoxedBooleanArray](underlying, _i0, _iN) {
+    def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
+    def semiclone(half: Int) = new StepsBoxedBooleanArray(underlying, i0, half)
+  }
+  
+  private[java8] class StepsBoxedByteArray(underlying: Array[Byte], _i0: Int, _iN: Int)
+  extends StepsLikeIndexed[Byte, Array[Byte], StepsBoxedByteArray](underlying, _i0, _iN) {
+    def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
+    def semiclone(half: Int) = new StepsBoxedByteArray(underlying, i0, half)
+  }
+  
+  private[java8] class StepsBoxedCharArray(underlying: Array[Char], _i0: Int, _iN: Int)
+  extends StepsLikeIndexed[Char, Array[Char], StepsBoxedCharArray](underlying, _i0, _iN) {
+    def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
+    def semiclone(half: Int) = new StepsBoxedCharArray(underlying, i0, half)
+  }
+  
+  private[java8] class StepsBoxedShortArray(underlying: Array[Short], _i0: Int, _iN: Int)
+  extends StepsLikeIndexed[Short, Array[Short], StepsBoxedShortArray](underlying, _i0, _iN) {
+    def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
+    def semiclone(half: Int) = new StepsBoxedShortArray(underlying, i0, half)
+  }
+  
+  private[java8] class StepsBoxedFloatArray(underlying: Array[Float], _i0: Int, _iN: Int)
+  extends StepsLikeIndexed[Float, Array[Float], StepsBoxedFloatArray](underlying, _i0, _iN) {
+    def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
+    def semiclone(half: Int) = new StepsBoxedFloatArray(underlying, i0, half)
+  }
+  
+  private[java8] class StepsDoubleArray(underlying: Array[Double], var i0: Int, var iN: Int) extends DoubleStepper {
+    def characteristics() = NonNull + Sized + SubSized
     def estimateSize() = iN - i0
     def hasNext() = i0 < iN
-    def substep(): AnyStepper[A] = {
-      if (iN-1 > i0) {
-        val half = (i0+iN) >>> 1
-        val ans = semiclone(half)
-        i0 = half
-        ans
-      }
-      else null
-    }
-  }
-  
-  private[java8] class StepperArrayGenObject[A <: Object](underlying: Array[A], _i0: Int, _iN: Int)
-  extends StepperArrayAny[A, Array[A], StepperArrayGenObject[A]](underlying, _i0, _iN) {
-    def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throw new NoSuchElementException("Empty Stepper")
-    def semiclone(half: Int) = new StepperArrayGenObject[A](underlying, i0, half)
-  }
-  
-  private[java8] class StepperArrayGenAny[A](underlying: Array[A], _i0: Int, _iN: Int)
-  extends StepperArrayAny[A, Array[A], StepperArrayGenAny[A]](underlying, _i0, _iN) {
-    def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throw new NoSuchElementException("Empty Stepper")
-    def semiclone(half: Int) = new StepperArrayGenAny[A](underlying, i0, half)
-  }
-  
-  private[java8] class StepperArrayGenUnit(underlying: Array[Unit], _i0: Int, _iN: Int)
-  extends StepperArrayAny[Unit, Array[Unit], StepperArrayGenUnit](underlying, _i0, _iN) {
-    def next() = if (hasNext()) { val j = i0; i0 += 1; () } else throw new NoSuchElementException("Empty Stepper")
-    def semiclone(half: Int) = new StepperArrayGenUnit(underlying, i0, half)
-  }
-  
-  private[java8] class StepperArrayGenBoolean(underlying: Array[Boolean], _i0: Int, _iN: Int)
-  extends StepperArrayAny[Boolean, Array[Boolean], StepperArrayGenBoolean](underlying, _i0, _iN) {
-    def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throw new NoSuchElementException("Empty Stepper")
-    def semiclone(half: Int) = new StepperArrayGenBoolean(underlying, i0, half)
-  }
-  
-  private[java8] class StepperArrayGenByte(underlying: Array[Byte], _i0: Int, _iN: Int)
-  extends StepperArrayAny[Byte, Array[Byte], StepperArrayGenByte](underlying, _i0, _iN) {
-    def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throw new NoSuchElementException("Empty Stepper")
-    def semiclone(half: Int) = new StepperArrayGenByte(underlying, i0, half)
-  }
-  
-  private[java8] class StepperArrayGenChar(underlying: Array[Char], _i0: Int, _iN: Int)
-  extends StepperArrayAny[Char, Array[Char], StepperArrayGenChar](underlying, _i0, _iN) {
-    def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throw new NoSuchElementException("Empty Stepper")
-    def semiclone(half: Int) = new StepperArrayGenChar(underlying, i0, half)
-  }
-  
-  private[java8] class StepperArrayGenShort(underlying: Array[Short], _i0: Int, _iN: Int)
-  extends StepperArrayAny[Short, Array[Short], StepperArrayGenShort](underlying, _i0, _iN) {
-    def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throw new NoSuchElementException("Empty Stepper")
-    def semiclone(half: Int) = new StepperArrayGenShort(underlying, i0, half)
-  }
-  
-  private[java8] class StepperArrayGenFloat(underlying: Array[Float], _i0: Int, _iN: Int)
-  extends StepperArrayAny[Float, Array[Float], StepperArrayGenFloat](underlying, _i0, _iN) {
-    def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throw new NoSuchElementException("Empty Stepper")
-    def semiclone(half: Int) = new StepperArrayGenFloat(underlying, i0, half)
-  }
-  
-  private[java8] class StepperArrayDouble(underlying: Array[Double], var i0: Int, var iN: Int) extends DoubleStepper {
-    def characteristics() = NonNull + Sized + Subsized
-    def estimateSize() = iN - i0
-    def hasNext() = i0 < iN
-    def nextDouble() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throw new NoSuchElementException("Empty Stepper")
+    def nextDouble() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def substep() = {
       if (iN-1 > i0) {
         val half = (i0+iN) >>> 1
-        val ans = new StepperArrayDouble(underlying, i0, half)
+        val ans = new StepsDoubleArray(underlying, i0, half)
         i0 = half
         ans
       }
@@ -88,15 +71,15 @@ package converterImpls {
     }
   }
 
-  private[java8] class StepperArrayInt(underlying: Array[Int], var i0: Int, var iN: Int) extends IntStepper {
-    def characteristics() = NonNull + Sized + Subsized
+  private[java8] class StepsIntArray(underlying: Array[Int], var i0: Int, var iN: Int) extends IntStepper {
+    def characteristics() = NonNull + Sized + SubSized
     def estimateSize() = iN - i0
     def hasNext() = i0 < iN
-    def nextInt() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throw new NoSuchElementException("Empty Stepper")
+    def nextInt() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def substep() = {
       if (iN-1 > i0) {
         val half = (i0+iN) >>> 1
-        val ans = new StepperArrayInt(underlying, i0, half)
+        val ans = new StepsIntArray(underlying, i0, half)
         i0 = half
         ans
       }
@@ -104,15 +87,15 @@ package converterImpls {
     }
   }
 
-  private[java8] class StepperArrayLong(underlying: Array[Long], var i0: Int, var iN: Int) extends LongStepper {
-    def characteristics() = NonNull + Sized + Subsized
+  private[java8] class StepsLongArray(underlying: Array[Long], var i0: Int, var iN: Int) extends LongStepper {
+    def characteristics() = NonNull + Sized + SubSized
     def estimateSize() = iN - i0
     def hasNext() = i0 < iN
-    def nextLong() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throw new NoSuchElementException("Empty Stepper")
+    def nextLong() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def substep() = {
       if (iN-1 > i0) {
         val half = (i0+iN) >>> 1
-        val ans = new StepperArrayLong(underlying, i0, half)
+        val ans = new StepsLongArray(underlying, i0, half)
         i0 = half
         ans
       }
@@ -121,35 +104,35 @@ package converterImpls {
   }
   
   final class RichArrayAnyCanStep[A](val underlying: Array[A]) extends AnyVal {
-    @inline def stepper: AnyStepper[A] = new StepperArrayGenAny[A](underlying, 0, underlying.length)
+    @inline def stepper: AnyStepper[A] = new StepsAnyArray[A](underlying, 0, underlying.length)
   }
   
   final class RichArrayObjectCanStep[A <: Object](val underlying: Array[A]) extends AnyVal{
-    @inline def stepper: AnyStepper[A] = new StepperArrayGenObject[A](underlying, 0, underlying.length)
+    @inline def stepper: AnyStepper[A] = new StepsObjectArray[A](underlying, 0, underlying.length)
   }
   
   final class RichArrayUnitCanStep(val underlying: Array[Unit]) extends AnyVal{
-    @inline def stepper: AnyStepper[Unit] = new StepperArrayGenUnit(underlying, 0, underlying.length)
+    @inline def stepper: AnyStepper[Unit] = new StepsUnitArray(underlying, 0, underlying.length)
   }
   
   final class RichArrayBooleanCanStep(val underlying: Array[Boolean]) extends AnyVal{
-    @inline def stepper: AnyStepper[Boolean] = new StepperArrayGenBoolean(underlying, 0, underlying.length)
+    @inline def stepper: AnyStepper[Boolean] = new StepsBoxedBooleanArray(underlying, 0, underlying.length)
   }
   
   final class RichArrayByteCanStep(val underlying: Array[Byte]) extends AnyVal{
-    @inline def stepper: AnyStepper[Byte] = new StepperArrayGenByte(underlying, 0, underlying.length)
+    @inline def stepper: AnyStepper[Byte] = new StepsBoxedByteArray(underlying, 0, underlying.length)
   }
   
   final class RichArrayCharCanStep(val underlying: Array[Char]) extends AnyVal{
-    @inline def stepper: AnyStepper[Char] = new StepperArrayGenChar(underlying, 0, underlying.length)
+    @inline def stepper: AnyStepper[Char] = new StepsBoxedCharArray(underlying, 0, underlying.length)
   }
   
   final class RichArrayShortCanStep(val underlying: Array[Short]) extends AnyVal{
-    @inline def stepper: AnyStepper[Short] = new StepperArrayGenShort(underlying, 0, underlying.length)
+    @inline def stepper: AnyStepper[Short] = new StepsBoxedShortArray(underlying, 0, underlying.length)
   }
   
   final class RichArrayFloatCanStep(val underlying: Array[Float]) extends AnyVal{
-    @inline def stepper: AnyStepper[Float] = new StepperArrayGenFloat(underlying, 0, underlying.length)
+    @inline def stepper: AnyStepper[Float] = new StepsBoxedFloatArray(underlying, 0, underlying.length)
   }
   
   private[java8] class StepperStringCodePoint(underlying: String, var i0: Int, var iN: Int) extends IntStepper {
@@ -162,7 +145,7 @@ package converterImpls {
         i0 += java.lang.Character.charCount(cp)
         cp
       }
-      else throw new NoSuchElementException("Empty Stepper")
+      else throwNSEE
     }
     def substep() = {
       if (iN-3 > i0) {
@@ -192,29 +175,19 @@ package converterImpls {
 }
 
 object StepConverters extends converterImpls.Priority2StepConverters {
-  object SplitFlags {
-    final val Concurrent = java.util.Spliterator.CONCURRENT
-    final val Distinct = java.util.Spliterator.DISTINCT
-    final val Immutable = java.util.Spliterator.IMMUTABLE
-    final val NonNull = java.util.Spliterator.NONNULL
-    final val HasOrder = java.util.Spliterator.ORDERED
-    final val Sized = java.util.Spliterator.SIZED
-    final val Sorted = java.util.Spliterator.SORTED
-    final val Subsized = java.util.Spliterator.SUBSIZED
-  }
-  import SplitFlags._
   import converterImpls._
+  import Stepper._
 
   implicit class RichArrayDoubleCanStep(val underlying: Array[Double]) extends AnyVal {
-    @inline def stepper: DoubleStepper = new StepperArrayDouble(underlying, 0, underlying.length)
+    @inline def stepper: DoubleStepper = new StepsDoubleArray(underlying, 0, underlying.length)
   }
 
   implicit class RichArrayIntCanStep(val underlying: Array[Int]) extends AnyVal {
-    @inline def stepper: IntStepper = new StepperArrayInt(underlying, 0, underlying.length)
+    @inline def stepper: IntStepper = new StepsIntArray(underlying, 0, underlying.length)
   }
   
   implicit class RichArrayLongCanStep(val underlying: Array[Long]) extends AnyVal {
-    @inline def stepper: LongStepper = new StepperArrayLong(underlying, 0, underlying.length)
+    @inline def stepper: LongStepper = new StepsLongArray(underlying, 0, underlying.length)
   }
   
   implicit class RichStringCanStep(val underlying: String) extends AnyVal {
