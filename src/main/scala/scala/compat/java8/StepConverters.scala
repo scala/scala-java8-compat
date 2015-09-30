@@ -96,7 +96,31 @@ package converterImpls {
     def nextLong() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def semiclone(half: Int) = new StepsLongIndexedSeqOptimized[CC](underlying, i0, half)
   }
-  
+
+  private[java8] class StepsAnyFlatHashTable[A](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+  extends StepsLikeGapped[A, StepsAnyFlatHashTable[A]](_underlying, _i0, _iN) {
+    def next() = if (currentEntry eq null) throwNSEE else { val ans = currentEntry.asInstanceOf[A]; currentEntry = null; ans }
+    def semiclone(half: Int) = new StepsAnyFlatHashTable[A](underlying, i0, half)
+  }
+
+  private[java8] class StepsDoubleFlatHashTable(_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+  extends StepsDoubleLikeGapped[StepsDoubleFlatHashTable](_underlying, _i0, _iN) {
+    def nextDouble() = if (currentEntry eq null) throwNSEE else { val ans = currentEntry.asInstanceOf[Double]; currentEntry = null; ans }
+    def semiclone(half: Int) = new StepsDoubleFlatHashTable(underlying, i0, half)    
+  }
+
+  private[java8] class StepsIntFlatHashTable(_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+  extends StepsIntLikeGapped[StepsIntFlatHashTable](_underlying, _i0, _iN) {
+    def nextInt() = if (currentEntry eq null) throwNSEE else { val ans = currentEntry.asInstanceOf[Int]; currentEntry = null; ans }
+    def semiclone(half: Int) = new StepsIntFlatHashTable(underlying, i0, half)    
+  }
+
+  private[java8] class StepsLongFlatHashTable(_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+  extends StepsLongLikeGapped[StepsLongFlatHashTable](_underlying, _i0, _iN) {
+    def nextLong() = if (currentEntry eq null) throwNSEE else { val ans = currentEntry.asInstanceOf[Long]; currentEntry = null; ans }
+    def semiclone(half: Int) = new StepsLongFlatHashTable(underlying, i0, half)    
+  }
+
   final class RichArrayAnyCanStep[A](private val underlying: Array[A]) extends AnyVal {
     @inline def stepper: AnyStepper[A] = new StepsAnyArray[A](underlying, 0, underlying.length)
   }
@@ -144,6 +168,34 @@ package converterImpls {
   final class RichLongIndexedSeqOptimizedCanStep[CC <: collection.IndexedSeqOptimized[Long, _]](private val underlying: CC) extends AnyVal {
     @inline def stepper: LongStepper = new StepsLongIndexedSeqOptimized[CC](underlying, 0, underlying.length)
   }
+
+  final class RichFlatHashTableCanStep[A](private val underlying: collection.mutable.FlatHashTable[A]) extends AnyVal {
+    @inline def stepper: AnyStepper[A] = {
+      val tbl = runtime.CollectionInternals.getTable(underlying)
+      new StepsAnyFlatHashTable(tbl, 0, tbl.length)
+    }
+  }
+  
+  final class RichDoubleFlatHashTableCanStep(private val underlying: collection.mutable.FlatHashTable[Double]) extends AnyVal {
+    @inline def stepper: DoubleStepper = {
+      val tbl = runtime.CollectionInternals.getTable(underlying)
+      new StepsDoubleFlatHashTable(tbl, 0, tbl.length)
+    }
+  }
+  
+  final class RichIntFlatHashTableCanStep(private val underlying: collection.mutable.FlatHashTable[Int]) extends AnyVal {
+    @inline def stepper: IntStepper = {
+      val tbl = runtime.CollectionInternals.getTable(underlying)
+      new StepsIntFlatHashTable(tbl, 0, tbl.length)
+    }
+  }
+  
+  final class RichLongFlatHashTableCanStep(private val underlying: collection.mutable.FlatHashTable[Long]) extends AnyVal {
+    @inline def stepper: LongStepper = {
+      val tbl = runtime.CollectionInternals.getTable(underlying)
+      new StepsLongFlatHashTable(tbl, 0, tbl.length)
+    }
+  }
   
   private[java8] class StepperStringCodePoint(underlying: String, var i0: Int, var iN: Int) extends IntStepper {
     def characteristics() = NonNull
@@ -172,6 +224,7 @@ package converterImpls {
   trait Priority3StepConverters {
     implicit def richArrayAnyCanStep[A](underlying: Array[A]) = new RichArrayAnyCanStep[A](underlying)
     implicit def richIndexedSeqOptimizedCanStep[A, CC <: collection.IndexedSeqOptimized[A, _]](underlying: CC) = new RichIndexedSeqOptimizedCanStep[A, CC](underlying)
+    implicit def richFlatHashTableCanStep[A](underlying: collection.mutable.FlatHashTable[A]) = new RichFlatHashTableCanStep[A](underlying)
   }
   
   trait Priority2StepConverters extends Priority3StepConverters {
@@ -188,6 +241,9 @@ package converterImpls {
       new RichIntIndexedSeqOptimizedCanStep[CC](underlying)
     implicit def richLongIndexedSeqOptimizedCanStep[CC <: collection.IndexedSeqOptimized[Long, _]](underlying: CC) =
       new RichLongIndexedSeqOptimizedCanStep[CC](underlying)
+    implicit def richDoubleFlatHashTableCanStep(underlying: collection.mutable.FlatHashTable[Double]) = new RichDoubleFlatHashTableCanStep(underlying)
+    implicit def richIntFlatHashTableCanStep(underlying: collection.mutable.FlatHashTable[Int]) = new RichIntFlatHashTableCanStep(underlying)
+    implicit def richLongFlatHashTableCanStep(underlying: collection.mutable.FlatHashTable[Long]) = new RichLongFlatHashTableCanStep(underlying)
   }
 }
 

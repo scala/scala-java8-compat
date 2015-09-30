@@ -104,11 +104,20 @@ class StreamConvertersTest {
     assert(newLongStream(1).boxed.unboxed.isInstanceOf[LongStream])
   }
 
-  import collection.mutable.{ArrayBuffer, WrappedArray }
+  import collection.mutable.{ ArrayBuffer, WrappedArray }
   def abufO(n: Int) = { val ab = new ArrayBuffer[String]; arrayO(n).foreach(ab += _); ab }
   def abufD(n: Int) = { val ab = new ArrayBuffer[Double]; arrayD(n).foreach(ab += _); ab }
   def abufI(n: Int) = { val ab = new ArrayBuffer[Int]; arrayI(n).foreach(ab += _); ab }
   def abufL(n: Int) = { val ab = new ArrayBuffer[Long]; arrayL(n).foreach(ab += _); ab }
+  def wrapO(n: Int): WrappedArray[String] = arrayO(n)
+  def wrapD(n: Int): WrappedArray[Double] = arrayD(n)
+  def wrapI(n: Int): WrappedArray[Int] = arrayI(n)
+  def wrapL(n: Int): WrappedArray[Long] = arrayL(n)
+  def genhset[A](aa: Array[A]) = { val hs = new collection.mutable.HashSet[A]; aa.foreach(hs += _); hs }
+  def hsetO(n: Int) = genhset(arrayO(n))
+  def hsetD(n: Int) = genhset(arrayD(n))
+  def hsetI(n: Int) = genhset(arrayI(n))
+  def hsetL(n: Int) = genhset(arrayL(n))
   
   @Test
   def scalaToStream() {
@@ -116,16 +125,25 @@ class StreamConvertersTest {
       val arrO = arrayO(n)
       val seqO = arrO.toSeq
       val abO = abufO(n)
+      val wrO = wrapO(n)
+      val hsO = hsetO(n)
+      // Seems like a lot of boilerplate, but we need it to test implicit resolution
       assertEq(seqO, seqO.seqStream.toScala[Seq])
       assertEq(seqO, seqO.parStream.toScala[Seq])
       assertEq(seqO, arrO.seqStream.toScala[Seq])
       assertEq(seqO, arrO.parStream.toScala[Seq])
       assertEq(seqO, abO.seqStream.toScala[Seq])
       assertEq(seqO, abO.parStream.toScala[Seq])
+      assertEq(seqO, wrO.seqStream.toScala[Seq])
+      assertEq(seqO, wrO.parStream.toScala[Seq])
+      assertEq(seqO, hsO.seqStream.toScala[Seq].sortBy(_.toInt))
+      assertEq(seqO, hsO.parStream.toScala[Seq].sortBy(_.toInt))
       
       val arrD = arrayD(n)
       val seqD = arrD.toSeq
       val abD = abufD(n)
+      val wrD = wrapD(n)
+      val hsD = hsetD(n)
       assertEq(seqD, seqD.seqStream.toScala[Seq])
       assertEq(seqD, seqD.parStream.toScala[Seq])
       assertEq(seqD, arrD.seqStream.toScala[Seq])
@@ -136,10 +154,20 @@ class StreamConvertersTest {
       assertEq(seqD, abD.parStream.toScala[Seq])
       assert(abD.seqStream.isInstanceOf[DoubleStream])
       assert(abD.parStream.isInstanceOf[DoubleStream])
+      assertEq(seqD, wrD.seqStream.toScala[Seq])
+      assertEq(seqD, wrD.parStream.toScala[Seq])
+      assert(wrD.seqStream.isInstanceOf[DoubleStream])
+      assert(wrD.parStream.isInstanceOf[DoubleStream])
+      assertEq(seqD, hsD.seqStream.toScala[Seq].sorted)
+      assertEq(seqD, hsD.parStream.toScala[Seq].sorted)
+      assert(hsD.seqStream.isInstanceOf[DoubleStream])
+      assert(hsD.parStream.isInstanceOf[DoubleStream])
       
       val arrI = arrayI(n)
       val seqI = arrI.toSeq
       val abI = abufI(n)
+      val wrI = wrapI(n)
+      val hsI = hsetI(n)
       assertEq(seqI, seqI.seqStream.toScala[Seq])
       assertEq(seqI, seqI.parStream.toScala[Seq])
       assertEq(seqI, arrI.seqStream.toScala[Seq])
@@ -150,10 +178,20 @@ class StreamConvertersTest {
       assertEq(seqI, abI.parStream.toScala[Seq])
       assert(abI.seqStream.isInstanceOf[IntStream])
       assert(abI.parStream.isInstanceOf[IntStream])
+      assertEq(seqI, wrI.seqStream.toScala[Seq])
+      assertEq(seqI, wrI.parStream.toScala[Seq])
+      assert(wrI.seqStream.isInstanceOf[IntStream])
+      assert(wrI.parStream.isInstanceOf[IntStream])
+      assertEq(seqI, hsI.seqStream.toScala[Seq].sorted)
+      assertEq(seqI, hsI.parStream.toScala[Seq].sorted)
+      assert(hsI.seqStream.isInstanceOf[IntStream])
+      assert(hsI.parStream.isInstanceOf[IntStream])
       
       val arrL = arrayL(n)
       val seqL = arrL.toSeq
       val abL = abufL(n)
+      val wrL = wrapL(n)
+      val hsL = hsetL(n)
       assertEq(seqL, seqL.seqStream.toScala[Seq])
       assertEq(seqL, seqL.parStream.toScala[Seq])
       assertEq(seqL, arrL.seqStream.toScala[Seq])
@@ -164,6 +202,14 @@ class StreamConvertersTest {
       assertEq(seqL, abL.parStream.toScala[Seq])
       assert(abL.seqStream.isInstanceOf[LongStream])
       assert(abL.parStream.isInstanceOf[LongStream])
+      assertEq(seqD, wrD.seqStream.toScala[Seq])
+      assertEq(seqD, wrD.parStream.toScala[Seq])
+      assert(wrL.seqStream.isInstanceOf[LongStream])
+      assert(wrL.parStream.isInstanceOf[LongStream])
+      assertEq(seqL, hsL.seqStream.toScala[Seq].sorted)
+      assertEq(seqL, hsL.parStream.toScala[Seq].sorted)
+      assert(hsL.seqStream.isInstanceOf[LongStream])
+      assert(hsL.parStream.isInstanceOf[LongStream])
     }
   }
 }

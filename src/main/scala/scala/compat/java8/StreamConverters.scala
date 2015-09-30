@@ -63,6 +63,11 @@ trait Priority2StreamConverters extends Priority3StreamConverters {
 }
 
 trait Priority1StreamConverters extends Priority2StreamConverters {
+  implicit class EnrichGenericArrayWithStream[A <: AnyRef](a: Array[A]) {
+    def seqStream: Stream[A] = java.util.Arrays.stream(a)
+    def parStream: Stream[A] = seqStream.parallel
+  }
+
   implicit class EnrichGenericIndexedSeqOptimizedWithStream[A, CC <: collection.IndexedSeqOptimized[A, _]](c: CC) {
     private def someStream(parallel: Boolean): Stream[A] =
       StreamSupport.stream(new converterImpls.StepsAnyIndexedSeqOptimized[A, CC](c, 0, c.length), parallel)
@@ -70,9 +75,13 @@ trait Priority1StreamConverters extends Priority2StreamConverters {
     def parStream: Stream[A] = someStream(true)
   }
 
-  implicit class EnrichGenericArrayWithStream[A <: AnyRef](a: Array[A]) {
-    def seqStream: Stream[A] = java.util.Arrays.stream(a)
-    def parStream: Stream[A] = seqStream.parallel
+  implicit class EnrichGenericFlatHashTableWithStream[A](fht: collection.mutable.FlatHashTable[A]) {
+    private def someStream(parallel: Boolean): Stream[A] = {
+      val tbl = runtime.CollectionInternals.getTable(fht)
+      StreamSupport.stream(new converterImpls.StepsAnyFlatHashTable[A](tbl, 0, tbl.length), parallel)
+    }
+    def seqStream: Stream[A] = someStream(false)
+    def parStream: Stream[A] = someStream(true)
   }
 
   implicit class RichStream[A](stream: Stream[A]) {
@@ -148,6 +157,33 @@ object StreamConverters extends Priority1StreamConverters {
   implicit class EnrichLongIndexedSeqOptimizedWithStream[CC <: collection.IndexedSeqOptimized[Long, _]](c: CC) {
     private def someStream(parallel: Boolean): LongStream =
       StreamSupport.longStream(new converterImpls.StepsLongIndexedSeqOptimized[CC](c, 0, c.length), parallel)
+    def seqStream: LongStream = someStream(false)
+    def parStream: LongStream = someStream(true)
+  }
+
+  implicit class EnrichDoubleFlatHashTableWithStream(fht: collection.mutable.FlatHashTable[Double]) {
+    private def someStream(parallel: Boolean): DoubleStream = {
+      val tbl = runtime.CollectionInternals.getTable(fht)
+      StreamSupport.doubleStream(new converterImpls.StepsDoubleFlatHashTable(tbl, 0, tbl.length), parallel)
+    }
+    def seqStream: DoubleStream = someStream(false)
+    def parStream: DoubleStream = someStream(true)
+  }
+
+  implicit class EnrichIntFlatHashTableWithStream(fht: collection.mutable.FlatHashTable[Int]) {
+    private def someStream(parallel: Boolean): IntStream = {
+      val tbl = runtime.CollectionInternals.getTable(fht)
+      StreamSupport.intStream(new converterImpls.StepsIntFlatHashTable(tbl, 0, tbl.length), parallel)
+    }
+    def seqStream: IntStream = someStream(false)
+    def parStream: IntStream = someStream(true)
+  }
+
+  implicit class EnrichLongFlatHashTableWithStream(fht: collection.mutable.FlatHashTable[Long]) {
+    private def someStream(parallel: Boolean): LongStream = {
+      val tbl = runtime.CollectionInternals.getTable(fht)
+      StreamSupport.longStream(new converterImpls.StepsLongFlatHashTable(tbl, 0, tbl.length), parallel)
+    }
     def seqStream: LongStream = someStream(false)
     def parStream: LongStream = someStream(true)
   }
