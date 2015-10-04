@@ -75,6 +75,13 @@ trait Priority1StreamConverters extends Priority2StreamConverters {
     def parStream: Stream[A] = someStream(true)
   }
 
+  implicit class EnrichAnyVectorWithStream[A](c: Vector[A]) {
+    private def someStream(parallel: Boolean): Stream[A] =
+      StreamSupport.stream(new converterImpls.StepsAnyVector[A](c, 0, c.length), parallel)
+    def seqStream: Stream[A] = someStream(false)
+    def parStream: Stream[A] = someStream(true)
+  }
+
   implicit class EnrichGenericFlatHashTableWithStream[A](fht: collection.mutable.FlatHashTable[A]) {
     private def someStream(parallel: Boolean): Stream[A] = {
       val tbl = runtime.CollectionInternals.getTable(fht)
@@ -157,6 +164,27 @@ object StreamConverters extends Priority1StreamConverters {
   implicit class EnrichLongIndexedSeqOptimizedWithStream[CC <: collection.IndexedSeqOptimized[Long, _]](c: CC) {
     private def someStream(parallel: Boolean): LongStream =
       StreamSupport.longStream(new converterImpls.StepsLongIndexedSeqOptimized[CC](c, 0, c.length), parallel)
+    def seqStream: LongStream = someStream(false)
+    def parStream: LongStream = someStream(true)
+  }
+
+  implicit class EnrichDoubleVectorWithStream(c: Vector[Double]) {
+    private def someStream(parallel: Boolean): DoubleStream =
+      StreamSupport.doubleStream(new converterImpls.StepsDoubleVector(c, 0, c.length), parallel)
+    def seqStream: DoubleStream = someStream(false)
+    def parStream: DoubleStream = someStream(true)
+  }
+
+  implicit class EnrichIntVectorWithStream(c: Vector[Int]) {
+    private def someStream(parallel: Boolean): IntStream =
+      StreamSupport.intStream(new converterImpls.StepsIntVector(c, 0, c.length), parallel)
+    def seqStream: IntStream = someStream(false)
+    def parStream: IntStream = someStream(true)
+  }
+
+  implicit class EnrichLongVectorWithStream(c: Vector[Long]) {
+    private def someStream(parallel: Boolean): LongStream =
+      StreamSupport.longStream(new converterImpls.StepsLongVector(c, 0, c.length), parallel)
     def seqStream: LongStream = someStream(false)
     def parStream: LongStream = someStream(true)
   }

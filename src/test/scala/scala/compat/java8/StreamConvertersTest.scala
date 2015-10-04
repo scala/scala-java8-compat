@@ -113,12 +113,16 @@ class StreamConvertersTest {
   def wrapD(n: Int): WrappedArray[Double] = arrayD(n)
   def wrapI(n: Int): WrappedArray[Int] = arrayI(n)
   def wrapL(n: Int): WrappedArray[Long] = arrayL(n)
+  def vectO(n: Int) = arrayO(n).toVector
+  def vectD(n: Int) = arrayD(n).toVector
+  def vectI(n: Int) = arrayI(n).toVector
+  def vectL(n: Int) = arrayL(n).toVector
   def genhset[A](aa: Array[A]) = { val hs = new collection.mutable.HashSet[A]; aa.foreach(hs += _); hs }
   def hsetO(n: Int) = genhset(arrayO(n))
   def hsetD(n: Int) = genhset(arrayD(n))
   def hsetI(n: Int) = genhset(arrayI(n))
   def hsetL(n: Int) = genhset(arrayL(n))
-  
+
   @Test
   def scalaToStream() {
     for (n <- ns) {
@@ -126,6 +130,7 @@ class StreamConvertersTest {
       val seqO = arrO.toSeq
       val abO = abufO(n)
       val wrO = wrapO(n)
+      val vecO = vectO(n)
       val hsO = hsetO(n)
       // Seems like a lot of boilerplate, but we need it to test implicit resolution
       assertEq(seqO, seqO.seqStream.toScala[Seq])
@@ -136,6 +141,8 @@ class StreamConvertersTest {
       assertEq(seqO, abO.parStream.toScala[Seq])
       assertEq(seqO, wrO.seqStream.toScala[Seq])
       assertEq(seqO, wrO.parStream.toScala[Seq])
+      assertEq(seqO, vecO.seqStream.toScala[Seq])
+      assertEq(seqO, vecO.parStream.toScala[Seq])
       assertEq(seqO, hsO.seqStream.toScala[Seq].sortBy(_.toInt))
       assertEq(seqO, hsO.parStream.toScala[Seq].sortBy(_.toInt))
       
@@ -143,6 +150,7 @@ class StreamConvertersTest {
       val seqD = arrD.toSeq
       val abD = abufD(n)
       val wrD = wrapD(n)
+      val vecD = vectD(n)
       val hsD = hsetD(n)
       assertEq(seqD, seqD.seqStream.toScala[Seq])
       assertEq(seqD, seqD.parStream.toScala[Seq])
@@ -158,6 +166,10 @@ class StreamConvertersTest {
       assertEq(seqD, wrD.parStream.toScala[Seq])
       assert(wrD.seqStream.isInstanceOf[DoubleStream])
       assert(wrD.parStream.isInstanceOf[DoubleStream])
+      assertEq(seqD, vecD.seqStream.toScala[Seq])
+      assertEq(seqD, vecD.parStream.toScala[Seq])
+      assert(vecD.seqStream.isInstanceOf[DoubleStream])
+      assert(vecD.parStream.isInstanceOf[DoubleStream])
       assertEq(seqD, hsD.seqStream.toScala[Seq].sorted)
       assertEq(seqD, hsD.parStream.toScala[Seq].sorted)
       assert(hsD.seqStream.isInstanceOf[DoubleStream])
@@ -167,6 +179,7 @@ class StreamConvertersTest {
       val seqI = arrI.toSeq
       val abI = abufI(n)
       val wrI = wrapI(n)
+      val vecI = vectI(n)
       val hsI = hsetI(n)
       assertEq(seqI, seqI.seqStream.toScala[Seq])
       assertEq(seqI, seqI.parStream.toScala[Seq])
@@ -182,6 +195,10 @@ class StreamConvertersTest {
       assertEq(seqI, wrI.parStream.toScala[Seq])
       assert(wrI.seqStream.isInstanceOf[IntStream])
       assert(wrI.parStream.isInstanceOf[IntStream])
+      assertEq(seqI, vecI.seqStream.toScala[Seq])
+      assertEq(seqI, vecI.parStream.toScala[Seq])
+      assert(vecI.seqStream.isInstanceOf[IntStream])
+      assert(vecI.parStream.isInstanceOf[IntStream])
       assertEq(seqI, hsI.seqStream.toScala[Seq].sorted)
       assertEq(seqI, hsI.parStream.toScala[Seq].sorted)
       assert(hsI.seqStream.isInstanceOf[IntStream])
@@ -191,6 +208,7 @@ class StreamConvertersTest {
       val seqL = arrL.toSeq
       val abL = abufL(n)
       val wrL = wrapL(n)
+      val vecL = vectL(n)
       val hsL = hsetL(n)
       assertEq(seqL, seqL.seqStream.toScala[Seq])
       assertEq(seqL, seqL.parStream.toScala[Seq])
@@ -206,6 +224,10 @@ class StreamConvertersTest {
       assertEq(seqD, wrD.parStream.toScala[Seq])
       assert(wrL.seqStream.isInstanceOf[LongStream])
       assert(wrL.parStream.isInstanceOf[LongStream])
+      assertEq(seqD, wrD.seqStream.toScala[Seq])
+      assertEq(seqD, wrD.parStream.toScala[Seq])
+      assert(vecL.seqStream.isInstanceOf[LongStream])
+      assert(vecL.parStream.isInstanceOf[LongStream])
       assertEq(seqL, hsL.seqStream.toScala[Seq].sorted)
       assertEq(seqL, hsL.parStream.toScala[Seq].sorted)
       assert(hsL.seqStream.isInstanceOf[LongStream])
