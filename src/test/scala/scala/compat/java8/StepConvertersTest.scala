@@ -8,7 +8,7 @@ class StepConvertersTest {
   import collectionImpl._
   import StepConverters._
   import scala.{ collection => co }
-  import collection.{ mutable => cm, immutable => ci, generic => cg }
+  import collection.{ mutable => cm, immutable => ci, concurrent => cc }
 
   def isAcc[X](x: X) = x match {
     case _: AccumulatorStepper[_] => true
@@ -48,8 +48,6 @@ class StepConvertersTest {
     IFFY( co.Traversable[String]("salmon").stepper )
     IFFY( (co.Iterator[String]("salmon"): co.TraversableOnce[String]).stepper )
     IFFY( co.Traversable[String]("salmon").view.stepper )
-
-    // Generic section
 
     // Immutable section
     IFFY( ci.::("salmon", Nil).stepper )
@@ -121,10 +119,13 @@ class StepConvertersTest {
     // Java 6 converters section
 
     // Concurrent section
+    IFFY( cc.TrieMap[String, String]("fish" -> "salmon").stepper )
+    IFFY( (cc.TrieMap[String, String]("fish" -> "salmon"): cc.Map[String, String]).stepper )
   }
 
   @Test
   def comprehensivelyDouble() {
+    //Double-specific tests
   }
 
   @Test
@@ -132,18 +133,20 @@ class StepConvertersTest {
     // Int-specific tests
     IFFY( co.BitSet(42).stepper )
     IFFY( ci.BitSet(42).stepper )
+    good( ci.NumericRange(123456, 123458, 1).stepper )
     IFFY( cm.BitSet(42).stepper )
-    IFFY( (1 until 2).stepper )
+    good( (1 until 2).stepper )
   }
 
   @Test
   def comprehensivelyLong() {
     // Long-specific tests
-    IFFY( ci.NumericRange(9876543210L, 9876543212L, 1L).stepper )
+    good( ci.NumericRange(9876543210L, 9876543212L, 1L).stepper )
   }
 
   @Test
   def comprehensivelySpecific() {
+    good( ci.NumericRange(277: Short, 279: Short, 1: Short).stepper )
     IFFY( ci.PagedSeq.fromLines(Array("salmon").iterator).stepper )
     good( ("salmon": ci.StringOps).stepper )
     good( ("salmon": ci.WrappedString).stepper )

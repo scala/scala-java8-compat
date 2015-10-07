@@ -98,6 +98,30 @@ package converterImpls {
     def semiclone(half: Int) = new StepsLongIndexedSeqOptimized[CC](underlying, i0, half)
   }
 
+  private[java8] class StepsIntRange(underlying: Range, _i0: Int, _iN: Int)
+  extends StepsIntLikeIndexed[Range, StepsIntRange](underlying, _i0, _iN) {
+    def nextInt() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
+    def semiclone(half: Int) = new StepsIntRange(underlying, i0, half)
+  }
+
+  private[java8] class StepsAnyNumericRange[T](underlying: collection.immutable.NumericRange[T], _i0: Int, _iN: Int)
+  extends StepsLikeIndexed[T, collection.immutable.NumericRange[T], StepsAnyNumericRange[T]](underlying, _i0, _iN) {
+    def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
+    def semiclone(half: Int) = new StepsAnyNumericRange[T](underlying, i0, half)
+  }
+
+  private[java8] class StepsIntNumericRange(underlying: collection.immutable.NumericRange[Int], _i0: Int, _iN: Int)
+  extends StepsIntLikeIndexed[collection.immutable.NumericRange[Int], StepsIntNumericRange](underlying, _i0, _iN) {
+    def nextInt() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
+    def semiclone(half: Int) = new StepsIntNumericRange(underlying, i0, half)
+  }
+
+  private[java8] class StepsLongNumericRange(underlying: collection.immutable.NumericRange[Long], _i0: Int, _iN: Int)
+  extends StepsLongLikeIndexed[collection.immutable.NumericRange[Long], StepsLongNumericRange](underlying, _i0, _iN) {
+    def nextLong() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
+    def semiclone(half: Int) = new StepsLongNumericRange(underlying, i0, half)
+  }
+
   private[java8] trait StepsVectorLike[A] {
     protected def myVector: Vector[A]
     protected var index: Int = 32
@@ -289,6 +313,10 @@ package converterImpls {
     @inline def stepper: LongStepper = new StepsLongIndexedSeqOptimized[CC](underlying, 0, underlying.length)
   }
 
+  final class RichNumericRangeCanStep[T](private val underlying: collection.immutable.NumericRange[T]) extends AnyVal {
+    @inline def stepper: AnyStepper[T] = new StepsAnyNumericRange[T](underlying, 0, underlying.length)
+  }
+
   final class RichVectorCanStep[A](private val underlying: Vector[A]) extends AnyVal {
     @inline def stepper: AnyStepper[A] = new StepsAnyVector[A](underlying, 0, underlying.length)
   }
@@ -383,10 +411,11 @@ package converterImpls {
       new RichIntIndexedSeqOptimizedCanStep[CC](underlying)
     implicit def richLongIndexedSeqOptimizedCanStep[CC <: collection.IndexedSeqOptimized[Long, _]](underlying: CC) =
       new RichLongIndexedSeqOptimizedCanStep[CC](underlying)
+    implicit def richNumericRangeCanStep[T](underlying: collection.immutable.NumericRange[T]) = new RichNumericRangeCanStep(underlying)
+    implicit def richVectorCanStep[A](underlying: Vector[A]) = new RichVectorCanStep[A](underlying)
     implicit def richDoubleFlatHashTableCanStep(underlying: collection.mutable.FlatHashTable[Double]) = new RichDoubleFlatHashTableCanStep(underlying)
     implicit def richIntFlatHashTableCanStep(underlying: collection.mutable.FlatHashTable[Int]) = new RichIntFlatHashTableCanStep(underlying)
     implicit def richLongFlatHashTableCanStep(underlying: collection.mutable.FlatHashTable[Long]) = new RichLongFlatHashTableCanStep(underlying)
-    implicit def richVectorCanStep[A](underlying: Vector[A]) = new RichVectorCanStep[A](underlying)
   }
 }
 
@@ -409,6 +438,18 @@ object StepConverters extends converterImpls.Priority2StepConverters {
   implicit class RichDoubleVectorCanStep[A](private val underlying: Vector[Double]) extends AnyVal {
     @inline def stepper: DoubleStepper = new StepsDoubleVector(underlying, 0, underlying.length)
   }
+
+  implicit final class RichIntNumericRangeCanStep(private val underlying: collection.immutable.NumericRange[Int]) extends AnyVal {
+    @inline def stepper: IntStepper = new StepsIntNumericRange(underlying, 0, underlying.length)
+  }
+
+  implicit final class RichLongNumericRangeCanStep(private val underlying: collection.immutable.NumericRange[Long]) extends AnyVal {
+    @inline def stepper: LongStepper = new StepsLongNumericRange(underlying, 0, underlying.length)
+  }
+
+  implicit final class RichRangeCanStep(private val underlying: Range) extends AnyVal {
+    @inline def stepper: IntStepper = new StepsIntRange(underlying, 0, underlying.length)
+  }  
 
   implicit class RichIntVectorCanStep[A](private val underlying: Vector[Int]) extends AnyVal {
     @inline def stepper: IntStepper = new StepsIntVector(underlying, 0, underlying.length)
