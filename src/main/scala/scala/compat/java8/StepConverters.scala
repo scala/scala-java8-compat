@@ -344,10 +344,28 @@ package converterImpls {
       else null
     }
   }
+
+  final class RichTraversableOnceCanStep[A](private val underlying: TraversableOnce[A]) extends AnyVal {
+    def stepper: Stepper[A] = {
+      val acc = new Accumulator[A]
+      underlying.foreach(acc += _)
+      acc.stepper
+    }
+  }
+
+  trait Priority5StepConverters {
+    implicit def richTraversableOnceCanStep[A](underlying: TraversableOnce[A]) = new RichTraversableOnceCanStep(underlying)
+  }
+
+  trait Priority4StepConverters extends Priority5StepConverters {
+    implicit def richLikeIndexedSeqOptimizedCanStep[A, DD, CC[A, DD] <: collection.IndexedSeqOptimized[A, DD]](underlying: CC[A, DD]) =
+      new RichIndexedSeqOptimizedCanStep[A, CC[A, DD]](underlying)
+  }
   
-  trait Priority3StepConverters {
+  trait Priority3StepConverters extends Priority4StepConverters {
     implicit def richArrayAnyCanStep[A](underlying: Array[A]) = new RichArrayAnyCanStep[A](underlying)
-    implicit def richIndexedSeqOptimizedCanStep[A, CC <: collection.IndexedSeqOptimized[A, _]](underlying: CC) = new RichIndexedSeqOptimizedCanStep[A, CC](underlying)
+    implicit def richIndexedSeqOptimizedCanStep[A, CC[A] <: collection.IndexedSeqOptimized[A, CC[A]]](underlying: CC[A]) =
+      new RichIndexedSeqOptimizedCanStep[A, CC[A]](underlying)
     implicit def richFlatHashTableCanStep[A](underlying: collection.mutable.FlatHashTable[A]) = new RichFlatHashTableCanStep[A](underlying)
   }
   
