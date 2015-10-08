@@ -21,25 +21,25 @@ abstract class AbstractStepsLikeIndexed[Sub >: Null, Semi <: Sub](protected var 
 }
 
 /** Abstracts the operation of stepping over a generic indexable collection */
-abstract class StepsLikeIndexed[A, AA, STA >: Null <: StepsLikeIndexed[A, AA, _]](underlying: AA, _i0: Int, _iN: Int)
+abstract class StepsLikeIndexed[A, STA >: Null <: StepsLikeIndexed[A, _]](_i0: Int, _iN: Int)
   extends AbstractStepsLikeIndexed[AnyStepper[A], STA](_i0, _iN)
   with AnyStepper[A]
 {}
 
 /** Abstracts the operation of stepping over an indexable collection of Doubles */
-abstract class StepsDoubleLikeIndexed[DD, STD >: Null <: StepsDoubleLikeIndexed[DD, _]](underlying: DD, _i0: Int, _iN: Int)
+abstract class StepsDoubleLikeIndexed[STD >: Null <: StepsDoubleLikeIndexed[_]](_i0: Int, _iN: Int)
   extends AbstractStepsLikeIndexed[DoubleStepper, STD](_i0, _iN)
   with DoubleStepper
 {}
 
 /** Abstracts the operation of stepping over an indexable collection of Ints */
-abstract class StepsIntLikeIndexed[II, STI >: Null <: StepsIntLikeIndexed[II, _]](underlying: II, _i0: Int, _iN: Int)
+abstract class StepsIntLikeIndexed[STI >: Null <: StepsIntLikeIndexed[_]](_i0: Int, _iN: Int)
   extends AbstractStepsLikeIndexed[IntStepper, STI](_i0, _iN)
   with IntStepper
 {}
 
 /** Abstracts the operation of stepping over an indexable collection of Longs */
-abstract class StepsLongLikeIndexed[LL, STL >: Null <: StepsLongLikeIndexed[LL, _]](underlying: LL, _i0: Int, _iN: Int)
+abstract class StepsLongLikeIndexed[STL >: Null <: StepsLongLikeIndexed[_]](_i0: Int, _iN: Int)
   extends AbstractStepsLikeIndexed[LongStepper, STL](_i0, _iN)
   with LongStepper
 {}

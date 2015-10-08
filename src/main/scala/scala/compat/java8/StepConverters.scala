@@ -9,115 +9,115 @@ package converterImpls {
   import Stepper._
     
   private[java8] class StepsObjectArray[A <: Object](underlying: Array[A], _i0: Int, _iN: Int)
-  extends StepsLikeIndexed[A, Array[A], StepsObjectArray[A]](underlying, _i0, _iN) {
+  extends StepsLikeIndexed[A, StepsObjectArray[A]](_i0, _iN) {
     def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def semiclone(half: Int) = new StepsObjectArray[A](underlying, i0, half)
   }
   
   private[java8] class StepsAnyArray[A](underlying: Array[A], _i0: Int, _iN: Int)
-  extends StepsLikeIndexed[A, Array[A], StepsAnyArray[A]](underlying, _i0, _iN) {
+  extends StepsLikeIndexed[A, StepsAnyArray[A]](_i0, _iN) {
     def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def semiclone(half: Int) = new StepsAnyArray[A](underlying, i0, half)
   }
   
   private[java8] class StepsUnitArray(underlying: Array[Unit], _i0: Int, _iN: Int)
-  extends StepsLikeIndexed[Unit, Array[Unit], StepsUnitArray](underlying, _i0, _iN) {
+  extends StepsLikeIndexed[Unit, StepsUnitArray](_i0, _iN) {
     def next() = if (hasNext()) { val j = i0; i0 += 1; () } else throwNSEE
     def semiclone(half: Int) = new StepsUnitArray(underlying, i0, half)
   }
   
   private[java8] class StepsBoxedBooleanArray(underlying: Array[Boolean], _i0: Int, _iN: Int)
-  extends StepsLikeIndexed[Boolean, Array[Boolean], StepsBoxedBooleanArray](underlying, _i0, _iN) {
+  extends StepsLikeIndexed[Boolean, StepsBoxedBooleanArray](_i0, _iN) {
     def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def semiclone(half: Int) = new StepsBoxedBooleanArray(underlying, i0, half)
   }
   
   private[java8] class StepsBoxedByteArray(underlying: Array[Byte], _i0: Int, _iN: Int)
-  extends StepsLikeIndexed[Byte, Array[Byte], StepsBoxedByteArray](underlying, _i0, _iN) {
+  extends StepsLikeIndexed[Byte, StepsBoxedByteArray](_i0, _iN) {
     def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def semiclone(half: Int) = new StepsBoxedByteArray(underlying, i0, half)
   }
   
   private[java8] class StepsBoxedCharArray(underlying: Array[Char], _i0: Int, _iN: Int)
-  extends StepsLikeIndexed[Char, Array[Char], StepsBoxedCharArray](underlying, _i0, _iN) {
+  extends StepsLikeIndexed[Char, StepsBoxedCharArray](_i0, _iN) {
     def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def semiclone(half: Int) = new StepsBoxedCharArray(underlying, i0, half)
   }
   
   private[java8] class StepsBoxedShortArray(underlying: Array[Short], _i0: Int, _iN: Int)
-  extends StepsLikeIndexed[Short, Array[Short], StepsBoxedShortArray](underlying, _i0, _iN) {
+  extends StepsLikeIndexed[Short, StepsBoxedShortArray](_i0, _iN) {
     def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def semiclone(half: Int) = new StepsBoxedShortArray(underlying, i0, half)
   }
   
   private[java8] class StepsBoxedFloatArray(underlying: Array[Float], _i0: Int, _iN: Int)
-  extends StepsLikeIndexed[Float, Array[Float], StepsBoxedFloatArray](underlying, _i0, _iN) {
+  extends StepsLikeIndexed[Float, StepsBoxedFloatArray](_i0, _iN) {
     def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def semiclone(half: Int) = new StepsBoxedFloatArray(underlying, i0, half)
   }
   
   private[java8] class StepsDoubleArray(underlying: Array[Double], _i0: Int, _iN: Int)
-  extends StepsDoubleLikeIndexed[Array[Double], StepsDoubleArray](underlying, _i0, _iN) {
+  extends StepsDoubleLikeIndexed[StepsDoubleArray](_i0, _iN) {
     def nextDouble() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def semiclone(half: Int) = new StepsDoubleArray(underlying, i0, half)
   }
 
   private[java8] class StepsIntArray(underlying: Array[Int], _i0: Int, _iN: Int)
-  extends StepsIntLikeIndexed[Array[Int], StepsIntArray](underlying, _i0, _iN) {
+  extends StepsIntLikeIndexed[StepsIntArray](_i0, _iN) {
     def nextInt() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def semiclone(half: Int) = new StepsIntArray(underlying, i0, half)
   }
 
   private[java8] class StepsLongArray(underlying: Array[Long], _i0: Int, _iN: Int)
-  extends StepsLongLikeIndexed[Array[Long], StepsLongArray](underlying, _i0, _iN) {
+  extends StepsLongLikeIndexed[StepsLongArray](_i0, _iN) {
     def nextLong() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def semiclone(half: Int) = new StepsLongArray(underlying, i0, half)
   }
 
   private[java8] class StepsAnyIndexedSeqOptimized[A](underlying: collection.IndexedSeqOptimized[A, _], _i0: Int, _iN: Int)
-  extends StepsLikeIndexed[A, collection.IndexedSeqOptimized[A, _], StepsAnyIndexedSeqOptimized[A]](underlying, _i0, _iN) {
+  extends StepsLikeIndexed[A, StepsAnyIndexedSeqOptimized[A]](_i0, _iN) {
     def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def semiclone(half: Int) = new StepsAnyIndexedSeqOptimized[A](underlying, i0, half)
   }
 
   private[java8] class StepsDoubleIndexedSeqOptimized[CC <: collection.IndexedSeqOptimized[Double, _]](underlying: CC, _i0: Int, _iN: Int)
-  extends StepsDoubleLikeIndexed[CC, StepsDoubleIndexedSeqOptimized[CC]](underlying, _i0, _iN) {
+  extends StepsDoubleLikeIndexed[StepsDoubleIndexedSeqOptimized[CC]](_i0, _iN) {
     def nextDouble() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def semiclone(half: Int) = new StepsDoubleIndexedSeqOptimized[CC](underlying, i0, half)
   }
   
   private[java8] class StepsIntIndexedSeqOptimized[CC <: collection.IndexedSeqOptimized[Int, _]](underlying: CC, _i0: Int, _iN: Int)
-  extends StepsIntLikeIndexed[CC, StepsIntIndexedSeqOptimized[CC]](underlying, _i0, _iN) {
+  extends StepsIntLikeIndexed[StepsIntIndexedSeqOptimized[CC]](_i0, _iN) {
     def nextInt() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def semiclone(half: Int) = new StepsIntIndexedSeqOptimized[CC](underlying, i0, half)
   }
   
   private[java8] class StepsLongIndexedSeqOptimized[CC <: collection.IndexedSeqOptimized[Long, _]](underlying: CC, _i0: Int, _iN: Int)
-  extends StepsLongLikeIndexed[CC, StepsLongIndexedSeqOptimized[CC]](underlying, _i0, _iN) {
+  extends StepsLongLikeIndexed[StepsLongIndexedSeqOptimized[CC]](_i0, _iN) {
     def nextLong() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def semiclone(half: Int) = new StepsLongIndexedSeqOptimized[CC](underlying, i0, half)
   }
 
   private[java8] class StepsIntRange(underlying: Range, _i0: Int, _iN: Int)
-  extends StepsIntLikeIndexed[Range, StepsIntRange](underlying, _i0, _iN) {
+  extends StepsIntLikeIndexed[StepsIntRange](_i0, _iN) {
     def nextInt() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def semiclone(half: Int) = new StepsIntRange(underlying, i0, half)
   }
 
   private[java8] class StepsAnyNumericRange[T](underlying: collection.immutable.NumericRange[T], _i0: Int, _iN: Int)
-  extends StepsLikeIndexed[T, collection.immutable.NumericRange[T], StepsAnyNumericRange[T]](underlying, _i0, _iN) {
+  extends StepsLikeIndexed[T, StepsAnyNumericRange[T]](_i0, _iN) {
     def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def semiclone(half: Int) = new StepsAnyNumericRange[T](underlying, i0, half)
   }
 
   private[java8] class StepsIntNumericRange(underlying: collection.immutable.NumericRange[Int], _i0: Int, _iN: Int)
-  extends StepsIntLikeIndexed[collection.immutable.NumericRange[Int], StepsIntNumericRange](underlying, _i0, _iN) {
+  extends StepsIntLikeIndexed[StepsIntNumericRange](_i0, _iN) {
     def nextInt() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def semiclone(half: Int) = new StepsIntNumericRange(underlying, i0, half)
   }
 
   private[java8] class StepsLongNumericRange(underlying: collection.immutable.NumericRange[Long], _i0: Int, _iN: Int)
-  extends StepsLongLikeIndexed[collection.immutable.NumericRange[Long], StepsLongNumericRange](underlying, _i0, _iN) {
+  extends StepsLongLikeIndexed[StepsLongNumericRange](_i0, _iN) {
     def nextLong() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
     def semiclone(half: Int) = new StepsLongNumericRange(underlying, i0, half)
   }
@@ -166,7 +166,7 @@ package converterImpls {
   }
 
   private[java8] class StepsAnyVector[A](underlying: Vector[A], _i0: Int, _iN: Int)
-  extends StepsLikeIndexed[A, Vector[A], StepsAnyVector[A]](underlying, _i0, _iN) 
+  extends StepsLikeIndexed[A, StepsAnyVector[A]](_i0, _iN) 
   with StepsVectorLike[A] {
     protected def myVector = underlying
     def next() = if (hasNext()) {
@@ -185,7 +185,7 @@ package converterImpls {
   }
 
   private[java8] class StepsDoubleVector(underlying: Vector[Double], _i0: Int, _iN: Int)
-  extends StepsDoubleLikeIndexed[Vector[Double], StepsDoubleVector](underlying, _i0, _iN)
+  extends StepsDoubleLikeIndexed[StepsDoubleVector](_i0, _iN)
   with StepsVectorLike[Double] {
     protected def myVector = underlying
     def nextDouble() = if (hasNext()) {
@@ -204,7 +204,7 @@ package converterImpls {
   }
 
   private[java8] class StepsIntVector(underlying: Vector[Int], _i0: Int, _iN: Int)
-  extends StepsIntLikeIndexed[Vector[Int], StepsIntVector](underlying, _i0, _iN)
+  extends StepsIntLikeIndexed[StepsIntVector](_i0, _iN)
   with StepsVectorLike[Int] {
     protected def myVector = underlying
     def nextInt() = if (hasNext()) {
@@ -223,7 +223,7 @@ package converterImpls {
   }
 
   private[java8] class StepsLongVector(underlying: Vector[Long], _i0: Int, _iN: Int)
-  extends StepsLongLikeIndexed[Vector[Long], StepsLongVector](underlying, _i0, _iN)
+  extends StepsLongLikeIndexed[StepsLongVector](_i0, _iN)
   with StepsVectorLike[Long] {
     protected def myVector = underlying
     def nextLong() = if (hasNext()) {
