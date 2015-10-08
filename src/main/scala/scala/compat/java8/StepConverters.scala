@@ -74,10 +74,10 @@ package converterImpls {
     def semiclone(half: Int) = new StepsLongArray(underlying, i0, half)
   }
 
-  private[java8] class StepsAnyIndexedSeqOptimized[A, CC <: collection.IndexedSeqOptimized[A, _]](underlying: CC, _i0: Int, _iN: Int)
-  extends StepsLikeIndexed[A, CC, StepsAnyIndexedSeqOptimized[A, CC]](underlying, _i0, _iN) {
+  private[java8] class StepsAnyIndexedSeqOptimized[A](underlying: collection.IndexedSeqOptimized[A, _], _i0: Int, _iN: Int)
+  extends StepsLikeIndexed[A, collection.IndexedSeqOptimized[A, _], StepsAnyIndexedSeqOptimized[A]](underlying, _i0, _iN) {
     def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
-    def semiclone(half: Int) = new StepsAnyIndexedSeqOptimized[A, CC](underlying, i0, half)
+    def semiclone(half: Int) = new StepsAnyIndexedSeqOptimized[A](underlying, i0, half)
   }
 
   private[java8] class StepsDoubleIndexedSeqOptimized[CC <: collection.IndexedSeqOptimized[Double, _]](underlying: CC, _i0: Int, _iN: Int)
@@ -297,8 +297,8 @@ package converterImpls {
     @inline def stepper: AnyStepper[Float] = new StepsBoxedFloatArray(underlying, 0, underlying.length)
   }
 
-  final class RichIndexedSeqOptimizedCanStep[A, CC <: collection.IndexedSeqOptimized[A, _]](private val underlying: CC) extends AnyVal {
-    @inline def stepper: AnyStepper[A] = new StepsAnyIndexedSeqOptimized[A, CC](underlying, 0, underlying.length)
+  final class RichIndexedSeqOptimizedCanStep[A](private val underlying: collection.IndexedSeqOptimized[A, _]) extends AnyVal {
+    @inline def stepper: AnyStepper[A] = new StepsAnyIndexedSeqOptimized[A](underlying, 0, underlying.length)
   }
   
   final class RichDoubleIndexedSeqOptimizedCanStep[CC <: collection.IndexedSeqOptimized[Double, _]](private val underlying: CC) extends AnyVal {
@@ -374,8 +374,32 @@ package converterImpls {
   }
 
   final class RichTraversableOnceCanStep[A](private val underlying: TraversableOnce[A]) extends AnyVal {
-    def stepper: Stepper[A] = {
+    def stepper: AnyStepper[A] = {
       val acc = new Accumulator[A]
+      underlying.foreach(acc += _)
+      acc.stepper
+    }
+  }
+
+  final class RichDoubleTraversableOnceCanStep(private val underlying: TraversableOnce[Double]) extends AnyVal {
+    def stepper: DoubleStepper = {
+      val acc = new DoubleAccumulator
+      underlying.foreach(acc += _)
+      acc.stepper
+    }
+  }
+
+  final class RichIntTraversableOnceCanStep(private val underlying: TraversableOnce[Int]) extends AnyVal {
+    def stepper: IntStepper = {
+      val acc = new IntAccumulator
+      underlying.foreach(acc += _)
+      acc.stepper
+    }
+  }
+
+  final class RichLongTraversableOnceCanStep(private val underlying: TraversableOnce[Long]) extends AnyVal {
+    def stepper: LongStepper = {
+      val acc = new LongAccumulator
       underlying.foreach(acc += _)
       acc.stepper
     }
@@ -386,14 +410,15 @@ package converterImpls {
   }
 
   trait Priority4StepConverters extends Priority5StepConverters {
-    implicit def richLikeIndexedSeqOptimizedCanStep[A, DD, CC[A, DD] <: collection.IndexedSeqOptimized[A, DD]](underlying: CC[A, DD]) =
-      new RichIndexedSeqOptimizedCanStep[A, CC[A, DD]](underlying)
+    implicit def richDoubleTraversableOnceCanStep(underlying: TraversableOnce[Double]) = new RichDoubleTraversableOnceCanStep(underlying)
+    implicit def richIntTraversableOnceCanStep(underlying: TraversableOnce[Int]) = new RichIntTraversableOnceCanStep(underlying)
+    implicit def richLongTraversableOnceCanStep(underlying: TraversableOnce[Long]) = new RichLongTraversableOnceCanStep(underlying)
   }
   
   trait Priority3StepConverters extends Priority4StepConverters {
     implicit def richArrayAnyCanStep[A](underlying: Array[A]) = new RichArrayAnyCanStep[A](underlying)
-    implicit def richIndexedSeqOptimizedCanStep[A, CC[A] <: collection.IndexedSeqOptimized[A, CC[A]]](underlying: CC[A]) =
-      new RichIndexedSeqOptimizedCanStep[A, CC[A]](underlying)
+    implicit def richIndexedSeqOptimizedCanStep[A](underlying: collection.IndexedSeqOptimized[A, _]) =
+      new RichIndexedSeqOptimizedCanStep[A](underlying)
     implicit def richFlatHashTableCanStep[A](underlying: collection.mutable.FlatHashTable[A]) = new RichFlatHashTableCanStep[A](underlying)
   }
   

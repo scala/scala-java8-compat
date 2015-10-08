@@ -68,9 +68,9 @@ trait Priority1StreamConverters extends Priority2StreamConverters {
     def parStream: Stream[A] = seqStream.parallel
   }
 
-  implicit class EnrichGenericIndexedSeqOptimizedWithStream[A, CC <: collection.IndexedSeqOptimized[A, _]](c: CC) {
+  implicit class EnrichGenericIndexedSeqOptimizedWithStream[A](c: collection.IndexedSeqOptimized[A, _]) {
     private def someStream(parallel: Boolean): Stream[A] =
-      StreamSupport.stream(new converterImpls.StepsAnyIndexedSeqOptimized[A, CC](c, 0, c.length), parallel)
+      StreamSupport.stream(new converterImpls.StepsAnyIndexedSeqOptimized[A](c, 0, c.length), parallel)
     def seqStream: Stream[A] = someStream(false)
     def parStream: Stream[A] = someStream(true)
   }
