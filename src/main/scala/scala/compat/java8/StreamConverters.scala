@@ -68,9 +68,9 @@ trait Priority1StreamConverters extends Priority2StreamConverters {
     def parStream: Stream[A] = seqStream.parallel
   }
 
-  implicit class EnrichGenericIndexedSeqOptimizedWithStream[A](c: collection.IndexedSeqOptimized[A, _]) {
+  implicit class EnrichGenericIndexedSeqWithStream[A](c: collection.IndexedSeqLike[A, _]) {
     private def someStream(parallel: Boolean): Stream[A] =
-      StreamSupport.stream(new converterImpls.StepsAnyIndexedSeqOptimized[A](c, 0, c.length), parallel)
+      StreamSupport.stream(new converterImpls.StepsAnyIndexedSeq[A](c, 0, c.length), parallel)
     def seqStream: Stream[A] = someStream(false)
     def parStream: Stream[A] = someStream(true)
   }
@@ -147,23 +147,23 @@ trait Priority1StreamConverters extends Priority2StreamConverters {
   * ```
   */
 object StreamConverters extends Priority1StreamConverters {
-  implicit class EnrichDoubleIndexedSeqOptimizedWithStream[CC <: collection.IndexedSeqOptimized[Double, _]](c: CC) {
+  implicit class EnrichDoubleIndexedSeqWithStream[CC <: collection.IndexedSeqLike[Double, _]](c: CC) {
     private def someStream(parallel: Boolean): DoubleStream =
-      StreamSupport.doubleStream(new converterImpls.StepsDoubleIndexedSeqOptimized[CC](c, 0, c.length), parallel)
+      StreamSupport.doubleStream(new converterImpls.StepsDoubleIndexedSeq[CC](c, 0, c.length), parallel)
     def seqStream: DoubleStream = someStream(false)
     def parStream: DoubleStream = someStream(true)
   }
 
-  implicit class EnrichIntIndexedSeqOptimizedWithStream[CC <: collection.IndexedSeqOptimized[Int, _]](c: CC) {
+  implicit class EnrichIntIndexedSeqWithStream[CC <: collection.IndexedSeqLike[Int, _]](c: CC) {
     private def someStream(parallel: Boolean): IntStream =
-      StreamSupport.intStream(new converterImpls.StepsIntIndexedSeqOptimized[CC](c, 0, c.length), parallel)
+      StreamSupport.intStream(new converterImpls.StepsIntIndexedSeq[CC](c, 0, c.length), parallel)
     def seqStream: IntStream = someStream(false)
     def parStream: IntStream = someStream(true)
   }
 
-  implicit class EnrichLongIndexedSeqOptimizedWithStream[CC <: collection.IndexedSeqOptimized[Long, _]](c: CC) {
+  implicit class EnrichLongIndexedSeqWithStream[CC <: collection.IndexedSeqLike[Long, _]](c: CC) {
     private def someStream(parallel: Boolean): LongStream =
-      StreamSupport.longStream(new converterImpls.StepsLongIndexedSeqOptimized[CC](c, 0, c.length), parallel)
+      StreamSupport.longStream(new converterImpls.StepsLongIndexedSeq[CC](c, 0, c.length), parallel)
     def seqStream: LongStream = someStream(false)
     def parStream: LongStream = someStream(true)
   }

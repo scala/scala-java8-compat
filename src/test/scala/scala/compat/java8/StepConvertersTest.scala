@@ -23,7 +23,10 @@ class StepConvertersTest {
     def apply(f: Any => Boolean) = new SpecCheck { def apply[X](x: X): Boolean = f(x) }
   }
 
-  def _eh_[X](x: => X)(implicit correctSpec: SpecCheck) { IFFY(x)(correctSpec) }
+  def _eh_[X](x: => X)(implicit correctSpec: SpecCheck) { 
+    assert(x.isInstanceOf[Stepper[_]])
+    assert(correctSpec(x))
+  }
 
   def IFFY[X](x: => X)(implicit correctSpec: SpecCheck) {
     assert(x.isInstanceOf[Stepper[_]])
@@ -49,7 +52,7 @@ class StepConvertersTest {
 
     // Collection section
     IFFY( co.Iterator[String]("salmon").buffered.stepper )
-    IFFY( co.IndexedSeq[String]("salmon").stepper )
+    good( co.IndexedSeq[String]("salmon").stepper )
     IFFY( co.Iterable[String]("salmon").stepper )
     IFFY( co.Iterable[String]("salmon").view.stepper )
     IFFY( co.Iterator[String]("salmon").stepper )
@@ -69,7 +72,7 @@ class StepConvertersTest {
     IFFY( (ci.HashMap[String, String]("fish" -> "salmon"): ci.AbstractMap[String, String]).stepper )
     IFFY( ci.HashMap[String, String]("fish" -> "salmon").stepper )
     IFFY( ci.HashSet[String]("salmon").stepper )
-    IFFY( ci.IndexedSeq[String]("salmon").stepper )
+    good( ci.IndexedSeq[String]("salmon").stepper )
     IFFY( ci.IntMap[String](123456 -> "salmon").stepper )
     IFFY( ci.Iterable[String]("salmon").stepper )
     IFFY( ci.LinearSeq[String]("salmon").stepper )
@@ -106,7 +109,7 @@ class StepConvertersTest {
     IFFY( (cm.ArrayBuffer[String]("salmon"): cm.Buffer[String]).stepper )
     IFFY( cm.HashMap[String, String]("fish" -> "salmon").stepper )
     good( cm.HashSet[String]("salmon").stepper )
-    IFFY( cm.IndexedSeq[String]("salmon").stepper )
+    good( cm.IndexedSeq[String]("salmon").stepper )
     good( cm.IndexedSeq[String]("salmon").view.stepper )
     IFFY( cm.Iterable[String]("salmon").stepper )
     IFFY( cm.LinearSeq[String]("salmon").stepper )
@@ -145,7 +148,7 @@ class StepConvertersTest {
 
     // Collection section
     IFFY( co.Iterator[Double](3.14159).buffered.stepper )
-    IFFY( co.IndexedSeq[Double](3.14159).stepper )
+    good( co.IndexedSeq[Double](3.14159).stepper )
     IFFY( co.Iterable[Double](3.14159).stepper )
     IFFY( co.Iterable[Double](3.14159).view.stepper )
     IFFY( co.Iterator[Double](3.14159).stepper )
@@ -165,7 +168,7 @@ class StepConvertersTest {
     //IFFY( (ci.HashMap[Double, Double](2.718281828 -> 3.14159): ci.AbstractMap[Double, Double]).stepper )
     //IFFY( ci.HashMap[Double, Double](2.718281828 -> 3.14159).stepper )
     IFFY( ci.HashSet[Double](3.14159).stepper )
-    IFFY( ci.IndexedSeq[Double](3.14159).stepper )
+    good( ci.IndexedSeq[Double](3.14159).stepper )
     //IFFY( ci.IntMap[Double](123456 -> 3.14159).stepper )
     IFFY( ci.Iterable[Double](3.14159).stepper )
     IFFY( ci.LinearSeq[Double](3.14159).stepper )
@@ -202,7 +205,7 @@ class StepConvertersTest {
     IFFY( (cm.ArrayBuffer[Double](3.14159): cm.Buffer[Double]).stepper )
     //IFFY( cm.HashMap[Double, Double](2.718281828 -> 3.14159).stepper )
     good( cm.HashSet[Double](3.14159).stepper )
-    IFFY( cm.IndexedSeq[Double](3.14159).stepper )
+    good( cm.IndexedSeq[Double](3.14159).stepper )
     good( cm.IndexedSeq[Double](3.14159).view.stepper )
     IFFY( cm.Iterable[Double](3.14159).stepper )
     IFFY( cm.LinearSeq[Double](3.14159).stepper )
@@ -247,7 +250,7 @@ class StepConvertersTest {
 
     // Collection section
     IFFY( co.Iterator[Int](654321).buffered.stepper )
-    IFFY( co.IndexedSeq[Int](654321).stepper )
+    good( co.IndexedSeq[Int](654321).stepper )
     IFFY( co.Iterable[Int](654321).stepper )
     IFFY( co.Iterable[Int](654321).view.stepper )
     IFFY( co.Iterator[Int](654321).stepper )
@@ -267,7 +270,7 @@ class StepConvertersTest {
     //IFFY( (ci.HashMap[Int, Int](0xDEEDED -> 654321): ci.AbstractMap[Int, Int]).stepper )
     //IFFY( ci.HashMap[Int, Int](0xDEEDED -> 654321).stepper )
     IFFY( ci.HashSet[Int](654321).stepper )
-    IFFY( ci.IndexedSeq[Int](654321).stepper )
+    good( ci.IndexedSeq[Int](654321).stepper )
     //IFFY( ci.IntMap[Int](123456 -> 654321).stepper )
     IFFY( ci.Iterable[Int](654321).stepper )
     IFFY( ci.LinearSeq[Int](654321).stepper )
@@ -304,7 +307,7 @@ class StepConvertersTest {
     IFFY( (cm.ArrayBuffer[Int](654321): cm.Buffer[Int]).stepper )
     //IFFY( cm.HashMap[Int, Int](0xDEEDED -> 654321).stepper )
     good( cm.HashSet[Int](654321).stepper )
-    IFFY( cm.IndexedSeq[Int](654321).stepper )
+    good( cm.IndexedSeq[Int](654321).stepper )
     good( cm.IndexedSeq[Int](654321).view.stepper )
     IFFY( cm.Iterable[Int](654321).stepper )
     IFFY( cm.LinearSeq[Int](654321).stepper )
@@ -345,7 +348,7 @@ class StepConvertersTest {
 
      // Collection section
     IFFY( co.Iterator[Long](0x123456789L).buffered.stepper )
-    IFFY( co.IndexedSeq[Long](0x123456789L).stepper )
+    good( co.IndexedSeq[Long](0x123456789L).stepper )
     IFFY( co.Iterable[Long](0x123456789L).stepper )
     IFFY( co.Iterable[Long](0x123456789L).view.stepper )
     IFFY( co.Iterator[Long](0x123456789L).stepper )
@@ -365,7 +368,7 @@ class StepConvertersTest {
     //IFFY( (ci.HashMap[Long, Long](1234567654321L -> 0x123456789L): ci.AbstractMap[Long, Long]).stepper )
     //IFFY( ci.HashMap[Long, Long](1234567654321L -> 0x123456789L).stepper )
     IFFY( ci.HashSet[Long](0x123456789L).stepper )
-    IFFY( ci.IndexedSeq[Long](0x123456789L).stepper )
+    good( ci.IndexedSeq[Long](0x123456789L).stepper )
     //IFFY( ci.IntMap[Long](123456 -> 0x123456789L).stepper )
     IFFY( ci.Iterable[Long](0x123456789L).stepper )
     IFFY( ci.LinearSeq[Long](0x123456789L).stepper )
@@ -402,7 +405,7 @@ class StepConvertersTest {
     IFFY( (cm.ArrayBuffer[Long](0x123456789L): cm.Buffer[Long]).stepper )
     //IFFY( cm.HashMap[Long, Long](1234567654321L -> 0x123456789L).stepper )
     good( cm.HashSet[Long](0x123456789L).stepper )
-    IFFY( cm.IndexedSeq[Long](0x123456789L).stepper )
+    good( cm.IndexedSeq[Long](0x123456789L).stepper )
     good( cm.IndexedSeq[Long](0x123456789L).view.stepper )
     IFFY( cm.Iterable[Long](0x123456789L).stepper )
     IFFY( cm.LinearSeq[Long](0x123456789L).stepper )
@@ -439,7 +442,7 @@ class StepConvertersTest {
     implicit val spec = SpecCheck(_.isInstanceOf[AnyStepper[_]])
 
     good( ci.NumericRange(277: Short, 279: Short, 1: Short).stepper )
-    IFFY( ci.PagedSeq.fromLines(Array("salmon").iterator).stepper )
+    _eh_( ci.PagedSeq.fromLines(Array("salmon").iterator).stepper )
     good( ("salmon": ci.StringOps).stepper )
     good( ("salmon": ci.WrappedString).stepper )
   }

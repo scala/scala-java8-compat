@@ -74,28 +74,28 @@ package converterImpls {
     def semiclone(half: Int) = new StepsLongArray(underlying, i0, half)
   }
 
-  private[java8] class StepsAnyIndexedSeqOptimized[A](underlying: collection.IndexedSeqOptimized[A, _], _i0: Int, _iN: Int)
-  extends StepsLikeIndexed[A, StepsAnyIndexedSeqOptimized[A]](_i0, _iN) {
+  private[java8] class StepsAnyIndexedSeq[A](underlying: collection.IndexedSeqLike[A, _], _i0: Int, _iN: Int)
+  extends StepsLikeIndexed[A, StepsAnyIndexedSeq[A]](_i0, _iN) {
     def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
-    def semiclone(half: Int) = new StepsAnyIndexedSeqOptimized[A](underlying, i0, half)
+    def semiclone(half: Int) = new StepsAnyIndexedSeq[A](underlying, i0, half)
   }
 
-  private[java8] class StepsDoubleIndexedSeqOptimized[CC <: collection.IndexedSeqOptimized[Double, _]](underlying: CC, _i0: Int, _iN: Int)
-  extends StepsDoubleLikeIndexed[StepsDoubleIndexedSeqOptimized[CC]](_i0, _iN) {
+  private[java8] class StepsDoubleIndexedSeq[CC <: collection.IndexedSeqLike[Double, _]](underlying: CC, _i0: Int, _iN: Int)
+  extends StepsDoubleLikeIndexed[StepsDoubleIndexedSeq[CC]](_i0, _iN) {
     def nextDouble() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
-    def semiclone(half: Int) = new StepsDoubleIndexedSeqOptimized[CC](underlying, i0, half)
+    def semiclone(half: Int) = new StepsDoubleIndexedSeq[CC](underlying, i0, half)
   }
   
-  private[java8] class StepsIntIndexedSeqOptimized[CC <: collection.IndexedSeqOptimized[Int, _]](underlying: CC, _i0: Int, _iN: Int)
-  extends StepsIntLikeIndexed[StepsIntIndexedSeqOptimized[CC]](_i0, _iN) {
+  private[java8] class StepsIntIndexedSeq[CC <: collection.IndexedSeqLike[Int, _]](underlying: CC, _i0: Int, _iN: Int)
+  extends StepsIntLikeIndexed[StepsIntIndexedSeq[CC]](_i0, _iN) {
     def nextInt() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
-    def semiclone(half: Int) = new StepsIntIndexedSeqOptimized[CC](underlying, i0, half)
+    def semiclone(half: Int) = new StepsIntIndexedSeq[CC](underlying, i0, half)
   }
   
-  private[java8] class StepsLongIndexedSeqOptimized[CC <: collection.IndexedSeqOptimized[Long, _]](underlying: CC, _i0: Int, _iN: Int)
-  extends StepsLongLikeIndexed[StepsLongIndexedSeqOptimized[CC]](_i0, _iN) {
+  private[java8] class StepsLongIndexedSeq[CC <: collection.IndexedSeqLike[Long, _]](underlying: CC, _i0: Int, _iN: Int)
+  extends StepsLongLikeIndexed[StepsLongIndexedSeq[CC]](_i0, _iN) {
     def nextLong() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
-    def semiclone(half: Int) = new StepsLongIndexedSeqOptimized[CC](underlying, i0, half)
+    def semiclone(half: Int) = new StepsLongIndexedSeq[CC](underlying, i0, half)
   }
 
   private[java8] class StepsIntRange(underlying: Range, _i0: Int, _iN: Int)
@@ -297,20 +297,20 @@ package converterImpls {
     @inline def stepper: AnyStepper[Float] = new StepsBoxedFloatArray(underlying, 0, underlying.length)
   }
 
-  final class RichIndexedSeqOptimizedCanStep[A](private val underlying: collection.IndexedSeqOptimized[A, _]) extends AnyVal {
-    @inline def stepper: AnyStepper[A] = new StepsAnyIndexedSeqOptimized[A](underlying, 0, underlying.length)
+  final class RichIndexedSeqCanStep[A](private val underlying: collection.IndexedSeqLike[A, _]) extends AnyVal {
+    @inline def stepper: AnyStepper[A] = new StepsAnyIndexedSeq[A](underlying, 0, underlying.length)
   }
   
-  final class RichDoubleIndexedSeqOptimizedCanStep[CC <: collection.IndexedSeqOptimized[Double, _]](private val underlying: CC) extends AnyVal {
-    @inline def stepper: DoubleStepper = new StepsDoubleIndexedSeqOptimized[CC](underlying, 0, underlying.length)
+  final class RichDoubleIndexedSeqCanStep[CC <: collection.IndexedSeqLike[Double, _]](private val underlying: CC) extends AnyVal {
+    @inline def stepper: DoubleStepper = new StepsDoubleIndexedSeq[CC](underlying, 0, underlying.length)
   }
   
-  final class RichIntIndexedSeqOptimizedCanStep[CC <: collection.IndexedSeqOptimized[Int, _]](private val underlying: CC) extends AnyVal {
-    @inline def stepper: IntStepper = new StepsIntIndexedSeqOptimized[CC](underlying, 0, underlying.length)
+  final class RichIntIndexedSeqCanStep[CC <: collection.IndexedSeqLike[Int, _]](private val underlying: CC) extends AnyVal {
+    @inline def stepper: IntStepper = new StepsIntIndexedSeq[CC](underlying, 0, underlying.length)
   }
   
-  final class RichLongIndexedSeqOptimizedCanStep[CC <: collection.IndexedSeqOptimized[Long, _]](private val underlying: CC) extends AnyVal {
-    @inline def stepper: LongStepper = new StepsLongIndexedSeqOptimized[CC](underlying, 0, underlying.length)
+  final class RichLongIndexedSeqCanStep[CC <: collection.IndexedSeqLike[Long, _]](private val underlying: CC) extends AnyVal {
+    @inline def stepper: LongStepper = new StepsLongIndexedSeq[CC](underlying, 0, underlying.length)
   }
 
   final class RichNumericRangeCanStep[T](private val underlying: collection.immutable.NumericRange[T]) extends AnyVal {
@@ -417,8 +417,8 @@ package converterImpls {
   
   trait Priority3StepConverters extends Priority4StepConverters {
     implicit def richArrayAnyCanStep[A](underlying: Array[A]) = new RichArrayAnyCanStep[A](underlying)
-    implicit def richIndexedSeqOptimizedCanStep[A](underlying: collection.IndexedSeqOptimized[A, _]) =
-      new RichIndexedSeqOptimizedCanStep[A](underlying)
+    implicit def richIndexedSeqCanStep[A](underlying: collection.IndexedSeqLike[A, _]) =
+      new RichIndexedSeqCanStep[A](underlying)
     implicit def richFlatHashTableCanStep[A](underlying: collection.mutable.FlatHashTable[A]) = new RichFlatHashTableCanStep[A](underlying)
   }
   
@@ -430,12 +430,12 @@ package converterImpls {
     implicit def richArrayCharCanStep(underlying: Array[Char]) = new RichArrayCharCanStep(underlying)
     implicit def richArrayShortCanStep(underlying: Array[Short]) = new RichArrayShortCanStep(underlying)
     implicit def richArrayFloatCanStep(underlying: Array[Float]) = new RichArrayFloatCanStep(underlying)
-    implicit def richDoubleIndexedSeqOptimizedCanStep[CC <: collection.IndexedSeqOptimized[Double, _]](underlying: CC) =
-      new RichDoubleIndexedSeqOptimizedCanStep[CC](underlying)
-    implicit def richIntIndexedSeqOptimizedCanStep[CC <: collection.IndexedSeqOptimized[Int, _]](underlying: CC) =
-      new RichIntIndexedSeqOptimizedCanStep[CC](underlying)
-    implicit def richLongIndexedSeqOptimizedCanStep[CC <: collection.IndexedSeqOptimized[Long, _]](underlying: CC) =
-      new RichLongIndexedSeqOptimizedCanStep[CC](underlying)
+    implicit def richDoubleIndexedSeqCanStep[CC <: collection.IndexedSeqLike[Double, _]](underlying: CC) =
+      new RichDoubleIndexedSeqCanStep[CC](underlying)
+    implicit def richIntIndexedSeqCanStep[CC <: collection.IndexedSeqLike[Int, _]](underlying: CC) =
+      new RichIntIndexedSeqCanStep[CC](underlying)
+    implicit def richLongIndexedSeqCanStep[CC <: collection.IndexedSeqLike[Long, _]](underlying: CC) =
+      new RichLongIndexedSeqCanStep[CC](underlying)
     implicit def richNumericRangeCanStep[T](underlying: collection.immutable.NumericRange[T]) = new RichNumericRangeCanStep(underlying)
     implicit def richVectorCanStep[A](underlying: Vector[A]) = new RichVectorCanStep[A](underlying)
     implicit def richDoubleFlatHashTableCanStep(underlying: collection.mutable.FlatHashTable[Double]) = new RichDoubleFlatHashTableCanStep(underlying)
