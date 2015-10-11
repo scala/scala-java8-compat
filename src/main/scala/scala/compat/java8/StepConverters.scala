@@ -98,6 +98,38 @@ package converterImpls {
     def semiclone(half: Int) = new StepsLongIndexedSeq[CC](underlying, i0, half)
   }
 
+  private[java8] class StepsAnyLinearSeq[A, CC >: Null <: collection.LinearSeqLike[A, CC]](_underlying: CC, _maxN: Long)
+  extends StepsWithTail[A, CC, StepsAnyLinearSeq[A, CC]](_underlying, _maxN) {
+    protected def myIsEmpty(cc: CC): Boolean = cc.isEmpty
+    protected def myTailOf(cc: CC): CC = cc.tail
+    def next() = if (hasNext()) { maxN -= 1; val ans = underlying.head; underlying = underlying.tail; ans } else throwNSEE
+    def semiclone(half: Int) = new StepsAnyLinearSeq[A, CC](underlying, half)
+  }
+
+  private[java8] class StepsDoubleLinearSeq[CC >: Null <: collection.LinearSeqLike[Double, CC]](_underlying: CC, _maxN: Long)
+  extends StepsDoubleWithTail[CC, StepsDoubleLinearSeq[CC]](_underlying, _maxN) {
+    protected def myIsEmpty(cc: CC): Boolean = cc.isEmpty
+    protected def myTailOf(cc: CC): CC = cc.tail
+    def nextDouble() = if (hasNext()) { maxN -= 1; val ans = underlying.head; underlying = underlying.tail; ans } else throwNSEE
+    def semiclone(half: Int) = new StepsDoubleLinearSeq[CC](underlying, half)
+  }
+
+  private[java8] class StepsIntLinearSeq[CC >: Null <: collection.LinearSeqLike[Int, CC]](_underlying: CC, _maxN: Long)
+  extends StepsIntWithTail[CC, StepsIntLinearSeq[CC]](_underlying, _maxN) {
+    protected def myIsEmpty(cc: CC): Boolean = cc.isEmpty
+    protected def myTailOf(cc: CC): CC = cc.tail
+    def nextInt() = if (hasNext()) { maxN -= 1; val ans = underlying.head; underlying = underlying.tail; ans } else throwNSEE
+    def semiclone(half: Int) = new StepsIntLinearSeq[CC](underlying, half)
+  }
+
+  private[java8] class StepsLongLinearSeq[CC >: Null <: collection.LinearSeqLike[Long, CC]](_underlying: CC, _maxN: Long)
+  extends StepsLongWithTail[CC, StepsLongLinearSeq[CC]](_underlying, _maxN) {
+    protected def myIsEmpty(cc: CC): Boolean = cc.isEmpty
+    protected def myTailOf(cc: CC): CC = cc.tail
+    def nextLong() = if (hasNext()) { maxN -= 1; val ans = underlying.head; underlying = underlying.tail; ans } else throwNSEE
+    def semiclone(half: Int) = new StepsLongLinearSeq[CC](underlying, half)
+  }
+
   private[java8] class StepsIntRange(underlying: Range, _i0: Int, _iN: Int)
   extends StepsIntLikeIndexed[StepsIntRange](_i0, _iN) {
     def nextInt() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
@@ -313,6 +345,22 @@ package converterImpls {
     @inline def stepper: LongStepper = new StepsLongIndexedSeq[CC](underlying, 0, underlying.length)
   }
 
+  final class RichLinearSeqCanStep[A, CC >: Null <: collection.LinearSeqLike[A, CC]](private val underlying: CC) extends AnyVal {
+    @inline def stepper: AnyStepper[A] = new StepsAnyLinearSeq[A, CC](underlying, Long.MaxValue)
+  }
+
+  final class RichDoubleLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Double, CC]](private val underlying: CC) extends AnyVal {
+    @inline def stepper: DoubleStepper = new StepsDoubleLinearSeq[CC](underlying, Long.MaxValue)
+  }
+
+  final class RichIntLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Int, CC]](private val underlying: CC) extends AnyVal {
+    @inline def stepper: IntStepper = new StepsIntLinearSeq[CC](underlying, Long.MaxValue)
+  }
+
+  final class RichLongLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Long, CC]](private val underlying: CC) extends AnyVal {
+    @inline def stepper: LongStepper = new StepsLongLinearSeq[CC](underlying, Long.MaxValue)
+  }
+
   final class RichNumericRangeCanStep[T](private val underlying: collection.immutable.NumericRange[T]) extends AnyVal {
     @inline def stepper: AnyStepper[T] = new StepsAnyNumericRange[T](underlying, 0, underlying.length)
   }
@@ -413,6 +461,7 @@ package converterImpls {
     implicit def richDoubleTraversableOnceCanStep(underlying: TraversableOnce[Double]) = new RichDoubleTraversableOnceCanStep(underlying)
     implicit def richIntTraversableOnceCanStep(underlying: TraversableOnce[Int]) = new RichIntTraversableOnceCanStep(underlying)
     implicit def richLongTraversableOnceCanStep(underlying: TraversableOnce[Long]) = new RichLongTraversableOnceCanStep(underlying)
+    implicit def richLinearSeqCanStep[A, CC[A] >: Null <: collection.LinearSeqLike[A, CC[A]]](underlying: CC[A]) = new RichLinearSeqCanStep[A, CC[A]](underlying)
   }
   
   trait Priority3StepConverters extends Priority4StepConverters {
@@ -420,6 +469,12 @@ package converterImpls {
     implicit def richIndexedSeqCanStep[A](underlying: collection.IndexedSeqLike[A, _]) =
       new RichIndexedSeqCanStep[A](underlying)
     implicit def richFlatHashTableCanStep[A](underlying: collection.mutable.FlatHashTable[A]) = new RichFlatHashTableCanStep[A](underlying)
+    implicit def richDoubleLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Double, CC]](underlying: CC) = 
+      new RichDoubleLinearSeqCanStep[CC](underlying)
+    implicit def richIntLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Int, CC]](underlying: CC) = 
+      new RichIntLinearSeqCanStep[CC](underlying)
+    implicit def richLongLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Long, CC]](underlying: CC) = 
+      new RichLongLinearSeqCanStep[CC](underlying)
   }
   
   trait Priority2StepConverters extends Priority3StepConverters {
