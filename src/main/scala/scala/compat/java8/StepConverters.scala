@@ -461,6 +461,35 @@ package converterImpls {
     }
   }
 
+  final class RichMapCanStep[K, V](private val underlying: collection.Map[K, V]) extends AnyVal {
+    def keyStepper: AnyStepper[K] = new StepsAnyIterator[K](underlying.keysIterator)
+    def valueStepper: AnyStepper[V] = new StepsAnyIterator[V](underlying.valuesIterator)
+  }
+
+  final class RichDoubleKeyMapCanStep[V](private val underlying: collection.Map[Double, V]) extends AnyVal {
+    def keyStepper: DoubleStepper = new StepsDoubleIterator(underlying.keysIterator)
+  }
+
+  final class RichDoubleValueMapCanStep[K](private val underlying: collection.Map[K, Double]) extends AnyVal {
+    def valueStepper: DoubleStepper = new StepsDoubleIterator(underlying.valuesIterator)
+  }
+
+  final class RichIntKeyMapCanStep[V](private val underlying: collection.Map[Int, V]) extends AnyVal {
+    def keyStepper: IntStepper = new StepsIntIterator(underlying.keysIterator)
+  }
+
+  final class RichIntValueMapCanStep[K](private val underlying: collection.Map[K, Int]) extends AnyVal {
+    def valueStepper: IntStepper = new StepsIntIterator(underlying.valuesIterator)
+  }
+
+  final class RichLongKeyMapCanStep[V](private val underlying: collection.Map[Long, V]) extends AnyVal {
+    def keyStepper: LongStepper = new StepsLongIterator(underlying.keysIterator)
+  }
+
+  final class RichLongValueMapCanStep[K](private val underlying: collection.Map[K, Long]) extends AnyVal {
+    def valueStepper: LongStepper = new StepsLongIterator(underlying.valuesIterator)
+  }
+
   final class RichTraversableOnceCanStep[A](private val underlying: TraversableOnce[A]) extends AnyVal {
     def stepper: AnyStepper[A] = {
       val acc = new Accumulator[A]
@@ -502,6 +531,7 @@ package converterImpls {
     implicit def richIntTraversableOnceCanStep(underlying: TraversableOnce[Int]) = new RichIntTraversableOnceCanStep(underlying)
     implicit def richLongTraversableOnceCanStep(underlying: TraversableOnce[Long]) = new RichLongTraversableOnceCanStep(underlying)
     implicit def richLinearSeqCanStep[A, CC[A] >: Null <: collection.LinearSeqLike[A, CC[A]]](underlying: CC[A]) = new RichLinearSeqCanStep[A, CC[A]](underlying)
+    implicit def richMapCanStep[K, V](underlying: collection.Map[K, V]) = new RichMapCanStep[K, V](underlying)
   }
   
   trait Priority3StepConverters extends Priority4StepConverters {
@@ -516,6 +546,12 @@ package converterImpls {
     implicit def richLongLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Long, CC]](underlying: CC) = 
       new RichLongLinearSeqCanStep[CC](underlying)
     implicit def richIteratorCanStep[A](underlying: Iterator[A]) = new RichIteratorCanStep(underlying)
+    implicit def richDoubleKeyMapCanStep[V](underlying: collection.Map[Double, V]) = new RichDoubleKeyMapCanStep(underlying)
+    implicit def richDoubleValueMapCanStep[K](underlying: collection.Map[K, Double]) = new RichDoubleValueMapCanStep(underlying)
+    implicit def richIntKeyMapCanStep[V](underlying: collection.Map[Int, V]) = new RichIntKeyMapCanStep(underlying)
+    implicit def richIntValueMapCanStep[K](underlying: collection.Map[K, Int]) = new RichIntValueMapCanStep(underlying)
+    implicit def richLongKeyMapCanStep[V](underlying: collection.Map[Long, V]) = new RichLongKeyMapCanStep(underlying)
+    implicit def richLongValueMapCanStep[K](underlying: collection.Map[K, Long]) = new RichLongValueMapCanStep(underlying)    
   }
   
   trait Priority2StepConverters extends Priority3StepConverters {
