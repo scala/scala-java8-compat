@@ -122,6 +122,30 @@ package converterImpls {
     def semiclone(half: Int) = new StepsIntLinearSeq[CC](underlying, half)
   }
 
+  private[java8] class StepsAnyIterator[A](_underlying: Iterator[A])
+  extends StepsLikeIterator[A, StepsAnyIterator[A]](_underlying) {
+    def semiclone() = new StepsAnyIterator(null)
+    def next() = if (proxied ne null) proxied.nextStep else underlying.next
+  }
+
+  private[java8] class StepsDoubleIterator(_underlying: Iterator[Double])
+  extends StepsDoubleLikeIterator[StepsDoubleIterator](_underlying) {
+    def semiclone() = new StepsDoubleIterator(null)
+    def nextDouble() = if (proxied ne null) proxied.nextStep else underlying.next
+  }
+
+  private[java8] class StepsIntIterator(_underlying: Iterator[Int])
+  extends StepsIntLikeIterator[StepsIntIterator](_underlying) {
+    def semiclone() = new StepsIntIterator(null)
+    def nextInt() = if (proxied ne null) proxied.nextStep else underlying.next
+  }
+
+  private[java8] class StepsLongIterator(_underlying: Iterator[Long])
+  extends StepsLongLikeIterator[StepsLongIterator](_underlying) {
+    def semiclone() = new StepsLongIterator(null)
+    def nextLong() = if (proxied ne null) proxied.nextStep else underlying.next
+  }
+
   private[java8] class StepsLongLinearSeq[CC >: Null <: collection.LinearSeqLike[Long, CC]](_underlying: CC, _maxN: Long)
   extends StepsLongWithTail[CC, StepsLongLinearSeq[CC]](_underlying, _maxN) {
     protected def myIsEmpty(cc: CC): Boolean = cc.isEmpty
@@ -361,6 +385,22 @@ package converterImpls {
     @inline def stepper: LongStepper = new StepsLongLinearSeq[CC](underlying, Long.MaxValue)
   }
 
+  final class RichIteratorCanStep[A](private val underlying: Iterator[A]) extends AnyVal {
+    @inline def stepper: AnyStepper[A] = new StepsAnyIterator[A](underlying)
+  }
+
+  final class RichDoubleIteratorCanStep(private val underlying: Iterator[Double]) extends AnyVal {
+    @inline def stepper: DoubleStepper = new StepsDoubleIterator(underlying)
+  }
+
+  final class RichIntIteratorCanStep(private val underlying: Iterator[Int]) extends AnyVal {
+    @inline def stepper: IntStepper = new StepsIntIterator(underlying)
+  }
+
+  final class RichLongIteratorCanStep(private val underlying: Iterator[Long]) extends AnyVal {
+    @inline def stepper: LongStepper = new StepsLongIterator(underlying)
+  }
+
   final class RichNumericRangeCanStep[T](private val underlying: collection.immutable.NumericRange[T]) extends AnyVal {
     @inline def stepper: AnyStepper[T] = new StepsAnyNumericRange[T](underlying, 0, underlying.length)
   }
@@ -475,6 +515,7 @@ package converterImpls {
       new RichIntLinearSeqCanStep[CC](underlying)
     implicit def richLongLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Long, CC]](underlying: CC) = 
       new RichLongLinearSeqCanStep[CC](underlying)
+    implicit def richIteratorCanStep[A](underlying: Iterator[A]) = new RichIteratorCanStep(underlying)
   }
   
   trait Priority2StepConverters extends Priority3StepConverters {
@@ -496,6 +537,9 @@ package converterImpls {
     implicit def richDoubleFlatHashTableCanStep(underlying: collection.mutable.FlatHashTable[Double]) = new RichDoubleFlatHashTableCanStep(underlying)
     implicit def richIntFlatHashTableCanStep(underlying: collection.mutable.FlatHashTable[Int]) = new RichIntFlatHashTableCanStep(underlying)
     implicit def richLongFlatHashTableCanStep(underlying: collection.mutable.FlatHashTable[Long]) = new RichLongFlatHashTableCanStep(underlying)
+    implicit def richDoubleIteratorCanStep(underlying: Iterator[Double]) = new RichDoubleIteratorCanStep(underlying)
+    implicit def richIntIteratorCanStep(underlying: Iterator[Int]) = new RichIntIteratorCanStep(underlying)
+    implicit def richLongIteratorCanStep(underlying: Iterator[Long]) = new RichLongIteratorCanStep(underlying)
   }
 }
 

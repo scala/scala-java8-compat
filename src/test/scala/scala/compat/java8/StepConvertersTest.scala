@@ -51,11 +51,11 @@ class StepConvertersTest {
     implicit val spec = SpecCheck(_.isInstanceOf[AnyStepper[_]])
 
     // Collection section
-    IFFY( co.Iterator[String]("salmon").buffered.stepper )
+    good( co.Iterator[String]("salmon").buffered.stepper )
     good( co.IndexedSeq[String]("salmon").stepper )
     IFFY( co.Iterable[String]("salmon").stepper )
     IFFY( co.Iterable[String]("salmon").view.stepper )
-    IFFY( co.Iterator[String]("salmon").stepper )
+    good( co.Iterator[String]("salmon").stepper )
     good( co.LinearSeq[String]("salmon").stepper )
     IFFY( co.Map[String, String]("fish" -> "salmon").stepper )
     IFFY( co.Seq[String]("salmon").stepper )
@@ -147,11 +147,11 @@ class StepConvertersTest {
     //Double-specific tests
 
     // Collection section
-    IFFY( co.Iterator[Double](3.14159).buffered.stepper )
+    good( co.Iterator[Double](3.14159).buffered.stepper )
     good( co.IndexedSeq[Double](3.14159).stepper )
     IFFY( co.Iterable[Double](3.14159).stepper )
     IFFY( co.Iterable[Double](3.14159).view.stepper )
-    IFFY( co.Iterator[Double](3.14159).stepper )
+    good( co.Iterator[Double](3.14159).stepper )
     good( co.LinearSeq[Double](3.14159).stepper )
     //IFFY( co.Map[Double, Double](2.718281828 -> 3.14159).stepper )
     IFFY( co.Seq[Double](3.14159).stepper )
@@ -249,11 +249,11 @@ class StepConvertersTest {
     good( (1 until 2).stepper )
 
     // Collection section
-    IFFY( co.Iterator[Int](654321).buffered.stepper )
+    good( co.Iterator[Int](654321).buffered.stepper )
     good( co.IndexedSeq[Int](654321).stepper )
     IFFY( co.Iterable[Int](654321).stepper )
     IFFY( co.Iterable[Int](654321).view.stepper )
-    IFFY( co.Iterator[Int](654321).stepper )
+    good( co.Iterator[Int](654321).stepper )
     good( co.LinearSeq[Int](654321).stepper )
     //IFFY( co.Map[Int, Int](0xDEEDED -> 654321).stepper )
     IFFY( co.Seq[Int](654321).stepper )
@@ -347,11 +347,11 @@ class StepConvertersTest {
     good( ci.NumericRange(9876543210L, 9876543212L, 1L).stepper )
 
      // Collection section
-    IFFY( co.Iterator[Long](0x123456789L).buffered.stepper )
+    good( co.Iterator[Long](0x123456789L).buffered.stepper )
     good( co.IndexedSeq[Long](0x123456789L).stepper )
     IFFY( co.Iterable[Long](0x123456789L).stepper )
     IFFY( co.Iterable[Long](0x123456789L).view.stepper )
-    IFFY( co.Iterator[Long](0x123456789L).stepper )
+    good( co.Iterator[Long](0x123456789L).stepper )
     good( co.LinearSeq[Long](0x123456789L).stepper )
     //IFFY( co.Map[Long, Long](1234567654321L -> 0x123456789L).stepper )
     IFFY( co.Seq[Long](0x123456789L).stepper )
