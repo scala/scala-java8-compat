@@ -2,6 +2,7 @@ package scala.compat.java8.runtime;
 
 public class CollectionInternals {
     public static <A> Object[] getTable(scala.collection.mutable.FlatHashTable<A> fht) { return fht.hashTableContents().table(); }
+    public static <A, E extends scala.collection.mutable.HashEntry<A,E>> scala.collection.mutable.HashEntry<A, E>[] getTable(scala.collection.mutable.HashTable<A,E> ht) { return ht.hashTableContents().table(); }
     public static <A> Object[] getDisplay0(scala.collection.immutable.Vector<A> v) { return v.display0(); }
     public static <A> Object[] getDisplay1(scala.collection.immutable.Vector<A> v) { return v.display1(); }
     public static <A> Object[] getDisplay2(scala.collection.immutable.Vector<A> v) { return v.display2(); }

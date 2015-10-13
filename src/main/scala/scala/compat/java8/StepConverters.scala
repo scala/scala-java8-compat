@@ -321,6 +321,120 @@ package converterImpls {
     def semiclone(half: Int) = new StepsLongFlatHashTable(underlying, i0, half)    
   }
 
+  private[java8] class StepsAnyHashTableKey[K, HE <: collection.mutable.HashEntry[K, HE]](_underlying: Array[collection.mutable.HashEntry[K, HE]], _i0: Int, _iN: Int)
+  extends StepsLikeGapped[K, StepsAnyHashTableKey[K, HE]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+    def next() = if (currentEntry eq null) throwNSEE else { val ans = currentEntry.asInstanceOf[HE].key; currentEntry = currentEntry.asInstanceOf[HE].next; ans }
+    def semiclone(half: Int) = new StepsAnyHashTableKey[K, HE](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, HE]]], i0, half)
+  }
+
+  private[java8] class StepsDoubleHashTableKey[HE <: collection.mutable.HashEntry[Double, HE]](_underlying: Array[collection.mutable.HashEntry[Double, HE]], _i0: Int, _iN: Int)
+  extends StepsDoubleLikeGapped[StepsDoubleHashTableKey[HE]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+    def nextDouble() = if (currentEntry eq null) throwNSEE else { val ans = currentEntry.asInstanceOf[HE].key; currentEntry = currentEntry.asInstanceOf[HE].next; ans }
+    def semiclone(half: Int) = new StepsDoubleHashTableKey[HE](underlying.asInstanceOf[Array[collection.mutable.HashEntry[Double, HE]]], i0, half)
+  }
+
+  private[java8] class StepsIntHashTableKey[HE <: collection.mutable.HashEntry[Int, HE]](_underlying: Array[collection.mutable.HashEntry[Int, HE]], _i0: Int, _iN: Int)
+  extends StepsIntLikeGapped[StepsIntHashTableKey[HE]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+    def nextInt() = if (currentEntry eq null) throwNSEE else { val ans = currentEntry.asInstanceOf[HE].key; currentEntry = currentEntry.asInstanceOf[HE].next; ans }
+    def semiclone(half: Int) = new StepsIntHashTableKey[HE](underlying.asInstanceOf[Array[collection.mutable.HashEntry[Int, HE]]], i0, half)
+  }
+
+  private[java8] class StepsLongHashTableKey[HE <: collection.mutable.HashEntry[Long, HE]](_underlying: Array[collection.mutable.HashEntry[Long, HE]], _i0: Int, _iN: Int)
+  extends StepsLongLikeGapped[StepsLongHashTableKey[HE]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+    def nextLong() = if (currentEntry eq null) throwNSEE else { val ans = currentEntry.asInstanceOf[HE].key; currentEntry = currentEntry.asInstanceOf[HE].next; ans }
+    def semiclone(half: Int) = new StepsLongHashTableKey[HE](underlying.asInstanceOf[Array[collection.mutable.HashEntry[Long, HE]]], i0, half)
+  }
+
+  private[java8] class StepsAnyDefaultHashTable[K, V](_underlying: Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, V]]], _i0: Int, _iN: Int)
+  extends StepsLikeGapped[(K, V), StepsAnyDefaultHashTable[K, V]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+    def next() = 
+      if (currentEntry eq null) throwNSEE
+      else { val de = currentEntry.asInstanceOf[collection.mutable.DefaultEntry[K, V]]; currentEntry = de.next; (de.key, de.value) }
+    def semiclone(half: Int) =
+      new StepsAnyDefaultHashTable[K, V](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, V]]]], i0, half)
+  }
+
+  private[java8] class StepsAnyDefaultHashTableValue[K, V](_underlying: Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, V]]], _i0: Int, _iN: Int)
+  extends StepsLikeGapped[V, StepsAnyDefaultHashTableValue[K, V]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+    def next() = 
+      if (currentEntry eq null) throwNSEE
+      else { val de = currentEntry.asInstanceOf[collection.mutable.DefaultEntry[K, V]]; currentEntry = de.next; de.value }
+    def semiclone(half: Int) =
+      new StepsAnyDefaultHashTableValue[K, V](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, V]]]], i0, half)
+  }
+
+  private[java8] class StepsDoubleDefaultHashTableValue[K](_underlying: Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, Double]]], _i0: Int, _iN: Int)
+  extends StepsDoubleLikeGapped[StepsDoubleDefaultHashTableValue[K]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+    def nextDouble() = 
+      if (currentEntry eq null) throwNSEE
+      else { val de = currentEntry.asInstanceOf[collection.mutable.DefaultEntry[K, Double]]; currentEntry = de.next; de.value }
+    def semiclone(half: Int) =
+      new StepsDoubleDefaultHashTableValue[K](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, Double]]]], i0, half)
+  }
+
+  private[java8] class StepsIntDefaultHashTableValue[K](_underlying: Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, Int]]], _i0: Int, _iN: Int)
+  extends StepsIntLikeGapped[StepsIntDefaultHashTableValue[K]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+    def nextInt() = 
+      if (currentEntry eq null) throwNSEE
+      else { val de = currentEntry.asInstanceOf[collection.mutable.DefaultEntry[K, Int]]; currentEntry = de.next; de.value }
+    def semiclone(half: Int) =
+      new StepsIntDefaultHashTableValue[K](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, Int]]]], i0, half)
+  }
+
+  private[java8] class StepsLongDefaultHashTableValue[K](_underlying: Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, Long]]], _i0: Int, _iN: Int)
+  extends StepsLongLikeGapped[StepsLongDefaultHashTableValue[K]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+    def nextLong() = 
+      if (currentEntry eq null) throwNSEE
+      else { val de = currentEntry.asInstanceOf[collection.mutable.DefaultEntry[K, Long]]; currentEntry = de.next; de.value }
+    def semiclone(half: Int) =
+      new StepsLongDefaultHashTableValue[K](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, Long]]]], i0, half)
+  }
+
+  private[java8] class StepsAnyLinkedHashTable[K, V](_underlying: Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, V]]], _i0: Int, _iN: Int)
+  extends StepsLikeGapped[(K, V), StepsAnyLinkedHashTable[K, V]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+    def next() = 
+      if (currentEntry eq null) throwNSEE
+      else { val de = currentEntry.asInstanceOf[collection.mutable.LinkedEntry[K, V]]; currentEntry = de.next; (de.key, de.value) }
+    def semiclone(half: Int) =
+      new StepsAnyLinkedHashTable[K, V](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, V]]]], i0, half)
+  }
+
+  private[java8] class StepsAnyLinkedHashTableValue[K, V](_underlying: Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, V]]], _i0: Int, _iN: Int)
+  extends StepsLikeGapped[V, StepsAnyLinkedHashTableValue[K, V]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+    def next() = 
+      if (currentEntry eq null) throwNSEE
+      else { val de = currentEntry.asInstanceOf[collection.mutable.LinkedEntry[K, V]]; currentEntry = de.next; de.value }
+    def semiclone(half: Int) =
+      new StepsAnyLinkedHashTableValue[K, V](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, V]]]], i0, half)
+  }
+
+  private[java8] class StepsDoubleLinkedHashTableValue[K](_underlying: Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, Double]]], _i0: Int, _iN: Int)
+  extends StepsDoubleLikeGapped[StepsDoubleLinkedHashTableValue[K]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+    def nextDouble() = 
+      if (currentEntry eq null) throwNSEE
+      else { val de = currentEntry.asInstanceOf[collection.mutable.LinkedEntry[K, Double]]; currentEntry = de.next; de.value }
+    def semiclone(half: Int) =
+      new StepsDoubleLinkedHashTableValue[K](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, Double]]]], i0, half)
+  }
+
+  private[java8] class StepsIntLinkedHashTableValue[K](_underlying: Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, Int]]], _i0: Int, _iN: Int)
+  extends StepsIntLikeGapped[StepsIntLinkedHashTableValue[K]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+    def nextInt() = 
+      if (currentEntry eq null) throwNSEE
+      else { val de = currentEntry.asInstanceOf[collection.mutable.LinkedEntry[K, Int]]; currentEntry = de.next; de.value }
+    def semiclone(half: Int) =
+      new StepsIntLinkedHashTableValue[K](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, Int]]]], i0, half)
+  }
+
+  private[java8] class StepsLongLinkedHashTableValue[K](_underlying: Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, Long]]], _i0: Int, _iN: Int)
+  extends StepsLongLikeGapped[StepsLongLinkedHashTableValue[K]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+    def nextLong() = 
+      if (currentEntry eq null) throwNSEE
+      else { val de = currentEntry.asInstanceOf[collection.mutable.LinkedEntry[K, Long]]; currentEntry = de.next; de.value }
+    def semiclone(half: Int) =
+      new StepsLongLinkedHashTableValue[K](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, Long]]]], i0, half)
+  }
+
   final class RichArrayAnyCanStep[A](private val underlying: Array[A]) extends AnyVal {
     @inline def stepper: AnyStepper[A] = new StepsAnyArray[A](underlying, 0, underlying.length)
   }
@@ -436,7 +550,105 @@ package converterImpls {
       new StepsLongFlatHashTable(tbl, 0, tbl.length)
     }
   }
+
+  final class RichHashTableKeyCanStep[K, HE >: Null <: collection.mutable.HashEntry[K, HE]](private val underlying: collection.mutable.HashTable[K, HE]) extends AnyVal {
+    @inline def keyStepper: AnyStepper[K] = {
+      val tbl = runtime.CollectionInternals.getTable[K, HE](underlying)
+      new StepsAnyHashTableKey(tbl, 0, tbl.length)
+    }
+  }
+
+  final class RichHashTableDoubleKeyCanStep[HE >: Null <: collection.mutable.HashEntry[Double, HE]](private val underlying: collection.mutable.HashTable[Double, HE]) extends AnyVal {
+    @inline def keyStepper: DoubleStepper = {
+      val tbl = runtime.CollectionInternals.getTable[Double, HE](underlying)
+      new StepsDoubleHashTableKey(tbl, 0, tbl.length)
+    }
+  }
+
+  final class RichHashTableIntKeyCanStep[HE >: Null <: collection.mutable.HashEntry[Int, HE]](private val underlying: collection.mutable.HashTable[Int, HE]) extends AnyVal {
+    @inline def keyStepper: IntStepper = {
+      val tbl = runtime.CollectionInternals.getTable[Int, HE](underlying)
+      new StepsIntHashTableKey(tbl, 0, tbl.length)
+    }
+  }
+
+  final class RichHashTableLongKeyCanStep[HE >: Null <: collection.mutable.HashEntry[Long, HE]](private val underlying: collection.mutable.HashTable[Long, HE]) extends AnyVal {
+    @inline def keyStepper: LongStepper = {
+      val tbl = runtime.CollectionInternals.getTable[Long, HE](underlying)
+      new StepsLongHashTableKey(tbl, 0, tbl.length)
+    }
+  }
+
+  final class RichDefaultHashTableCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, V]]) extends AnyVal {
+    @inline def stepper: AnyStepper[(K,V)] = {
+      val tbl = runtime.CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, V]](underlying)
+      new StepsAnyDefaultHashTable(tbl, 0, tbl.length)
+    }
+  }
+
+  final class RichDefaultHashTableValueCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, V]]) extends AnyVal {
+    @inline def valueStepper: AnyStepper[V] = {
+      val tbl = runtime.CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, V]](underlying)
+      new StepsAnyDefaultHashTableValue(tbl, 0, tbl.length)
+    }
+  }
   
+  final class RichDefaultHashTableDoubleValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, Double]]) extends AnyVal {
+    @inline def valueStepper: DoubleStepper = {
+      val tbl = runtime.CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, Double]](underlying)
+      new StepsDoubleDefaultHashTableValue(tbl, 0, tbl.length)
+    }
+  }
+
+  final class RichDefaultHashTableIntValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, Int]]) extends AnyVal {
+    @inline def valueStepper: IntStepper = {
+      val tbl = runtime.CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, Int]](underlying)
+      new StepsIntDefaultHashTableValue(tbl, 0, tbl.length)
+    }
+  }
+  
+  final class RichDefaultHashTableLongValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, Long]]) extends AnyVal {
+    @inline def valueStepper: LongStepper = {
+      val tbl = runtime.CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, Long]](underlying)
+      new StepsLongDefaultHashTableValue(tbl, 0, tbl.length)
+    }
+  }
+    
+  final class RichLinkedHashTableCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, V]]) extends AnyVal {
+    @inline def stepper: AnyStepper[(K,V)] = {
+      val tbl = runtime.CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, V]](underlying)
+      new StepsAnyLinkedHashTable(tbl, 0, tbl.length)
+    }
+  }
+
+  final class RichLinkedHashTableValueCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, V]]) extends AnyVal {
+    @inline def valueStepper: AnyStepper[V] = {
+      val tbl = runtime.CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, V]](underlying)
+      new StepsAnyLinkedHashTableValue(tbl, 0, tbl.length)
+    }
+  }
+  
+  final class RichLinkedHashTableDoubleValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, Double]]) extends AnyVal {
+    @inline def valueStepper: DoubleStepper = {
+      val tbl = runtime.CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, Double]](underlying)
+      new StepsDoubleLinkedHashTableValue(tbl, 0, tbl.length)
+    }
+  }
+
+  final class RichLinkedHashTableIntValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, Int]]) extends AnyVal {
+    @inline def valueStepper: IntStepper = {
+      val tbl = runtime.CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, Int]](underlying)
+      new StepsIntLinkedHashTableValue(tbl, 0, tbl.length)
+    }
+  }
+  
+  final class RichLinkedHashTableLongValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, Long]]) extends AnyVal {
+    @inline def valueStepper: LongStepper = {
+      val tbl = runtime.CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, Long]](underlying)
+      new StepsLongLinkedHashTableValue(tbl, 0, tbl.length)
+    }
+  }
+    
   private[java8] class StepperStringCodePoint(underlying: String, var i0: Int, var iN: Int) extends IntStepper {
     def characteristics() = NonNull
     def estimateSize = iN - i0
@@ -522,16 +734,38 @@ package converterImpls {
     }
   }
 
-  trait Priority5StepConverters {
+  trait Priority7StepConverters {
     implicit def richTraversableOnceCanStep[A](underlying: TraversableOnce[A]) = new RichTraversableOnceCanStep(underlying)
   }
 
-  trait Priority4StepConverters extends Priority5StepConverters {
+  trait Priority6StepConverters extends Priority7StepConverters {
     implicit def richDoubleTraversableOnceCanStep(underlying: TraversableOnce[Double]) = new RichDoubleTraversableOnceCanStep(underlying)
     implicit def richIntTraversableOnceCanStep(underlying: TraversableOnce[Int]) = new RichIntTraversableOnceCanStep(underlying)
     implicit def richLongTraversableOnceCanStep(underlying: TraversableOnce[Long]) = new RichLongTraversableOnceCanStep(underlying)
-    implicit def richLinearSeqCanStep[A, CC[A] >: Null <: collection.LinearSeqLike[A, CC[A]]](underlying: CC[A]) = new RichLinearSeqCanStep[A, CC[A]](underlying)
     implicit def richMapCanStep[K, V](underlying: collection.Map[K, V]) = new RichMapCanStep[K, V](underlying)
+  }
+
+  trait Priority5StepConverters extends Priority6StepConverters {
+    implicit def richDoubleKeyMapCanStep[V](underlying: collection.Map[Double, V]) = new RichDoubleKeyMapCanStep(underlying)
+    implicit def richDoubleValueMapCanStep[K](underlying: collection.Map[K, Double]) = new RichDoubleValueMapCanStep(underlying)
+    implicit def richIntKeyMapCanStep[V](underlying: collection.Map[Int, V]) = new RichIntKeyMapCanStep(underlying)
+    implicit def richIntValueMapCanStep[K](underlying: collection.Map[K, Int]) = new RichIntValueMapCanStep(underlying)
+    implicit def richLongKeyMapCanStep[V](underlying: collection.Map[Long, V]) = new RichLongKeyMapCanStep(underlying)
+    implicit def richLongValueMapCanStep[K](underlying: collection.Map[K, Long]) = new RichLongValueMapCanStep(underlying)        
+  }
+
+  trait Priority4StepConverters extends Priority5StepConverters {
+    implicit def richLinearSeqCanStep[A, CC[A] >: Null <: collection.LinearSeqLike[A, CC[A]]](underlying: CC[A]) = new RichLinearSeqCanStep[A, CC[A]](underlying)
+    implicit def richHashTableKeyCanStep[K, HE >: Null <: collection.mutable.HashEntry[K, HE]](underlying: collection.mutable.HashTable[K, HE]) =
+      new RichHashTableKeyCanStep[K, HE](underlying)
+    implicit def richDefaultHashTableCanStep[K, V](underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, V]]) =
+      new RichDefaultHashTableCanStep[K, V](underlying)
+    implicit def richDefaultHashTableValueCanStep[K, V](underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, V]]) =
+      new RichDefaultHashTableValueCanStep[K, V](underlying)
+    implicit def richLinkedHashTableCanStep[K, V](underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, V]]) =
+      new RichLinkedHashTableCanStep[K, V](underlying)
+    implicit def richLinkedHashTableValueCanStep[K, V](underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, V]]) =
+      new RichLinkedHashTableValueCanStep[K, V](underlying)
   }
   
   trait Priority3StepConverters extends Priority4StepConverters {
@@ -546,12 +780,24 @@ package converterImpls {
     implicit def richLongLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Long, CC]](underlying: CC) = 
       new RichLongLinearSeqCanStep[CC](underlying)
     implicit def richIteratorCanStep[A](underlying: Iterator[A]) = new RichIteratorCanStep(underlying)
-    implicit def richDoubleKeyMapCanStep[V](underlying: collection.Map[Double, V]) = new RichDoubleKeyMapCanStep(underlying)
-    implicit def richDoubleValueMapCanStep[K](underlying: collection.Map[K, Double]) = new RichDoubleValueMapCanStep(underlying)
-    implicit def richIntKeyMapCanStep[V](underlying: collection.Map[Int, V]) = new RichIntKeyMapCanStep(underlying)
-    implicit def richIntValueMapCanStep[K](underlying: collection.Map[K, Int]) = new RichIntValueMapCanStep(underlying)
-    implicit def richLongKeyMapCanStep[V](underlying: collection.Map[Long, V]) = new RichLongKeyMapCanStep(underlying)
-    implicit def richLongValueMapCanStep[K](underlying: collection.Map[K, Long]) = new RichLongValueMapCanStep(underlying)    
+    implicit def richHashTableDoubleKeyCanStep[HE >: Null <: collection.mutable.HashEntry[Double, HE]](underlying: collection.mutable.HashTable[Double, HE]) =
+      new RichHashTableDoubleKeyCanStep[HE](underlying)
+    implicit def richHashTableIntKeyCanStep[HE >: Null <: collection.mutable.HashEntry[Int, HE]](underlying: collection.mutable.HashTable[Int, HE]) =
+      new RichHashTableIntKeyCanStep[HE](underlying)
+    implicit def richHashTableLongKeyCanStep[HE >: Null <: collection.mutable.HashEntry[Long, HE]](underlying: collection.mutable.HashTable[Long, HE]) =
+      new RichHashTableLongKeyCanStep[HE](underlying)
+    implicit def richDefaultHashTableDoubleValueCanStep[K](underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, Double]]) =
+      new RichDefaultHashTableDoubleValueCanStep[K](underlying)
+    implicit def richDefaultHashTableIntValueCanStep[K](underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, Int]]) =
+      new RichDefaultHashTableIntValueCanStep[K](underlying)
+    implicit def richDefaultHashTableLongValueCanStep[K](underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, Long]]) =
+      new RichDefaultHashTableLongValueCanStep[K](underlying)
+    implicit def richLinkedHashTableDoubleValueCanStep[K](underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, Double]]) =
+      new RichLinkedHashTableDoubleValueCanStep[K](underlying)
+    implicit def richLinkedHashTableIntValueCanStep[K](underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, Int]]) =
+      new RichLinkedHashTableIntValueCanStep[K](underlying)
+    implicit def richLinkedHashTableLongValueCanStep[K](underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, Long]]) =
+      new RichLinkedHashTableLongValueCanStep[K](underlying)
   }
   
   trait Priority2StepConverters extends Priority3StepConverters {
