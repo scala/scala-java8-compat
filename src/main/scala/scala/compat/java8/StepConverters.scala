@@ -435,6 +435,114 @@ package converterImpls {
       new StepsLongLinkedHashTableValue[K](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, Long]]]], i0, half)
   }
 
+  private[java8] class StepsAnyImmHashMap[K, V](_underlying: collection.immutable.HashMap[K, V], _i0: Int, _iN: Int)
+  extends StepsLikeImmHashMap[K, V, (K, V), StepsAnyImmHashMap[K, V]](_underlying, _i0, _iN) {
+    protected def demiclone(u: collection.immutable.HashMap[K,V], j0: Int, jN: Int) = new StepsAnyImmHashMap[K, V](u, j0, jN)
+    def next(): (K, V) = 
+      if (hasNext) { 
+        if (theIterator eq null) theIterator = underlying.iterator
+        i += 1
+        theIterator.next
+      }
+      else throwNSEE  
+  }
+
+  private[java8] class StepsAnyImmHashMapKey[K, V](_underlying: collection.immutable.HashMap[K, V], _i0: Int, _iN: Int)
+  extends StepsLikeImmHashMap[K, V, K, StepsAnyImmHashMapKey[K, V]](_underlying, _i0, _iN) {
+    protected def demiclone(u: collection.immutable.HashMap[K,V], j0: Int, jN: Int) = new StepsAnyImmHashMapKey[K, V](u, j0, jN)
+    def next(): K = 
+      if (hasNext) { 
+        if (theIterator eq null) theIterator = underlying.keysIterator
+        i += 1
+        theIterator.next
+      }
+      else throwNSEE  
+  }
+
+  private[java8] class StepsAnyImmHashMapValue[K, V](_underlying: collection.immutable.HashMap[K, V], _i0: Int, _iN: Int)
+  extends StepsLikeImmHashMap[K, V, V, StepsAnyImmHashMapValue[K, V]](_underlying, _i0, _iN) {
+    protected def demiclone(u: collection.immutable.HashMap[K,V], j0: Int, jN: Int) = new StepsAnyImmHashMapValue[K, V](u, j0, jN)
+    def next(): V = 
+      if (hasNext) { 
+        if (theIterator eq null) theIterator = underlying.valuesIterator
+        i += 1
+        theIterator.next
+      }
+      else throwNSEE  
+  }
+
+  private[java8] class StepsDoubleImmHashMapKey[V](_underlying: collection.immutable.HashMap[Double, V], _i0: Int, _iN: Int)
+  extends StepsDoubleLikeImmHashMap[Double, V, StepsDoubleImmHashMapKey[V]](_underlying, _i0, _iN) {
+    protected def demiclone(u: collection.immutable.HashMap[Double,V], j0: Int, jN: Int) = new StepsDoubleImmHashMapKey[V](u, j0, jN)
+    def nextDouble() = 
+      if (hasNext) { 
+        if (theIterator eq null) theIterator = underlying.keysIterator
+        i += 1
+        theIterator.next
+      }
+      else throwNSEE  
+  }
+
+  private[java8] class StepsDoubleImmHashMapValue[K](_underlying: collection.immutable.HashMap[K, Double], _i0: Int, _iN: Int)
+  extends StepsDoubleLikeImmHashMap[K, Double, StepsDoubleImmHashMapValue[K]](_underlying, _i0, _iN) {
+    protected def demiclone(u: collection.immutable.HashMap[K,Double], j0: Int, jN: Int) = new StepsDoubleImmHashMapValue[K](u, j0, jN)
+    def nextDouble() = 
+      if (hasNext) { 
+        if (theIterator eq null) theIterator = underlying.valuesIterator
+        i += 1
+        theIterator.next
+      }
+      else throwNSEE  
+  }
+
+  private[java8] class StepsIntImmHashMapKey[V](_underlying: collection.immutable.HashMap[Int, V], _i0: Int, _iN: Int)
+  extends StepsIntLikeImmHashMap[Int, V, StepsIntImmHashMapKey[V]](_underlying, _i0, _iN) {
+    protected def demiclone(u: collection.immutable.HashMap[Int,V], j0: Int, jN: Int) = new StepsIntImmHashMapKey[V](u, j0, jN)
+    def nextInt() = 
+      if (hasNext) { 
+        if (theIterator eq null) theIterator = underlying.keysIterator
+        i += 1
+        theIterator.next
+      }
+      else throwNSEE  
+  }
+
+  private[java8] class StepsIntImmHashMapValue[K](_underlying: collection.immutable.HashMap[K, Int], _i0: Int, _iN: Int)
+  extends StepsIntLikeImmHashMap[K, Int, StepsIntImmHashMapValue[K]](_underlying, _i0, _iN) {
+    protected def demiclone(u: collection.immutable.HashMap[K,Int], j0: Int, jN: Int) = new StepsIntImmHashMapValue[K](u, j0, jN)
+    def nextInt() = 
+      if (hasNext) { 
+        if (theIterator eq null) theIterator = underlying.valuesIterator
+        i += 1
+        theIterator.next
+      }
+      else throwNSEE  
+  }
+
+  private[java8] class StepsLongImmHashMapKey[V](_underlying: collection.immutable.HashMap[Long, V], _i0: Int, _iN: Int)
+  extends StepsLongLikeImmHashMap[Long, V, StepsLongImmHashMapKey[V]](_underlying, _i0, _iN) {
+    protected def demiclone(u: collection.immutable.HashMap[Long,V], j0: Int, jN: Int) = new StepsLongImmHashMapKey[V](u, j0, jN)
+    def nextLong() = 
+      if (hasNext) { 
+        if (theIterator eq null) theIterator = underlying.keysIterator
+        i += 1
+        theIterator.next
+      }
+      else throwNSEE  
+  }
+
+  private[java8] class StepsLongImmHashMapValue[K](_underlying: collection.immutable.HashMap[K, Long], _i0: Int, _iN: Int)
+  extends StepsLongLikeImmHashMap[K, Long, StepsLongImmHashMapValue[K]](_underlying, _i0, _iN) {
+    protected def demiclone(u: collection.immutable.HashMap[K,Long], j0: Int, jN: Int) = new StepsLongImmHashMapValue[K](u, j0, jN)
+    def nextLong() = 
+      if (hasNext) { 
+        if (theIterator eq null) theIterator = underlying.valuesIterator
+        i += 1
+        theIterator.next
+      }
+      else throwNSEE  
+  }
+
   final class RichArrayAnyCanStep[A](private val underlying: Array[A]) extends AnyVal {
     @inline def stepper: AnyStepper[A] = new StepsAnyArray[A](underlying, 0, underlying.length)
   }
@@ -648,6 +756,36 @@ package converterImpls {
       new StepsLongLinkedHashTableValue(tbl, 0, tbl.length)
     }
   }
+
+  final class RichImmHashMapCanStep[K, V](private val underlying: collection.immutable.HashMap[K, V]) extends AnyVal {
+    @inline def stepper: AnyStepper[(K, V)] = new StepsAnyImmHashMap[K, V](underlying, 0, underlying.size)
+    @inline def keyStepper: AnyStepper[K] = new StepsAnyImmHashMapKey[K, V](underlying, 0, underlying.size)
+    @inline def valueStepper: AnyStepper[V] = new StepsAnyImmHashMapValue[K, V](underlying, 0, underlying.size)
+  }
+
+  final class RichImmHashMapDoubleKeyCanStep[V](private val underlying: collection.immutable.HashMap[Double, V]) extends AnyVal {
+    @inline def keyStepper: DoubleStepper = new StepsDoubleImmHashMapKey[V](underlying, 0, underlying.size)
+  }
+
+  final class RichImmHashMapDoubleValueCanStep[K](private val underlying: collection.immutable.HashMap[K, Double]) extends AnyVal {
+    @inline def valueStepper: DoubleStepper = new StepsDoubleImmHashMapValue[K](underlying, 0, underlying.size)
+  }
+    
+  final class RichImmHashMapIntKeyCanStep[V](private val underlying: collection.immutable.HashMap[Int, V]) extends AnyVal {
+    @inline def keyStepper: IntStepper = new StepsIntImmHashMapKey[V](underlying, 0, underlying.size)
+  }
+
+  final class RichImmHashMapIntValueCanStep[K](private val underlying: collection.immutable.HashMap[K, Int]) extends AnyVal {
+    @inline def valueStepper: IntStepper = new StepsIntImmHashMapValue[K](underlying, 0, underlying.size)
+  }
+    
+  final class RichImmHashMapLongKeyCanStep[V](private val underlying: collection.immutable.HashMap[Long, V]) extends AnyVal {
+    @inline def keyStepper: LongStepper = new StepsLongImmHashMapKey[V](underlying, 0, underlying.size)
+  }
+
+  final class RichImmHashMapLongValueCanStep[K](private val underlying: collection.immutable.HashMap[K, Long]) extends AnyVal {
+    @inline def valueStepper: LongStepper = new StepsLongImmHashMapValue[K](underlying, 0, underlying.size)
+  }
     
   private[java8] class StepperStringCodePoint(underlying: String, var i0: Int, var iN: Int) extends IntStepper {
     def characteristics() = NonNull
@@ -798,6 +936,8 @@ package converterImpls {
       new RichLinkedHashTableIntValueCanStep[K](underlying)
     implicit def richLinkedHashTableLongValueCanStep[K](underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, Long]]) =
       new RichLinkedHashTableLongValueCanStep[K](underlying)
+
+    implicit def richImmHashMapCanStep[K, V](underlying: collection.immutable.HashMap[K, V]) = new RichImmHashMapCanStep[K, V](underlying)
   }
   
   trait Priority2StepConverters extends Priority3StepConverters {
@@ -822,6 +962,13 @@ package converterImpls {
     implicit def richDoubleIteratorCanStep(underlying: Iterator[Double]) = new RichDoubleIteratorCanStep(underlying)
     implicit def richIntIteratorCanStep(underlying: Iterator[Int]) = new RichIntIteratorCanStep(underlying)
     implicit def richLongIteratorCanStep(underlying: Iterator[Long]) = new RichLongIteratorCanStep(underlying)
+
+    implicit def richImmHashMapDoubleKeyCanStep[V](underlying: collection.immutable.HashMap[Double, V]) = new RichImmHashMapDoubleKeyCanStep(underlying)
+    implicit def richImmHashMapDoubleValueCanStep[K](underlying: collection.immutable.HashMap[K, Double]) = new RichImmHashMapDoubleValueCanStep(underlying)
+    implicit def richImmHashMapIntKeyCanStep[V](underlying: collection.immutable.HashMap[Int, V]) = new RichImmHashMapIntKeyCanStep(underlying)
+    implicit def richImmHashMapIntValueCanStep[K](underlying: collection.immutable.HashMap[K, Int]) = new RichImmHashMapIntValueCanStep(underlying)
+    implicit def richImmHashMapLongKeyCanStep[V](underlying: collection.immutable.HashMap[Long, V]) = new RichImmHashMapLongKeyCanStep(underlying)
+    implicit def richImmHashMapLongValueCanStep[K](underlying: collection.immutable.HashMap[K, Long]) = new RichImmHashMapLongValueCanStep(underlying)
   }
 }
 
