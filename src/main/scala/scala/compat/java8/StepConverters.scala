@@ -543,6 +543,68 @@ package converterImpls {
       else throwNSEE  
   }
 
+  private[java8] class StepsAnyImmHashSet[A](_underlying: Iterator[A], _N: Int)
+  extends StepsLikeTrieIterator[A, StepsAnyImmHashSet[A]](_underlying, _N) {
+    protected def demiclone(it: Iterator[A], N: Int) = new StepsAnyImmHashSet(it, N)
+    def next(): A = { val ans = underlying.next; i += 1; ans }
+  }
+
+  private[java8] class StepsDoubleImmHashSet(_underlying: Iterator[Double], _N: Int)
+  extends StepsDoubleLikeTrieIterator[StepsDoubleImmHashSet](_underlying, _N) {
+    protected def demiclone(it: Iterator[Double], N: Int) = new StepsDoubleImmHashSet(it, N)
+    def nextDouble() = { val ans = underlying.next; i += 1; ans }
+  }
+
+  private[java8] class StepsIntImmHashSet(_underlying: Iterator[Int], _N: Int)
+  extends StepsIntLikeTrieIterator[StepsIntImmHashSet](_underlying, _N) {
+    protected def demiclone(it: Iterator[Int], N: Int) = new StepsIntImmHashSet(it, N)
+    def nextInt() = { val ans = underlying.next; i += 1; ans }
+  }
+
+  private[java8] class StepsLongImmHashSet(_underlying: Iterator[Long], _N: Int)
+  extends StepsLongLikeTrieIterator[StepsLongImmHashSet](_underlying, _N) {
+    protected def demiclone(it: Iterator[Long], N: Int) = new StepsLongImmHashSet(it, N)
+    def nextLong() = { val ans = underlying.next; i += 1; ans }
+  }
+
+  private[java8] class StepsIntBitSet(_underlying: Array[Long], _i0: Int, _iN: Int)
+  extends StepsIntLikeSliced[Array[Long], StepsIntBitSet](_underlying, _i0, _iN) {
+    private var mask: Long = (-1L) << (i & 0x3F)
+    private var cache: Long = underlying(i >>> 6)
+    private var found: Boolean = false
+    def semiclone(half: Int) = {
+      val ans = new StepsIntBitSet(underlying, i, half)
+      i = half
+      mask = (-1L) << (i & 0x3F)
+      cache = underlying(i >>> 6)
+      found = false
+      ans
+    }
+    def hasNext(): Boolean = found || ((i < iN) && {
+      while ((mask & cache) == 0) {
+        i += java.lang.Long.numberOfLeadingZeros(~mask)
+        if (i < 0 || i >= iN) { i = iN; return false }
+        mask = -1L
+        cache = underlying(i >>> 6)
+      }
+      var m = mask << 1
+      while ((mask & cache) == (m & cache)) {
+        mask = m
+        m = mask << 1
+        i += 1
+      }
+      if (i < 0 || i >= iN) {
+        i = iN
+        false
+      }
+      else {
+        found = true
+        true
+      }
+    })
+    def nextInt() = if (hasNext) { val j = i; found = false; mask = mask << 1; i += 1; j } else throwNSEE
+  }
+
   final class RichArrayAnyCanStep[A](private val underlying: Array[A]) extends AnyVal {
     @inline def stepper: AnyStepper[A] = new StepsAnyArray[A](underlying, 0, underlying.length)
   }
@@ -787,6 +849,25 @@ package converterImpls {
     @inline def valueStepper: LongStepper = new StepsLongImmHashMapValue[K](underlying, 0, underlying.size)
   }
     
+  final class RichImmHashSetCanStep[A](private val underlying: collection.immutable.HashSet[A]) extends AnyVal {
+    @inline def stepper: AnyStepper[A] = new StepsAnyImmHashSet(underlying.iterator, underlying.size)
+  }
+
+  final class RichBitSetCanStep(private val underlying: collection.BitSet) extends AnyVal {
+    def stepper: IntStepper = {
+      val bits: Array[Long] = underlying match {
+        case m: collection.mutable.BitSet => runtime.CollectionInternals.getBitSetInternals(m)
+        case n: collection.immutable.BitSet.BitSetN => RichBitSetCanStep.reflectInternalsN(n)
+        case x => x.toBitMask
+      }
+      new StepsIntBitSet(bits, 0, math.min(bits.length*64L, Int.MaxValue).toInt)
+    }
+  }
+  private[java8] object RichBitSetCanStep {
+    private val reflector = classOf[collection.immutable.BitSet.BitSetN].getMethod("elems")
+    def reflectInternalsN(bsn: collection.immutable.BitSet.BitSetN): Array[Long] = reflector.invoke(bsn).asInstanceOf[Array[Long]]
+  }
+
   private[java8] class StepperStringCodePoint(underlying: String, var i0: Int, var iN: Int) extends IntStepper {
     def characteristics() = NonNull
     def estimateSize = iN - i0
@@ -938,6 +1019,7 @@ package converterImpls {
       new RichLinkedHashTableLongValueCanStep[K](underlying)
 
     implicit def richImmHashMapCanStep[K, V](underlying: collection.immutable.HashMap[K, V]) = new RichImmHashMapCanStep[K, V](underlying)
+    implicit def richImmHashSetCanStep[A](underlying: collection.immutable.HashSet[A]) = new RichImmHashSetCanStep[A](underlying)
   }
   
   trait Priority2StepConverters extends Priority3StepConverters {
@@ -969,6 +1051,8 @@ package converterImpls {
     implicit def richImmHashMapIntValueCanStep[K](underlying: collection.immutable.HashMap[K, Int]) = new RichImmHashMapIntValueCanStep(underlying)
     implicit def richImmHashMapLongKeyCanStep[V](underlying: collection.immutable.HashMap[Long, V]) = new RichImmHashMapLongKeyCanStep(underlying)
     implicit def richImmHashMapLongValueCanStep[K](underlying: collection.immutable.HashMap[K, Long]) = new RichImmHashMapLongValueCanStep(underlying)
+
+    implicit def richBitSetCanStep(underlying: collection.BitSet) = new RichBitSetCanStep(underlying)
   }
 }
 
@@ -992,15 +1076,15 @@ object StepConverters extends converterImpls.Priority2StepConverters {
     @inline def stepper: DoubleStepper = new StepsDoubleVector(underlying, 0, underlying.length)
   }
 
-  implicit final class RichIntNumericRangeCanStep(private val underlying: collection.immutable.NumericRange[Int]) extends AnyVal {
+  implicit class RichIntNumericRangeCanStep(private val underlying: collection.immutable.NumericRange[Int]) extends AnyVal {
     @inline def stepper: IntStepper = new StepsIntNumericRange(underlying, 0, underlying.length)
   }
 
-  implicit final class RichLongNumericRangeCanStep(private val underlying: collection.immutable.NumericRange[Long]) extends AnyVal {
+  implicit class RichLongNumericRangeCanStep(private val underlying: collection.immutable.NumericRange[Long]) extends AnyVal {
     @inline def stepper: LongStepper = new StepsLongNumericRange(underlying, 0, underlying.length)
   }
 
-  implicit final class RichRangeCanStep(private val underlying: Range) extends AnyVal {
+  implicit class RichRangeCanStep(private val underlying: Range) extends AnyVal {
     @inline def stepper: IntStepper = new StepsIntRange(underlying, 0, underlying.length)
   }  
 
@@ -1010,6 +1094,18 @@ object StepConverters extends converterImpls.Priority2StepConverters {
 
   implicit class RichLongVectorCanStep[A](private val underlying: Vector[Long]) extends AnyVal {
     @inline def stepper: LongStepper = new StepsLongVector(underlying, 0, underlying.length)
+  }
+
+  implicit class RichDoubleHashSetCanStep(private val underlying: collection.immutable.HashSet[Double]) extends AnyVal {
+    @inline def stepper: DoubleStepper = new StepsDoubleImmHashSet(underlying.iterator, underlying.size)
+  }
+
+  implicit class RichIntHashSetCanStep(private val underlying: collection.immutable.HashSet[Int]) extends AnyVal {
+    @inline def stepper: IntStepper = new StepsIntImmHashSet(underlying.iterator, underlying.size)
+  }
+
+  implicit class RichLongHashSetCanStep(private val underlying: collection.immutable.HashSet[Long]) extends AnyVal {
+    @inline def stepper: LongStepper = new StepsLongImmHashSet(underlying.iterator, underlying.size)
   }
 
   implicit class RichStringCanStep(val underlying: String) extends AnyVal {
