@@ -35,7 +35,8 @@ abstract class AbstractStepsLikeGapped[Sub >: Null, Semi <: Sub](protected val u
   */
 abstract class StepsLikeGapped[A, STA >: Null <: StepsLikeGapped[A, _]](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
   extends AbstractStepsLikeGapped[AnyStepper[A], STA](_underlying, _i0, _iN)
-  with AnyStepper[A] 
+  with AnyStepper[A]
+  with EfficientSubstep
 {}
 
 /** Abstracts the process of stepping through an incompletely filled array of `AnyRefs`
@@ -44,7 +45,8 @@ abstract class StepsLikeGapped[A, STA >: Null <: StepsLikeGapped[A, _]](_underly
   */
 abstract class StepsDoubleLikeGapped[STD >: Null <: StepsDoubleLikeGapped[_]](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
   extends AbstractStepsLikeGapped[DoubleStepper, STD](_underlying, _i0, _iN)
-  with DoubleStepper 
+  with DoubleStepper
+  with EfficientSubstep
 {}
 
 /** Abstracts the process of stepping through an incompletely filled array of `AnyRefs`
@@ -53,7 +55,8 @@ abstract class StepsDoubleLikeGapped[STD >: Null <: StepsDoubleLikeGapped[_]](_u
   */
 abstract class StepsIntLikeGapped[STI >: Null <: StepsIntLikeGapped[_]](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
   extends AbstractStepsLikeGapped[IntStepper, STI](_underlying, _i0, _iN)
-  with IntStepper 
+  with IntStepper
+  with EfficientSubstep
 {}
 
 /** Abstracts the process of stepping through an incompletely filled array of `AnyRefs`
@@ -63,4 +66,5 @@ abstract class StepsIntLikeGapped[STI >: Null <: StepsIntLikeGapped[_]](_underly
 abstract class StepsLongLikeGapped[STL >: Null <: StepsLongLikeGapped[_]](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
   extends AbstractStepsLikeGapped[LongStepper, STL](_underlying, _i0, _iN)
   with LongStepper 
+  with EfficientSubstep
 {}

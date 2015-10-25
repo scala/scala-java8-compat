@@ -7,6 +7,54 @@ import scala.compat.java8.runtime._
 
 package converterImpls {
   import Stepper._
+
+  trait MakesAnyStepper[A] extends Any {
+    def stepper: AnyStepper[A] with EfficientSubstep
+  }
+
+  trait MakesAnyKeyStepper[A] extends Any {
+    def keyStepper: AnyStepper[A] with EfficientSubstep
+  }
+
+  trait MakesAnyValueStepper[A] extends Any {
+    def valueStepper: AnyStepper[A] with EfficientSubstep
+  }
+
+  trait MakesDoubleStepper extends Any {
+    def stepper: DoubleStepper with EfficientSubstep
+  }
+
+  trait MakesDoubleKeyStepper extends Any {
+    def keyStepper: DoubleStepper with EfficientSubstep
+  }
+
+  trait MakesDoubleValueStepper extends Any {
+    def valueStepper: DoubleStepper with EfficientSubstep
+  }
+
+  trait MakesIntStepper extends Any {
+    def stepper: IntStepper with EfficientSubstep
+  }
+
+  trait MakesIntKeyStepper extends Any {
+    def keyStepper: IntStepper with EfficientSubstep
+  }
+
+  trait MakesIntValueStepper extends Any {
+    def valueStepper: IntStepper with EfficientSubstep
+  }
+
+  trait MakesLongStepper extends Any {
+    def stepper: LongStepper with EfficientSubstep
+  }
+
+  trait MakesLongKeyStepper extends Any {
+    def keyStepper: LongStepper with EfficientSubstep
+  }
+
+  trait MakesLongValueStepper extends Any {
+    def valueStepper: LongStepper with EfficientSubstep
+  }
     
   private[java8] class StepsObjectArray[A <: Object](underlying: Array[A], _i0: Int, _iN: Int)
   extends StepsLikeIndexed[A, StepsObjectArray[A]](_i0, _iN) {
@@ -605,52 +653,52 @@ package converterImpls {
     def nextInt() = if (hasNext) { val j = i; found = false; mask = mask << 1; i += 1; j } else throwNSEE
   }
 
-  final class RichArrayAnyCanStep[A](private val underlying: Array[A]) extends AnyVal {
-    @inline def stepper: AnyStepper[A] = new StepsAnyArray[A](underlying, 0, underlying.length)
+  final class RichArrayAnyCanStep[A](private val underlying: Array[A]) extends AnyVal with MakesAnyStepper[A] {
+    @inline def stepper: AnyStepper[A] with EfficientSubstep = new StepsAnyArray[A](underlying, 0, underlying.length)
   }
   
-  final class RichArrayObjectCanStep[A <: Object](private val underlying: Array[A]) extends AnyVal{
-    @inline def stepper: AnyStepper[A] = new StepsObjectArray[A](underlying, 0, underlying.length)
+  final class RichArrayObjectCanStep[A <: Object](private val underlying: Array[A]) extends AnyVal with MakesAnyStepper[A] {
+    @inline def stepper: AnyStepper[A] with EfficientSubstep = new StepsObjectArray[A](underlying, 0, underlying.length)
   }
   
-  final class RichArrayUnitCanStep(private val underlying: Array[Unit]) extends AnyVal{
-    @inline def stepper: AnyStepper[Unit] = new StepsUnitArray(underlying, 0, underlying.length)
+  final class RichArrayUnitCanStep(private val underlying: Array[Unit]) extends AnyVal with MakesAnyStepper[Unit] {
+    @inline def stepper: AnyStepper[Unit] with EfficientSubstep = new StepsUnitArray(underlying, 0, underlying.length)
   }
   
-  final class RichArrayBooleanCanStep(private val underlying: Array[Boolean]) extends AnyVal{
-    @inline def stepper: AnyStepper[Boolean] = new StepsBoxedBooleanArray(underlying, 0, underlying.length)
+  final class RichArrayBooleanCanStep(private val underlying: Array[Boolean]) extends AnyVal with MakesAnyStepper[Boolean] {
+    @inline def stepper: AnyStepper[Boolean] with EfficientSubstep = new StepsBoxedBooleanArray(underlying, 0, underlying.length)
   }
   
-  final class RichArrayByteCanStep(private val underlying: Array[Byte]) extends AnyVal{
-    @inline def stepper: AnyStepper[Byte] = new StepsBoxedByteArray(underlying, 0, underlying.length)
+  final class RichArrayByteCanStep(private val underlying: Array[Byte]) extends AnyVal with MakesAnyStepper[Byte] {
+    @inline def stepper: AnyStepper[Byte] with EfficientSubstep = new StepsBoxedByteArray(underlying, 0, underlying.length)
   }
   
-  final class RichArrayCharCanStep(private val underlying: Array[Char]) extends AnyVal {
-    @inline def stepper: AnyStepper[Char] = new StepsBoxedCharArray(underlying, 0, underlying.length)
+  final class RichArrayCharCanStep(private val underlying: Array[Char]) extends AnyVal with MakesAnyStepper[Char] {
+    @inline def stepper: AnyStepper[Char] with EfficientSubstep = new StepsBoxedCharArray(underlying, 0, underlying.length)
   }
   
-  final class RichArrayShortCanStep(private val underlying: Array[Short]) extends AnyVal{
-    @inline def stepper: AnyStepper[Short] = new StepsBoxedShortArray(underlying, 0, underlying.length)
+  final class RichArrayShortCanStep(private val underlying: Array[Short]) extends AnyVal with MakesAnyStepper[Short] {
+    @inline def stepper: AnyStepper[Short] with EfficientSubstep = new StepsBoxedShortArray(underlying, 0, underlying.length)
   }
   
-  final class RichArrayFloatCanStep(private val underlying: Array[Float]) extends AnyVal {
-    @inline def stepper: AnyStepper[Float] = new StepsBoxedFloatArray(underlying, 0, underlying.length)
+  final class RichArrayFloatCanStep(private val underlying: Array[Float]) extends AnyVal with MakesAnyStepper[Float] {
+    @inline def stepper: AnyStepper[Float] with EfficientSubstep = new StepsBoxedFloatArray(underlying, 0, underlying.length)
   }
 
-  final class RichIndexedSeqCanStep[A](private val underlying: collection.IndexedSeqLike[A, _]) extends AnyVal {
-    @inline def stepper: AnyStepper[A] = new StepsAnyIndexedSeq[A](underlying, 0, underlying.length)
+  final class RichIndexedSeqCanStep[A](private val underlying: collection.IndexedSeqLike[A, _]) extends AnyVal with MakesAnyStepper[A] {
+    @inline def stepper: AnyStepper[A] with EfficientSubstep = new StepsAnyIndexedSeq[A](underlying, 0, underlying.length)
   }
   
-  final class RichDoubleIndexedSeqCanStep[CC <: collection.IndexedSeqLike[Double, _]](private val underlying: CC) extends AnyVal {
-    @inline def stepper: DoubleStepper = new StepsDoubleIndexedSeq[CC](underlying, 0, underlying.length)
+  final class RichDoubleIndexedSeqCanStep[CC <: collection.IndexedSeqLike[Double, _]](private val underlying: CC) extends AnyVal with MakesDoubleStepper {
+    @inline def stepper: DoubleStepper with EfficientSubstep = new StepsDoubleIndexedSeq[CC](underlying, 0, underlying.length)
   }
   
-  final class RichIntIndexedSeqCanStep[CC <: collection.IndexedSeqLike[Int, _]](private val underlying: CC) extends AnyVal {
-    @inline def stepper: IntStepper = new StepsIntIndexedSeq[CC](underlying, 0, underlying.length)
+  final class RichIntIndexedSeqCanStep[CC <: collection.IndexedSeqLike[Int, _]](private val underlying: CC) extends AnyVal with MakesIntStepper {
+    @inline def stepper: IntStepper with EfficientSubstep = new StepsIntIndexedSeq[CC](underlying, 0, underlying.length)
   }
   
-  final class RichLongIndexedSeqCanStep[CC <: collection.IndexedSeqLike[Long, _]](private val underlying: CC) extends AnyVal {
-    @inline def stepper: LongStepper = new StepsLongIndexedSeq[CC](underlying, 0, underlying.length)
+  final class RichLongIndexedSeqCanStep[CC <: collection.IndexedSeqLike[Long, _]](private val underlying: CC) extends AnyVal with MakesLongStepper {
+    @inline def stepper: LongStepper with EfficientSubstep = new StepsLongIndexedSeq[CC](underlying, 0, underlying.length)
   }
 
   final class RichLinearSeqCanStep[A, CC >: Null <: collection.LinearSeqLike[A, CC]](private val underlying: CC) extends AnyVal {
@@ -685,176 +733,191 @@ package converterImpls {
     @inline def stepper: LongStepper = new StepsLongIterator(underlying)
   }
 
-  final class RichNumericRangeCanStep[T](private val underlying: collection.immutable.NumericRange[T]) extends AnyVal {
-    @inline def stepper: AnyStepper[T] = new StepsAnyNumericRange[T](underlying, 0, underlying.length)
+  final class RichNumericRangeCanStep[T](private val underlying: collection.immutable.NumericRange[T]) extends AnyVal with MakesAnyStepper[T] {
+    @inline def stepper: AnyStepper[T] with EfficientSubstep = new StepsAnyNumericRange[T](underlying, 0, underlying.length)
   }
 
-  final class RichVectorCanStep[A](private val underlying: Vector[A]) extends AnyVal {
-    @inline def stepper: AnyStepper[A] = new StepsAnyVector[A](underlying, 0, underlying.length)
+  final class RichVectorCanStep[A](private val underlying: Vector[A]) extends AnyVal with MakesAnyStepper[A] {
+    @inline def stepper: AnyStepper[A] with EfficientSubstep = new StepsAnyVector[A](underlying, 0, underlying.length)
   }
 
-  final class RichFlatHashTableCanStep[A](private val underlying: collection.mutable.FlatHashTable[A]) extends AnyVal {
-    @inline def stepper: AnyStepper[A] = {
+  final class RichFlatHashTableCanStep[A](private val underlying: collection.mutable.FlatHashTable[A]) extends AnyVal with MakesAnyStepper[A] {
+    @inline def stepper: AnyStepper[A] with EfficientSubstep = {
       val tbl = runtime.CollectionInternals.getTable(underlying)
       new StepsAnyFlatHashTable(tbl, 0, tbl.length)
     }
   }
   
-  final class RichDoubleFlatHashTableCanStep(private val underlying: collection.mutable.FlatHashTable[Double]) extends AnyVal {
-    @inline def stepper: DoubleStepper = {
+  final class RichDoubleFlatHashTableCanStep(private val underlying: collection.mutable.FlatHashTable[Double]) extends AnyVal with MakesDoubleStepper {
+    @inline def stepper: DoubleStepper with EfficientSubstep = {
       val tbl = runtime.CollectionInternals.getTable(underlying)
       new StepsDoubleFlatHashTable(tbl, 0, tbl.length)
     }
   }
   
-  final class RichIntFlatHashTableCanStep(private val underlying: collection.mutable.FlatHashTable[Int]) extends AnyVal {
-    @inline def stepper: IntStepper = {
+  final class RichIntFlatHashTableCanStep(private val underlying: collection.mutable.FlatHashTable[Int]) extends AnyVal with MakesIntStepper {
+    @inline def stepper: IntStepper with EfficientSubstep = {
       val tbl = runtime.CollectionInternals.getTable(underlying)
       new StepsIntFlatHashTable(tbl, 0, tbl.length)
     }
   }
   
-  final class RichLongFlatHashTableCanStep(private val underlying: collection.mutable.FlatHashTable[Long]) extends AnyVal {
-    @inline def stepper: LongStepper = {
+  final class RichLongFlatHashTableCanStep(private val underlying: collection.mutable.FlatHashTable[Long]) extends AnyVal with MakesLongStepper {
+    @inline def stepper: LongStepper with EfficientSubstep = {
       val tbl = runtime.CollectionInternals.getTable(underlying)
       new StepsLongFlatHashTable(tbl, 0, tbl.length)
     }
   }
 
-  final class RichHashTableKeyCanStep[K, HE >: Null <: collection.mutable.HashEntry[K, HE]](private val underlying: collection.mutable.HashTable[K, HE]) extends AnyVal {
-    @inline def keyStepper: AnyStepper[K] = {
+  final class RichHashTableKeyCanStep[K, HE >: Null <: collection.mutable.HashEntry[K, HE]](private val underlying: collection.mutable.HashTable[K, HE])
+  extends AnyVal with MakesAnyKeyStepper[K] {
+    @inline def keyStepper: AnyStepper[K] with EfficientSubstep = {
       val tbl = runtime.CollectionInternals.getTable[K, HE](underlying)
       new StepsAnyHashTableKey(tbl, 0, tbl.length)
     }
   }
 
-  final class RichHashTableDoubleKeyCanStep[HE >: Null <: collection.mutable.HashEntry[Double, HE]](private val underlying: collection.mutable.HashTable[Double, HE]) extends AnyVal {
-    @inline def keyStepper: DoubleStepper = {
+  final class RichHashTableDoubleKeyCanStep[HE >: Null <: collection.mutable.HashEntry[Double, HE]](private val underlying: collection.mutable.HashTable[Double, HE])
+  extends AnyVal with MakesDoubleKeyStepper {
+    @inline def keyStepper: DoubleStepper with EfficientSubstep = {
       val tbl = runtime.CollectionInternals.getTable[Double, HE](underlying)
       new StepsDoubleHashTableKey(tbl, 0, tbl.length)
     }
   }
 
-  final class RichHashTableIntKeyCanStep[HE >: Null <: collection.mutable.HashEntry[Int, HE]](private val underlying: collection.mutable.HashTable[Int, HE]) extends AnyVal {
-    @inline def keyStepper: IntStepper = {
+  final class RichHashTableIntKeyCanStep[HE >: Null <: collection.mutable.HashEntry[Int, HE]](private val underlying: collection.mutable.HashTable[Int, HE])
+  extends AnyVal with MakesIntKeyStepper {
+    @inline def keyStepper: IntStepper with EfficientSubstep = {
       val tbl = runtime.CollectionInternals.getTable[Int, HE](underlying)
       new StepsIntHashTableKey(tbl, 0, tbl.length)
     }
   }
 
-  final class RichHashTableLongKeyCanStep[HE >: Null <: collection.mutable.HashEntry[Long, HE]](private val underlying: collection.mutable.HashTable[Long, HE]) extends AnyVal {
-    @inline def keyStepper: LongStepper = {
+  final class RichHashTableLongKeyCanStep[HE >: Null <: collection.mutable.HashEntry[Long, HE]](private val underlying: collection.mutable.HashTable[Long, HE])
+  extends AnyVal with MakesLongKeyStepper {
+    @inline def keyStepper: LongStepper with EfficientSubstep = {
       val tbl = runtime.CollectionInternals.getTable[Long, HE](underlying)
       new StepsLongHashTableKey(tbl, 0, tbl.length)
     }
   }
 
-  final class RichDefaultHashTableCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, V]]) extends AnyVal {
-    @inline def stepper: AnyStepper[(K,V)] = {
+  final class RichDefaultHashTableCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, V]])
+  extends AnyVal with MakesAnyStepper[(K, V)] {
+    @inline def stepper: AnyStepper[(K,V)] with EfficientSubstep = {
       val tbl = runtime.CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, V]](underlying)
       new StepsAnyDefaultHashTable(tbl, 0, tbl.length)
     }
   }
 
-  final class RichDefaultHashTableValueCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, V]]) extends AnyVal {
-    @inline def valueStepper: AnyStepper[V] = {
+  final class RichDefaultHashTableValueCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, V]])
+  extends AnyVal with MakesAnyValueStepper[V] {
+    @inline def valueStepper: AnyStepper[V] with EfficientSubstep = {
       val tbl = runtime.CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, V]](underlying)
       new StepsAnyDefaultHashTableValue(tbl, 0, tbl.length)
     }
   }
   
-  final class RichDefaultHashTableDoubleValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, Double]]) extends AnyVal {
-    @inline def valueStepper: DoubleStepper = {
+  final class RichDefaultHashTableDoubleValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, Double]])
+  extends AnyVal with MakesDoubleValueStepper {
+    @inline def valueStepper: DoubleStepper with EfficientSubstep = {
       val tbl = runtime.CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, Double]](underlying)
       new StepsDoubleDefaultHashTableValue(tbl, 0, tbl.length)
     }
   }
 
-  final class RichDefaultHashTableIntValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, Int]]) extends AnyVal {
-    @inline def valueStepper: IntStepper = {
+  final class RichDefaultHashTableIntValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, Int]])
+  extends AnyVal with MakesIntValueStepper {
+    @inline def valueStepper: IntStepper with EfficientSubstep = {
       val tbl = runtime.CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, Int]](underlying)
       new StepsIntDefaultHashTableValue(tbl, 0, tbl.length)
     }
   }
   
-  final class RichDefaultHashTableLongValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, Long]]) extends AnyVal {
-    @inline def valueStepper: LongStepper = {
+  final class RichDefaultHashTableLongValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, Long]])
+  extends AnyVal with MakesLongValueStepper {
+    @inline def valueStepper: LongStepper with EfficientSubstep = {
       val tbl = runtime.CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, Long]](underlying)
       new StepsLongDefaultHashTableValue(tbl, 0, tbl.length)
     }
   }
     
-  final class RichLinkedHashTableCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, V]]) extends AnyVal {
-    @inline def stepper: AnyStepper[(K,V)] = {
+  final class RichLinkedHashTableCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, V]])
+  extends AnyVal with MakesAnyStepper[(K,V)] {
+    @inline def stepper: AnyStepper[(K,V)] with EfficientSubstep = {
       val tbl = runtime.CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, V]](underlying)
       new StepsAnyLinkedHashTable(tbl, 0, tbl.length)
     }
   }
 
-  final class RichLinkedHashTableValueCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, V]]) extends AnyVal {
-    @inline def valueStepper: AnyStepper[V] = {
+  final class RichLinkedHashTableValueCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, V]])
+  extends AnyVal with MakesAnyValueStepper[V] {
+    @inline def valueStepper: AnyStepper[V] with EfficientSubstep = {
       val tbl = runtime.CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, V]](underlying)
       new StepsAnyLinkedHashTableValue(tbl, 0, tbl.length)
     }
   }
   
-  final class RichLinkedHashTableDoubleValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, Double]]) extends AnyVal {
-    @inline def valueStepper: DoubleStepper = {
+  final class RichLinkedHashTableDoubleValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, Double]])
+  extends AnyVal with MakesDoubleValueStepper {
+    @inline def valueStepper: DoubleStepper with EfficientSubstep = {
       val tbl = runtime.CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, Double]](underlying)
       new StepsDoubleLinkedHashTableValue(tbl, 0, tbl.length)
     }
   }
 
-  final class RichLinkedHashTableIntValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, Int]]) extends AnyVal {
-    @inline def valueStepper: IntStepper = {
+  final class RichLinkedHashTableIntValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, Int]])
+  extends AnyVal with MakesIntValueStepper {
+    @inline def valueStepper: IntStepper with EfficientSubstep = {
       val tbl = runtime.CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, Int]](underlying)
       new StepsIntLinkedHashTableValue(tbl, 0, tbl.length)
     }
   }
   
-  final class RichLinkedHashTableLongValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, Long]]) extends AnyVal {
-    @inline def valueStepper: LongStepper = {
+  final class RichLinkedHashTableLongValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, Long]])
+  extends AnyVal with MakesLongValueStepper {
+    @inline def valueStepper: LongStepper with EfficientSubstep = {
       val tbl = runtime.CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, Long]](underlying)
       new StepsLongLinkedHashTableValue(tbl, 0, tbl.length)
     }
   }
 
-  final class RichImmHashMapCanStep[K, V](private val underlying: collection.immutable.HashMap[K, V]) extends AnyVal {
-    @inline def stepper: AnyStepper[(K, V)] = new StepsAnyImmHashMap[K, V](underlying, 0, underlying.size)
-    @inline def keyStepper: AnyStepper[K] = new StepsAnyImmHashMapKey[K, V](underlying, 0, underlying.size)
-    @inline def valueStepper: AnyStepper[V] = new StepsAnyImmHashMapValue[K, V](underlying, 0, underlying.size)
+  final class RichImmHashMapCanStep[K, V](private val underlying: collection.immutable.HashMap[K, V])
+  extends AnyVal with MakesAnyStepper[(K, V)] with MakesAnyKeyStepper[K] with MakesAnyValueStepper[V] {
+    @inline def stepper: AnyStepper[(K, V)] with EfficientSubstep = new StepsAnyImmHashMap[K, V](underlying, 0, underlying.size)
+    @inline def keyStepper: AnyStepper[K] with EfficientSubstep = new StepsAnyImmHashMapKey[K, V](underlying, 0, underlying.size)
+    @inline def valueStepper: AnyStepper[V] with EfficientSubstep = new StepsAnyImmHashMapValue[K, V](underlying, 0, underlying.size)
   }
 
-  final class RichImmHashMapDoubleKeyCanStep[V](private val underlying: collection.immutable.HashMap[Double, V]) extends AnyVal {
-    @inline def keyStepper: DoubleStepper = new StepsDoubleImmHashMapKey[V](underlying, 0, underlying.size)
+  final class RichImmHashMapDoubleKeyCanStep[V](private val underlying: collection.immutable.HashMap[Double, V]) extends AnyVal with MakesDoubleKeyStepper {
+    @inline def keyStepper: DoubleStepper with EfficientSubstep = new StepsDoubleImmHashMapKey[V](underlying, 0, underlying.size)
   }
 
-  final class RichImmHashMapDoubleValueCanStep[K](private val underlying: collection.immutable.HashMap[K, Double]) extends AnyVal {
-    @inline def valueStepper: DoubleStepper = new StepsDoubleImmHashMapValue[K](underlying, 0, underlying.size)
+  final class RichImmHashMapDoubleValueCanStep[K](private val underlying: collection.immutable.HashMap[K, Double]) extends AnyVal with MakesDoubleValueStepper {
+    @inline def valueStepper: DoubleStepper with EfficientSubstep = new StepsDoubleImmHashMapValue[K](underlying, 0, underlying.size)
   }
     
-  final class RichImmHashMapIntKeyCanStep[V](private val underlying: collection.immutable.HashMap[Int, V]) extends AnyVal {
-    @inline def keyStepper: IntStepper = new StepsIntImmHashMapKey[V](underlying, 0, underlying.size)
+  final class RichImmHashMapIntKeyCanStep[V](private val underlying: collection.immutable.HashMap[Int, V]) extends AnyVal with MakesIntKeyStepper {
+    @inline def keyStepper: IntStepper with EfficientSubstep = new StepsIntImmHashMapKey[V](underlying, 0, underlying.size)
   }
 
-  final class RichImmHashMapIntValueCanStep[K](private val underlying: collection.immutable.HashMap[K, Int]) extends AnyVal {
-    @inline def valueStepper: IntStepper = new StepsIntImmHashMapValue[K](underlying, 0, underlying.size)
+  final class RichImmHashMapIntValueCanStep[K](private val underlying: collection.immutable.HashMap[K, Int]) extends AnyVal with MakesIntValueStepper {
+    @inline def valueStepper: IntStepper with EfficientSubstep = new StepsIntImmHashMapValue[K](underlying, 0, underlying.size)
   }
     
-  final class RichImmHashMapLongKeyCanStep[V](private val underlying: collection.immutable.HashMap[Long, V]) extends AnyVal {
-    @inline def keyStepper: LongStepper = new StepsLongImmHashMapKey[V](underlying, 0, underlying.size)
+  final class RichImmHashMapLongKeyCanStep[V](private val underlying: collection.immutable.HashMap[Long, V]) extends AnyVal with MakesLongKeyStepper {
+    @inline def keyStepper: LongStepper with EfficientSubstep = new StepsLongImmHashMapKey[V](underlying, 0, underlying.size)
   }
 
-  final class RichImmHashMapLongValueCanStep[K](private val underlying: collection.immutable.HashMap[K, Long]) extends AnyVal {
-    @inline def valueStepper: LongStepper = new StepsLongImmHashMapValue[K](underlying, 0, underlying.size)
+  final class RichImmHashMapLongValueCanStep[K](private val underlying: collection.immutable.HashMap[K, Long]) extends AnyVal with MakesLongValueStepper {
+    @inline def valueStepper: LongStepper with EfficientSubstep = new StepsLongImmHashMapValue[K](underlying, 0, underlying.size)
   }
     
-  final class RichImmHashSetCanStep[A](private val underlying: collection.immutable.HashSet[A]) extends AnyVal {
-    @inline def stepper: AnyStepper[A] = new StepsAnyImmHashSet(underlying.iterator, underlying.size)
+  final class RichImmHashSetCanStep[A](private val underlying: collection.immutable.HashSet[A]) extends AnyVal with MakesAnyStepper[A] {
+    @inline def stepper: AnyStepper[A] with EfficientSubstep = new StepsAnyImmHashSet(underlying.iterator, underlying.size)
   }
 
-  final class RichBitSetCanStep(private val underlying: collection.BitSet) extends AnyVal {
-    def stepper: IntStepper = {
+  final class RichBitSetCanStep(private val underlying: collection.BitSet) extends AnyVal with MakesIntStepper {
+    def stepper: IntStepper with EfficientSubstep = {
       val bits: Array[Long] = underlying match {
         case m: collection.mutable.BitSet => runtime.CollectionInternals.getBitSetInternals(m)
         case n: collection.immutable.BitSet.BitSetN => RichBitSetCanStep.reflectInternalsN(n)
@@ -868,7 +931,7 @@ package converterImpls {
     def reflectInternalsN(bsn: collection.immutable.BitSet.BitSetN): Array[Long] = reflector.invoke(bsn).asInstanceOf[Array[Long]]
   }
 
-  private[java8] class StepperStringCodePoint(underlying: String, var i0: Int, var iN: Int) extends IntStepper {
+  private[java8] class StepperStringCodePoint(underlying: String, var i0: Int, var iN: Int) extends IntStepper with EfficientSubstep {
     def characteristics() = NonNull
     def estimateSize = iN - i0
     def hasNext = i0 < iN
@@ -1060,55 +1123,55 @@ object StepConverters extends converterImpls.Priority2StepConverters {
   import converterImpls._
   import Stepper._
 
-  implicit class RichArrayDoubleCanStep(val underlying: Array[Double]) extends AnyVal {
-    @inline def stepper: DoubleStepper = new StepsDoubleArray(underlying, 0, underlying.length)
+  implicit class RichArrayDoubleCanStep(val underlying: Array[Double]) extends AnyVal with MakesDoubleStepper {
+    @inline def stepper: DoubleStepper with EfficientSubstep with EfficientSubstep = new StepsDoubleArray(underlying, 0, underlying.length)
   }
 
-  implicit class RichArrayIntCanStep(val underlying: Array[Int]) extends AnyVal {
-    @inline def stepper: IntStepper = new StepsIntArray(underlying, 0, underlying.length)
+  implicit class RichArrayIntCanStep(val underlying: Array[Int]) extends AnyVal with MakesIntStepper {
+    @inline def stepper: IntStepper with EfficientSubstep = new StepsIntArray(underlying, 0, underlying.length)
   }
   
-  implicit class RichArrayLongCanStep(val underlying: Array[Long]) extends AnyVal {
-    @inline def stepper: LongStepper = new StepsLongArray(underlying, 0, underlying.length)
+  implicit class RichArrayLongCanStep(val underlying: Array[Long]) extends AnyVal with MakesLongStepper {
+    @inline def stepper: LongStepper with EfficientSubstep = new StepsLongArray(underlying, 0, underlying.length)
   }
   
-  implicit class RichDoubleVectorCanStep[A](private val underlying: Vector[Double]) extends AnyVal {
-    @inline def stepper: DoubleStepper = new StepsDoubleVector(underlying, 0, underlying.length)
+  implicit class RichIntNumericRangeCanStep(private val underlying: collection.immutable.NumericRange[Int]) extends AnyVal with MakesIntStepper {
+    @inline def stepper: IntStepper with EfficientSubstep = new StepsIntNumericRange(underlying, 0, underlying.length)
   }
 
-  implicit class RichIntNumericRangeCanStep(private val underlying: collection.immutable.NumericRange[Int]) extends AnyVal {
-    @inline def stepper: IntStepper = new StepsIntNumericRange(underlying, 0, underlying.length)
+  implicit class RichLongNumericRangeCanStep(private val underlying: collection.immutable.NumericRange[Long]) extends AnyVal with MakesLongStepper {
+    @inline def stepper: LongStepper with EfficientSubstep = new StepsLongNumericRange(underlying, 0, underlying.length)
   }
 
-  implicit class RichLongNumericRangeCanStep(private val underlying: collection.immutable.NumericRange[Long]) extends AnyVal {
-    @inline def stepper: LongStepper = new StepsLongNumericRange(underlying, 0, underlying.length)
-  }
-
-  implicit class RichRangeCanStep(private val underlying: Range) extends AnyVal {
-    @inline def stepper: IntStepper = new StepsIntRange(underlying, 0, underlying.length)
+  implicit class RichRangeCanStep(private val underlying: Range) extends AnyVal with MakesIntStepper {
+    @inline def stepper: IntStepper with EfficientSubstep = new StepsIntRange(underlying, 0, underlying.length)
   }  
 
-  implicit class RichIntVectorCanStep[A](private val underlying: Vector[Int]) extends AnyVal {
-    @inline def stepper: IntStepper = new StepsIntVector(underlying, 0, underlying.length)
+  implicit class RichDoubleVectorCanStep[A](private val underlying: Vector[Double]) extends AnyVal with MakesDoubleStepper {
+    @inline def stepper: DoubleStepper with EfficientSubstep = new StepsDoubleVector(underlying, 0, underlying.length)
   }
 
-  implicit class RichLongVectorCanStep[A](private val underlying: Vector[Long]) extends AnyVal {
-    @inline def stepper: LongStepper = new StepsLongVector(underlying, 0, underlying.length)
+  implicit class RichIntVectorCanStep[A](private val underlying: Vector[Int]) extends AnyVal with MakesIntStepper {
+    @inline def stepper: IntStepper with EfficientSubstep = new StepsIntVector(underlying, 0, underlying.length)
   }
 
-  implicit class RichDoubleHashSetCanStep(private val underlying: collection.immutable.HashSet[Double]) extends AnyVal {
-    @inline def stepper: DoubleStepper = new StepsDoubleImmHashSet(underlying.iterator, underlying.size)
+  implicit class RichLongVectorCanStep[A](private val underlying: Vector[Long]) extends AnyVal with MakesLongStepper {
+    @inline def stepper: LongStepper with EfficientSubstep = new StepsLongVector(underlying, 0, underlying.length)
   }
 
-  implicit class RichIntHashSetCanStep(private val underlying: collection.immutable.HashSet[Int]) extends AnyVal {
-    @inline def stepper: IntStepper = new StepsIntImmHashSet(underlying.iterator, underlying.size)
+  implicit class RichDoubleHashSetCanStep(private val underlying: collection.immutable.HashSet[Double]) extends AnyVal with MakesDoubleStepper {
+    @inline def stepper: DoubleStepper with EfficientSubstep = new StepsDoubleImmHashSet(underlying.iterator, underlying.size)
   }
 
-  implicit class RichLongHashSetCanStep(private val underlying: collection.immutable.HashSet[Long]) extends AnyVal {
-    @inline def stepper: LongStepper = new StepsLongImmHashSet(underlying.iterator, underlying.size)
+  implicit class RichIntHashSetCanStep(private val underlying: collection.immutable.HashSet[Int]) extends AnyVal with MakesIntStepper {
+    @inline def stepper: IntStepper with EfficientSubstep = new StepsIntImmHashSet(underlying.iterator, underlying.size)
   }
 
-  implicit class RichStringCanStep(val underlying: String) extends AnyVal {
-    @inline def stepper: IntStepper = new StepperStringCodePoint(underlying, 0, underlying.length)
+  implicit class RichLongHashSetCanStep(private val underlying: collection.immutable.HashSet[Long]) extends AnyVal with MakesLongStepper {
+    @inline def stepper: LongStepper with EfficientSubstep = new StepsLongImmHashSet(underlying.iterator, underlying.size)
+  }
+
+  implicit class RichStringCanStep(val underlying: String) extends AnyVal with MakesIntStepper {
+    @inline def stepper: IntStepper with EfficientSubstep = new StepperStringCodePoint(underlying, 0, underlying.length)
   }
 }

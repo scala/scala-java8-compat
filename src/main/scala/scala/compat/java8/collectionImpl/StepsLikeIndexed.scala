@@ -24,22 +24,26 @@ abstract class AbstractStepsLikeIndexed[Sub >: Null, Semi <: Sub](protected var 
 abstract class StepsLikeIndexed[A, STA >: Null <: StepsLikeIndexed[A, _]](_i0: Int, _iN: Int)
   extends AbstractStepsLikeIndexed[AnyStepper[A], STA](_i0, _iN)
   with AnyStepper[A]
+  with EfficientSubstep
 {}
 
 /** Abstracts the operation of stepping over an indexable collection of Doubles */
 abstract class StepsDoubleLikeIndexed[STD >: Null <: StepsDoubleLikeIndexed[_]](_i0: Int, _iN: Int)
   extends AbstractStepsLikeIndexed[DoubleStepper, STD](_i0, _iN)
   with DoubleStepper
+  with EfficientSubstep
 {}
 
 /** Abstracts the operation of stepping over an indexable collection of Ints */
 abstract class StepsIntLikeIndexed[STI >: Null <: StepsIntLikeIndexed[_]](_i0: Int, _iN: Int)
   extends AbstractStepsLikeIndexed[IntStepper, STI](_i0, _iN)
   with IntStepper
+  with EfficientSubstep
 {}
 
 /** Abstracts the operation of stepping over an indexable collection of Longs */
 abstract class StepsLongLikeIndexed[STL >: Null <: StepsLongLikeIndexed[_]](_i0: Int, _iN: Int)
   extends AbstractStepsLikeIndexed[LongStepper, STL](_i0, _iN)
   with LongStepper
+  with EfficientSubstep
 {}

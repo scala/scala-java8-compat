@@ -38,6 +38,12 @@ import java.util.Spliterator
   */
 trait Stepper[@specialized(Double, Int, Long) A] extends StepperLike[A, Stepper[A]] {}
 
+/** An (optional) marker trait that indicates that a `Stepper` can call `substep` with
+  * at worst O(log N) time and space complexity, and that the division is likely to
+  * be reasonably even.
+  */
+trait EfficientSubstep {}
+
 /** Provides functionality for Stepper while keeping track of a more precise type of the collection.
   */
 trait StepperLike[@specialized(Double, Int, Long) A, +CC] { self =>

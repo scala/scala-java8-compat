@@ -19,22 +19,26 @@ abstract class AbstractStepsLikeSliced[Coll, Sub >: Null, Semi <: Sub](protected
 abstract class StepsLikeSliced[A, AA, STA >: Null <: StepsLikeSliced[A, AA, _]](_underlying: AA, _i0: Int, _iN: Int)
   extends AbstractStepsLikeSliced[AA, AnyStepper[A], STA](_underlying, _i0, _iN)
   with AnyStepper[A]
+  with EfficientSubstep
 {}
 
 /** Abstracts the operation of stepping over a collection of Doubles that can be efficiently sliced or otherwise subdivided */
 abstract class StepsDoubleLikeSliced[AA, STA >: Null <: StepsDoubleLikeSliced[AA, STA]](_underlying: AA, _i0: Int, _iN: Int)
   extends AbstractStepsLikeSliced[AA, DoubleStepper, STA](_underlying, _i0, _iN)
   with DoubleStepper
+  with EfficientSubstep
 {}
 
 /** Abstracts the operation of stepping over a collection of Ints that can be efficiently sliced or otherwise subdivided */
 abstract class StepsIntLikeSliced[AA, STA >: Null <: StepsIntLikeSliced[AA, STA]](_underlying: AA, _i0: Int, _iN: Int)
   extends AbstractStepsLikeSliced[AA, IntStepper, STA](_underlying, _i0, _iN)
   with IntStepper
+  with EfficientSubstep
 {}
 
 /** Abstracts the operation of stepping over a collection of Longs that can be efficiently sliced or otherwise subdivided */
 abstract class StepsLongLikeSliced[AA, STA >: Null <: StepsLongLikeSliced[AA, STA]](_underlying: AA, _i0: Int, _iN: Int)
   extends AbstractStepsLikeSliced[AA, LongStepper, STA](_underlying, _i0, _iN)
   with LongStepper
+  with EfficientSubstep
 {}

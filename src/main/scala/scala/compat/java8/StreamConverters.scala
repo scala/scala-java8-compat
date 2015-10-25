@@ -4,6 +4,7 @@ import language.implicitConversions
 
 import java.util.stream._
 import scala.compat.java8.collectionImpl._
+import scala.compat.java8.converterImpls._
 
 trait PrimitiveStreamAccumulator[S, AA] {
   def streamAccumulate(stream: S): AA
@@ -13,7 +14,7 @@ trait PrimitiveStreamUnboxer[A, S] {
   def apply(boxed: Stream[A]): S
 }
 
-trait Priority3StreamConverters {
+trait Priority6StreamConverters {
   implicit class EnrichAnyScalaCollectionWithStream[A](t: TraversableOnce[A]) {
     private def mkAcc() = {
       val acc = new Accumulator[A]
@@ -27,7 +28,7 @@ trait Priority3StreamConverters {
   }  
 }
 
-trait Priority2StreamConverters extends Priority3StreamConverters {
+trait Priority5StreamConverters extends Priority6StreamConverters {
   implicit class EnrichScalaCollectionWithStream[A <: AnyRef](t: TraversableOnce[A]) {
     private def mkArr()(implicit tag: reflect.ClassTag[A]): Array[A] = {
       if (t.isTraversableAgain && t.hasDefiniteSize) {
@@ -43,8 +44,21 @@ trait Priority2StreamConverters extends Priority3StreamConverters {
       java.util.Arrays.stream(mkArr())
       
     def parStream(implicit tag: reflect.ClassTag[A]): Stream[A] = seqStream.parallel
-  }
+  }  
+}
 
+trait Priority4StreamConverters extends Priority5StreamConverters {
+  implicit class EnrichAnySteppableWithStream[A, CC](cc: CC)(implicit steppize: CC => MakesAnyStepper[A]) {
+    def seqStream: Stream[A] = java.util.stream.StreamSupport.stream(steppize(cc).stepper, false)
+    def parStream: Stream[A] = java.util.stream.StreamSupport.stream(steppize(cc).stepper, true)
+  }
+}
+
+trait Priority3StreamConverters extends Priority4StreamConverters {
+
+}
+
+trait Priority2StreamConverters extends Priority3StreamConverters {
   implicit class EnrichMissingPrimitiveArrayWithStream[A](a: Array[A]) {
     private def mkAcc() = {
       val acc = new Accumulator[A]
