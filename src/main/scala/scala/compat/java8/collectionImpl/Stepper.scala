@@ -85,6 +85,9 @@ trait StepperLike[@specialized(Double, Int, Long) A, +CC] { self =>
 
   /** Returns the precise underlying type of this `Stepper`. */
   def typedPrecisely: CC
+
+  /** Warns this `Stepper` that it is likely to be used in a parallel context (used for efficiency only) */
+  def anticipateParallelism: this.type = this
   
 
   ////

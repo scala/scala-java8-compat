@@ -15,22 +15,24 @@ trait PrimitiveStreamUnboxer[A, S] {
 }
 
 trait Priority6StreamConverters {
-  implicit class EnrichAnyScalaCollectionWithStream[A](t: TraversableOnce[A]) {
+  // Note--conversion is only to make sure implicit conversion priority is lower than alternatives.
+  implicit class EnrichAnyScalaCollectionWithStream[A, CC](cc: CC)(implicit ev: CC <:< TraversableOnce[A]) {
     private def mkAcc() = {
       val acc = new Accumulator[A]
-      t.foreach{ acc += _ }
+      ev(cc).foreach{ acc += _ }
       acc
     }
       
     def seqStream: Stream[A] = mkAcc().seqStream
     
     def parStream: Stream[A] = mkAcc().parStream
-  }  
+  }
 }
 
 trait Priority5StreamConverters extends Priority6StreamConverters {
-  implicit class EnrichScalaCollectionWithStream[A <: AnyRef](t: TraversableOnce[A]) {
+  implicit class EnrichScalaCollectionWithStream[A <: AnyRef, CC](cc: CC)(implicit ev: CC <:< TraversableOnce[A]) {
     private def mkArr()(implicit tag: reflect.ClassTag[A]): Array[A] = {
+      val t = ev(cc)
       if (t.isTraversableAgain && t.hasDefiniteSize) {
         val sz = t.size
         val a = new Array[A](sz)
@@ -49,62 +51,62 @@ trait Priority5StreamConverters extends Priority6StreamConverters {
 
 trait Priority4StreamConverters extends Priority5StreamConverters {
   implicit class EnrichAnySteppableWithStream[A, CC](cc: CC)(implicit steppize: CC => MakesAnyStepper[A]) {
-    def seqStream: Stream[A] = java.util.stream.StreamSupport.stream(steppize(cc).stepper, false)
-    def parStream: Stream[A] = java.util.stream.StreamSupport.stream(steppize(cc).stepper, true)
+    def seqStream: Stream[A] = StreamSupport.stream(steppize(cc).stepper, false)
+    def parStream: Stream[A] = StreamSupport.stream(steppize(cc).stepper.anticipateParallelism, true)
+  }
+  implicit class EnrichAnyKeySteppableWithStream[K, CC](cc: CC)(implicit steppize: CC => MakesAnyKeyStepper[K]) {
+    def seqKeyStream: Stream[K] = StreamSupport.stream(steppize(cc).keyStepper, false)
+    def parKeyStream: Stream[K] = StreamSupport.stream(steppize(cc).keyStepper.anticipateParallelism, true)    
+  }
+  implicit class EnrichAnyValueSteppableWithStream[V, CC](cc: CC)(implicit steppize: CC => MakesAnyValueStepper[V]) {
+    def seqValueStream: Stream[V] = StreamSupport.stream(steppize(cc).valueStepper, false)
+    def parValueStream: Stream[V] = StreamSupport.stream(steppize(cc).valueStepper.anticipateParallelism, true)    
   }
 }
 
 trait Priority3StreamConverters extends Priority4StreamConverters {
-
+  implicit class EnrichDoubleSteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesDoubleStepper) {
+    def seqStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).stepper, false)
+    def parStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).stepper.anticipateParallelism, true)
+  }
+  implicit class EnrichDoubleKeySteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesDoubleKeyStepper) {
+    def seqKeyStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).keyStepper, false)
+    def parKeyStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).keyStepper.anticipateParallelism, true)
+  }
+  implicit class EnrichDoubleValueSteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesDoubleValueStepper) {
+    def seqValueStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).valueStepper, false)
+    def parValueStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).valueStepper.anticipateParallelism, true)
+  }
+  implicit class EnrichIntSteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesIntStepper) {
+    def seqStream: IntStream = StreamSupport.intStream(steppize(cc).stepper, false)
+    def parStream: IntStream = StreamSupport.intStream(steppize(cc).stepper.anticipateParallelism, true)
+  }
+  implicit class EnrichIntKeySteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesIntKeyStepper) {
+    def seqKeyStream: IntStream = StreamSupport.intStream(steppize(cc).keyStepper, false)
+    def parKeyStream: IntStream = StreamSupport.intStream(steppize(cc).keyStepper.anticipateParallelism, true)
+  }
+  implicit class EnrichIntValueSteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesIntValueStepper) {
+    def seqValueStream: IntStream = StreamSupport.intStream(steppize(cc).valueStepper, false)
+    def parValueStream: IntStream = StreamSupport.intStream(steppize(cc).valueStepper.anticipateParallelism, true)
+  }
+  implicit class EnrichLongSteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesLongStepper) {
+    def seqStream: LongStream = StreamSupport.longStream(steppize(cc).stepper, false)
+    def parStream: LongStream = StreamSupport.longStream(steppize(cc).stepper.anticipateParallelism, true)
+  }
+  implicit class EnrichLongKeySteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesLongKeyStepper) {
+    def seqKeyStream: LongStream = StreamSupport.longStream(steppize(cc).keyStepper, false)
+    def parKeyStream: LongStream = StreamSupport.longStream(steppize(cc).keyStepper.anticipateParallelism, true)
+  }
+  implicit class EnrichLongValueSteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesLongValueStepper) {
+    def seqValueStream: LongStream = StreamSupport.longStream(steppize(cc).valueStepper, false)
+    def parValueStream: LongStream = StreamSupport.longStream(steppize(cc).valueStepper.anticipateParallelism, true)
+  }
 }
 
 trait Priority2StreamConverters extends Priority3StreamConverters {
-  implicit class EnrichMissingPrimitiveArrayWithStream[A](a: Array[A]) {
-    private def mkAcc() = {
-      val acc = new Accumulator[A]
-      var i = 0
-      while (i < a.length) {
-        acc += a(i)
-        i += 1
-      }
-      acc
-    }
-    
-    def seqStream: Stream[A] = mkAcc().seqStream
-    
-    def parStream: Stream[A] = mkAcc().parStream
-  }
 }
 
 trait Priority1StreamConverters extends Priority2StreamConverters {
-  implicit class EnrichGenericArrayWithStream[A <: AnyRef](a: Array[A]) {
-    def seqStream: Stream[A] = java.util.Arrays.stream(a)
-    def parStream: Stream[A] = seqStream.parallel
-  }
-
-  implicit class EnrichGenericIndexedSeqWithStream[A](c: collection.IndexedSeqLike[A, _]) {
-    private def someStream(parallel: Boolean): Stream[A] =
-      StreamSupport.stream(new converterImpls.StepsAnyIndexedSeq[A](c, 0, c.length), parallel)
-    def seqStream: Stream[A] = someStream(false)
-    def parStream: Stream[A] = someStream(true)
-  }
-
-  implicit class EnrichAnyVectorWithStream[A](c: Vector[A]) {
-    private def someStream(parallel: Boolean): Stream[A] =
-      StreamSupport.stream(new converterImpls.StepsAnyVector[A](c, 0, c.length), parallel)
-    def seqStream: Stream[A] = someStream(false)
-    def parStream: Stream[A] = someStream(true)
-  }
-
-  implicit class EnrichGenericFlatHashTableWithStream[A](fht: collection.mutable.FlatHashTable[A]) {
-    private def someStream(parallel: Boolean): Stream[A] = {
-      val tbl = runtime.CollectionInternals.getTable(fht)
-      StreamSupport.stream(new converterImpls.StepsAnyFlatHashTable[A](tbl, 0, tbl.length), parallel)
-    }
-    def seqStream: Stream[A] = someStream(false)
-    def parStream: Stream[A] = someStream(true)
-  }
-
   implicit class RichStream[A](stream: Stream[A]) {
     def accumulate = stream.collect(Accumulator.supplier[A], Accumulator.adder[A], Accumulator.merger[A])
     
@@ -161,75 +163,6 @@ trait Priority1StreamConverters extends Priority2StreamConverters {
   * ```
   */
 object StreamConverters extends Priority1StreamConverters {
-  implicit class EnrichDoubleIndexedSeqWithStream[CC <: collection.IndexedSeqLike[Double, _]](c: CC) {
-    private def someStream(parallel: Boolean): DoubleStream =
-      StreamSupport.doubleStream(new converterImpls.StepsDoubleIndexedSeq[CC](c, 0, c.length), parallel)
-    def seqStream: DoubleStream = someStream(false)
-    def parStream: DoubleStream = someStream(true)
-  }
-
-  implicit class EnrichIntIndexedSeqWithStream[CC <: collection.IndexedSeqLike[Int, _]](c: CC) {
-    private def someStream(parallel: Boolean): IntStream =
-      StreamSupport.intStream(new converterImpls.StepsIntIndexedSeq[CC](c, 0, c.length), parallel)
-    def seqStream: IntStream = someStream(false)
-    def parStream: IntStream = someStream(true)
-  }
-
-  implicit class EnrichLongIndexedSeqWithStream[CC <: collection.IndexedSeqLike[Long, _]](c: CC) {
-    private def someStream(parallel: Boolean): LongStream =
-      StreamSupport.longStream(new converterImpls.StepsLongIndexedSeq[CC](c, 0, c.length), parallel)
-    def seqStream: LongStream = someStream(false)
-    def parStream: LongStream = someStream(true)
-  }
-
-  implicit class EnrichDoubleVectorWithStream(c: Vector[Double]) {
-    private def someStream(parallel: Boolean): DoubleStream =
-      StreamSupport.doubleStream(new converterImpls.StepsDoubleVector(c, 0, c.length), parallel)
-    def seqStream: DoubleStream = someStream(false)
-    def parStream: DoubleStream = someStream(true)
-  }
-
-  implicit class EnrichIntVectorWithStream(c: Vector[Int]) {
-    private def someStream(parallel: Boolean): IntStream =
-      StreamSupport.intStream(new converterImpls.StepsIntVector(c, 0, c.length), parallel)
-    def seqStream: IntStream = someStream(false)
-    def parStream: IntStream = someStream(true)
-  }
-
-  implicit class EnrichLongVectorWithStream(c: Vector[Long]) {
-    private def someStream(parallel: Boolean): LongStream =
-      StreamSupport.longStream(new converterImpls.StepsLongVector(c, 0, c.length), parallel)
-    def seqStream: LongStream = someStream(false)
-    def parStream: LongStream = someStream(true)
-  }
-
-  implicit class EnrichDoubleFlatHashTableWithStream(fht: collection.mutable.FlatHashTable[Double]) {
-    private def someStream(parallel: Boolean): DoubleStream = {
-      val tbl = runtime.CollectionInternals.getTable(fht)
-      StreamSupport.doubleStream(new converterImpls.StepsDoubleFlatHashTable(tbl, 0, tbl.length), parallel)
-    }
-    def seqStream: DoubleStream = someStream(false)
-    def parStream: DoubleStream = someStream(true)
-  }
-
-  implicit class EnrichIntFlatHashTableWithStream(fht: collection.mutable.FlatHashTable[Int]) {
-    private def someStream(parallel: Boolean): IntStream = {
-      val tbl = runtime.CollectionInternals.getTable(fht)
-      StreamSupport.intStream(new converterImpls.StepsIntFlatHashTable(tbl, 0, tbl.length), parallel)
-    }
-    def seqStream: IntStream = someStream(false)
-    def parStream: IntStream = someStream(true)
-  }
-
-  implicit class EnrichLongFlatHashTableWithStream(fht: collection.mutable.FlatHashTable[Long]) {
-    private def someStream(parallel: Boolean): LongStream = {
-      val tbl = runtime.CollectionInternals.getTable(fht)
-      StreamSupport.longStream(new converterImpls.StepsLongFlatHashTable(tbl, 0, tbl.length), parallel)
-    }
-    def seqStream: LongStream = someStream(false)
-    def parStream: LongStream = someStream(true)
-  }
-
   implicit class EnrichDoubleArrayWithStream(a: Array[Double]) {
     def seqStream: DoubleStream = java.util.Arrays.stream(a)
     def parStream: DoubleStream = seqStream.parallel
