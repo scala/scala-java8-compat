@@ -47,6 +47,12 @@ class StepConvertersTest {
     assert(isLin(x))
   }
 
+  def Fine[X](x: => X)(implicit correctSpec: SpecCheck) {
+    assert(x.isInstanceOf[Stepper[_]])
+    assert(correctSpec(x))
+    assert(!isAcc(x))
+  }
+
   def good[X](x: => X)(implicit correctSpec: SpecCheck) {
     assert(x.isInstanceOf[Stepper[_]])
     assert(correctSpec(x))
@@ -81,9 +87,9 @@ class StepConvertersTest {
     Okay( co.SortedMap[String, String]("fish" -> "salmon").keyStepper )
     Okay( co.SortedMap[String, String]("fish" -> "salmon").valueStepper )
     IFFY( co.SortedSet[String]("salmon").stepper )
-    IFFY( co.Traversable[String]("salmon").stepper )
-    IFFY( (co.Iterator[String]("salmon"): co.TraversableOnce[String]).stepper )
-    IFFY( co.Traversable[String]("salmon").view.stepper )
+    IFFY( co.Traversable[String]("salmon").accumulate.stepper )
+    IFFY( (co.Iterator[String]("salmon"): co.TraversableOnce[String]).accumulate.stepper )
+    IFFY( co.Traversable[String]("salmon").view.accumulate.stepper )
 
     // Immutable section
     IFFY( ci.::("salmon", Nil).stepper )

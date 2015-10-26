@@ -8,6 +8,54 @@ import scala.compat.java8.runtime._
 package converterImpls {
   import Stepper._
 
+  trait MakesAnySeqStepper[A] extends Any {
+    def stepper: AnyStepper[A] 
+  }
+
+  trait MakesAnyKeySeqStepper[A] extends Any {
+    def keyStepper: AnyStepper[A] 
+  }
+
+  trait MakesAnyValueSeqStepper[A] extends Any {
+    def valueStepper: AnyStepper[A] 
+  }
+
+  trait MakesDoubleSeqStepper extends Any {
+    def stepper: DoubleStepper 
+  }
+
+  trait MakesDoubleKeySeqStepper extends Any {
+    def keyStepper: DoubleStepper 
+  }
+
+  trait MakesDoubleValueSeqStepper extends Any {
+    def valueStepper: DoubleStepper 
+  }
+
+  trait MakesIntSeqStepper extends Any {
+    def stepper: IntStepper 
+  }
+
+  trait MakesIntKeySeqStepper extends Any {
+    def keyStepper: IntStepper 
+  }
+
+  trait MakesIntValueSeqStepper extends Any {
+    def valueStepper: IntStepper 
+  }
+
+  trait MakesLongSeqStepper extends Any {
+    def stepper: LongStepper 
+  }
+
+  trait MakesLongKeySeqStepper extends Any {
+    def keyStepper: LongStepper 
+  }
+
+  trait MakesLongValueSeqStepper extends Any {
+    def valueStepper: LongStepper 
+  }
+
   trait MakesAnyStepper[A] extends Any {
     def stepper: AnyStepper[A] with EfficientSubstep
   }
@@ -701,35 +749,35 @@ package converterImpls {
     @inline def stepper: LongStepper with EfficientSubstep = new StepsLongIndexedSeq[CC](underlying, 0, underlying.length)
   }
 
-  final class RichLinearSeqCanStep[A, CC >: Null <: collection.LinearSeqLike[A, CC]](private val underlying: CC) extends AnyVal {
+  final class RichLinearSeqCanStep[A, CC >: Null <: collection.LinearSeqLike[A, CC]](private val underlying: CC) extends AnyVal with MakesAnySeqStepper[A] {
     @inline def stepper: AnyStepper[A] = new StepsAnyLinearSeq[A, CC](underlying, Long.MaxValue)
   }
 
-  final class RichDoubleLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Double, CC]](private val underlying: CC) extends AnyVal {
+  final class RichDoubleLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Double, CC]](private val underlying: CC) extends AnyVal with MakesDoubleSeqStepper {
     @inline def stepper: DoubleStepper = new StepsDoubleLinearSeq[CC](underlying, Long.MaxValue)
   }
 
-  final class RichIntLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Int, CC]](private val underlying: CC) extends AnyVal {
+  final class RichIntLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Int, CC]](private val underlying: CC) extends AnyVal with MakesIntSeqStepper {
     @inline def stepper: IntStepper = new StepsIntLinearSeq[CC](underlying, Long.MaxValue)
   }
 
-  final class RichLongLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Long, CC]](private val underlying: CC) extends AnyVal {
+  final class RichLongLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Long, CC]](private val underlying: CC) extends AnyVal with MakesLongSeqStepper {
     @inline def stepper: LongStepper = new StepsLongLinearSeq[CC](underlying, Long.MaxValue)
   }
 
-  final class RichIteratorCanStep[A](private val underlying: Iterator[A]) extends AnyVal {
+  final class RichIteratorCanStep[A](private val underlying: Iterator[A]) extends AnyVal with MakesAnySeqStepper[A] {
     @inline def stepper: AnyStepper[A] = new StepsAnyIterator[A](underlying)
   }
 
-  final class RichDoubleIteratorCanStep(private val underlying: Iterator[Double]) extends AnyVal {
+  final class RichDoubleIteratorCanStep(private val underlying: Iterator[Double]) extends AnyVal with MakesDoubleSeqStepper {
     @inline def stepper: DoubleStepper = new StepsDoubleIterator(underlying)
   }
 
-  final class RichIntIteratorCanStep(private val underlying: Iterator[Int]) extends AnyVal {
+  final class RichIntIteratorCanStep(private val underlying: Iterator[Int]) extends AnyVal with MakesIntSeqStepper {
     @inline def stepper: IntStepper = new StepsIntIterator(underlying)
   }
 
-  final class RichLongIteratorCanStep(private val underlying: Iterator[Long]) extends AnyVal {
+  final class RichLongIteratorCanStep(private val underlying: Iterator[Long]) extends AnyVal with MakesLongSeqStepper {
     @inline def stepper: LongStepper = new StepsLongIterator(underlying)
   }
 
@@ -955,75 +1003,111 @@ package converterImpls {
     }
   }
 
-  final class RichMapCanStep[K, V](private val underlying: collection.Map[K, V]) extends AnyVal {
+  final class RichMapCanStep[K, V](private val underlying: collection.Map[K, V]) extends AnyVal with MakesAnyKeySeqStepper[K] with MakesAnyValueSeqStepper[V] {
     def keyStepper: AnyStepper[K] = new StepsAnyIterator[K](underlying.keysIterator)
     def valueStepper: AnyStepper[V] = new StepsAnyIterator[V](underlying.valuesIterator)
   }
 
-  final class RichDoubleKeyMapCanStep[V](private val underlying: collection.Map[Double, V]) extends AnyVal {
+  final class RichDoubleKeyMapCanStep[V](private val underlying: collection.Map[Double, V]) extends AnyVal with MakesDoubleKeySeqStepper {
     def keyStepper: DoubleStepper = new StepsDoubleIterator(underlying.keysIterator)
   }
 
-  final class RichDoubleValueMapCanStep[K](private val underlying: collection.Map[K, Double]) extends AnyVal {
+  final class RichDoubleValueMapCanStep[K](private val underlying: collection.Map[K, Double]) extends AnyVal with MakesDoubleValueSeqStepper {
     def valueStepper: DoubleStepper = new StepsDoubleIterator(underlying.valuesIterator)
   }
 
-  final class RichIntKeyMapCanStep[V](private val underlying: collection.Map[Int, V]) extends AnyVal {
+  final class RichIntKeyMapCanStep[V](private val underlying: collection.Map[Int, V]) extends AnyVal with MakesIntKeySeqStepper {
     def keyStepper: IntStepper = new StepsIntIterator(underlying.keysIterator)
   }
 
-  final class RichIntValueMapCanStep[K](private val underlying: collection.Map[K, Int]) extends AnyVal {
+  final class RichIntValueMapCanStep[K](private val underlying: collection.Map[K, Int]) extends AnyVal with MakesIntValueSeqStepper {
     def valueStepper: IntStepper = new StepsIntIterator(underlying.valuesIterator)
   }
 
-  final class RichLongKeyMapCanStep[V](private val underlying: collection.Map[Long, V]) extends AnyVal {
+  final class RichLongKeyMapCanStep[V](private val underlying: collection.Map[Long, V]) extends AnyVal with MakesLongKeySeqStepper {
     def keyStepper: LongStepper = new StepsLongIterator(underlying.keysIterator)
   }
 
-  final class RichLongValueMapCanStep[K](private val underlying: collection.Map[K, Long]) extends AnyVal {
+  final class RichLongValueMapCanStep[K](private val underlying: collection.Map[K, Long]) extends AnyVal with MakesLongValueSeqStepper {
     def valueStepper: LongStepper = new StepsLongIterator(underlying.valuesIterator)
   }
 
-  final class RichTraversableOnceCanStep[A](private val underlying: TraversableOnce[A]) extends AnyVal {
-    def stepper: AnyStepper[A] = {
-      val acc = new Accumulator[A]
-      underlying.foreach(acc += _)
-      acc.stepper
-    }
+  final class RichIterableCanStep[A](private val underlying: Iterable[A]) extends AnyVal with MakesAnySeqStepper[A] {
+    @inline def stepper: AnyStepper[A] = new StepsAnyIterator[A](underlying.iterator)
   }
 
-  final class RichDoubleTraversableOnceCanStep(private val underlying: TraversableOnce[Double]) extends AnyVal {
-    def stepper: DoubleStepper = {
-      val acc = new DoubleAccumulator
-      underlying.foreach(acc += _)
-      acc.stepper
-    }
+  final class RichDoubleIterableCanStep(private val underlying: Iterable[Double]) extends AnyVal with MakesDoubleSeqStepper {
+    @inline def stepper: DoubleStepper = new StepsDoubleIterator(underlying.iterator)
   }
 
-  final class RichIntTraversableOnceCanStep(private val underlying: TraversableOnce[Int]) extends AnyVal {
-    def stepper: IntStepper = {
-      val acc = new IntAccumulator
-      underlying.foreach(acc += _)
-      acc.stepper
-    }
+  final class RichIntIterableCanStep(private val underlying: Iterable[Int]) extends AnyVal with MakesIntSeqStepper {
+    @inline def stepper: IntStepper = new StepsIntIterator(underlying.iterator)
   }
 
-  final class RichLongTraversableOnceCanStep(private val underlying: TraversableOnce[Long]) extends AnyVal {
-    def stepper: LongStepper = {
-      val acc = new LongAccumulator
-      underlying.foreach(acc += _)
-      acc.stepper
-    }
+  final class RichLongIterableCanStep(private val underlying: Iterable[Long]) extends AnyVal with MakesLongSeqStepper {
+    @inline def stepper: LongStepper = new StepsLongIterator(underlying.iterator)
   }
+
+  final class RichArrayDoubleCanStep(private val underlying: Array[Double]) extends AnyVal with MakesDoubleStepper {
+    @inline def stepper: DoubleStepper with EfficientSubstep with EfficientSubstep = new StepsDoubleArray(underlying, 0, underlying.length)
+  }
+
+  final class RichArrayIntCanStep(private val underlying: Array[Int]) extends AnyVal with MakesIntStepper {
+    @inline def stepper: IntStepper with EfficientSubstep = new StepsIntArray(underlying, 0, underlying.length)
+  }
+  
+  final class RichArrayLongCanStep(private val underlying: Array[Long]) extends AnyVal with MakesLongStepper {
+    @inline def stepper: LongStepper with EfficientSubstep = new StepsLongArray(underlying, 0, underlying.length)
+  }
+  
+  final class RichIntNumericRangeCanStep(private val underlying: collection.immutable.NumericRange[Int]) extends AnyVal with MakesIntStepper {
+    @inline def stepper: IntStepper with EfficientSubstep = new StepsIntNumericRange(underlying, 0, underlying.length)
+  }
+
+  final class RichLongNumericRangeCanStep(private val underlying: collection.immutable.NumericRange[Long]) extends AnyVal with MakesLongStepper {
+    @inline def stepper: LongStepper with EfficientSubstep = new StepsLongNumericRange(underlying, 0, underlying.length)
+  }
+
+  final class RichRangeCanStep(private val underlying: Range) extends AnyVal with MakesIntStepper {
+    @inline def stepper: IntStepper with EfficientSubstep = new StepsIntRange(underlying, 0, underlying.length)
+  }  
+
+  final class RichDoubleVectorCanStep[A](private val underlying: Vector[Double]) extends AnyVal with MakesDoubleStepper {
+    @inline def stepper: DoubleStepper with EfficientSubstep = new StepsDoubleVector(underlying, 0, underlying.length)
+  }
+
+  final class RichIntVectorCanStep[A](private val underlying: Vector[Int]) extends AnyVal with MakesIntStepper {
+    @inline def stepper: IntStepper with EfficientSubstep = new StepsIntVector(underlying, 0, underlying.length)
+  }
+
+  final class RichLongVectorCanStep[A](private val underlying: Vector[Long]) extends AnyVal with MakesLongStepper {
+    @inline def stepper: LongStepper with EfficientSubstep = new StepsLongVector(underlying, 0, underlying.length)
+  }
+
+  final class RichDoubleHashSetCanStep(private val underlying: collection.immutable.HashSet[Double]) extends AnyVal with MakesDoubleStepper {
+    @inline def stepper: DoubleStepper with EfficientSubstep = new StepsDoubleImmHashSet(underlying.iterator, underlying.size)
+  }
+
+  final class RichIntHashSetCanStep(private val underlying: collection.immutable.HashSet[Int]) extends AnyVal with MakesIntStepper {
+    @inline def stepper: IntStepper with EfficientSubstep = new StepsIntImmHashSet(underlying.iterator, underlying.size)
+  }
+
+  final class RichLongHashSetCanStep(private val underlying: collection.immutable.HashSet[Long]) extends AnyVal with MakesLongStepper {
+    @inline def stepper: LongStepper with EfficientSubstep = new StepsLongImmHashSet(underlying.iterator, underlying.size)
+  }
+
+  final class RichStringCanStep(private val underlying: String) extends AnyVal with MakesIntStepper {
+    @inline def stepper: IntStepper with EfficientSubstep = new StepperStringCodePoint(underlying, 0, underlying.length)
+  }    
 
   trait Priority7StepConverters {
-    implicit def richTraversableOnceCanStep[A](underlying: TraversableOnce[A]) = new RichTraversableOnceCanStep(underlying)
+    implicit def richIterableCanStep[A](underlying: Iterable[A]) = new RichIterableCanStep(underlying)
   }
 
   trait Priority6StepConverters extends Priority7StepConverters {
-    implicit def richDoubleTraversableOnceCanStep(underlying: TraversableOnce[Double]) = new RichDoubleTraversableOnceCanStep(underlying)
-    implicit def richIntTraversableOnceCanStep(underlying: TraversableOnce[Int]) = new RichIntTraversableOnceCanStep(underlying)
-    implicit def richLongTraversableOnceCanStep(underlying: TraversableOnce[Long]) = new RichLongTraversableOnceCanStep(underlying)
+    implicit def richDoubleIterableCanStep(underlying: Iterable[Double]) = new RichDoubleIterableCanStep(underlying)
+    implicit def richIntIterableCanStep(underlying: Iterable[Int]) = new RichIntIterableCanStep(underlying)
+    implicit def richLongIterableCanStep(underlying: Iterable[Long]) = new RichLongIterableCanStep(underlying)
     implicit def richMapCanStep[K, V](underlying: collection.Map[K, V]) = new RichMapCanStep[K, V](underlying)
   }
 
@@ -1117,61 +1201,109 @@ package converterImpls {
 
     implicit def richBitSetCanStep(underlying: collection.BitSet) = new RichBitSetCanStep(underlying)
   }
+
+  trait Priority1StepConverters extends Priority2StepConverters {
+    implicit def richArrayDoubleCanStep(underlying: Array[Double]) = new RichArrayDoubleCanStep(underlying)
+    implicit def richArrayIntCanStep(underlying: Array[Int]) = new RichArrayIntCanStep(underlying)
+    implicit def richArrayLongCanStep(underlying: Array[Long]) = new RichArrayLongCanStep(underlying)
+    
+    implicit def richIntNumericRangeCanStep(underlying: collection.immutable.NumericRange[Int]) = new RichIntNumericRangeCanStep(underlying)
+    implicit def richLongNumericRangeCanStep(underlying: collection.immutable.NumericRange[Long]) = new RichLongNumericRangeCanStep(underlying)
+    implicit def richRangeCanStep(underlying: Range) = new RichRangeCanStep(underlying)
+
+    implicit def richDoubleVectorCanStep[A](underlying: Vector[Double]) = new RichDoubleVectorCanStep(underlying)
+    implicit def richIntVectorCanStep[A](underlying: Vector[Int]) = new RichIntVectorCanStep(underlying)
+    implicit def richLongVectorCanStep[A](underlying: Vector[Long]) = new RichLongVectorCanStep(underlying)
+
+    implicit def richDoubleHashSetCanStep(underlying: collection.immutable.HashSet[Double]) = new RichDoubleHashSetCanStep(underlying)
+    implicit def richIntHashSetCanStep(underlying: collection.immutable.HashSet[Int]) = new RichIntHashSetCanStep(underlying)
+    implicit def richLongHashSetCanStep(underlying: collection.immutable.HashSet[Long]) = new RichLongHashSetCanStep(underlying)
+
+    implicit def richStringCanStep(underlying: String) = new RichStringCanStep(underlying)
+  }
+
+  final class CollectionCanAccumulate[A](private val underlying: TraversableOnce[A]) extends AnyVal {
+    def accumulate: Accumulator[A] = {
+      val a = new Accumulator[A]
+      underlying.foreach(a += _)
+      a
+    }
+  }
+
+  final class AccumulateDoubleCollection(private val underlying: TraversableOnce[Double]) extends AnyVal {
+    def accumulate: DoubleAccumulator = {
+      val da = new DoubleAccumulator
+      underlying.foreach(da += _)
+      da
+    }
+  }
+  final class AccumulateIntCollection(private val underlying: TraversableOnce[Int]) extends AnyVal {
+    def accumulate: IntAccumulator = {
+      val da = new IntAccumulator
+      underlying.foreach(da += _)
+      da
+    }
+  }
+  final class AccumulateLongCollection(private val underlying: TraversableOnce[Long]) extends AnyVal {
+    def accumulate: LongAccumulator = {
+      val da = new LongAccumulator
+      underlying.foreach(da += _)
+      da
+    }
+  }
+  final class AccumulateAnyArray[A](private val underlying: Array[A]) extends AnyVal {
+    def accumulate: Accumulator[A] = {
+      val a = new Accumulator[A]
+      var i = 0
+      while (i < underlying.length) { a += underlying(i); i += 1 }
+      a
+    }
+  }
+
+  final class AccumulateDoubleArray(private val underlying: Array[Double]) extends AnyVal {
+    def accumulate: DoubleAccumulator = {
+      val da = new DoubleAccumulator
+      var i = 0
+      while (i < underlying.length) { da += underlying(i); i += 1 }
+      da
+    }
+  }
+  final class AccumulateIntArray(private val underlying: Array[Int]) extends AnyVal {
+    def accumulate: IntAccumulator = {
+      val da = new IntAccumulator
+      var i = 0
+      while (i < underlying.length) { da += underlying(i); i += 1 }
+      da
+    }
+  }
+  final class AccumulateLongArray(private val underlying: Array[Long]) extends AnyVal {
+    def accumulate: LongAccumulator = {
+      val da = new LongAccumulator
+      var i = 0
+      while (i < underlying.length) { da += underlying(i); i += 1 }
+      da
+    }
+  }
+
+  trait Priority3AccumulatorConverters {
+    implicit def collectionCanAccumulate[A](underlying: TraversableOnce[A]) = new CollectionCanAccumulate[A](underlying)
+  }
+
+  trait Priority2AccumulatorConverters extends Priority3AccumulatorConverters {
+    implicit def accumulateDoubleCollection(underlying: TraversableOnce[Double]) = new AccumulateDoubleCollection(underlying)
+    implicit def accumulateIntCollection(underlying: TraversableOnce[Int]) = new AccumulateIntCollection(underlying)
+    implicit def accumulateLongCollection(underlying: TraversableOnce[Long]) = new AccumulateLongCollection(underlying)
+    implicit def accumulateAnyArray[A](underlying: Array[A]) = new AccumulateAnyArray(underlying)
+  }
+
+  trait Priority1AccumulatorConverters extends Priority2AccumulatorConverters {
+    implicit def accumulateDoubleArray(underlying: Array[Double]) = new AccumulateDoubleArray(underlying)
+    implicit def accumulateIntArray(underlying: Array[Int]) = new AccumulateIntArray(underlying)
+    implicit def accumulateLongArray(underlying: Array[Long]) = new AccumulateLongArray(underlying)
+  }
 }
 
-object StepConverters extends converterImpls.Priority2StepConverters {
-  import converterImpls._
-  import Stepper._
-
-  implicit class RichArrayDoubleCanStep(val underlying: Array[Double]) extends AnyVal with MakesDoubleStepper {
-    @inline def stepper: DoubleStepper with EfficientSubstep with EfficientSubstep = new StepsDoubleArray(underlying, 0, underlying.length)
-  }
-
-  implicit class RichArrayIntCanStep(val underlying: Array[Int]) extends AnyVal with MakesIntStepper {
-    @inline def stepper: IntStepper with EfficientSubstep = new StepsIntArray(underlying, 0, underlying.length)
-  }
-  
-  implicit class RichArrayLongCanStep(val underlying: Array[Long]) extends AnyVal with MakesLongStepper {
-    @inline def stepper: LongStepper with EfficientSubstep = new StepsLongArray(underlying, 0, underlying.length)
-  }
-  
-  implicit class RichIntNumericRangeCanStep(private val underlying: collection.immutable.NumericRange[Int]) extends AnyVal with MakesIntStepper {
-    @inline def stepper: IntStepper with EfficientSubstep = new StepsIntNumericRange(underlying, 0, underlying.length)
-  }
-
-  implicit class RichLongNumericRangeCanStep(private val underlying: collection.immutable.NumericRange[Long]) extends AnyVal with MakesLongStepper {
-    @inline def stepper: LongStepper with EfficientSubstep = new StepsLongNumericRange(underlying, 0, underlying.length)
-  }
-
-  implicit class RichRangeCanStep(private val underlying: Range) extends AnyVal with MakesIntStepper {
-    @inline def stepper: IntStepper with EfficientSubstep = new StepsIntRange(underlying, 0, underlying.length)
-  }  
-
-  implicit class RichDoubleVectorCanStep[A](private val underlying: Vector[Double]) extends AnyVal with MakesDoubleStepper {
-    @inline def stepper: DoubleStepper with EfficientSubstep = new StepsDoubleVector(underlying, 0, underlying.length)
-  }
-
-  implicit class RichIntVectorCanStep[A](private val underlying: Vector[Int]) extends AnyVal with MakesIntStepper {
-    @inline def stepper: IntStepper with EfficientSubstep = new StepsIntVector(underlying, 0, underlying.length)
-  }
-
-  implicit class RichLongVectorCanStep[A](private val underlying: Vector[Long]) extends AnyVal with MakesLongStepper {
-    @inline def stepper: LongStepper with EfficientSubstep = new StepsLongVector(underlying, 0, underlying.length)
-  }
-
-  implicit class RichDoubleHashSetCanStep(private val underlying: collection.immutable.HashSet[Double]) extends AnyVal with MakesDoubleStepper {
-    @inline def stepper: DoubleStepper with EfficientSubstep = new StepsDoubleImmHashSet(underlying.iterator, underlying.size)
-  }
-
-  implicit class RichIntHashSetCanStep(private val underlying: collection.immutable.HashSet[Int]) extends AnyVal with MakesIntStepper {
-    @inline def stepper: IntStepper with EfficientSubstep = new StepsIntImmHashSet(underlying.iterator, underlying.size)
-  }
-
-  implicit class RichLongHashSetCanStep(private val underlying: collection.immutable.HashSet[Long]) extends AnyVal with MakesLongStepper {
-    @inline def stepper: LongStepper with EfficientSubstep = new StepsLongImmHashSet(underlying.iterator, underlying.size)
-  }
-
-  implicit class RichStringCanStep(val underlying: String) extends AnyVal with MakesIntStepper {
-    @inline def stepper: IntStepper with EfficientSubstep = new StepperStringCodePoint(underlying, 0, underlying.length)
-  }
-}
+object StepConverters
+extends converterImpls.Priority1StepConverters
+with converterImpls.Priority1AccumulatorConverters
+{}

@@ -14,42 +14,50 @@ trait PrimitiveStreamUnboxer[A, S] {
   def apply(boxed: Stream[A]): S
 }
 
-trait Priority6StreamConverters {
+trait Priority5StreamConverters {
   // Note--conversion is only to make sure implicit conversion priority is lower than alternatives.
-  implicit class EnrichAnyScalaCollectionWithStream[A, CC](cc: CC)(implicit ev: CC <:< TraversableOnce[A]) {
-    private def mkAcc() = {
-      val acc = new Accumulator[A]
-      ev(cc).foreach{ acc += _ }
-      acc
-    }
-      
-    def seqStream: Stream[A] = mkAcc().seqStream
-    
-    def parStream: Stream[A] = mkAcc().parStream
+  implicit class EnrichScalaCollectionWithSeqStream[A, CC](cc: CC)(implicit steppize: CC => MakesAnySeqStepper[A]) {
+    def seqStream: Stream[A] = StreamSupport.stream(steppize(cc).stepper, false)
+  }
+  implicit class EnrichScalaCollectionWithKeySeqStream[K, CC](cc: CC)(implicit steppize: CC => MakesAnyKeySeqStepper[K]) {
+    def seqKeyStream: Stream[K] = StreamSupport.stream(steppize(cc).keyStepper, false)
+  }
+  implicit class EnrichScalaCollectionWithValueSeqStream[V, CC](cc: CC)(implicit steppize: CC => MakesAnyValueSeqStepper[V]) {
+    def seqValueStream: Stream[V] = StreamSupport.stream(steppize(cc).valueStepper, false)
   }
 }
 
-trait Priority5StreamConverters extends Priority6StreamConverters {
-  implicit class EnrichScalaCollectionWithStream[A <: AnyRef, CC](cc: CC)(implicit ev: CC <:< TraversableOnce[A]) {
-    private def mkArr()(implicit tag: reflect.ClassTag[A]): Array[A] = {
-      val t = ev(cc)
-      if (t.isTraversableAgain && t.hasDefiniteSize) {
-        val sz = t.size
-        val a = new Array[A](sz)
-        t.copyToArray(a, 0, sz)
-        a
-      }
-      else t.toArray[A]
-    }
-    
-    def seqStream(implicit tag: reflect.ClassTag[A]): Stream[A] =
-      java.util.Arrays.stream(mkArr())
-      
-    def parStream(implicit tag: reflect.ClassTag[A]): Stream[A] = seqStream.parallel
+trait Priority4StreamConverters extends Priority5StreamConverters {
+  implicit class EnrichScalaCollectionWithSeqDoubleStream[CC](cc: CC)(implicit steppize: CC => MakesDoubleSeqStepper) {
+    def seqStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).stepper, false)
   }  
+  implicit class EnrichScalaCollectionWithSeqIntStream[CC](cc: CC)(implicit steppize: CC => MakesIntSeqStepper) {
+    def seqStream: IntStream = StreamSupport.intStream(steppize(cc).stepper, false)
+  }  
+  implicit class EnrichScalaCollectionWithSeqLongStream[CC](cc: CC)(implicit steppize: CC => MakesLongSeqStepper) {
+    def seqStream: LongStream = StreamSupport.longStream(steppize(cc).stepper, false)
+  }
+  implicit class EnrichScalaCollectionWithSeqDoubleKeyStream[CC](cc: CC)(implicit steppize: CC => MakesDoubleKeySeqStepper) {
+    def seqKeyStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).keyStepper, false)
+  }  
+  implicit class EnrichScalaCollectionWithSeqIntKeyStream[CC](cc: CC)(implicit steppize: CC => MakesIntKeySeqStepper) {
+    def seqKeyStream: IntStream = StreamSupport.intStream(steppize(cc).keyStepper, false)
+  }  
+  implicit class EnrichScalaCollectionWithSeqLongKeyStream[CC](cc: CC)(implicit steppize: CC => MakesLongKeySeqStepper) {
+    def seqKeyStream: LongStream = StreamSupport.longStream(steppize(cc).keyStepper, false)
+  }
+  implicit class EnrichScalaCollectionWithSeqDoubleValueStream[CC](cc: CC)(implicit steppize: CC => MakesDoubleValueSeqStepper) {
+    def seqValueStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).valueStepper, false)
+  }  
+  implicit class EnrichScalaCollectionWithSeqIntValueStream[CC](cc: CC)(implicit steppize: CC => MakesIntValueSeqStepper) {
+    def seqValueStream: IntStream = StreamSupport.intStream(steppize(cc).valueStepper, false)
+  }  
+  implicit class EnrichScalaCollectionWithSeqLongValueStream[CC](cc: CC)(implicit steppize: CC => MakesLongValueSeqStepper) {
+    def seqValueStream: LongStream = StreamSupport.longStream(steppize(cc).valueStepper, false)
+  }
 }
 
-trait Priority4StreamConverters extends Priority5StreamConverters {
+trait Priority3StreamConverters extends Priority4StreamConverters {
   implicit class EnrichAnySteppableWithStream[A, CC](cc: CC)(implicit steppize: CC => MakesAnyStepper[A]) {
     def seqStream: Stream[A] = StreamSupport.stream(steppize(cc).stepper, false)
     def parStream: Stream[A] = StreamSupport.stream(steppize(cc).stepper.anticipateParallelism, true)
@@ -64,7 +72,7 @@ trait Priority4StreamConverters extends Priority5StreamConverters {
   }
 }
 
-trait Priority3StreamConverters extends Priority4StreamConverters {
+trait Priority2StreamConverters extends Priority3StreamConverters {
   implicit class EnrichDoubleSteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesDoubleStepper) {
     def seqStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).stepper, false)
     def parStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).stepper.anticipateParallelism, true)
@@ -101,9 +109,6 @@ trait Priority3StreamConverters extends Priority4StreamConverters {
     def seqValueStream: LongStream = StreamSupport.longStream(steppize(cc).valueStepper, false)
     def parValueStream: LongStream = StreamSupport.longStream(steppize(cc).valueStepper.anticipateParallelism, true)
   }
-}
-
-trait Priority2StreamConverters extends Priority3StreamConverters {
 }
 
 trait Priority1StreamConverters extends Priority2StreamConverters {
