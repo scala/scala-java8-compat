@@ -7,6 +7,10 @@ import scala.compat.java8.runtime._
 
 import Stepper._
 
+/////////////////////////////
+// Stepper implementations //
+/////////////////////////////
+
 private[java8] class StepsAnyImmHashSet[A](_underlying: Iterator[A], _N: Int)
 extends StepsLikeTrieIterator[A, StepsAnyImmHashSet[A]](_underlying, _N) {
   protected def demiclone(it: Iterator[A], N: Int) = new StepsAnyImmHashSet(it, N)
@@ -31,3 +35,22 @@ extends StepsLongLikeTrieIterator[StepsLongImmHashSet](_underlying, _N) {
   def nextLong() = { val ans = underlying.next; i += 1; ans }
 }
 
+//////////////////////////
+// Value class adapters //
+//////////////////////////
+
+final class RichImmHashSetCanStep[A](private val underlying: collection.immutable.HashSet[A]) extends AnyVal with MakesAnyStepper[A] {
+  @inline def stepper: AnyStepper[A] with EfficientSubstep = new StepsAnyImmHashSet(underlying.iterator, underlying.size)
+}
+
+final class RichDoubleHashSetCanStep(private val underlying: collection.immutable.HashSet[Double]) extends AnyVal with MakesDoubleStepper {
+  @inline def stepper: DoubleStepper with EfficientSubstep = new StepsDoubleImmHashSet(underlying.iterator, underlying.size)
+}
+
+final class RichIntHashSetCanStep(private val underlying: collection.immutable.HashSet[Int]) extends AnyVal with MakesIntStepper {
+  @inline def stepper: IntStepper with EfficientSubstep = new StepsIntImmHashSet(underlying.iterator, underlying.size)
+}
+
+final class RichLongHashSetCanStep(private val underlying: collection.immutable.HashSet[Long]) extends AnyVal with MakesLongStepper {
+  @inline def stepper: LongStepper with EfficientSubstep = new StepsLongImmHashSet(underlying.iterator, underlying.size)
+}

@@ -7,6 +7,10 @@ import scala.compat.java8.runtime._
 
 import Stepper._
 
+/////////////////////////////
+// Stepper implementations //
+/////////////////////////////
+
 private[java8] trait StepsVectorLike[A] {
   protected def myVector: Vector[A]
   protected var index: Int = 32
@@ -126,4 +130,22 @@ with StepsVectorLike[Long] {
   }    
 }
 
+//////////////////////////
+// Value class adapters //
+//////////////////////////
 
+final class RichVectorCanStep[A](private val underlying: Vector[A]) extends AnyVal with MakesAnyStepper[A] {
+  @inline def stepper: AnyStepper[A] with EfficientSubstep = new StepsAnyVector[A](underlying, 0, underlying.length)
+}
+
+final class RichDoubleVectorCanStep[A](private val underlying: Vector[Double]) extends AnyVal with MakesDoubleStepper {
+  @inline def stepper: DoubleStepper with EfficientSubstep = new StepsDoubleVector(underlying, 0, underlying.length)
+}
+
+final class RichIntVectorCanStep[A](private val underlying: Vector[Int]) extends AnyVal with MakesIntStepper {
+  @inline def stepper: IntStepper with EfficientSubstep = new StepsIntVector(underlying, 0, underlying.length)
+}
+
+final class RichLongVectorCanStep[A](private val underlying: Vector[Long]) extends AnyVal with MakesLongStepper {
+  @inline def stepper: LongStepper with EfficientSubstep = new StepsLongVector(underlying, 0, underlying.length)
+}

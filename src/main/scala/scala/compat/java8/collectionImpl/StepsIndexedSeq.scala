@@ -7,6 +7,10 @@ import scala.compat.java8.runtime._
 
 import Stepper._
 
+/////////////////////////////
+// Stepper implementations //
+/////////////////////////////
+
 private[java8] class StepsAnyIndexedSeq[A](underlying: collection.IndexedSeqLike[A, _], _i0: Int, _iN: Int)
 extends StepsLikeIndexed[A, StepsAnyIndexedSeq[A]](_i0, _iN) {
   def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
@@ -29,4 +33,24 @@ private[java8] class StepsLongIndexedSeq[CC <: collection.IndexedSeqLike[Long, _
 extends StepsLongLikeIndexed[StepsLongIndexedSeq[CC]](_i0, _iN) {
   def nextLong() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
   def semiclone(half: Int) = new StepsLongIndexedSeq[CC](underlying, i0, half)
+}
+
+//////////////////////////
+// Value class adapters //
+//////////////////////////
+
+final class RichIndexedSeqCanStep[A](private val underlying: collection.IndexedSeqLike[A, _]) extends AnyVal with MakesAnyStepper[A] {
+  @inline def stepper: AnyStepper[A] with EfficientSubstep = new StepsAnyIndexedSeq[A](underlying, 0, underlying.length)
+}
+
+final class RichDoubleIndexedSeqCanStep[CC <: collection.IndexedSeqLike[Double, _]](private val underlying: CC) extends AnyVal with MakesDoubleStepper {
+  @inline def stepper: DoubleStepper with EfficientSubstep = new StepsDoubleIndexedSeq[CC](underlying, 0, underlying.length)
+}
+
+final class RichIntIndexedSeqCanStep[CC <: collection.IndexedSeqLike[Int, _]](private val underlying: CC) extends AnyVal with MakesIntStepper {
+  @inline def stepper: IntStepper with EfficientSubstep = new StepsIntIndexedSeq[CC](underlying, 0, underlying.length)
+}
+
+final class RichLongIndexedSeqCanStep[CC <: collection.IndexedSeqLike[Long, _]](private val underlying: CC) extends AnyVal with MakesLongStepper {
+  @inline def stepper: LongStepper with EfficientSubstep = new StepsLongIndexedSeq[CC](underlying, 0, underlying.length)
 }

@@ -7,6 +7,10 @@ import scala.compat.java8.runtime._
 
 import Stepper._
 
+////////////////////////////
+// Stepper implementation //
+////////////////////////////
+
 private[java8] class StepsIntBitSet(_underlying: Array[Long], _i0: Int, _iN: Int)
 extends StepsIntLikeSliced[Array[Long], StepsIntBitSet](_underlying, _i0, _iN) {
   private var mask: Long = (-1L) << (i & 0x3F)
@@ -43,5 +47,24 @@ extends StepsIntLikeSliced[Array[Long], StepsIntBitSet](_underlying, _i0, _iN) {
     }
   })
   def nextInt() = if (hasNext) { val j = i; found = false; mask = mask << 1; i += 1; j } else throwNSEE
+}
+
+/////////////////////////
+// Value class adapter //
+/////////////////////////
+
+final class RichBitSetCanStep(private val underlying: collection.BitSet) extends AnyVal with MakesIntStepper {
+  def stepper: IntStepper with EfficientSubstep = {
+    val bits: Array[Long] = underlying match {
+      case m: collection.mutable.BitSet => CollectionInternals.getBitSetInternals(m)
+      case n: collection.immutable.BitSet.BitSetN => RichBitSetCanStep.reflectInternalsN(n)
+      case x => x.toBitMask
+    }
+    new StepsIntBitSet(bits, 0, math.min(bits.length*64L, Int.MaxValue).toInt)
+  }
+}
+private[java8] object RichBitSetCanStep {
+  private val reflector = classOf[collection.immutable.BitSet.BitSetN].getMethod("elems")
+  def reflectInternalsN(bsn: collection.immutable.BitSet.BitSetN): Array[Long] = reflector.invoke(bsn).asInstanceOf[Array[Long]]
 }
 

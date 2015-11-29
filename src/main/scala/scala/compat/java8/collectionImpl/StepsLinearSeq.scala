@@ -7,6 +7,10 @@ import scala.compat.java8.runtime._
 
 import Stepper._
 
+/////////////////////////////
+// Stepper implementations //
+/////////////////////////////
+
 private[java8] class StepsAnyLinearSeq[A, CC >: Null <: collection.LinearSeqLike[A, CC]](_underlying: CC, _maxN: Long)
 extends StepsWithTail[A, CC, StepsAnyLinearSeq[A, CC]](_underlying, _maxN) {
   protected def myIsEmpty(cc: CC): Boolean = cc.isEmpty
@@ -39,3 +43,22 @@ extends StepsLongWithTail[CC, StepsLongLinearSeq[CC]](_underlying, _maxN) {
   def semiclone(half: Int) = new StepsLongLinearSeq[CC](underlying, half)
 }
 
+//////////////////////////
+// Value class adapters //
+//////////////////////////
+
+final class RichLinearSeqCanStep[A, CC >: Null <: collection.LinearSeqLike[A, CC]](private val underlying: CC) extends AnyVal with MakesAnySeqStepper[A] {
+  @inline def stepper: AnyStepper[A] = new StepsAnyLinearSeq[A, CC](underlying, Long.MaxValue)
+}
+
+final class RichDoubleLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Double, CC]](private val underlying: CC) extends AnyVal with MakesDoubleSeqStepper {
+  @inline def stepper: DoubleStepper = new StepsDoubleLinearSeq[CC](underlying, Long.MaxValue)
+}
+
+final class RichIntLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Int, CC]](private val underlying: CC) extends AnyVal with MakesIntSeqStepper {
+  @inline def stepper: IntStepper = new StepsIntLinearSeq[CC](underlying, Long.MaxValue)
+}
+
+final class RichLongLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Long, CC]](private val underlying: CC) extends AnyVal with MakesLongSeqStepper {
+  @inline def stepper: LongStepper = new StepsLongLinearSeq[CC](underlying, Long.MaxValue)
+}

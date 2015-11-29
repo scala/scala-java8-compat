@@ -7,6 +7,10 @@ import scala.compat.java8.runtime._
 
 import Stepper._
 
+////////////////////////////
+// Stepper implementation //
+////////////////////////////
+
 private[java8] class StepperStringCodePoint(underlying: String, var i0: Int, var iN: Int) extends IntStepper with EfficientSubstep {
   def characteristics() = NonNull
   def estimateSize = iN - i0
@@ -31,3 +35,10 @@ private[java8] class StepperStringCodePoint(underlying: String, var i0: Int, var
   }
 }
 
+/////////////////////////
+// Value class adapter //
+/////////////////////////
+
+final class RichStringCanStep(private val underlying: String) extends AnyVal with MakesIntStepper {
+  @inline def stepper: IntStepper with EfficientSubstep = new StepperStringCodePoint(underlying, 0, underlying.length)
+}    
