@@ -135,7 +135,7 @@ class StreamConvertersTest {
       val hsO = hsetO(n)
       // Seems like a lot of boilerplate, but we need it to test implicit resolution
       assertEq(seqO, seqO.seqStream.toScala[Seq])
-      //assertEq(seqO, seqO.stepper.parStream.toScala[Seq])  // Must go through stepper if we're unsure whether we can parallelize well
+      assertEq(seqO, seqO.stepper.parStream.toScala[Seq])  // Must go through stepper if we're unsure whether we can parallelize well
       assertEq(seqO, arrO.seqStream.toScala[Seq])
       assertEq(seqO, arrO.parStream.toScala[Seq])
       assertEq(seqO, abO.seqStream.toScala[Seq])
@@ -154,7 +154,7 @@ class StreamConvertersTest {
       val vecD = vectD(n)
       val hsD = hsetD(n)
       assertEq(seqD, seqD.seqStream.toScala[Seq])
-      //assertEq(seqD, seqD.stepper.parStream.toScala[Seq])
+      assertEq(seqD, seqD.stepper.parStream.toScala[Seq])
       assertEq(seqD, arrD.seqStream.toScala[Seq])
       assertEq(seqD, arrD.parStream.toScala[Seq])
       assert(arrD.seqStream.isInstanceOf[DoubleStream])
@@ -183,7 +183,7 @@ class StreamConvertersTest {
       val vecI = vectI(n)
       val hsI = hsetI(n)
       assertEq(seqI, seqI.seqStream.toScala[Seq])
-      //assertEq(seqI, seqI.stepper.parStream.toScala[Seq])
+      assertEq(seqI, seqI.stepper.parStream.toScala[Seq])
       assertEq(seqI, arrI.seqStream.toScala[Seq])
       assertEq(seqI, arrI.parStream.toScala[Seq])
       assert(arrI.seqStream.isInstanceOf[IntStream])
