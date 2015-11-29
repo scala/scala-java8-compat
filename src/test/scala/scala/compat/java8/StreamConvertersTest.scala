@@ -6,7 +6,6 @@ import org.junit.Assert._
 class StreamConvertersTest {
   import java.util.stream._
   import StreamConverters._
-  import StepConverters._
   
   def assertEq[A](a1: A, a2: A, s: String) { assertEquals(s, a1, a2) }  // Weird order normally!
   def assertEq[A](a1: A, a2: A) { assertEq(a1, a2, "not equal") }

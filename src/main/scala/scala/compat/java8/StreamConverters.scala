@@ -167,7 +167,11 @@ trait Priority1StreamConverters extends Priority2StreamConverters {
   * val q = t.toScala[scala.collection.immutable.Queue]  // Queue[Double]
   * ```
   */
-object StreamConverters extends Priority1StreamConverters {
+object StreamConverters
+extends Priority1StreamConverters
+with converterImpls.Priority1StepConverters
+with converterImpls.Priority1AccumulatorConverters
+{
   implicit class EnrichDoubleArrayWithStream(a: Array[Double]) {
     def seqStream: DoubleStream = java.util.Arrays.stream(a)
     def parStream: DoubleStream = seqStream.parallel

@@ -6,7 +6,7 @@ import org.junit.Assert._
 class StepConvertersTest {
   import java.util._
   import collectionImpl._
-  import StepConverters._
+  import StreamConverters._   // Includes StepConverters!
   import scala.{ collection => co }
   import collection.{ mutable => cm, immutable => ci, concurrent => cc }
 
