@@ -8,31 +8,6 @@ import scala.compat.java8.runtime._
 package converterImpls {
   import Stepper._
 
-  private[java8] class StepsAnyIterator[A](_underlying: Iterator[A])
-  extends StepsLikeIterator[A, StepsAnyIterator[A]](_underlying) {
-    def semiclone() = new StepsAnyIterator(null)
-    def next() = if (proxied ne null) proxied.nextStep else underlying.next
-  }
-
-  private[java8] class StepsDoubleIterator(_underlying: Iterator[Double])
-  extends StepsDoubleLikeIterator[StepsDoubleIterator](_underlying) {
-    def semiclone() = new StepsDoubleIterator(null)
-    def nextDouble() = if (proxied ne null) proxied.nextStep else underlying.next
-  }
-
-  private[java8] class StepsIntIterator(_underlying: Iterator[Int])
-  extends StepsIntLikeIterator[StepsIntIterator](_underlying) {
-    def semiclone() = new StepsIntIterator(null)
-    def nextInt() = if (proxied ne null) proxied.nextStep else underlying.next
-  }
-
-  private[java8] class StepsLongIterator(_underlying: Iterator[Long])
-  extends StepsLongLikeIterator[StepsLongIterator](_underlying) {
-    def semiclone() = new StepsLongIterator(null)
-    def nextLong() = if (proxied ne null) proxied.nextStep else underlying.next
-  }
-
-
   final class RichArrayAnyCanStep[A](private val underlying: Array[A]) extends AnyVal with MakesAnyStepper[A] {
     @inline def stepper: AnyStepper[A] with EfficientSubstep = new StepsAnyArray[A](underlying, 0, underlying.length)
   }
@@ -309,30 +284,6 @@ package converterImpls {
   private[java8] object RichBitSetCanStep {
     private val reflector = classOf[collection.immutable.BitSet.BitSetN].getMethod("elems")
     def reflectInternalsN(bsn: collection.immutable.BitSet.BitSetN): Array[Long] = reflector.invoke(bsn).asInstanceOf[Array[Long]]
-  }
-
-  private[java8] class StepperStringCodePoint(underlying: String, var i0: Int, var iN: Int) extends IntStepper with EfficientSubstep {
-    def characteristics() = NonNull
-    def estimateSize = iN - i0
-    def hasNext = i0 < iN
-    def nextInt() = {
-      if (hasNext()) {
-        val cp = underlying.codePointAt(i0)
-        i0 += java.lang.Character.charCount(cp)
-        cp
-      }
-      else throwNSEE
-    }
-    def substep() = {
-      if (iN-3 > i0) {
-        var half = (i0+iN) >>> 1
-        if (java.lang.Character.isLowSurrogate(underlying.charAt(half))) half -= 1
-        val ans = new StepperStringCodePoint(underlying, i0, half)
-        i0 = half
-        ans
-      }
-      else null
-    }
   }
 
   final class RichMapCanStep[K, V](private val underlying: collection.Map[K, V]) extends AnyVal with MakesAnyKeySeqStepper[K] with MakesAnyValueSeqStepper[V] {
