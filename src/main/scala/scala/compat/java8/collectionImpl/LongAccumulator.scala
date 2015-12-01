@@ -212,6 +212,13 @@ object LongAccumulator {
   
   /** A `BiConsumer` that merges `LongAccumulator`s, suitable for use with `java.util.stream.LongStream`'s `collect` method.  Suitable for `Stream[Long]` also. */
   def merger = new java.util.function.BiConsumer[LongAccumulator, LongAccumulator]{ def accept(a1: LongAccumulator, a2: LongAccumulator) { a1 drain a2 } }
+
+  /** Builds a `LongAccumulator` from any `Long`-valued `TraversableOnce` */
+  def from[A](source: TraversableOnce[Long]) = {
+    val a = new LongAccumulator
+    source.foreach(a += _)
+    a
+  }
 }
 
 private[java8] class LongAccumulatorStepper(private val acc: LongAccumulator) extends LongStepper {

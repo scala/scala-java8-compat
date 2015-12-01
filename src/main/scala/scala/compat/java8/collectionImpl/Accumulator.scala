@@ -214,6 +214,13 @@ object Accumulator {
 
   /** A `BiConsumer` that merges `Accumulator`s, suitable for use with `java.util.stream.Stream`'s `collect` method. */
   def merger[A] = new java.util.function.BiConsumer[Accumulator[A], Accumulator[A]]{ def accept(a1: Accumulator[A], a2: Accumulator[A]) { a1 drain a2 } }
+
+  /** Builds an `Accumulator` from any `TraversableOnce` */
+  def from[A](source: TraversableOnce[A]) = {
+    val a = new Accumulator[A]
+    source.foreach(a += _)
+    a
+  }
 }
 
 private[java8] class AccumulatorStepper[A](private val acc: Accumulator[A]) extends AnyStepper[A] {

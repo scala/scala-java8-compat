@@ -117,6 +117,49 @@ class Test {
 ```
 
 
-## Future work
-  - Converters for `java.util.stream`
-  - [`Spliterator`](https://docs.oracle.com/javase/8/docs/api/java/util/Spliterator.html)s for Scala collections
+## Converters from Scala collections to Java 8 Streams
+
+Scala collections gain `seqStream` and `parStream` as extension methods that produce a Java 8 Stream
+running sequentially or in parallel, respectively.  These are automatically specialized to a primitive
+type if possible.  For instance, `List(1,2).seqStream` produces an `IntStream`.  Maps additionally have
+`seqKeyStream`, `seqValueStream`, `parKeyStream`, and `parValueStream` methods.
+
+Scala collections also gain `accumulate` and `stepper` methods that produce utility collections that
+can be useful when working with Java 8 Streams.  `accumulate` produces an `Accumulator` or its primitive
+counterpart (`DoubleAccumulator`, etc.), which is a low-level collection designed for efficient collection
+and dispatching of results to and from Streams.  Unlike most collections, it can contain more than
+`Int.MaxValue` elements.  `stepper` produces a `Stepper` which is a fusion of `Spliterator` and `Iterator`.
+`Stepper`s underlie the Scala collections' instances of Java 8 Streams.
+
+Java 8 Streams gain `toScala[Coll]` and `accumulate` methods, to make it easy to produce Scala collections
+or Accumulators, respectively, from Java 8 Streams. For instance, `myStream.to[Vector]` will collect the
+contents of a Stream into a `scala.collection.immutable.Vector`.  Note that standard sequential builders
+are used for collections, so this is best done to gather the results of an expensive computation.
+
+Finally, there is a Java class, `ScalaStreamer`, that has a series of `from` methods that can be used to
+obtain Java 8 Streams from Scala collections from within Java.
+
+#### Scala Usage Example
+
+```scala
+import scala.compat.java8.StreamConverters._
+
+object Test {
+  val m = collection.immutable.HashMap("fish" -> 2, "bird" -> 4)
+  val s = m.parValueStream.sum          // 6, potientially computed in parallel
+  val t = m.seqKeyStream.toScala[List]  // List("fish", "bird")
+  val a = t.accumulate                  // Accumulator[(String, Int)]
+
+  val n = a.splitter.fold(0)(_ + _._1.length) +
+          a.parStream.count             // 8 + 2 = 10
+
+  val b = java.util.Arrays.stream(Array(2L, 3L, 4L)).
+          accumulate                    // LongAccumulator
+}
+```
+
+#### Java Usage Example
+
+```java
+// TODO -- write converter and create example
+```

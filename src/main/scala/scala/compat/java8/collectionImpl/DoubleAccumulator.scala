@@ -211,6 +211,13 @@ object DoubleAccumulator {
   
   /** A `BiConsumer` that merges `DoubleAccumulator`s, suitable for use with `java.util.stream.DoubleStream`'s `collect` method.  Suitable for `Stream[Double]` also. */
   def merger = new java.util.function.BiConsumer[DoubleAccumulator, DoubleAccumulator]{ def accept(a1: DoubleAccumulator, a2: DoubleAccumulator) { a1 drain a2 } }
+
+  /** Builds a `DoubleAccumulator` from any `Double`-valued `TraversableOnce` */
+  def from[A](source: TraversableOnce[Double]) = {
+    val a = new DoubleAccumulator
+    source.foreach(a += _)
+    a
+  }
 }
 
 private[java8] class DoubleAccumulatorStepper(private val acc: DoubleAccumulator) extends DoubleStepper {

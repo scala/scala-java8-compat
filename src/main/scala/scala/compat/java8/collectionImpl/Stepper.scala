@@ -36,7 +36,14 @@ import java.util.Spliterator
   * println(s.hasStep)                      //  Prints `false`
   * }}}
   */
-trait Stepper[@specialized(Double, Int, Long) A] extends StepperLike[A, Stepper[A]] {}
+trait Stepper[@specialized(Double, Int, Long) A] extends StepperLike[A, Stepper[A]] {
+  /** Drains the contents of this stepper into an `Accumulator` or specialized variant thereof as appropriate.
+    * This is a terminal operation.
+    *
+    * Note: accumulation will occur sequentially.  To accumulate in parallel, use a `Stream` (i.e. `.parStream.accumulate`).
+    */
+  def accumulate[Acc <: AccumulatorLike[A, Acc]](implicit accer: scala.compat.java8.converterImpls.AccumulatesFromStepper[A, Acc]) = accer(this)  
+}
 
 /** An (optional) marker trait that indicates that a `Stepper` can call `substep` with
   * at worst O(log N) time and space complexity, and that the division is likely to
@@ -158,6 +165,13 @@ trait StepperLike[@specialized(Double, Int, Long) A, +CC] { self =>
   def iterator: Iterator[A] = new scala.collection.AbstractIterator[A] {
     def hasNext = self.hasStep
     def next = self.nextStep
+  }
+
+  /** Returns a Scala collection of the type requested. */
+  def to[Coll[_]](implicit cbf: collection.generic.CanBuildFrom[Nothing, A, Coll[A]]): Coll[A] = {
+    val b = cbf()
+    while (hasStep) b += nextStep
+    b.result()
   }
 }
 

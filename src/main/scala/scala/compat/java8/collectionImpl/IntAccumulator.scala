@@ -218,6 +218,13 @@ object IntAccumulator {
   
   /** A `BiConsumer` that merges `IntAccumulator`s, suitable for use with `java.util.stream.IntStream`'s `collect` method.  Suitable for `Stream[Int]` also. */
   def merger = new java.util.function.BiConsumer[IntAccumulator, IntAccumulator]{ def accept(a1: IntAccumulator, a2: IntAccumulator) { a1 drain a2 } }
+
+  /** Builds an `IntAccumulator` from any `Int`-valued `TraversableOnce` */
+  def from[A](source: TraversableOnce[Int]) = {
+    val a = new IntAccumulator
+    source.foreach(a += _)
+    a
+  }
 }
 
 private[java8] class IntAccumulatorStepper(private val acc: IntAccumulator) extends IntStepper {

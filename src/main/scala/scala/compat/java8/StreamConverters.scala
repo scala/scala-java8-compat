@@ -137,6 +137,10 @@ trait Priority1StreamConverters extends Priority2StreamConverters {
   * 
   * Scala collections gain extension methods `seqStream` and
   * `parStream` that allow them to be used as the source of a `Stream`.
+  * Some collections either intrinsically cannot be paralellized, or
+  * could be but an efficient implementation is missing.  It this case,
+  * only `seqStream` is provided.  If a collection cannot be stepped over
+  * at all (e.g. `Traversable`), then it gains neither method.
   *
   * `Array` also gains `seqStream` and `parStream` methods, and calling those
   * on `Array[Double]`, `Array[Int]`, or `Array[Long]` will produce the
@@ -152,10 +156,32 @@ trait Priority1StreamConverters extends Priority2StreamConverters {
   * have custom accumulators with improved performance.
   *
   * Accumulators have `toArray`, `toList`, `iterator`, and `to[_]` methods
-  * to convert to standard Scala collections.
+  * to convert to standard Scala collections.  Note that if you wish to
+  * create an array from a `Stream`, going through an `Accumulator` is
+  * not the most efficient option: just create the `Array` directly.
   *
-  * Example:
-  * ```
+  * Internally, Scala collections implement a hybrid of `Iterator` and
+  * `java.util.Spliterator` to implement `Stream` compatibility; these
+  * are called `Stepper`s.  In particular, they can test for the presence
+  * of a next element using `hasStep`, can retrieve the next value with
+  * `nextStep`, or can optionally retrieve and operate on a value if present
+  * with `tryStep`, which works like `tryAdvance` in `java.util.Spliterator`.
+  *
+  * Every Scala collection that can be stepped
+  * through has a `stepper` method implicitly provided.  In addition,
+  * maps have `keyStepper` and `valueStepper` methods.  A limited number
+  * of collections operations are defined on `Stepper`s, including conversion
+  * to Scala collections with `to` or accumulation via `accumulate`.
+  * `Stepper`s also implement `seqStream` and `parStream` to generate `Stream`s.
+  * These are provided regardless of whether a `Stepper` can efficiently
+  * subdivide itself for parallel processing (though one can check for the
+  * presence of the `EfficientSubstep` trait to know that parallel execution will
+  * not be limited by long sequential searching steps, and one can call
+  * `anticipateParallelism` to warn a `Stepper` that it will be used in a parallel
+  * context and thus may wish to make different tradeoffs).
+  *
+  * Examples:
+  * {{{
   * import scala.compat.java8.StreamConverers._
   *
   * val s = Vector(1,2,3,4).parStream    // Stream[Int]
@@ -165,7 +191,9 @@ trait Priority1StreamConverters extends Priority2StreamConverters {
   *
   * val t = Array(2.0, 3.0, 4.0).parStream               // DoubleStream
   * val q = t.toScala[scala.collection.immutable.Queue]  // Queue[Double]
-  * ```
+  *
+  * val x = List(1L, 2L, 3L, 4L).stepper.parStream.sum   // 10, potentially computed in parallel
+  * }}}
   */
 object StreamConverters
 extends Priority1StreamConverters
@@ -271,6 +299,30 @@ with converterImpls.Priority1AccumulatorConverters
         stream.forEachOrdered(new java.util.function.LongConsumer{ def accept(d: Long) { b += d } })
         b.result()
       }
+    }
+  }
+
+  implicit val accumulateDoubleStepper = new AccumulatesFromStepper[Double, DoubleAccumulator] {
+    def apply(stepper: Stepper[Double]) = {
+      val a = new DoubleAccumulator
+      while (stepper.hasStep) a += stepper.nextStep
+      a
+    }
+  }
+
+  implicit val accumulateIntStepper = new AccumulatesFromStepper[Int, IntAccumulator] {
+    def apply(stepper: Stepper[Int]) = {
+      val a = new IntAccumulator
+      while (stepper.hasStep) a += stepper.nextStep
+      a
+    }
+  }
+
+  implicit val accumulateLongStepper = new AccumulatesFromStepper[Long, LongAccumulator] {
+    def apply(stepper: Stepper[Long]) = {
+      val a = new LongAccumulator
+      while (stepper.hasStep) a += stepper.nextStep
+      a
     }
   }
 }
