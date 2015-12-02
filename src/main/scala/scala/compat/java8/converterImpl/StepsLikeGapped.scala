@@ -1,7 +1,8 @@
-package scala.compat.java8.collectionImpl
+package scala.compat.java8.converterImpl
 
 import annotation.tailrec
 
+import scala.compat.java8.collectionImpl._
 import Stepper._
 
 /** Abstracts all the generic operations of stepping over a backing array
@@ -10,7 +11,7 @@ import Stepper._
   * is used as a signal to look for more entries in the array.  (This also
   * allows a subclass to traverse a sublist by updating `currentEntry`.)
   */
-abstract class AbstractStepsLikeGapped[Sub >: Null, Semi <: Sub](protected val underlying: Array[AnyRef], protected var i0: Int, protected var iN: Int) {
+private[java8] abstract class AbstractStepsLikeGapped[Sub >: Null, Semi <: Sub](protected val underlying: Array[AnyRef], protected var i0: Int, protected var iN: Int) {
   protected var currentEntry: AnyRef = null
   def semiclone(half: Int): Semi
   def characteristics(): Int = Ordered
@@ -33,7 +34,7 @@ abstract class AbstractStepsLikeGapped[Sub >: Null, Semi <: Sub](protected val u
 /** Abstracts the process of stepping through an incompletely filled array of `AnyRefs`
   * and interpreting the contents as the elements of a collection.
   */
-abstract class StepsLikeGapped[A, STA >: Null <: StepsLikeGapped[A, _]](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+private[java8] abstract class StepsLikeGapped[A, STA >: Null <: StepsLikeGapped[A, _]](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
   extends AbstractStepsLikeGapped[AnyStepper[A], STA](_underlying, _i0, _iN)
   with AnyStepper[A]
   with EfficientSubstep
@@ -43,7 +44,7 @@ abstract class StepsLikeGapped[A, STA >: Null <: StepsLikeGapped[A, _]](_underly
   * and interpreting the contents as the elements of a collection of `Double`s.  Subclasses
   * are responsible for unboxing the `AnyRef` inside `nextDouble`.
   */
-abstract class StepsDoubleLikeGapped[STD >: Null <: StepsDoubleLikeGapped[_]](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+private[java8] abstract class StepsDoubleLikeGapped[STD >: Null <: StepsDoubleLikeGapped[_]](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
   extends AbstractStepsLikeGapped[DoubleStepper, STD](_underlying, _i0, _iN)
   with DoubleStepper
   with EfficientSubstep
@@ -53,7 +54,7 @@ abstract class StepsDoubleLikeGapped[STD >: Null <: StepsDoubleLikeGapped[_]](_u
   * and interpreting the contents as the elements of a collection of `Int`s.  Subclasses
   * are responsible for unboxing the `AnyRef` inside `nextInt`.
   */
-abstract class StepsIntLikeGapped[STI >: Null <: StepsIntLikeGapped[_]](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+private[java8] abstract class StepsIntLikeGapped[STI >: Null <: StepsIntLikeGapped[_]](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
   extends AbstractStepsLikeGapped[IntStepper, STI](_underlying, _i0, _iN)
   with IntStepper
   with EfficientSubstep
@@ -63,7 +64,7 @@ abstract class StepsIntLikeGapped[STI >: Null <: StepsIntLikeGapped[_]](_underly
   * and interpreting the contents as the elements of a collection of `Long`s.  Subclasses
   * are responsible for unboxing the `AnyRef` inside `nextLong`.
   */
-abstract class StepsLongLikeGapped[STL >: Null <: StepsLongLikeGapped[_]](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+private[java8] abstract class StepsLongLikeGapped[STL >: Null <: StepsLongLikeGapped[_]](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
   extends AbstractStepsLikeGapped[LongStepper, STL](_underlying, _i0, _iN)
   with LongStepper 
   with EfficientSubstep

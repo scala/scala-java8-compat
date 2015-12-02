@@ -1,6 +1,7 @@
 package scala.compat.java8;
 
-import scala.compat.java8.converterImpls.*;
+import scala.compat.java8.converterImpl.*;
+import scala.compat.java8.collectionImpl.*;
 import java.util.stream.*;
 import scala.compat.java8.runtime.CollectionInternals;
 
@@ -471,8 +472,8 @@ public class ScalaStreaming {
      */
     public static IntStream intFrom(scala.collection.BitSet coll) {
         // Let the value class figure out the casting!
-        scala.compat.java8.converterImpls.RichBitSetCanStep rbscs = 
-          new scala.compat.java8.converterImpls.RichBitSetCanStep(coll);
+        scala.compat.java8.converterImpl.RichBitSetCanStep rbscs = 
+          new scala.compat.java8.converterImpl.RichBitSetCanStep(coll);
         return StreamSupport.intStream(rbscs.stepper(), false);
     }
 
@@ -485,7 +486,7 @@ public class ScalaStreaming {
      * @return     A IntStream view of the collection which, by default, executes sequentially.
      */
     public static IntStream intFrom(scala.collection.immutable.Range coll) {
-        return StreamSupport.intStream(new scala.compat.java8.converterImpls.StepsIntRange(coll, 0, coll.length()), false);
+        return StreamSupport.intStream(new scala.compat.java8.converterImpl.StepsIntRange(coll, 0, coll.length()), false);
     }
 
     /** 

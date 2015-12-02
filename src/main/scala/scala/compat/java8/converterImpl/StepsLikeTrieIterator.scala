@@ -1,20 +1,21 @@
-package scala.compat.java8
-package collectionImpl
+package scala.compat.java8.converterImpl
 
 import java.util.Spliterator
+
+import scala.compat.java8.collectionImpl._
 import Stepper._
 
 /** Abstracts all the generic operations of stepping over a TrieIterator by asking itself to
   * slice itself into pieces.  Note that `i` must be kept up to date in subclasses.
   */
-trait AbstractStepsLikeTrieIterator[A, Sub >: Null, Semi >: Null <: Sub with AbstractStepsLikeTrieIterator[A, Sub, _]]
+private[java8] trait AbstractStepsLikeTrieIterator[A, Sub >: Null, Semi >: Null <: Sub with AbstractStepsLikeTrieIterator[A, Sub, _]]
 extends AbstractStepsLikeSliced[Iterator[A], Sub, Semi] {
   protected def demiclone(it: Iterator[A], N: Int): Semi
   override def characteristics() = Immutable
   def hasNext(): Boolean = underlying.hasNext
   def semiclone(halfHint: Int): Semi = 
     if (!underlying.hasNext || i > iN-2) null
-    else runtime.CollectionInternals.trieIteratorSplit(underlying) match {
+    else scala.compat.java8.runtime.CollectionInternals.trieIteratorSplit(underlying) match {
       case null => null
       case ((pre: Iterator[A], pno), post: Iterator[A]) =>
         val pn = (pno: Any) match { case i: Int => i; case _ => throw new Exception("Unexpected type") }
@@ -27,22 +28,22 @@ extends AbstractStepsLikeSliced[Iterator[A], Sub, Semi] {
     }
 }
 
-abstract class StepsLikeTrieIterator[A, STI >: Null <: StepsLikeTrieIterator[A, _]](_underlying: Iterator[A], _N: Int)
+private[java8] abstract class StepsLikeTrieIterator[A, STI >: Null <: StepsLikeTrieIterator[A, _]](_underlying: Iterator[A], _N: Int)
   extends StepsLikeSliced[A, Iterator[A], STI](_underlying, 0, _N)
   with AbstractStepsLikeTrieIterator[A, AnyStepper[A], STI]
 {}
 
-abstract class StepsDoubleLikeTrieIterator[STI >: Null <: StepsDoubleLikeTrieIterator[STI]](_underlying: Iterator[Double], _N: Int)
+private[java8] abstract class StepsDoubleLikeTrieIterator[STI >: Null <: StepsDoubleLikeTrieIterator[STI]](_underlying: Iterator[Double], _N: Int)
   extends StepsDoubleLikeSliced[Iterator[Double], STI](_underlying, 0, _N)
   with AbstractStepsLikeTrieIterator[Double, DoubleStepper, STI]
 {}
 
-abstract class StepsIntLikeTrieIterator[STI >: Null <: StepsIntLikeTrieIterator[STI]](_underlying: Iterator[Int], _N: Int)
+private[java8] abstract class StepsIntLikeTrieIterator[STI >: Null <: StepsIntLikeTrieIterator[STI]](_underlying: Iterator[Int], _N: Int)
   extends StepsIntLikeSliced[Iterator[Int], STI](_underlying, 0, _N)
   with AbstractStepsLikeTrieIterator[Int, IntStepper, STI]
 {}
 
-abstract class StepsLongLikeTrieIterator[STI >: Null <: StepsLongLikeTrieIterator[STI]](_underlying: Iterator[Long], _N: Int)
+private[java8] abstract class StepsLongLikeTrieIterator[STI >: Null <: StepsLongLikeTrieIterator[STI]](_underlying: Iterator[Long], _N: Int)
   extends StepsLongLikeSliced[Iterator[Long], STI](_underlying, 0, _N)
   with AbstractStepsLikeTrieIterator[Long, LongStepper, STI]
 {}

@@ -1,4 +1,4 @@
-package scala.compat.java8.converterImpls
+package scala.compat.java8.converterImpl
 
 import language.implicitConversions
 

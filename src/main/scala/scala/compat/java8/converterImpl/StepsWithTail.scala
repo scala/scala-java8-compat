@@ -1,6 +1,7 @@
-package scala.compat.java8.collectionImpl
+package scala.compat.java8.converterImpl
 
 import java.util.Spliterator
+import scala.compat.java8.collectionImpl._
 import Stepper._
 
 /** Abstracts all the generic operations of stepping over a collection with a fast tail operation.
@@ -10,7 +11,7 @@ import Stepper._
   *
   * Subclasses MUST decrement `maxN` when consuming elements, or this will not work!
   */
-abstract class AbstractStepsWithTail[CC >: Null, Sub >: Null, Semi <: Sub](final protected var underlying: CC, final protected var maxN: Long) {
+private[java8] abstract class AbstractStepsWithTail[CC >: Null, Sub >: Null, Semi <: Sub](final protected var underlying: CC, final protected var maxN: Long) {
   private var nextChunkSize: Int = 0
   protected def myIsEmpty(cc: CC): Boolean
   protected def myTailOf(cc: CC): CC
@@ -62,25 +63,25 @@ abstract class AbstractStepsWithTail[CC >: Null, Sub >: Null, Semi <: Sub](final
 }
 
 /** Abstracts the operation of stepping over a generic indexable collection */
-abstract class StepsWithTail[A, CC >: Null, STA >: Null <: StepsWithTail[A, CC, _]](_underlying: CC, _maxN: Long)
+private[java8] abstract class StepsWithTail[A, CC >: Null, STA >: Null <: StepsWithTail[A, CC, _]](_underlying: CC, _maxN: Long)
   extends AbstractStepsWithTail[CC, AnyStepper[A], STA](_underlying, _maxN)
   with AnyStepper[A]
 {}
 
 /** Abstracts the operation of stepping over an indexable collection of Doubles */
-abstract class StepsDoubleWithTail[CC >: Null, STD >: Null <: StepsDoubleWithTail[CC, _]](_underlying: CC, _maxN: Long)
+private[java8] abstract class StepsDoubleWithTail[CC >: Null, STD >: Null <: StepsDoubleWithTail[CC, _]](_underlying: CC, _maxN: Long)
   extends AbstractStepsWithTail[CC, DoubleStepper, STD](_underlying, _maxN)
   with DoubleStepper
 {}
 
 /** Abstracts the operation of stepping over an indexable collection of Ints */
-abstract class StepsIntWithTail[CC >: Null, STI >: Null <: StepsIntWithTail[CC, _]](_underlying: CC, _maxN: Long)
+private[java8] abstract class StepsIntWithTail[CC >: Null, STI >: Null <: StepsIntWithTail[CC, _]](_underlying: CC, _maxN: Long)
   extends AbstractStepsWithTail[CC, IntStepper, STI](_underlying, _maxN)
   with IntStepper
 {}
 
 /** Abstracts the operation of stepping over an indexable collection of Longs */
-abstract class StepsLongWithTail[CC >: Null, STL >: Null <: StepsLongWithTail[CC, _]](_underlying: CC, _maxN: Long)
+private[java8] abstract class StepsLongWithTail[CC >: Null, STL >: Null <: StepsLongWithTail[CC, _]](_underlying: CC, _maxN: Long)
   extends AbstractStepsWithTail[CC, LongStepper, STL](_underlying, _maxN)
   with LongStepper
 {}

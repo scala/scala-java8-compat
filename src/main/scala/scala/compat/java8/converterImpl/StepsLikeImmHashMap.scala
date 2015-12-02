@@ -1,13 +1,15 @@
-package scala.compat.java8.collectionImpl
+package scala.compat.java8.converterImpl
 
 import java.util.Spliterator
+
+import scala.compat.java8.collectionImpl._
 import Stepper._
 
 /** Abstracts all the generic operations of stepping over an immutable HashMap by slicing it into pieces.
   * `next` must update `i` but not `i0` so that later splitting steps can keep track of whether the
   * collection needs some sort of modification before transmission to the subclass.
   */
-trait AbstractStepsLikeImmHashMap[K, V, A, Sub >: Null, Semi >: Null <: Sub with AbstractStepsLikeImmHashMap[K, V, A, Sub, _]]
+private[java8] trait AbstractStepsLikeImmHashMap[K, V, A, Sub >: Null, Semi >: Null <: Sub with AbstractStepsLikeImmHashMap[K, V, A, Sub, _]]
 extends AbstractStepsLikeSliced[collection.immutable.HashMap[K, V], Sub, Semi] {
   protected var theIterator: Iterator[A] = null
   protected def demiclone(u: collection.immutable.HashMap[K,V], j0: Int, jN: Int): Semi
@@ -32,22 +34,22 @@ extends AbstractStepsLikeSliced[collection.immutable.HashMap[K, V], Sub, Semi] {
     }
 }
 
-abstract class StepsLikeImmHashMap[K, V, A, SIHM >: Null <: StepsLikeImmHashMap[K, V, A, _]](_underlying: collection.immutable.HashMap[K, V], _i0: Int, _iN: Int)
+private[java8] abstract class StepsLikeImmHashMap[K, V, A, SIHM >: Null <: StepsLikeImmHashMap[K, V, A, _]](_underlying: collection.immutable.HashMap[K, V], _i0: Int, _iN: Int)
   extends StepsLikeSliced[A, collection.immutable.HashMap[K, V], SIHM](_underlying, _i0, _iN)
   with AbstractStepsLikeImmHashMap[K, V, A, AnyStepper[A], SIHM]
 {}
 
-abstract class StepsDoubleLikeImmHashMap[K, V, SIHM >: Null <: StepsDoubleLikeImmHashMap[K, V, SIHM]](_underlying: collection.immutable.HashMap[K, V], _i0: Int, _iN: Int)
+private[java8] abstract class StepsDoubleLikeImmHashMap[K, V, SIHM >: Null <: StepsDoubleLikeImmHashMap[K, V, SIHM]](_underlying: collection.immutable.HashMap[K, V], _i0: Int, _iN: Int)
   extends StepsDoubleLikeSliced[collection.immutable.HashMap[K, V], SIHM](_underlying, _i0, _iN)
   with AbstractStepsLikeImmHashMap[K, V, Double, DoubleStepper, SIHM]
 {}
 
-abstract class StepsIntLikeImmHashMap[K, V, SIHM >: Null <: StepsIntLikeImmHashMap[K, V, SIHM]](_underlying: collection.immutable.HashMap[K, V], _i0: Int, _iN: Int)
+private[java8] abstract class StepsIntLikeImmHashMap[K, V, SIHM >: Null <: StepsIntLikeImmHashMap[K, V, SIHM]](_underlying: collection.immutable.HashMap[K, V], _i0: Int, _iN: Int)
   extends StepsIntLikeSliced[collection.immutable.HashMap[K, V], SIHM](_underlying, _i0, _iN)
   with AbstractStepsLikeImmHashMap[K, V, Int, IntStepper, SIHM]
 {}
 
-abstract class StepsLongLikeImmHashMap[K, V, SIHM >: Null <: StepsLongLikeImmHashMap[K, V, SIHM]](_underlying: collection.immutable.HashMap[K, V], _i0: Int, _iN: Int)
+private[java8] abstract class StepsLongLikeImmHashMap[K, V, SIHM >: Null <: StepsLongLikeImmHashMap[K, V, SIHM]](_underlying: collection.immutable.HashMap[K, V], _i0: Int, _iN: Int)
   extends StepsLongLikeSliced[collection.immutable.HashMap[K, V], SIHM](_underlying, _i0, _iN)
   with AbstractStepsLikeImmHashMap[K, V, Long, LongStepper, SIHM]
 {}

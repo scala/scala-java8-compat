@@ -4,7 +4,7 @@ import language.implicitConversions
 
 import java.util.stream._
 import scala.compat.java8.collectionImpl._
-import scala.compat.java8.converterImpls._
+import scala.compat.java8.converterImpl._
 
 trait PrimitiveStreamAccumulator[S, AA] {
   def streamAccumulate(stream: S): AA
@@ -197,8 +197,8 @@ trait Priority1StreamConverters extends Priority2StreamConverters {
   */
 object StreamConverters
 extends Priority1StreamConverters
-with converterImpls.Priority1StepConverters
-with converterImpls.Priority1AccumulatorConverters
+with converterImpl.Priority1StepConverters
+with converterImpl.Priority1AccumulatorConverters
 {
   implicit class EnrichDoubleArrayWithStream(a: Array[Double]) {
     def seqStream: DoubleStream = java.util.Arrays.stream(a)

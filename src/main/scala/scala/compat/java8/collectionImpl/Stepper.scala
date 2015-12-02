@@ -42,7 +42,7 @@ trait Stepper[@specialized(Double, Int, Long) A] extends StepperLike[A, Stepper[
     *
     * Note: accumulation will occur sequentially.  To accumulate in parallel, use a `Stream` (i.e. `.parStream.accumulate`).
     */
-  def accumulate[Acc <: AccumulatorLike[A, Acc]](implicit accer: scala.compat.java8.converterImpls.AccumulatesFromStepper[A, Acc]) = accer(this)  
+  def accumulate[Acc <: AccumulatorLike[A, Acc]](implicit accer: scala.compat.java8.converterImpl.AccumulatesFromStepper[A, Acc]) = accer(this)  
 }
 
 /** An (optional) marker trait that indicates that a `Stepper` can call `substep` with
