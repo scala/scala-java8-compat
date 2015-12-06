@@ -5,6 +5,16 @@ import language.implicitConversions
 import scala.compat.java8.collectionImpl._
 import scala.compat.java8.runtime._
 
+/** Classes or objects implementing this trait create streams suitable for sequential use */
+trait MakesSequentialStream[A, SS <: java.util.stream.BaseStream[A, SS]] extends Any {
+  def seqStream: SS
+}
+
+/** Classes or objects implementing this trait create streams suitable for parallel use */
+trait MakesParallelStream[A, SS <: java.util.stream.BaseStream[A, SS]] extends Any {
+  def parStream: SS
+}
+
 /** Classes or objects implementing this trait create generic steppers suitable for sequential use. */
 trait MakesAnySeqStepper[A] extends Any {
   /** Generates a fresh stepper over `A`s suitable for sequential use */

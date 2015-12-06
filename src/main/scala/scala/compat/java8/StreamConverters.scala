@@ -16,7 +16,8 @@ trait PrimitiveStreamUnboxer[A, S] {
 
 trait Priority5StreamConverters {
   // Note--conversion is only to make sure implicit conversion priority is lower than alternatives.
-  implicit class EnrichScalaCollectionWithSeqStream[A, CC](cc: CC)(implicit steppize: CC => MakesAnySeqStepper[A]) {
+  implicit class EnrichScalaCollectionWithSeqStream[A, CC](cc: CC)(implicit steppize: CC => MakesAnySeqStepper[A])
+  extends MakesSequentialStream[A, Stream[A]] {
     def seqStream: Stream[A] = StreamSupport.stream(steppize(cc).stepper, false)
   }
   implicit class EnrichScalaCollectionWithKeySeqStream[K, CC](cc: CC)(implicit steppize: CC => MakesAnyKeySeqStepper[K]) {
@@ -28,13 +29,16 @@ trait Priority5StreamConverters {
 }
 
 trait Priority4StreamConverters extends Priority5StreamConverters {
-  implicit class EnrichScalaCollectionWithSeqDoubleStream[CC](cc: CC)(implicit steppize: CC => MakesDoubleSeqStepper) {
+  implicit class EnrichScalaCollectionWithSeqDoubleStream[CC](cc: CC)(implicit steppize: CC => MakesDoubleSeqStepper)
+  extends MakesSequentialStream[java.lang.Double, DoubleStream] {
     def seqStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).stepper, false)
   }  
-  implicit class EnrichScalaCollectionWithSeqIntStream[CC](cc: CC)(implicit steppize: CC => MakesIntSeqStepper) {
+  implicit class EnrichScalaCollectionWithSeqIntStream[CC](cc: CC)(implicit steppize: CC => MakesIntSeqStepper) 
+  extends MakesSequentialStream[java.lang.Integer, IntStream] {
     def seqStream: IntStream = StreamSupport.intStream(steppize(cc).stepper, false)
   }  
-  implicit class EnrichScalaCollectionWithSeqLongStream[CC](cc: CC)(implicit steppize: CC => MakesLongSeqStepper) {
+  implicit class EnrichScalaCollectionWithSeqLongStream[CC](cc: CC)(implicit steppize: CC => MakesLongSeqStepper) 
+  extends MakesSequentialStream[java.lang.Long, LongStream] {
     def seqStream: LongStream = StreamSupport.longStream(steppize(cc).stepper, false)
   }
   implicit class EnrichScalaCollectionWithSeqDoubleKeyStream[CC](cc: CC)(implicit steppize: CC => MakesDoubleKeySeqStepper) {
@@ -58,7 +62,8 @@ trait Priority4StreamConverters extends Priority5StreamConverters {
 }
 
 trait Priority3StreamConverters extends Priority4StreamConverters {
-  implicit class EnrichAnySteppableWithStream[A, CC](cc: CC)(implicit steppize: CC => MakesAnyStepper[A]) {
+  implicit class EnrichAnySteppableWithStream[A, CC](cc: CC)(implicit steppize: CC => MakesAnyStepper[A]) 
+  extends MakesSequentialStream[A, Stream[A]] with MakesParallelStream[A, Stream[A]] {
     def seqStream: Stream[A] = StreamSupport.stream(steppize(cc).stepper, false)
     def parStream: Stream[A] = StreamSupport.stream(steppize(cc).stepper.anticipateParallelism, true)
   }
@@ -73,7 +78,8 @@ trait Priority3StreamConverters extends Priority4StreamConverters {
 }
 
 trait Priority2StreamConverters extends Priority3StreamConverters {
-  implicit class EnrichDoubleSteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesDoubleStepper) {
+  implicit class EnrichDoubleSteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesDoubleStepper)  
+  extends MakesSequentialStream[java.lang.Double, DoubleStream] with MakesParallelStream[java.lang.Double, DoubleStream] {
     def seqStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).stepper, false)
     def parStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).stepper.anticipateParallelism, true)
   }
@@ -85,7 +91,8 @@ trait Priority2StreamConverters extends Priority3StreamConverters {
     def seqValueStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).valueStepper, false)
     def parValueStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).valueStepper.anticipateParallelism, true)
   }
-  implicit class EnrichIntSteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesIntStepper) {
+  implicit class EnrichIntSteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesIntStepper)   
+  extends MakesSequentialStream[java.lang.Integer, IntStream] with MakesParallelStream[java.lang.Integer, IntStream] {
     def seqStream: IntStream = StreamSupport.intStream(steppize(cc).stepper, false)
     def parStream: IntStream = StreamSupport.intStream(steppize(cc).stepper.anticipateParallelism, true)
   }
@@ -97,7 +104,8 @@ trait Priority2StreamConverters extends Priority3StreamConverters {
     def seqValueStream: IntStream = StreamSupport.intStream(steppize(cc).valueStepper, false)
     def parValueStream: IntStream = StreamSupport.intStream(steppize(cc).valueStepper.anticipateParallelism, true)
   }
-  implicit class EnrichLongSteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesLongStepper) {
+  implicit class EnrichLongSteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesLongStepper)   
+  extends MakesSequentialStream[java.lang.Long, LongStream] with MakesParallelStream[java.lang.Long, LongStream] {
     def seqStream: LongStream = StreamSupport.longStream(steppize(cc).stepper, false)
     def parStream: LongStream = StreamSupport.longStream(steppize(cc).stepper.anticipateParallelism, true)
   }
@@ -200,17 +208,20 @@ extends Priority1StreamConverters
 with converterImpl.Priority1StepConverters
 with converterImpl.Priority1AccumulatorConverters
 {
-  implicit class EnrichDoubleArrayWithStream(a: Array[Double]) {
+  implicit class EnrichDoubleArrayWithStream(a: Array[Double])   
+  extends MakesSequentialStream[java.lang.Double, DoubleStream] with MakesParallelStream[java.lang.Double, DoubleStream] {
     def seqStream: DoubleStream = java.util.Arrays.stream(a)
     def parStream: DoubleStream = seqStream.parallel
   }
 
-  implicit class EnrichIntArrayWithStream(a: Array[Int]) {
+  implicit class EnrichIntArrayWithStream(a: Array[Int])   
+  extends MakesSequentialStream[java.lang.Integer, IntStream] with MakesParallelStream[java.lang.Integer, IntStream] {
     def seqStream: IntStream = java.util.Arrays.stream(a)
     def parStream: IntStream = seqStream.parallel
   }
 
-  implicit class EnrichLongArrayWithStream(a: Array[Long]) {
+  implicit class EnrichLongArrayWithStream(a: Array[Long])   
+  extends MakesSequentialStream[java.lang.Long, LongStream] with MakesParallelStream[java.lang.Long, LongStream] {
     def seqStream: LongStream = java.util.Arrays.stream(a)
     def parStream: LongStream = seqStream.parallel
   }
