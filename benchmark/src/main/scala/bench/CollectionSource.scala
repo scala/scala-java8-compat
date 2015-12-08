@@ -65,4 +65,106 @@ package object generate {
     def s[CC](cc: CC)(implicit streamize: CC => MakesParallelStream[String, Stream[String]]) =
       streamize(cc).parStream
   }
+
+  trait GenThingsOf[CC[_]] {
+    def title: String
+    def sizes: Array[Int]    
+  }
+
+  trait IntThingsOf[CC[_]] extends GenThingsOf[CC] {
+    implicit def myCBFi: CanBuildFrom[Nothing, Int, CC[Int]]
+    // Base collection
+    val cI = sizes.map(n => Coll.i[CC](n))
+    // Iterator
+    def iI(j: Int)(implicit x: CC[Int] => Iterator[Int]) = x(cI(j))
+    // Steppers (second letter--s = sequential, p = parallel)
+    def tsI(j: Int)(implicit x: CC[Int] => MakesIntSeqStepper) = Sstep i cI(j)
+    def tpI(j: Int)(implicit x: CC[Int] => MakesIntStepper) = Pstep i cI(j)
+    // Streams
+    def ssI(j: Int)(implicit x: CC[Int] => MakesSequentialStream[java.lang.Integer, IntStream]) = Sstream i cI(j)
+    def spI(j: Int)(implicit x: CC[Int] => MakesParallelStream[java.lang.Integer, IntStream]) = Pstream i cI(j)
+    // Streams via steppers
+    def zsI(j: Int)(implicit x: CC[Int] => MakesIntSeqStepper) = SsStream i cI(j)
+    def zpI(j: Int)(implicit x: CC[Int] => MakesIntStepper) = PsStream i cI(j)
+  }
+
+  trait StringThingsOf[CC[_]] extends GenThingsOf[CC] {
+    implicit def myCBFs: CanBuildFrom[Nothing, String, CC[String]]
+    // Base collection
+    val cS = sizes.map(n => Coll.s[CC](n))
+    // Iterator
+    def iS(j: Int)(implicit x: CC[String] => Iterator[String]) = x(cS(j))
+    // Steppers (second letter--s = sequential, p = parallel)
+    def tsS(j: Int)(implicit x: CC[String] => MakesAnySeqStepper[String]) = Sstep s cS(j)
+    def tpS(j: Int)(implicit x: CC[String] => MakesAnyStepper[String]) = Pstep s cS(j)
+    // Streams
+    def ssS(j: Int)(implicit x: CC[String] => MakesSequentialStream[String, Stream[String]]) = Sstream s cS(j)
+    def spS(j: Int)(implicit x: CC[String] => MakesParallelStream[String, Stream[String]]) = Pstream s cS(j)
+    // Streams via steppers
+    def zsS(j: Int)(implicit x: CC[String] => MakesAnySeqStepper[String]) = SsStream s cS(j)
+    def zpS(j: Int)(implicit x: CC[String] => MakesAnyStepper[String]) = PsStream s cS(j)
+  }
+
+  trait ThingsOf[CC[_]] extends IntThingsOf[CC] with StringThingsOf[CC] {}
+
+  abstract class AbstractThings[CC[_]](val title: String)(
+    implicit 
+    outerCBFi: CanBuildFrom[Nothing, Int, CC[Int]],
+    outerCBFs: CanBuildFrom[Nothing, String, CC[String]]
+  )
+  extends ThingsOf[CC] {
+    implicit def myCBFi = outerCBFi
+    implicit def myCBFs = outerCBFs
+  }
+
+  class ArrThings(val sizes: Array[Int]) extends AbstractThings[Array]("Array") {}
+
+  class IshThings(val sizes: Array[Int]) extends AbstractThings[collection.immutable.HashSet]("immutable.HashSet") {}
+
+  class LstThings(val sizes: Array[Int]) extends AbstractThings[List]("List") {}
+
+  class IlsThings(val sizes: Array[Int]) extends AbstractThings[collection.immutable.ListSet]("immutable.ListSet") {}
+
+  class QueThings(val sizes: Array[Int]) extends AbstractThings[collection.immutable.Queue]("immutable.Queue") {}
+
+  class StmThings(val sizes: Array[Int]) extends AbstractThings[collection.immutable.Stream]("immutable.Stream") {}
+
+  class TrsThings(val sizes: Array[Int]) extends AbstractThings[collection.immutable.TreeSet]("immutable.TreeSet") {}
+
+  class VecThings(val sizes: Array[Int]) extends AbstractThings[Vector]("Vector") {}
+
+  class ArbThings(val sizes: Array[Int]) extends AbstractThings[collection.mutable.ArrayBuffer]("mutable.ArrayBuffer") {}
+
+  class ArsThings(val sizes: Array[Int]) extends AbstractThings[collection.mutable.ArraySeq]("mutable.ArraySeq") {}
+
+  class AstThings(val sizes: Array[Int]) extends AbstractThings[collection.mutable.ArrayStack]("mutable.ArrayStack") {}
+
+  class MhsThings(val sizes: Array[Int]) extends AbstractThings[collection.mutable.HashSet]("mutable.HashSet") {}
+
+  class LhsThings(val sizes: Array[Int]) extends AbstractThings[collection.mutable.LinkedHashSet]("mutable.LinkedHashSet") {}
+
+  class PrqThings(val sizes: Array[Int]) extends AbstractThings[collection.mutable.PriorityQueue]("mutable.PriorityQueue") {}
+
+  class MuqThings(val sizes: Array[Int]) extends AbstractThings[collection.mutable.Queue]("mutable.Queue") {}
+
+  class WraThings(val sizes: Array[Int]) extends AbstractThings[collection.mutable.WrappedArray]("mutable.WrappedArray") {}
+
+  class Things(sizes: Array[Int] = Array(0, 1, 2, 5, 7, 15, 16, 32, 33, 64, 129, 256, 1023, 2914, 7151, 50000, 200000, 1000000)) {
+    lazy val arr = new ArrThings(sizes)
+    lazy val ish = new IshThings(sizes)
+    lazy val lst = new LstThings(sizes)
+    lazy val ils = new IlsThings(sizes)
+    lazy val que = new QueThings(sizes)
+    lazy val stm = new StmThings(sizes)
+    lazy val trs = new TrsThings(sizes)
+    lazy val vec = new VecThings(sizes)
+    lazy val arb = new ArbThings(sizes)
+    lazy val ars = new ArsThings(sizes)
+    lazy val ast = new AstThings(sizes)
+    lazy val mhs = new MhsThings(sizes)
+    lazy val lhs = new LhsThings(sizes)
+    lazy val prq = new PrqThings(sizes)
+    lazy val muq = new MuqThings(sizes)
+    lazy val wra = new WraThings(sizes)
+  }
 }
