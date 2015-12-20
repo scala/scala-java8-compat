@@ -117,6 +117,103 @@ package object generate {
     implicit def myCBFs = outerCBFs
   }
 
+  // Java collection CBFs
+
+  implicit val javaUtilArrayListIntCanBuildFrom = new CanBuildFrom[Nothing, Int, java.util.ArrayList[Int]] {
+    def apply(from: Nothing): collection.mutable.Builder[Int, java.util.ArrayList[Int]] = apply()
+    def apply(): collection.mutable.Builder[Int, java.util.ArrayList[Int]] = new collection.mutable.Builder[Int, java.util.ArrayList[Int]] {
+      private var myAL = new java.util.ArrayList[Int]
+      def clear() = { myAL = new java.util.ArrayList[Int]; () }
+      def result() = { val ans = myAL; clear(); ans }
+      def +=(x: Int) = { myAL add x; this }
+    }
+  }
+  implicit val javaUtilArrayListStringCanBuildFrom = new CanBuildFrom[Nothing, String, java.util.ArrayList[String]] {
+    def apply(from: Nothing): collection.mutable.Builder[String, java.util.ArrayList[String]] = apply()
+    def apply(): collection.mutable.Builder[String, java.util.ArrayList[String]] = new collection.mutable.Builder[String, java.util.ArrayList[String]] {
+      private var myAL = new java.util.ArrayList[String]
+      def clear() = { myAL = new java.util.ArrayList[String]; () }
+      def result() = { val ans = myAL; clear(); ans }
+      def +=(x: String) = { myAL add x; this }
+    }
+  }
+  implicit val javaUtilLinkedListIntCanBuildFrom = new CanBuildFrom[Nothing, Int, java.util.LinkedList[Int]] {
+    def apply(from: Nothing): collection.mutable.Builder[Int, java.util.LinkedList[Int]] = apply()
+    def apply(): collection.mutable.Builder[Int, java.util.LinkedList[Int]] = new collection.mutable.Builder[Int, java.util.LinkedList[Int]] {
+      private var myLL = new java.util.LinkedList[Int]
+      def clear() = { myLL = new java.util.LinkedList[Int]; () }
+      def result() = { val ans = myLL; clear(); ans }
+      def +=(x: Int) = { myLL add x; this }
+    }
+  }
+  implicit val javaUtilLinkedListStringCanBuildFrom = new CanBuildFrom[Nothing, String, java.util.LinkedList[String]] {
+    def apply(from: Nothing): collection.mutable.Builder[String, java.util.LinkedList[String]] = apply()
+    def apply(): collection.mutable.Builder[String, java.util.LinkedList[String]] = new collection.mutable.Builder[String, java.util.LinkedList[String]] {
+      private var myLL = new java.util.LinkedList[String]
+      def clear() = { myLL = new java.util.LinkedList[String]; () }
+      def result() = { val ans = myLL; clear(); ans }
+      def +=(x: String) = { myLL add x; this }
+    }
+  }
+
+  // Streams from ArrayList (Java)
+
+  implicit val getsParStreamFromArrayListInt: (java.util.ArrayList[Int] => MakesParallelStream[java.lang.Integer, IntStream]) = ali => {
+    new MakesParallelStream[java.lang.Integer, IntStream] {
+      def parStream: IntStream = ali.
+        asInstanceOf[java.util.ArrayList[java.lang.Integer]].
+        parallelStream.parallel.
+        mapToInt(new java.util.function.ToIntFunction[java.lang.Integer]{ def applyAsInt(i: java.lang.Integer) = i.intValue })
+    }
+  }
+  implicit val getsSeqStreamFromArrayListInt: (java.util.ArrayList[Int] => MakesSequentialStream[java.lang.Integer, IntStream]) = ali => {
+    new MakesSequentialStream[java.lang.Integer, IntStream] {
+      def seqStream: IntStream = ali.
+        asInstanceOf[java.util.ArrayList[java.lang.Integer]].
+        stream().
+        mapToInt(new java.util.function.ToIntFunction[java.lang.Integer]{ def applyAsInt(i: java.lang.Integer) = i.intValue })
+    }
+  }
+  implicit val getsParStreamFromArrayListString: (java.util.ArrayList[String] => MakesParallelStream[String, Stream[String]]) = als => {
+    new MakesParallelStream[String, Stream[String]] {
+      def parStream: Stream[String] = als.parallelStream.parallel
+    }
+  }
+  implicit val getsSeqStreamFromArrayListString: (java.util.ArrayList[String] => MakesSequentialStream[String, Stream[String]]) = als => {
+    new MakesSequentialStream[String, Stream[String]] {
+      def seqStream: Stream[String] = als.stream
+    }
+  }
+
+  // Streams from LinkedList (Java)
+
+  implicit val getsParStreamFromLinkedListInt: (java.util.LinkedList[Int] => MakesParallelStream[java.lang.Integer, IntStream]) = ali => {
+    new MakesParallelStream[java.lang.Integer, IntStream] {
+      def parStream: IntStream = ali.
+        asInstanceOf[java.util.LinkedList[java.lang.Integer]].
+        parallelStream.parallel.
+        mapToInt(new java.util.function.ToIntFunction[java.lang.Integer]{ def applyAsInt(i: java.lang.Integer) = i.intValue })
+    }
+  }
+  implicit val getsSeqStreamFromLinkedListInt: (java.util.LinkedList[Int] => MakesSequentialStream[java.lang.Integer, IntStream]) = ali => {
+    new MakesSequentialStream[java.lang.Integer, IntStream] {
+      def seqStream: IntStream = ali.
+        asInstanceOf[java.util.LinkedList[java.lang.Integer]].
+        stream().
+        mapToInt(new java.util.function.ToIntFunction[java.lang.Integer]{ def applyAsInt(i: java.lang.Integer) = i.intValue })
+    }
+  }
+  implicit val getsParStreamFromLinkedListString: (java.util.LinkedList[String] => MakesParallelStream[String, Stream[String]]) = als => {
+    new MakesParallelStream[String, Stream[String]] {
+      def parStream: Stream[String] = als.parallelStream.parallel
+    }
+  }
+  implicit val getsSeqStreamFromLinkedListString: (java.util.LinkedList[String] => MakesSequentialStream[String, Stream[String]]) = als => {
+    new MakesSequentialStream[String, Stream[String]] {
+      def seqStream: Stream[String] = als.stream
+    }
+  }
+
   class ArrThings(val sizes: Array[Int]) extends AbstractThings[Array]("Array") {}
 
   class IshThings(val sizes: Array[Int]) extends AbstractThings[collection.immutable.HashSet]("immutable.HashSet") {}
@@ -149,6 +246,10 @@ package object generate {
 
   class WraThings(val sizes: Array[Int]) extends AbstractThings[collection.mutable.WrappedArray]("mutable.WrappedArray") {}
 
+  class JixThings(val sizes: Array[Int]) extends AbstractThings[java.util.ArrayList]("java.util.ArrayList") {}
+
+  class JlnThings(val sizes: Array[Int]) extends AbstractThings[java.util.LinkedList]("java.util.LinkedList") {}
+
   class Things(sizes: Array[Int] = Array(0, 1, 2, 5, 7, 15, 16, 32, 33, 64, 129, 256, 1023, 2914, 7151, 50000, 200000, 1000000)) {
     lazy val arr = new ArrThings(sizes)
     lazy val ish = new IshThings(sizes)
@@ -166,5 +267,7 @@ package object generate {
     lazy val prq = new PrqThings(sizes)
     lazy val muq = new MuqThings(sizes)
     lazy val wra = new WraThings(sizes)
+    lazy val jix = new JixThings(sizes)
+    lazy val jln = new JlnThings(sizes)
   }
 }
