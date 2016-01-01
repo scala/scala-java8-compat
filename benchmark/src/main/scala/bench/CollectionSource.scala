@@ -214,6 +214,17 @@ package object generate {
     }
   }
 
+  object EnableIterators {
+    implicit val iterableIntToIterator: (Iterable[Int] => Iterator[Int]) = _.iterator
+    implicit val iterableStringToIterator: (Iterable[String] => Iterator[String]) = _.iterator
+    implicit val arrayIntToIterator: (Array[Int] => Iterator[Int]) = (a: Array[Int]) => new Iterator[Int] {
+      private[this] var i = 0
+      def hasNext = i < a.length
+      def next = if (hasNext) { var ans = a(i); i += 1; ans } else throw new NoSuchElementException(i.toString)
+    }
+    implicit val arrayStringToIterator: (Array[String] => Iterator[String]) = _.iterator
+  }
+
   class ArrThings(val sizes: Array[Int]) extends AbstractThings[Array]("Array") {}
 
   class IshThings(val sizes: Array[Int]) extends AbstractThings[collection.immutable.HashSet]("immutable.HashSet") {}
@@ -250,7 +261,8 @@ package object generate {
 
   class JlnThings(val sizes: Array[Int]) extends AbstractThings[java.util.LinkedList]("java.util.LinkedList") {}
 
-  class Things(sizes: Array[Int] = Array(0, 1, 2, 5, 7, 15, 16, 32, 33, 64, 129, 256, 1023, 2914, 7151, 50000, 200000, 1000000)) {
+  class Things(sizes: Array[Int] = Array(0, 1, 2, 5, 7, 15, 16, 32, 33, 64, 129, 256, 1023, 2914, 7151, 20000, 50000, 200000)) {
+    def N = sizes.length
     lazy val arr = new ArrThings(sizes)
     lazy val ish = new IshThings(sizes)
     lazy val lst = new LstThings(sizes)
