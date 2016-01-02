@@ -261,7 +261,7 @@ package object generate {
 
   class JlnThings(val sizes: Array[Int]) extends AbstractThings[java.util.LinkedList]("java.util.LinkedList") {}
 
-  class Things(sizes: Array[Int] = Array(0, 1, 2, 5, 7, 15, 16, 32, 33, 64, 129, 256, 1023, 2914, 7151, 20000, 50000, 200000)) {
+  class Things(sizes: Array[Int] = Array(0, 1, 2, 5, 7, 15, 16, 32, 33, 64, 129, 256, 1023, 2914, 7151/*, 20000, 50000, 200000*/)) {
     def N = sizes.length
     lazy val arr = new ArrThings(sizes)
     lazy val ish = new IshThings(sizes)
