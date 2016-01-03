@@ -22,6 +22,7 @@ object Generator {
   val parname = annotated.filterNot(_ contains "*").map(_.takeWhile(_.isLetter)).toSet
   val sqnname = names.filterNot(parname).toSet union names.filterNot(nojname).toSet
   val ordname = annotated.filterNot(_ contains "!").map(_.takeWhile(_.isLetter)).toSet
+  val jmhsizes = Array(10, 10000)  // JMH takes FOREVER, so we're lucky to get two sizes.
 
   def writeTo(f: java.io.File)(pr: (String => Unit) => Unit): Either[Throwable, Unit] = {
     try {
@@ -57,29 +58,30 @@ object Generator {
       pr(               s"    val m = (new bench.generate.Things(${sayArrayI(sizes)})).N;" )
       allops.foreach{ case (o, t, fs) =>
         names.foreach{ n =>
-        pr(             s"    {  // Scope for operations $o collection $n")
-        pr(             s"    val x = new bench.generate.Things(${sayArrayI(sizes)})" )
+          pr(           s"    {  // Scope for operations $o collection $n")
+          pr(           s"      var x = new bench.generate.Things(${sayArrayI(sizes)})" )
           parsefs(fs).foreach{ case (f, pf, ord) =>
             if (ordname(n) || !ord) {
-              pr(      """    for (i <- 0 until m) {""")
-              pr(       s"      val z = $o.$f(x.arr.c$t(i))")
+              pr(      """      for (i <- 0 until m) {""")
+              pr(       s"        val z = $o.$f(x.arr.c$t(i))")
               if (nojname(n)) {
-                pr(     s"      check(z, $o.$f(x.$n.c$t(i)), ${q}c$t $f $n ${q}+i.toString)");
-                pr(     s"      check(z, $o.$f(x.$n.i$t(i)), ${q}i$t $f $n ${q}+i.toString)")
+                pr(     s"        check(z, $o.$f(x.$n.c$t(i)), ${q}c$t $f $n ${q}+i.toString)");
+                pr(     s"        check(z, $o.$f(x.$n.i$t(i)), ${q}i$t $f $n ${q}+i.toString)")
               }
               if (sqnname(n)) {
-                pr(     s"      check(z, $o.$f(x.$n.ss$t(i)), ${q}ss$t $f $n ${q}+i.toString)")
+                pr(     s"        check(z, $o.$f(x.$n.ss$t(i)), ${q}ss$t $f $n ${q}+i.toString)")
                 if (nojname(n)) 
-                  pr(   s"      check(z, $o.$f(x.$n.zs$t(i)), ${q}zs$t $f $n ${q}+i.toString)")     
+                  pr(   s"        check(z, $o.$f(x.$n.zs$t(i)), ${q}zs$t $f $n ${q}+i.toString)")     
               }
               if (parname(n) && pf.isDefined) {
-                pr(     s"      check(z, $o.$f(x.$n.sp$t(i)), ${q}sp$t $f $n ${q}+i.toString)")
+                pr(     s"        check(z, $o.$f(x.$n.sp$t(i)), ${q}sp$t $f $n ${q}+i.toString)")
                 if (nojname(n))
-                  pr(   s"      check(z, $o.$f(x.$n.zp$t(i)), ${q}zp$t $f $n ${q}+i.toString)")     
+                  pr(   s"        check(z, $o.$f(x.$n.zp$t(i)), ${q}zp$t $f $n ${q}+i.toString)")     
               }
-              pr(       s"    }")
+              pr(       s"      }")
             }
           }
+          pr(           s"      x = null  // Allow GC" )
           pr(           s"    }  // End scope for operations $o collection $n")
         }
       }
@@ -93,7 +95,7 @@ object Generator {
     }
   }
 
-  def quickBenchWithThyme(target: java.io.File, sizes: Option[Array[Int]]) {
+  def quickBenchWithThyme(target: java.io.File, sizes: Option[Array[Int]] = None) {
     val q = "\""
     if (target.exists) throw new java.io.IOException("Generator will not write to existing file: " + target.getPath)
     writeTo(target){ pr =>
@@ -103,56 +105,107 @@ object Generator {
       pr(              """import scala.compat.java8.StreamConverters._""")
       pr(              """import ichi.bench.Thyme""")
       pr(              """""")
-      pr(              """object Agreement {""")
+      pr(              """object ThymeBench {""")
       pr(              """  def run() {""")
       pr(              """    val th = Thyme.warmed()""")
       pr(               s"    val m = (new bench.generate.Things(${sayArrayI(sizes)})).N;" )
       pr(              """    def timings[A](x: bench.generate.Things, op: Int => A, name: String) {""")
       pr(              """      val ts = new collection.mutable.ArrayBuffer[(Double, Double, Double)]""")
+      pr(              """      val discard = th.clock(op(m-1))(_ => ())  // Init collections""")
       pr(              """      for (i <- 0 until m) {""")
+      pr(              """        println(name + i)""")
       pr(              """        val b = Thyme.Benched.empty""")
       pr(              """        val a = th.bench(op(i))(b)""")
       pr(              """        if (a == null) ts += ((Double.NaN, Double.NaN, Double.NaN))""")
-      pr(              """        else ts += ((b.runtime * 1e6, b.runtimeCI95._1 * 1e6, b.runtimeCI95._2 * 1e6)""")
+      pr(              """        else ts += ((""")
+      pr(              """          b.runtime * 1e6, b.runtimeCI95._1 * 1e6, b.runtimeCI95._2 * 1e6""")
+      pr(              """        ))""")
       pr(              """      }""")
       pr(              """      val sb = new StringBuilder""")
-      pr(              """      sb ++= name + $q: $q""")
-      pr(              """      if (sb.length < 36) sb ++= $q $q * (36 - sb.length)""")
+      pr(              """      sb ++= name + ":" """)
+      pr(              """      if (sb.length < 16) sb ++= " " * (16 - sb.length)""")
       pr(              """      ts.foreach{ case (c, lo, hi) =>""")
-      pr(              """        sb ++= $q    $q""")
-      pr(              """        sb ++= ${q}12.4f${q}.format(c)""")
-      pr(              """        sb ++= ${q}12.4f${q}.format(lo)""")
-      pr(              """        sb ++= ${q}12.4f${q}.format(hi)""")
+      pr(              """        sb ++= "    " """)
+      pr(              """        sb ++= " %11.4f".format(c)""")
+      pr(              """        sb ++= " %11.4f".format(lo)""")
+      pr(              """        sb ++= " %11.4f".format(hi)""")
       pr(              """      }""")
       pr(              """      println(sb.result)""")
       pr(              """    }""")
       allops.foreach{ case (o, t, fs) =>
         names.foreach{ n =>
-        pr(             s"    {  // Scope for operations $o collection $n")
-        pr(             s"    val x = new bench.generate.Things(${sayArrayI(sizes)})" )
+          pr(           s"    {  // Scope for operations $o collection $n")
+          pr(           s"      var x = new bench.generate.Things(${sayArrayI(sizes)})" )
           parsefs(fs).foreach{ case (f, pf, ord) =>
             if (ordname(n) || !ord) {
               if (nojname(n)) {
-                pr(     s"      timings(x, i => $o.$f(x.$n.c$t(i)), ${q}c$t $f $n ${q}+i.toString)");
-                pr(     s"      timings(x, i => $o.$f(x.$n.i$t(i)), ${q}i$t $f $n ${q}+i.toString)")
+                pr(     s"      timings(x, i => $o.$f(x.$n.c$t(i)), ${q}c$t $f $n${q})");
+                pr(     s"      timings(x, i => $o.$f(x.$n.i$t(i)), ${q}i$t $f $n${q})")
               }
               if (sqnname(n)) {
-                pr(     s"      timings(x, i => $o.$f(x.$n.ss$t(i)), ${q}ss$t $f $n ${q}+i.toString)")
+                pr(     s"      timings(x, i => $o.$f(x.$n.ss$t(i)), ${q}ss$t $f $n${q})")
                 if (nojname(n)) 
-                  pr(   s"      timings(x, i => $o.$f(x.$n.zs$t(i)), ${q}zs$t $f $n ${q}+i.toString)")     
+                  pr(   s"      timings(x, i => $o.$f(x.$n.zs$t(i)), ${q}zs$t $f $n${q})")     
               }
               if (parname(n) && pf.isDefined) {
-                pr(     s"      timings(x, i => $o.$f(x.$n.sp$t(i)), ${q}sp$t $f $n ${q}+i.toString)")
+                pr(     s"      timings(x, i => $o.$f(x.$n.sp$t(i)), ${q}sp$t $f $n${q})")
                 if (nojname(n))
-                  pr(   s"      timings(x, i => $o.$f(x.$n.zp$t(i)), ${q}zp$t $f $n ${q}+i.toString)")     
+                  pr(   s"      timings(x, i => $o.$f(x.$n.zp$t(i)), ${q}zp$t $f $n${q})")     
               }
-              pr(       s"    }")
             }
           }
+          pr(           s"      x = null // Allow GC" )
           pr(           s"    }  // End scope for operations $o collection $n")
         }
       }
       pr(              """  }""")
+      pr(              """}""")
+    } match {
+      case Left(t) => println("Did not successfully write file: " + target.getPath); throw t
+      case _ =>
+    }
+  }
+
+  def jmhBench(target: java.io.File = new java.io.File("JmhBench.scala"), sizes: Option[Array[Int]] = Some(jmhsizes)) {
+    val q = "\""
+    if (target.exists) throw new java.io.IOException("Generator will not write to existing file: " + target.getPath)
+    writeTo(target){ pr =>
+      pr(              """// This file auto-generated by bench.codegen.Generator.jmhBench.  Do not modify directly.""")
+      pr(              """""")
+      pr(              """package bench.test""")
+      pr(              """""")
+      pr(              """import bench.generate._, bench.operate._, bench.generate.EnableIterators._""")
+      pr(              """import scala.compat.java8.StreamConverters._""")
+      pr(              """import org.openjdk.jmh.annotations._""")
+      pr(              """""")
+      pr(              """@State(Scope.Benchmark)""")
+      pr(              """class JmhBench {""")
+      pr(               s"  val x = new bench.generate.Things(${sayArrayI(sizes)})")
+      val m = sizes.map(_.length).getOrElse(new bench.generate.Things().N)
+      allops.foreach{ case (o, t, fs) =>
+        names.foreach{ n =>
+          parsefs(fs).foreach{ case (f, pf, ord) =>
+            for (i <- 0 until m) {
+              if (ordname(n) || !ord) {
+                if (nojname(n)) {
+                  pr(     s"  @Benchmark def bench_c${t}_${f}_${n}_$i() = $o.$f(x.$n.c$t($i))");
+                  pr(     s"  @Benchmark def bench_i${t}_${f}_${n}_$i() = $o.$f(x.$n.i$t($i))")
+                }
+                if (sqnname(n)) {
+                  pr(     s"  @Benchmark def bench_ss${t}_${f}_${n}_$i() = $o.$f(x.$n.ss$t($i))")
+                  //if (nojname(n)) 
+                  //  pr(   s"  @Benchmark def bench_zs${t}_${f}_${n}_$i() = $o.$f(x.$n.zs$t($i))")     
+                }
+                if (parname(n) && pf.isDefined) {
+                  pr(     s"  @Benchmark def bench_sp${t}_${f}_${n}_$i() = $o.$f(x.$n.sp$t($i))")
+                  //if (nojname(n))
+                  //  pr(   s"  @Benchmark def bench_zp${t}_${f}_${n}_$i() = $o.$f(x.$n.zp$t($i))")     
+                }
+              }
+            }
+          }
+        }
+      }
       pr(              """}""")
     } match {
       case Left(t) => println("Did not successfully write file: " + target.getPath); throw t
