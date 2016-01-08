@@ -2,6 +2,9 @@ package bench.operate
 
 import java.util.stream._
 import java.util.{function => jf}
+
+import scala.collection.parallel.ParIterable
+
 import scala.compat.java8.StreamConverters._
 import scala.compat.java8.converterImpl._
 import scala.compat.java8.collectionImpl._
@@ -25,16 +28,16 @@ object OnInt {
   def sum(i: Iterator[Int]): Int = i.sum
   def sum(s: IntStepper): Int = s.fold(0)(_ + _)
   def sum(s: IntStream): Int = s.sum
-  def psum(i: Iterable[Int]): Int = i.par.sum
-  def psum(s: IntStream): Int = s.parallel.sum
+  def psum(i: ParIterable[Int]): Int = i.sum
+  def psum(s: IntStream): Int = s.sum
 
   def trig(a: Array[Int]): Double = { var i = 0; var s = 0.0; while (i < a.length) { s += expensive(a(i)); i += 1 }; s }
   def trig(t: Traversable[Int]): Double = t.map(expensive).sum
   def trig(i: Iterator[Int]): Double = i.map(expensive).sum
   def trig(s: IntStepper): Double = s.fold(0.0)((x,i) => x + expensive(i))
   def trig(s: IntStream): Double = s.mapToDouble(new jf.IntToDoubleFunction{ def applyAsDouble(i: Int) = expensive(i) }).sum
-  def ptrig(i: Iterable[Int]): Double = i.par.map(expensive).sum
-  def ptrig(s: IntStream): Double = trig(s.parallel)
+  def ptrig(i: ParIterable[Int]): Double = i.map(expensive).sum
+  def ptrig(s: IntStream): Double = trig(s)
 
   def fmc(a: Array[Int]): Int = { var s,i = 0; while (i < a.length) { if (i%7 == 1) s += (i/7)*i; i += 1 }; s }
   def fmc(t: Traversable[Int]): Int = t.filter(x => (x%7) == 1).map(x => (x/7)*x).sum
@@ -43,8 +46,8 @@ object OnInt {
     filter(new jf.IntPredicate { def test(x: Int) = (x%7) == 1 }).
     map(new jf.IntUnaryOperator{ def applyAsInt(x: Int) = (x/7)*x }).
     sum
-  def pfmc(i: Iterable[Int]): Int = i.par.filter(x => (x%7) == 1).map(x => (x/7)*x).sum
-  def pfmc(s: IntStream): Int = fmc(s.parallel)
+  def pfmc(i: ParIterable[Int]): Int = i.filter(x => (x%7) == 1).map(x => (x/7)*x).sum
+  def pfmc(s: IntStream): Int = fmc(s)
 
   def mdtc(a: Array[Int]): Int  = { var i = 1; while(i < a.length) { if ((a(i) << 1) >= 42) return i-1; i += 1 }; i - 1 }
   def mdtc(t: Traversable[Int]): Int = t.map(_ << 1).drop(1).takeWhile(_ < 42).size
@@ -65,16 +68,16 @@ object OnString {
   def nbr(i: Iterator[String]): Int = i.count(s => s.charAt(s.length-1) < '5')
   def nbr(p: Stepper[String]): Int = p.fold(0)((i,s) => if (s.charAt(s.length-1) < '5') i+1 else i)
   def nbr(q: Stream[String]): Int = q.filter(new jf.Predicate[String] { def test(s: String) = s.charAt(s.length-1) < '5' }).count.toInt
-  def pnbr(i: Iterable[String]): Int = i.par.count(s => s.charAt(s.length-1) < '5')
-  def pnbr(q: Stream[String]): Int = nbr(q.parallel)
+  def pnbr(i: ParIterable[String]): Int = i.count(s => s.charAt(s.length-1) < '5')
+  def pnbr(q: Stream[String]): Int = nbr(q)
 
   def htrg(a: Array[String]): Double = { var s = 0.0; var i = 0; while (i < a.length) { s += expensive(a(i)); i += 1 }; s }
   def htrg(t: Traversable[String]): Double = t.map(expensive).sum
   def htrg(i: Iterator[String]): Double = i.map(expensive).sum
   def htrg(p: Stepper[String]): Double = p.fold(0.0)((x,s) => x + expensive(s))
   def htrg(q: Stream[String]): Double = q.mapToDouble(new jf.ToDoubleFunction[String]{ def applyAsDouble(s: String) = expensive(s) }).sum
-  def phtrg(i: Iterable[String]): Double = i.par.map(expensive).sum
-  def phtrg(q: Stream[String]): Double = htrg(q.parallel)
+  def phtrg(i: ParIterable[String]): Double = i.map(expensive).sum
+  def phtrg(q: Stream[String]): Double = htrg(q)
 
   def fmc(a: Array[String]): Int = {
     var s, i = 0
@@ -94,9 +97,9 @@ object OnString {
       map[String](new jf.Function[String, String]{ def apply(x: String) = if (x.charAt(0) == '-') x.substring(1) else x }).
       filter(new jf.Predicate[String]{ def test(x: String) = x.length > 1 }).
       count.toInt
-  def pfmc(i: Iterable[String]): Int =
-    i.par.filter(x => x.charAt(x.length-1) == '1').map(x => if (x.charAt(0) == '-') x.substring(1) else x).count(_.length > 1)
-  def pfmc(q: Stream[String]): Int = fmc(q.parallel)
+  def pfmc(i: ParIterable[String]): Int =
+    i.filter(x => x.charAt(x.length-1) == '1').map(x => if (x.charAt(0) == '-') x.substring(1) else x).count(_.length > 1)
+  def pfmc(q: Stream[String]): Int = fmc(q)
 
   def mdtc(a: Array[String]): Int = {
     var i = 1

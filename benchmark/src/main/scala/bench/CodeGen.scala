@@ -9,12 +9,13 @@ object Generator {
   val annotated = "arr ish! lst* ils*! que* stm* trs*! vec arb ars ast* mhs! lhs*! prq*! muq* wra jix jln".split(' ')
 
   // Parallel version if any appears after /
+  // Trailing % means that operation creates new collections and thus can't be used with Stepper (sequential ops only)
   // Trailing ! means that collection must maintain original order (i.e. don't use if collection is marked !)
-  val allops = Seq(("OnInt", "I", "sum/psum trig/ptrig fmc/pfmc mdtc!"), ("OnString", "S", "nbr/pnbr htrg/phtrg fmc/pfmc mdtc!"))
+  val allops = Seq(("OnInt", "I", "sum/psum trig/ptrig fmc%/pfmc mdtc!%"), ("OnString", "S", "nbr/pnbr htrg/phtrg fmc%/pfmc mdtc!%"))
 
   def parsefs(fs: String) = fs.split(' ').map(_.split('/') match {
-    case Array(x) => (x.takeWhile(_.isLetter), None, x contains "!")
-    case Array(x,y) => (x.takeWhile(_.isLetter), Some(y.takeWhile(_.isLetter)), (x+y) contains "!")
+    case Array(x) => (x.takeWhile(_.isLetter), None, x contains "!", x contains "%")
+    case Array(x,y) => (x.takeWhile(_.isLetter), Some(y.takeWhile(_.isLetter)), (x+y) contains "!", x contains "%")
   })
 
   val names = annotated.map(_.takeWhile(_.isLetter))
@@ -60,23 +61,29 @@ object Generator {
         names.foreach{ n =>
           pr(           s"    {  // Scope for operations $o collection $n")
           pr(           s"      var x = new bench.generate.Things(${sayArrayI(sizes)})" )
-          parsefs(fs).foreach{ case (f, pf, ord) =>
+          parsefs(fs).foreach{ case (f, pf, ord, nu) =>
             if (ordname(n) || !ord) {
               pr(      """      for (i <- 0 until m) {""")
               pr(       s"        val z = $o.$f(x.arr.c$t(i))")
               if (nojname(n)) {
-                pr(     s"        check(z, $o.$f(x.$n.c$t(i)), ${q}c$t $f $n ${q}+i.toString)");
+                pr(     s"        check(z, $o.$f(x.$n.c$t(i)), ${q}c$t $f $n ${q}+i.toString)")
                 pr(     s"        check(z, $o.$f(x.$n.i$t(i)), ${q}i$t $f $n ${q}+i.toString)")
+                if (pf.isDefined)
+                  pr(   s"        check(z, $o.${pf.get}(x.$n.c$t(i).par), ${q}i$t ${pf.get} $n ${q}+i.toString)")
               }
-              if (sqnname(n)) {
+              if (sqnname(n) || parname(n)) {
                 pr(     s"        check(z, $o.$f(x.$n.ss$t(i)), ${q}ss$t $f $n ${q}+i.toString)")
-                if (nojname(n)) 
-                  pr(   s"        check(z, $o.$f(x.$n.zs$t(i)), ${q}zs$t $f $n ${q}+i.toString)")     
+                if (nojname(n) && !nu) {
+                  if (sqnname(n))
+                    pr( s"        check(z, $o.$f(x.$n.ts$t(i)), ${q}ts$t $f $n ${q}+i.toString)")
+                  else
+                    pr( s"        check(z, $o.$f(x.$n.tp$t(i)), ${q}tp$t $f $n ${q}+i.toString)")     
+                }
               }
               if (parname(n) && pf.isDefined) {
-                pr(     s"        check(z, $o.$f(x.$n.sp$t(i)), ${q}sp$t $f $n ${q}+i.toString)")
-                if (nojname(n))
-                  pr(   s"        check(z, $o.$f(x.$n.zp$t(i)), ${q}zp$t $f $n ${q}+i.toString)")     
+                pr(     s"        check(z, $o.${pf.get}(x.$n.sp$t(i)), ${q}sp$t ${pf.get} $n ${q}+i.toString)")
+                if (nojname(n) && !nu)
+                  pr(   s"        check(z, $o.${pf.get}(x.$n.zp$t(i)), ${q}zp$t ${pf.get} $n ${q}+i.toString)")     
               }
               pr(       s"      }")
             }
@@ -136,11 +143,17 @@ object Generator {
         names.foreach{ n =>
           pr(           s"    {  // Scope for operations $o collection $n")
           pr(           s"      var x = new bench.generate.Things(${sayArrayI(sizes)})" )
-          parsefs(fs).foreach{ case (f, pf, ord) =>
+          parsefs(fs).foreach{ case (f, pf, ord, nu) =>
             if (ordname(n) || !ord) {
               if (nojname(n)) {
                 pr(     s"      timings(x, i => $o.$f(x.$n.c$t(i)), ${q}c$t $f $n${q})");
                 pr(     s"      timings(x, i => $o.$f(x.$n.i$t(i)), ${q}i$t $f $n${q})")
+                if (!nu) {
+                  if (sqnname(n))
+                    pr( s"      timings(x, i => $o.$f(x.$n.ts$t(i)), ${q}ts$t $f $n${q})");
+                  else
+                    pr( s"      timings(x, i => $o.$f(x.$n.tp$t(i)), ${q}tp$t $f $n${q})");
+                }
               }
               if (sqnname(n)) {
                 pr(     s"      timings(x, i => $o.$f(x.$n.ss$t(i)), ${q}ss$t $f $n${q})")
@@ -184,20 +197,26 @@ object Generator {
       val m = sizes.map(_.length).getOrElse(new bench.generate.Things().N)
       allops.foreach{ case (o, t, fs) =>
         names.foreach{ n =>
-          parsefs(fs).foreach{ case (f, pf, ord) =>
+          parsefs(fs).foreach{ case (f, pf, ord, nu) =>
             for (i <- 0 until m) {
               if (ordname(n) || !ord) {
                 if (nojname(n)) {
-                  pr(     s"  @Benchmark def bench_c${t}_${f}_${n}_$i() = $o.$f(x.$n.c$t($i))");
+                  pr(     s"  @Benchmark def bench_c${t}_${f}_${n}_$i() = $o.$f(x.$n.c$t($i))")
                   pr(     s"  @Benchmark def bench_i${t}_${f}_${n}_$i() = $o.$f(x.$n.i$t($i))")
+                  if (!nu) {
+                    if (sqnname(n))
+                      pr( s"  @Benchmark def bench_ts${t}_${f}_${n}_$i() = $o.$f(x.$n.ts$t($i))")
+                    else
+                      pr( s"  @Benchmark def bench_tp${t}_${f}_${n}_$i() = $o.$f(x.$n.tp$t($i))")
+                  }
                 }
-                if (sqnname(n)) {
-                  pr(     s"  @Benchmark def bench_ss${t}_${f}_${n}_$i() = $o.$f(x.$n.ss$t($i))")
-                  //if (nojname(n)) 
-                  //  pr(   s"  @Benchmark def bench_zs${t}_${f}_${n}_$i() = $o.$f(x.$n.zs$t($i))")     
-                }
+                pr(       s"  @Benchmark def bench_ss${t}_${f}_${n}_$i() = $o.$f(x.$n.ss$t($i))")
+                //if (nojname(n)) 
+                //  pr(   s"  @Benchmark def bench_zs${t}_${f}_${n}_$i() = $o.$f(x.$n.zs$t($i))")     
                 if (parname(n) && pf.isDefined) {
-                  pr(     s"  @Benchmark def bench_sp${t}_${f}_${n}_$i() = $o.$f(x.$n.sp$t($i))")
+                  if (nojname(n))
+                    pr(   s"  @Benchmark def bench_cp${t}_${pf.get}_${n}_$i() = $o.${pf.get}(x.$n.c$t($i).par)")
+                  pr(     s"  @Benchmark def bench_sp${t}_${pf.get}_${n}_$i() = $o.${pf.get}(x.$n.sp$t($i))")
                   //if (nojname(n))
                   //  pr(   s"  @Benchmark def bench_zp${t}_${f}_${n}_$i() = $o.$f(x.$n.zp$t($i))")     
                 }

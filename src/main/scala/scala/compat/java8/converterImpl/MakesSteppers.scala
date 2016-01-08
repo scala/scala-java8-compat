@@ -11,7 +11,7 @@ trait MakesSequentialStream[A, SS <: java.util.stream.BaseStream[A, SS]] extends
 }
 
 /** Classes or objects implementing this trait create streams suitable for parallel use */
-trait MakesParallelStream[A, SS <: java.util.stream.BaseStream[A, SS]] extends Any {
+trait MakesParallelStream[A, SS <: java.util.stream.BaseStream[A, SS]] extends Any with MakesSequentialStream[A, SS] {
   def parStream: SS
 }
 

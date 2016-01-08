@@ -1,0 +1,2537 @@
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+filter/map/sum trio
+10 elements
+collection.mutable.ArrayBuffer
+  Int, base collection       ##=                               0.112 +-   9.4 %
+  Int, iterator on coll      ####                              0.160 +-  14.7 %
+  Int, serial stream         ###-                              0.129 +-   9.6 %
+
+filter/map/sum trio
+10 elements
+Array
+  Int, base collection       #########################         1.000 +-   0.2 %
+  Int, iterator on coll      ###=                              0.150 +-  10.1 %
+  Int, serial stream         #####=                            0.223 +-   6.0 %
+
+filter/map/sum trio
+10 elements
+collection.mutable.ArraySeq
+  Int, base collection       #=                                0.068 +-  12.4 %
+  Int, iterator on coll      #####                             0.197 +-  11.1 %
+  Int, serial stream         ###                               0.122 +-   8.4 %
+
+filter/map/sum trio
+10 elements
+collection.mutable.ArrayStack
+  Int, base collection       ##                                0.081 +-   5.1 %
+  Int, iterator on coll      ####-                             0.171 +-   1.4 %
+  Int, serial stream         ##=                               0.113 +-   7.8 %
+
+filter/map/sum trio
+10 elements
+collection.immutable.ListSet
+  Int, base collection       #                                 0.037 +-  15.6 %
+  Int, iterator on coll      ####=                             0.185 +-  15.0 %
+  Int, serial stream         ##-                               0.091 +-   6.1 %
+
+filter/map/sum trio
+10 elements
+collection.immutable.HashSet
+  Int, base collection       #=                                0.069 +-  13.0 %
+  Int, iterator on coll      ###-                              0.132 +-  14.3 %
+  Int, serial stream         ##=                               0.111 +-  10.1 %
+
+filter/map/sum trio
+10 elements
+java.util.ArrayList
+  Int, serial stream         ###=                              0.144 +-   7.1 %
+
+filter/map/sum trio
+10 elements
+java.util.LinkedList
+  Int, serial stream         ###=                              0.141 +-   3.2 %
+
+filter/map/sum trio
+10 elements
+collection.mutable.LinkedHashSet
+  Int, base collection       ##                                0.081 +-  17.3 %
+  Int, iterator on coll      ####=                             0.189 +-   0.6 %
+  Int, serial stream         ###                               0.114 +-   0.8 %
+
+filter/map/sum trio
+10 elements
+collection.immutable.List
+  Int, base collection       ##-                               0.099 +-   6.1 %
+  Int, iterator on coll      ####                              0.165 +-  20.9 %
+  Int, serial stream         ##=                               0.104 +-  11.6 %
+
+filter/map/sum trio
+10 elements
+collection.mutable.HashSet
+  Int, base collection       #-                                0.060 +-   1.1 %
+  Int, iterator on coll      ##=                               0.106 +-   1.2 %
+  Int, serial stream         ##=                               0.101 +-   6.6 %
+
+filter/map/sum trio
+10 elements
+collection.mutable.Queue
+  Int, base collection       #                                 0.035 +-  13.4 %
+  Int, iterator on coll      ##=                               0.106 +-   0.8 %
+  Int, serial stream         #                                 0.046 +-   7.3 %
+
+filter/map/sum trio
+10 elements
+collection.mutable.PriorityQueue
+  Int, base collection       ##-                               0.092 +-   3.6 %
+  Int, iterator on coll      ####-                             0.174 +-  12.0 %
+  Int, serial stream         ###                               0.118 +-   7.8 %
+
+filter/map/sum trio
+10 elements
+collection.immutable.Queue
+  Int, base collection       #=                                0.069 +-   1.7 %
+  Int, iterator on coll      ###                               0.124 +-  21.0 %
+  Int, serial stream         ##=                               0.102 +-   3.2 %
+
+filter/map/sum trio
+10 elements
+collection.immutable.Stream
+  Int, base collection       ##                                0.075 +-   5.5 %
+  Int, iterator on coll      #-                                0.056 +-   4.7 %
+  Int, serial stream         ##=                               0.102 +-  15.3 %
+
+filter/map/sum trio
+10 elements
+collection.immutable.TreeSet
+  Int, base collection       #=                                0.069 +-   3.9 %
+  Int, iterator on coll      ###                               0.125 +-   3.5 %
+  Int, serial stream         ##=                               0.108 +-   1.4 %
+
+filter/map/sum trio
+10 elements
+collection.immutable.Vector
+  Int, base collection       ##-                               0.093 +-   2.9 %
+  Int, iterator on coll      ####                              0.164 +-   1.2 %
+  Int, serial stream         ###-                              0.127 +-   2.7 %
+
+filter/map/sum trio
+10 elements
+collection.mutable.WrappedArray
+  Int, base collection       ##-                               0.095 +-   2.1 %
+  Int, iterator on coll      ###-                              0.128 +-   0.6 %
+  Int, serial stream         ###-                              0.129 +-   4.9 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+filter/map/sum trio
+10000 elements
+collection.mutable.ArrayBuffer
+  Int, base collection       #####=                            0.225 +-   0.7 %
+  Int, iterator on coll      ######-                           0.258 +-   0.4 %
+  Int, serial stream         ##=                               0.101 +-   7.9 %
+
+filter/map/sum trio
+10000 elements
+Array
+  Int, base collection       #########################         1.000 +-   0.1 %
+  Int, iterator on coll      ####                              0.165 +-   2.9 %
+  Int, serial stream         ####################=             0.833 +-   1.8 %
+
+filter/map/sum trio
+10000 elements
+collection.mutable.ArraySeq
+  Int, base collection       ####=                             0.181 +-   3.2 %
+  Int, iterator on coll      ######-                           0.258 +-   0.7 %
+  Int, serial stream         ##-                               0.098 +-   8.6 %
+
+filter/map/sum trio
+10000 elements
+collection.mutable.ArrayStack
+  Int, base collection       ####=                             0.187 +-   1.3 %
+  Int, iterator on coll      ######=                           0.273 +-   0.5 %
+  Int, serial stream         ##=                               0.109 +-   5.0 %
+
+filter/map/sum trio
+10000 elements
+collection.immutable.ListSet
+  Int, base collection                                         0.005 +-   5.2 %
+  Int, iterator on coll      #####-                            0.214 +-   1.3 %
+  Int, serial stream         ##-                               0.099 +-   3.6 %
+
+filter/map/sum trio
+10000 elements
+collection.immutable.HashSet
+  Int, base collection       #                                 0.037 +-   9.0 %
+  Int, iterator on coll      ##=                               0.107 +-   0.6 %
+  Int, serial stream         ##-                               0.092 +-   0.9 %
+
+filter/map/sum trio
+10000 elements
+java.util.ArrayList
+  Int, serial stream         ######-                           0.256 +-   5.5 %
+
+filter/map/sum trio
+10000 elements
+java.util.LinkedList
+  Int, serial stream         #######                           0.280 +-   3.4 %
+
+filter/map/sum trio
+10000 elements
+collection.mutable.LinkedHashSet
+  Int, base collection       ##                                0.082 +-   4.3 %
+  Int, iterator on coll      ######=                           0.261 +-   2.9 %
+  Int, serial stream         ##=                               0.112 +-   6.3 %
+
+filter/map/sum trio
+10000 elements
+collection.immutable.List
+  Int, base collection       ###-                              0.135 +-   1.8 %
+  Int, iterator on coll      #####-                            0.215 +-   1.6 %
+  Int, serial stream         #=                                0.060 +-   1.6 %
+
+filter/map/sum trio
+10000 elements
+collection.mutable.HashSet
+  Int, base collection       #                                 0.046 +-   2.7 %
+  Int, iterator on coll      ##=                               0.111 +-   1.6 %
+  Int, serial stream         ##=                               0.109 +-   2.1 %
+
+filter/map/sum trio
+10000 elements
+collection.mutable.Queue
+  Int, base collection       #-                                0.059 +-   1.1 %
+  Int, iterator on coll      #####                             0.204 +-   1.2 %
+  Int, serial stream         #-                                0.051 +-   2.4 %
+
+filter/map/sum trio
+10000 elements
+collection.mutable.PriorityQueue
+  Int, base collection       ##=                               0.103 +-   9.3 %
+  Int, iterator on coll      ######-                           0.248 +-   0.6 %
+  Int, serial stream         ##-                               0.088 +-   4.4 %
+
+filter/map/sum trio
+10000 elements
+collection.immutable.Queue
+  Int, base collection       ##                                0.079 +-   0.7 %
+  Int, iterator on coll      #####-                            0.211 +-   2.5 %
+  Int, serial stream         ##=                               0.113 +-   1.6 %
+
+filter/map/sum trio
+10000 elements
+collection.immutable.Stream
+  Int, base collection       ##-                               0.087 +-   2.4 %
+  Int, iterator on coll      #-                                0.050 +-   6.6 %
+  Int, serial stream         ##-                               0.089 +-  31.9 %
+
+filter/map/sum trio
+10000 elements
+collection.immutable.TreeSet
+  Int, base collection       =                                 0.023 +-   2.5 %
+  Int, iterator on coll      ###=                              0.146 +-   1.6 %
+  Int, serial stream         ##                                0.083 +-   2.6 %
+
+filter/map/sum trio
+10000 elements
+collection.immutable.Vector
+  Int, base collection       ####                              0.159 +-   5.3 %
+  Int, iterator on coll      #####                             0.206 +-   0.9 %
+  Int, serial stream         ##=                               0.104 +-  18.7 %
+
+filter/map/sum trio
+10000 elements
+collection.mutable.WrappedArray
+  Int, base collection       ###                               0.125 +-   1.9 %
+  Int, iterator on coll      ####                              0.157 +-   3.4 %
+  Int, serial stream         ##-                               0.091 +-   8.9 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+filter/map/sum trio
+10 elements
+collection.mutable.ArrayBuffer
+  String, base collection    ####                              0.153 +-   0.6 %
+  String, iterator on coll   #########=                        0.381 +-   1.0 %
+  String, serial stream      ###-                              0.138 +-  10.2 %
+
+filter/map/sum trio
+10 elements
+Array
+  String, base collection    #########################         1.000 +-   0.1 %
+  String, iterator on coll   #########=                        0.389 +-   1.0 %
+  String, serial stream      ###=                              0.142 +-   8.6 %
+
+filter/map/sum trio
+10 elements
+collection.mutable.ArraySeq
+  String, base collection    ##-                               0.094 +-   4.2 %
+  String, iterator on coll   #########=                        0.382 +-   0.4 %
+  String, serial stream      ###-                              0.136 +-  10.0 %
+
+filter/map/sum trio
+10 elements
+collection.mutable.ArrayStack
+  String, base collection    ###                               0.124 +-   1.3 %
+  String, iterator on coll   ###########=                      0.473 +-   1.2 %
+  String, serial stream      ###                               0.125 +-  10.5 %
+
+filter/map/sum trio
+10 elements
+collection.immutable.ListSet
+  String, base collection    #-                                0.054 +-   4.9 %
+  String, iterator on coll   ######=                           0.265 +-   1.2 %
+  String, serial stream      ##=                               0.102 +-   3.1 %
+
+filter/map/sum trio
+10 elements
+collection.immutable.HashSet
+  String, base collection    ##-                               0.093 +-   3.1 %
+  String, iterator on coll   #####                             0.205 +-   2.7 %
+  String, serial stream      ##-                               0.097 +-   2.9 %
+
+filter/map/sum trio
+10 elements
+java.util.ArrayList
+  String, serial stream      ####                              0.159 +-   6.3 %
+
+filter/map/sum trio
+10 elements
+java.util.LinkedList
+  String, serial stream      ###=                              0.150 +-   4.1 %
+
+filter/map/sum trio
+10 elements
+collection.mutable.LinkedHashSet
+  String, base collection    ###-                              0.134 +-   1.4 %
+  String, iterator on coll   ##########-                       0.419 +-   0.7 %
+  String, serial stream      ###                               0.125 +-  10.9 %
+
+filter/map/sum trio
+10 elements
+collection.immutable.List
+  String, base collection    ###-                              0.138 +-   3.0 %
+  String, iterator on coll   ##########                        0.401 +-   1.1 %
+  String, serial stream      ##=                               0.105 +-  17.2 %
+
+filter/map/sum trio
+10 elements
+collection.mutable.HashSet
+  String, base collection    ##=                               0.102 +-   2.1 %
+  String, iterator on coll   ######-                           0.252 +-   0.6 %
+  String, serial stream      ##-                               0.091 +-  20.6 %
+
+filter/map/sum trio
+10 elements
+collection.mutable.Queue
+  String, base collection    #                                 0.035 +-   1.9 %
+  String, iterator on coll   ####-                             0.178 +-   1.6 %
+  String, serial stream      #-                                0.058 +-   5.1 %
+
+filter/map/sum trio
+10 elements
+collection.mutable.PriorityQueue
+  String, base collection    ###                               0.117 +-   1.0 %
+  String, iterator on coll   ##########                        0.398 +-   2.4 %
+  String, serial stream      ###                               0.120 +-  10.1 %
+
+filter/map/sum trio
+10 elements
+collection.immutable.Queue
+  String, base collection    ##=                               0.102 +-   4.6 %
+  String, iterator on coll   #########                         0.357 +-   1.5 %
+  String, serial stream      ##-                               0.097 +-  11.5 %
+
+filter/map/sum trio
+10 elements
+collection.immutable.Stream
+  String, base collection    ##=                               0.101 +-   7.1 %
+  String, iterator on coll   #=                                0.073 +-   5.8 %
+  String, serial stream      ##=                               0.110 +-  12.1 %
+
+filter/map/sum trio
+10 elements
+collection.immutable.TreeSet
+  String, base collection    ##-                               0.097 +-   1.6 %
+  String, iterator on coll   #####                             0.194 +-   5.2 %
+  String, serial stream      ##=                               0.102 +-   7.8 %
+
+filter/map/sum trio
+10 elements
+collection.immutable.Vector
+  String, base collection    ###                               0.126 +-   0.8 %
+  String, iterator on coll   #######-                          0.299 +-   7.3 %
+  String, serial stream      ###                               0.123 +-  12.2 %
+
+filter/map/sum trio
+10 elements
+collection.mutable.WrappedArray
+  String, base collection    ###                               0.123 +-   1.1 %
+  String, iterator on coll   ##########-                       0.409 +-   0.4 %
+  String, serial stream      ###-                              0.135 +-   9.9 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+filter/map/sum trio
+10000 elements
+collection.mutable.ArrayBuffer
+  String, base collection    ########-                         0.328 +-   1.2 %
+  String, iterator on coll   #############                     0.518 +-   0.6 %
+  String, serial stream      ##########=                       0.427 +-   1.0 %
+
+filter/map/sum trio
+10000 elements
+Array
+  String, base collection    #########################         1.000 +-   0.8 %
+  String, iterator on coll   #############=                    0.548 +-   0.9 %
+  String, serial stream      ###########                       0.442 +-  13.1 %
+
+filter/map/sum trio
+10000 elements
+collection.mutable.ArraySeq
+  String, base collection    #######-                          0.292 +-   5.3 %
+  String, iterator on coll   #############                     0.523 +-   0.6 %
+  String, serial stream      ########=                         0.342 +-  17.6 %
+
+filter/map/sum trio
+10000 elements
+collection.mutable.ArrayStack
+  String, base collection    ########                          0.325 +-   1.8 %
+  String, iterator on coll   ###############                   0.600 +-   0.8 %
+  String, serial stream      ########-                         0.338 +-  15.3 %
+
+filter/map/sum trio
+10000 elements
+collection.immutable.ListSet
+  String, base collection                                      0.003 +-   8.8 %
+  String, iterator on coll   #############                     0.516 +-   1.7 %
+  String, serial stream      #######=                          0.306 +-  12.0 %
+
+filter/map/sum trio
+10000 elements
+collection.immutable.HashSet
+  String, base collection    #-                                0.054 +-   1.3 %
+  String, iterator on coll   ###                               0.118 +-   0.8 %
+  String, serial stream      ##=                               0.103 +-   0.5 %
+
+filter/map/sum trio
+10000 elements
+java.util.ArrayList
+  String, serial stream      ############                      0.478 +-   8.2 %
+
+filter/map/sum trio
+10000 elements
+java.util.LinkedList
+  String, serial stream      ############-                     0.496 +-   8.7 %
+
+filter/map/sum trio
+10000 elements
+collection.mutable.LinkedHashSet
+  String, base collection    ##-                               0.091 +-   0.5 %
+  String, iterator on coll   #############=                    0.545 +-   1.1 %
+  String, serial stream      #########=                        0.392 +-  10.3 %
+
+filter/map/sum trio
+10000 elements
+collection.immutable.List
+  String, base collection    ####-                             0.175 +-   3.4 %
+  String, iterator on coll   ############=                     0.511 +-   2.1 %
+  String, serial stream      #######=                          0.301 +-   0.7 %
+
+filter/map/sum trio
+10000 elements
+collection.mutable.HashSet
+  String, base collection    #-                                0.047 +-   0.6 %
+  String, iterator on coll   ##=                               0.108 +-   0.5 %
+  String, serial stream      ###                               0.117 +-   0.3 %
+
+filter/map/sum trio
+10000 elements
+collection.mutable.Queue
+  String, base collection    #                                 0.046 +-   0.7 %
+  String, iterator on coll   ###########=                      0.461 +-   1.3 %
+  String, serial stream      ##-                               0.097 +-   1.7 %
+
+filter/map/sum trio
+10000 elements
+collection.mutable.PriorityQueue
+  String, base collection    ###                               0.115 +-  10.9 %
+  String, iterator on coll   #########-                        0.376 +-   2.2 %
+  String, serial stream      ######                            0.245 +-   1.0 %
+
+filter/map/sum trio
+10000 elements
+collection.immutable.Queue
+  String, base collection    ###-                              0.135 +-   2.0 %
+  String, iterator on coll   #############                     0.516 +-   0.9 %
+  String, serial stream      #####=                            0.220 +-   2.2 %
+
+filter/map/sum trio
+10000 elements
+collection.immutable.Stream
+  String, base collection    ###                               0.120 +-   2.5 %
+  String, iterator on coll   ##                                0.086 +-   6.3 %
+  String, serial stream      ######                            0.235 +-   5.3 %
+
+filter/map/sum trio
+10000 elements
+collection.immutable.TreeSet
+  String, base collection    =                                 0.024 +-   0.9 %
+  String, iterator on coll   ###=                              0.146 +-   3.4 %
+  String, serial stream      ###=                              0.148 +-   0.6 %
+
+filter/map/sum trio
+10000 elements
+collection.immutable.Vector
+  String, base collection    #####-                            0.207 +-   2.9 %
+  String, iterator on coll   #########=                        0.382 +-   1.8 %
+  String, serial stream      #########                         0.353 +-  24.5 %
+
+filter/map/sum trio
+10000 elements
+collection.mutable.WrappedArray
+  String, base collection    ########-                         0.334 +-   2.4 %
+  String, iterator on coll   #############=                    0.542 +-   0.9 %
+  String, serial stream      #########-                        0.376 +-  18.7 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+slow trig on hashCode
+10 elements
+collection.mutable.ArrayBuffer
+  String, base collection    ########################=         0.982 +-   0.1 %
+  String, iterator on coll   ########################=         0.993 +-   0.2 %
+  String, serial stream      ########################=         0.989 +-   0.3 %
+  String Stepper (can par)   #########################         0.996 +-   0.2 %
+
+slow trig on hashCode
+10 elements
+Array
+  String, base collection    #########################         1.000 +-   0.1 %
+  String, iterator on coll   ########################=         0.991 +-   0.2 %
+  String, serial stream      ########################=         0.990 +-   0.3 %
+  String Stepper (can par)   #########################         0.996 +-   0.2 %
+
+slow trig on hashCode
+10 elements
+collection.mutable.ArraySeq
+  String, base collection    #################=                0.704 +-   0.2 %
+  String, iterator on coll   ########################=         0.993 +-   0.2 %
+  String, serial stream      ########################=         0.989 +-   0.3 %
+  String Stepper (can par)   #########################         0.995 +-   0.2 %
+
+slow trig on hashCode
+10 elements
+collection.mutable.ArrayStack
+  String, base collection    #################=                0.701 +-   0.2 %
+  String, iterator on coll   ########################=         0.988 +-   0.3 %
+  String, serial stream      ########################=         0.988 +-   0.2 %
+  String Stepper (seq only)  #########################         0.994 +-   0.2 %
+
+slow trig on hashCode
+10 elements
+collection.immutable.ListSet
+  String, base collection    #######################-          0.935 +-   0.2 %
+  String, iterator on coll   #########################         0.994 +-   0.2 %
+  String, serial stream      ########################=         0.985 +-   0.9 %
+  String Stepper (seq only)  ########################=         0.992 +-   0.2 %
+
+slow trig on hashCode
+10 elements
+collection.immutable.HashSet
+  String, base collection    #################-                0.689 +-   0.2 %
+  String, iterator on coll   ########################=         0.989 +-   0.2 %
+  String, serial stream      ########################=         0.991 +-   0.2 %
+  String Stepper (can par)   ########################=         0.992 +-   0.2 %
+
+slow trig on hashCode
+10 elements
+java.util.ArrayList
+  String, serial stream      #########################         0.995 +-   0.3 %
+
+slow trig on hashCode
+10 elements
+java.util.LinkedList
+  String, serial stream      #########################         0.997 +-   0.2 %
+
+slow trig on hashCode
+10 elements
+collection.mutable.LinkedHashSet
+  String, base collection    ########################          0.960 +-   0.4 %
+  String, iterator on coll   ########################=         0.987 +-   0.3 %
+  String, serial stream      ########################=         0.992 +-   0.2 %
+  String Stepper (seq only)  ########################=         0.993 +-   0.4 %
+
+slow trig on hashCode
+10 elements
+collection.immutable.List
+  String, base collection    ########################=         0.985 +-   0.2 %
+  String, iterator on coll   #########################         0.993 +-   0.2 %
+  String, serial stream      ########################=         0.993 +-   0.2 %
+  String Stepper (seq only)  #########################         0.994 +-   0.3 %
+
+slow trig on hashCode
+10 elements
+collection.mutable.HashSet
+  String, base collection    ########################          0.960 +-   0.3 %
+  String, iterator on coll   ########################=         0.984 +-   0.2 %
+  String, serial stream      ########################=         0.989 +-   0.2 %
+  String Stepper (can par)   ########################=         0.992 +-   0.2 %
+
+slow trig on hashCode
+10 elements
+collection.mutable.Queue
+  String, base collection    #######################-          0.927 +-   0.4 %
+  String, iterator on coll   #########################         0.994 +-   0.3 %
+  String, serial stream      ########################-         0.972 +-   0.3 %
+  String Stepper (seq only)  ########################-         0.973 +-   0.2 %
+
+slow trig on hashCode
+10 elements
+collection.mutable.PriorityQueue
+  String, base collection    ########################=         0.983 +-   0.2 %
+  String, iterator on coll   #########################         0.993 +-   0.3 %
+  String, serial stream      ########################=         0.989 +-   0.4 %
+  String Stepper (seq only)  #########################         0.995 +-   0.2 %
+
+slow trig on hashCode
+10 elements
+collection.immutable.Queue
+  String, base collection    ########################          0.966 +-   0.2 %
+  String, iterator on coll   #########################         0.994 +-   0.2 %
+  String, serial stream      ########################=         0.986 +-   0.5 %
+  String Stepper (seq only)  #########################         0.993 +-   0.2 %
+
+slow trig on hashCode
+10 elements
+collection.immutable.Stream
+  String, base collection    ########################          0.956 +-   0.2 %
+  String, iterator on coll   ########################-         0.975 +-   0.2 %
+  String, serial stream      ########################=         0.987 +-   0.5 %
+  String Stepper (seq only)  #########################         0.994 +-   0.6 %
+
+slow trig on hashCode
+10 elements
+collection.immutable.TreeSet
+  String, base collection    #################                 0.682 +-   0.2 %
+  String, iterator on coll   ########################=         0.992 +-   0.2 %
+  String, serial stream      ########################=         0.991 +-   0.2 %
+  String Stepper (seq only)  ########################=         0.993 +-   0.3 %
+
+slow trig on hashCode
+10 elements
+collection.immutable.Vector
+  String, base collection    ########################=         0.982 +-   0.2 %
+  String, iterator on coll   #########################         0.994 +-   0.2 %
+  String, serial stream      ########################=         0.988 +-   0.3 %
+  String Stepper (can par)   ########################=         0.991 +-   0.5 %
+
+slow trig on hashCode
+10 elements
+collection.mutable.WrappedArray
+  String, base collection    ########################=         0.983 +-   0.2 %
+  String, iterator on coll   ########################=         0.993 +-   0.2 %
+  String, serial stream      ########################=         0.988 +-   0.4 %
+  String Stepper (can par)   #########################         0.995 +-   0.2 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+slow trig on hashCode
+10000 elements
+collection.mutable.ArrayBuffer
+  String, base collection    ########################=         0.989 +-   0.2 %
+  String, iterator on coll   ########################=         0.993 +-   0.2 %
+  String, serial stream      #########################         0.995 +-   0.2 %
+  String Stepper (can par)   #########################         0.995 +-   0.2 %
+
+slow trig on hashCode
+10000 elements
+Array
+  String, base collection    #########################         1.000 +-   0.1 %
+  String, iterator on coll   ########################=         0.992 +-   0.2 %
+  String, serial stream      #########################         0.996 +-   0.1 %
+  String Stepper (can par)   #########################         0.996 +-   0.3 %
+
+slow trig on hashCode
+10000 elements
+collection.mutable.ArraySeq
+  String, base collection    #####################             0.839 +-  11.2 %
+  String, iterator on coll   ########################=         0.992 +-   0.2 %
+  String, serial stream      #########################         0.994 +-   0.2 %
+  String Stepper (can par)   #########################         0.996 +-   0.2 %
+
+slow trig on hashCode
+10000 elements
+collection.mutable.ArrayStack
+  String, base collection    #################=                0.713 +-   0.2 %
+  String, iterator on coll   ########################=         0.993 +-   0.2 %
+  String, serial stream      #########################         0.994 +-   0.2 %
+  String Stepper (seq only)  #########################         0.995 +-   0.2 %
+
+slow trig on hashCode
+10000 elements
+collection.immutable.ListSet
+  String, base collection    ######################=           0.913 +-   0.3 %
+  String, iterator on coll   ########################=         0.992 +-   0.2 %
+  String, serial stream      ########################=         0.991 +-   0.2 %
+  String Stepper (seq only)  ########################=         0.986 +-   1.0 %
+
+slow trig on hashCode
+10000 elements
+collection.immutable.HashSet
+  String, base collection    ###############=                  0.627 +-   0.4 %
+  String, iterator on coll   ########################=         0.982 +-   0.2 %
+  String, serial stream      ########################-         0.970 +-   0.1 %
+  String Stepper (can par)   ########################=         0.981 +-   0.5 %
+
+slow trig on hashCode
+10000 elements
+java.util.ArrayList
+  String, serial stream      #########################         0.996 +-   0.1 %
+
+slow trig on hashCode
+10000 elements
+java.util.LinkedList
+  String, serial stream      #########################         0.996 +-   0.1 %
+
+slow trig on hashCode
+10000 elements
+collection.mutable.LinkedHashSet
+  String, base collection    #######################=          0.941 +-   0.2 %
+  String, iterator on coll   ########################=         0.993 +-   0.2 %
+  String, serial stream      #########################         0.995 +-   0.1 %
+  String Stepper (seq only)  #########################         0.994 +-   0.4 %
+
+slow trig on hashCode
+10000 elements
+collection.immutable.List
+  String, base collection    ########################=         0.987 +-   0.2 %
+  String, iterator on coll   #########################         0.994 +-   0.2 %
+  String, serial stream      #########################         0.996 +-   0.1 %
+  String Stepper (seq only)  #########################         0.996 +-   0.2 %
+
+slow trig on hashCode
+10000 elements
+collection.mutable.HashSet
+  String, base collection    #######################           0.916 +-   0.4 %
+  String, iterator on coll   ########################-         0.977 +-   0.4 %
+  String, serial stream      ########################-         0.979 +-   0.1 %
+  String Stepper (can par)   ########################=         0.983 +-   0.4 %
+
+slow trig on hashCode
+10000 elements
+collection.mutable.Queue
+  String, base collection    ########################          0.957 +-   0.3 %
+  String, iterator on coll   ########################=         0.992 +-   0.3 %
+  String, serial stream      ########################-         0.977 +-   0.2 %
+  String Stepper (seq only)  ########################-         0.971 +-   0.2 %
+
+slow trig on hashCode
+10000 elements
+collection.mutable.PriorityQueue
+  String, base collection    #################=                0.711 +-   0.3 %
+  String, iterator on coll   ########################=         0.988 +-   0.4 %
+  String, serial stream      ########################=         0.989 +-   0.1 %
+  String Stepper (seq only)  ########################=         0.990 +-   0.4 %
+
+slow trig on hashCode
+10000 elements
+collection.immutable.Queue
+  String, base collection    ########################-         0.972 +-   0.3 %
+  String, iterator on coll   ########################=         0.993 +-   0.3 %
+  String, serial stream      ########################=         0.987 +-   0.7 %
+  String Stepper (seq only)  ########################=         0.990 +-   0.2 %
+
+slow trig on hashCode
+10000 elements
+collection.immutable.Stream
+  String, base collection    ########################          0.954 +-   0.2 %
+  String, iterator on coll   ########################-         0.975 +-   0.3 %
+  String, serial stream      ########################=         0.992 +-   0.1 %
+  String Stepper (seq only)  ########################=         0.993 +-   0.3 %
+
+slow trig on hashCode
+10000 elements
+collection.immutable.TreeSet
+  String, base collection    ################                  0.635 +-   0.4 %
+  String, iterator on coll   ########################=         0.983 +-   0.3 %
+  String, serial stream      ########################=         0.981 +-   0.2 %
+  String Stepper (seq only)  ########################=         0.983 +-   0.4 %
+
+slow trig on hashCode
+10000 elements
+collection.immutable.Vector
+  String, base collection    ########################=         0.984 +-   0.2 %
+  String, iterator on coll   ########################=         0.991 +-   0.2 %
+  String, serial stream      #########################         0.995 +-   0.1 %
+  String Stepper (can par)   #########################         0.995 +-   0.2 %
+
+slow trig on hashCode
+10000 elements
+collection.mutable.WrappedArray
+  String, base collection    ########################=         0.986 +-   0.2 %
+  String, iterator on coll   ########################=         0.992 +-   0.2 %
+  String, serial stream      #########################         0.995 +-   0.1 %
+  String Stepper (can par)   #########################         0.996 +-   0.2 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+map/filter/take trio
+10 elements
+collection.mutable.ArrayBuffer
+  Int, base collection       #                                 0.043 +-   0.7 %
+  Int, iterator on coll      ######                            0.237 +-  14.9 %
+  Int, serial stream         #=                                0.067 +-   3.1 %
+
+map/filter/take trio
+10 elements
+Array
+  Int, base collection       #########################         1.000 +-   0.9 %
+  Int, iterator on coll      ######-                           0.257 +-  25.2 %
+  Int, serial stream         ##                                0.076 +-   2.2 %
+
+map/filter/take trio
+10 elements
+collection.mutable.ArraySeq
+  Int, base collection       =                                 0.031 +-   1.2 %
+  Int, iterator on coll      #####-                            0.213 +-  20.9 %
+  Int, serial stream         #=                                0.065 +-   7.1 %
+
+map/filter/take trio
+10 elements
+collection.mutable.ArrayStack
+  Int, base collection       =                                 0.023 +-   1.6 %
+  Int, iterator on coll      ######-                           0.259 +-  15.7 %
+  Int, serial stream         #=                                0.066 +-   1.0 %
+
+map/filter/take trio
+10 elements
+java.util.ArrayList
+  Int, serial stream         #-                                0.051 +-   1.8 %
+
+map/filter/take trio
+10 elements
+java.util.LinkedList
+  Int, serial stream         #-                                0.052 +-   4.6 %
+
+map/filter/take trio
+10 elements
+collection.immutable.List
+  Int, base collection       #=                                0.063 +-   2.1 %
+  Int, iterator on coll      ######=                           0.267 +-   2.3 %
+  Int, serial stream         #-                                0.059 +-   1.9 %
+
+map/filter/take trio
+10 elements
+collection.mutable.Queue
+  Int, base collection       -                                 0.013 +-   4.4 %
+  Int, iterator on coll      ###-                              0.130 +-   3.8 %
+  Int, serial stream         =                                 0.027 +-   2.4 %
+
+map/filter/take trio
+10 elements
+collection.immutable.Queue
+  Int, base collection       =                                 0.022 +-   0.8 %
+  Int, iterator on coll      #####=                            0.222 +-  13.2 %
+  Int, serial stream         #-                                0.050 +-   2.0 %
+
+map/filter/take trio
+10 elements
+collection.immutable.Stream
+  Int, base collection       -                                 0.013 +-   3.4 %
+  Int, iterator on coll      #                                 0.039 +-   5.1 %
+  Int, serial stream         #-                                0.058 +-   2.7 %
+
+map/filter/take trio
+10 elements
+collection.immutable.Vector
+  Int, base collection       #-                                0.058 +-   1.1 %
+  Int, iterator on coll      ######-                           0.254 +-   2.1 %
+  Int, serial stream         #=                                0.066 +-   2.4 %
+
+map/filter/take trio
+10 elements
+collection.mutable.WrappedArray
+  Int, base collection       #                                 0.045 +-   0.6 %
+  Int, iterator on coll      #####-                            0.209 +-  14.9 %
+  Int, serial stream         #=                                0.063 +-   1.3 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+map/filter/take trio
+10000 elements
+collection.mutable.ArrayBuffer
+  Int, base collection                                         0.000 +-   3.5 %
+  Int, iterator on coll      #=                                0.067 +-  13.3 %
+  Int, serial stream         #-                                0.056 +-   1.9 %
+
+map/filter/take trio
+10000 elements
+Array
+  Int, base collection       #########################         1.000 +-   0.7 %
+  Int, iterator on coll      ##                                0.084 +-  10.5 %
+  Int, serial stream         #=                                0.063 +-   1.0 %
+
+map/filter/take trio
+10000 elements
+collection.mutable.ArraySeq
+  Int, base collection                                         0.000 +-   2.3 %
+  Int, iterator on coll      #=                                0.062 +-   0.4 %
+  Int, serial stream         #-                                0.056 +-   1.1 %
+
+map/filter/take trio
+10000 elements
+collection.mutable.ArrayStack
+  Int, base collection                                         0.000 +-   8.5 %
+  Int, iterator on coll      ##                                0.080 +-  17.5 %
+  Int, serial stream         #-                                0.053 +-   2.6 %
+
+map/filter/take trio
+10000 elements
+java.util.ArrayList
+  Int, serial stream         #                                 0.042 +-   4.4 %
+
+map/filter/take trio
+10000 elements
+java.util.LinkedList
+  Int, serial stream         #                                 0.041 +-   5.9 %
+
+map/filter/take trio
+10000 elements
+collection.immutable.List
+  Int, base collection                                         0.000 +-   1.0 %
+  Int, iterator on coll      #=                                0.072 +-   0.8 %
+  Int, serial stream         #-                                0.055 +-  10.6 %
+
+map/filter/take trio
+10000 elements
+collection.mutable.Queue
+  Int, base collection                                         0.000 +-   3.2 %
+  Int, iterator on coll      #-                                0.053 +-  28.4 %
+  Int, serial stream         -                                 0.018 +-   1.7 %
+
+map/filter/take trio
+10000 elements
+collection.immutable.Queue
+  Int, base collection                                         0.000 +-   1.4 %
+  Int, iterator on coll      ##                                0.076 +-  10.0 %
+  Int, serial stream         #                                 0.037 +-   1.2 %
+
+map/filter/take trio
+10000 elements
+collection.immutable.Stream
+  Int, base collection       -                                 0.009 +-   6.4 %
+  Int, iterator on coll      =                                 0.026 +-   4.1 %
+  Int, serial stream         #-                                0.056 +-   0.8 %
+
+map/filter/take trio
+10000 elements
+collection.immutable.Vector
+  Int, base collection                                         0.000 +-   2.0 %
+  Int, iterator on coll      ##                                0.082 +-  15.8 %
+  Int, serial stream         #-                                0.055 +-   3.9 %
+
+map/filter/take trio
+10000 elements
+collection.mutable.WrappedArray
+  Int, base collection                                         0.000 +-   8.8 %
+  Int, iterator on coll      #-                                0.053 +-   1.3 %
+  Int, serial stream         #-                                0.049 +-   0.7 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+map/filter/take trio
+10 elements
+collection.mutable.ArrayBuffer
+  String, base collection    ############                      0.485 +-   0.8 %
+  String, iterator on coll   #############-                    0.531 +-   1.1 %
+  String, serial stream      ############=                     0.502 +-   3.1 %
+
+map/filter/take trio
+10 elements
+Array
+  String, base collection    #########################         1.000 +-   0.6 %
+  String, iterator on coll   #############-                    0.527 +-   1.7 %
+  String, serial stream      #############                     0.516 +-   1.0 %
+
+map/filter/take trio
+10 elements
+collection.mutable.ArraySeq
+  String, base collection    ##########-                       0.414 +-   0.9 %
+  String, iterator on coll   ############=                     0.509 +-   3.8 %
+  String, serial stream      #############=                    0.545 +-  12.0 %
+
+map/filter/take trio
+10 elements
+collection.mutable.ArrayStack
+  String, base collection    ########-                         0.335 +-   1.8 %
+  String, iterator on coll   #############=                    0.551 +-  10.2 %
+  String, serial stream      #############-                    0.531 +-  10.7 %
+
+map/filter/take trio
+10 elements
+java.util.ArrayList
+  String, serial stream      ############                      0.477 +-   2.2 %
+
+map/filter/take trio
+10 elements
+java.util.LinkedList
+  String, serial stream      ############-                     0.487 +-   5.2 %
+
+map/filter/take trio
+10 elements
+collection.immutable.List
+  String, base collection    #############=                    0.547 +-   5.1 %
+  String, iterator on coll   ##############=                   0.589 +-   1.4 %
+  String, serial stream      #############-                    0.528 +-  13.5 %
+
+map/filter/take trio
+10 elements
+collection.mutable.Queue
+  String, base collection    ######                            0.235 +-   3.4 %
+  String, iterator on coll   #############-                    0.531 +-   1.2 %
+  String, serial stream      #########=                        0.389 +-   9.1 %
+
+map/filter/take trio
+10 elements
+collection.immutable.Queue
+  String, base collection    ########-                         0.336 +-   1.1 %
+  String, iterator on coll   ##############=                   0.589 +-   1.3 %
+  String, serial stream      ###########-                      0.458 +-   2.1 %
+
+map/filter/take trio
+10 elements
+collection.immutable.Stream
+  String, base collection    ######-                           0.250 +-   2.5 %
+  String, iterator on coll   ##########-                       0.415 +-   2.0 %
+  String, serial stream      #############=                    0.546 +-  12.1 %
+
+map/filter/take trio
+10 elements
+collection.immutable.Vector
+  String, base collection    ############=                     0.512 +-   6.6 %
+  String, iterator on coll   #############                     0.525 +-   1.2 %
+  String, serial stream      ############-                     0.496 +-   1.0 %
+
+map/filter/take trio
+10 elements
+collection.mutable.WrappedArray
+  String, base collection    ###########=                      0.472 +-   4.5 %
+  String, iterator on coll   #############-                    0.527 +-   2.6 %
+  String, serial stream      ############-                     0.500 +-   1.0 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+map/filter/take trio
+10000 elements
+collection.mutable.ArrayBuffer
+  String, base collection                                      0.000 +-   9.2 %
+  String, iterator on coll   ##############                    0.555 +-   1.4 %
+  String, serial stream      #############-                    0.530 +-   1.4 %
+
+map/filter/take trio
+10000 elements
+Array
+  String, base collection    #########################         1.000 +-   8.4 %
+  String, iterator on coll   #############=                    0.542 +-   1.1 %
+  String, serial stream      #############=                    0.549 +-   3.1 %
+
+map/filter/take trio
+10000 elements
+collection.mutable.ArraySeq
+  String, base collection                                      0.000 +-   6.2 %
+  String, iterator on coll   #############=                    0.550 +-   2.2 %
+  String, serial stream      ##############-                   0.571 +-  12.9 %
+
+map/filter/take trio
+10000 elements
+collection.mutable.ArrayStack
+  String, base collection                                      0.000 +-   6.9 %
+  String, iterator on coll   ###############=                  0.624 +-   7.3 %
+  String, serial stream      #############                     0.516 +-   1.8 %
+
+map/filter/take trio
+10000 elements
+java.util.ArrayList
+  String, serial stream      #############                     0.522 +-   4.9 %
+
+map/filter/take trio
+10000 elements
+java.util.LinkedList
+  String, serial stream      ############=                     0.511 +-   1.6 %
+
+map/filter/take trio
+10000 elements
+collection.immutable.List
+  String, base collection                                      0.001 +-   9.9 %
+  String, iterator on coll   ###############                   0.600 +-   2.1 %
+  String, serial stream      ##############                    0.554 +-   5.2 %
+
+map/filter/take trio
+10000 elements
+collection.mutable.Queue
+  String, base collection                                      0.000 +-   7.9 %
+  String, iterator on coll   ##############                    0.562 +-   1.2 %
+  String, serial stream      ##########                        0.396 +-   9.2 %
+
+map/filter/take trio
+10000 elements
+collection.immutable.Queue
+  String, base collection                                      0.000 +-   3.8 %
+  String, iterator on coll   ##############=                   0.590 +-   2.3 %
+  String, serial stream      #############=                    0.546 +-  13.1 %
+
+map/filter/take trio
+10000 elements
+collection.immutable.Stream
+  String, base collection    ######=                           0.273 +-   2.0 %
+  String, iterator on coll   ###########-                      0.458 +-   3.7 %
+  String, serial stream      ###############                   0.606 +-  11.6 %
+
+map/filter/take trio
+10000 elements
+collection.immutable.Vector
+  String, base collection                                      0.001 +-   8.4 %
+  String, iterator on coll   #############                     0.521 +-   1.4 %
+  String, serial stream      #############=                    0.540 +-   4.6 %
+
+map/filter/take trio
+10000 elements
+collection.mutable.WrappedArray
+  String, base collection                                      0.001 +-   1.7 %
+  String, iterator on coll   #############=                    0.544 +-   2.2 %
+  String, serial stream      #############=                    0.543 +-   3.3 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+fast sum of lengths
+10 elements
+collection.mutable.ArrayBuffer
+  String, base collection    ########-                         0.332 +-   0.8 %
+  String, iterator on coll   ########                          0.316 +-   2.1 %
+  String, serial stream      ########                          0.318 +-   1.3 %
+  String Stepper (can par)   ##############=                   0.582 +-   0.4 %
+
+fast sum of lengths
+10 elements
+Array
+  String, base collection    #########################         1.000 +-   0.4 %
+  String, iterator on coll   #######-                          0.287 +-  15.1 %
+  String, serial stream      ########                          0.325 +-   1.5 %
+  String Stepper (can par)   #################                 0.686 +-   0.4 %
+
+fast sum of lengths
+10 elements
+collection.mutable.ArraySeq
+  String, base collection    ##################-               0.731 +-   1.2 %
+  String, iterator on coll   ########                          0.319 +-   0.5 %
+  String, serial stream      ########                          0.319 +-   0.6 %
+  String Stepper (can par)   ##############=                   0.582 +-   0.3 %
+
+fast sum of lengths
+10 elements
+collection.mutable.ArrayStack
+  String, base collection    ##################-               0.729 +-   1.5 %
+  String, iterator on coll   ########=                         0.344 +-   1.0 %
+  String, serial stream      #######                           0.282 +-   3.0 %
+  String Stepper (seq only)  #############                     0.519 +-   9.1 %
+
+fast sum of lengths
+10 elements
+collection.immutable.ListSet
+  String, base collection    #####-                            0.219 +-   0.4 %
+  String, iterator on coll   #######                           0.285 +-   0.9 %
+  String, serial stream      ####-                             0.179 +-   5.8 %
+  String Stepper (seq only)  ##########                        0.394 +-   1.2 %
+
+fast sum of lengths
+10 elements
+collection.immutable.HashSet
+  String, base collection    ######=                           0.266 +-  11.3 %
+  String, iterator on coll   #######                           0.277 +-  11.4 %
+  String, serial stream      ####                              0.161 +-   1.3 %
+  String Stepper (can par)   #####=                            0.221 +-   3.2 %
+
+fast sum of lengths
+10 elements
+java.util.ArrayList
+  String, serial stream      ########-                         0.337 +-   0.4 %
+
+fast sum of lengths
+10 elements
+java.util.LinkedList
+  String, serial stream      ########                          0.314 +-   1.6 %
+
+fast sum of lengths
+10 elements
+collection.mutable.LinkedHashSet
+  String, base collection    ################=                 0.668 +-   1.1 %
+  String, iterator on coll   #########-                        0.370 +-   0.9 %
+  String, serial stream      #######-                          0.292 +-   0.8 %
+  String Stepper (seq only)  ############-                     0.495 +-   0.9 %
+
+fast sum of lengths
+10 elements
+collection.immutable.List
+  String, base collection    ###############-                  0.613 +-   1.3 %
+  String, iterator on coll   ########=                         0.343 +-   0.4 %
+  String, serial stream      #####-                            0.214 +-   2.0 %
+  String Stepper (seq only)  ########-                         0.339 +-   2.4 %
+
+fast sum of lengths
+10 elements
+collection.mutable.HashSet
+  String, base collection    ###########-                      0.458 +-   4.6 %
+  String, iterator on coll   ######-                           0.248 +-   0.7 %
+  String, serial stream      #####                             0.199 +-   0.9 %
+  String Stepper (can par)   ##########=                       0.432 +-   1.4 %
+
+fast sum of lengths
+10 elements
+collection.mutable.Queue
+  String, base collection    ##                                0.086 +-   0.8 %
+  String, iterator on coll   ######                            0.245 +-   0.4 %
+  String, serial stream      #=                                0.069 +-   1.0 %
+  String Stepper (seq only)  ##                                0.084 +-   1.8 %
+
+fast sum of lengths
+10 elements
+collection.mutable.PriorityQueue
+  String, base collection    ########                          0.314 +-   0.3 %
+  String, iterator on coll   ########                          0.322 +-   0.5 %
+  String, serial stream      #######                           0.285 +-   1.3 %
+  String Stepper (seq only)  ############=                     0.505 +-   0.8 %
+
+fast sum of lengths
+10 elements
+collection.immutable.Queue
+  String, base collection    #####=                            0.232 +-   0.4 %
+  String, iterator on coll   ########-                         0.330 +-   0.7 %
+  String, serial stream      ####                              0.166 +-   0.9 %
+  String Stepper (seq only)  #####=                            0.231 +-   1.1 %
+
+fast sum of lengths
+10 elements
+collection.immutable.Stream
+  String, base collection    ###############=                  0.629 +-   0.7 %
+  String, iterator on coll   ##                                0.087 +-   4.7 %
+  String, serial stream      #####-                            0.219 +-   1.6 %
+  String Stepper (seq only)  ########-                         0.331 +-   1.0 %
+
+fast sum of lengths
+10 elements
+collection.immutable.TreeSet
+  String, base collection    ########-                         0.338 +-   0.4 %
+  String, iterator on coll   #####=                            0.224 +-   0.7 %
+  String, serial stream      ####-                             0.173 +-   1.6 %
+  String Stepper (seq only)  ######-                           0.255 +-   3.4 %
+
+fast sum of lengths
+10 elements
+collection.immutable.Vector
+  String, base collection    #######                           0.276 +-   0.5 %
+  String, iterator on coll   #######=                          0.307 +-   0.5 %
+  String, serial stream      ######                            0.236 +-   1.2 %
+  String Stepper (can par)   ##########-                       0.418 +-   0.6 %
+
+fast sum of lengths
+10 elements
+collection.mutable.WrappedArray
+  String, base collection    ########=                         0.344 +-   0.3 %
+  String, iterator on coll   ########-                         0.329 +-   0.3 %
+  String, serial stream      ########                          0.317 +-   0.5 %
+  String Stepper (can par)   ##############=                   0.583 +-   1.4 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+fast sum of lengths
+10000 elements
+collection.mutable.ArrayBuffer
+  String, base collection    ########=                         0.340 +-   0.9 %
+  String, iterator on coll   ########-                         0.334 +-   0.3 %
+  String, serial stream      #################-                0.690 +-  33.6 %
+  String Stepper (can par)   #############                     0.526 +-   2.1 %
+
+fast sum of lengths
+10000 elements
+Array
+  String, base collection    #########################         1.000 +-   0.6 %
+  String, iterator on coll   ########-                         0.328 +-   0.9 %
+  String, serial stream      ##################                0.726 +-  27.9 %
+  String Stepper (can par)   ################                  0.640 +-   4.6 %
+
+fast sum of lengths
+10000 elements
+collection.mutable.ArraySeq
+  String, base collection    ####################=             0.830 +-   0.7 %
+  String, iterator on coll   ########-                         0.332 +-   0.4 %
+  String, serial stream      ###################-              0.774 +-  24.4 %
+  String Stepper (can par)   #############                     0.523 +-   1.9 %
+
+fast sum of lengths
+10000 elements
+collection.mutable.ArrayStack
+  String, base collection    ################-                 0.654 +-   6.7 %
+  String, iterator on coll   #########                         0.362 +-   0.3 %
+  String, serial stream      ################=                 0.666 +-  25.4 %
+  String Stepper (seq only)  #############                     0.515 +-   9.1 %
+
+fast sum of lengths
+10000 elements
+collection.immutable.ListSet
+  String, base collection    #########-                        0.379 +-  30.0 %
+  String, iterator on coll   ########                          0.325 +-  16.5 %
+  String, serial stream      ###########                       0.436 +-  39.9 %
+  String Stepper (seq only)  #########-                        0.372 +-   6.0 %
+
+fast sum of lengths
+10000 elements
+collection.immutable.HashSet
+  String, base collection    ###                               0.125 +-   3.1 %
+  String, iterator on coll   ###                               0.123 +-   1.0 %
+  String, serial stream      ###                               0.118 +-   0.5 %
+  String Stepper (can par)   ###-                              0.135 +-   0.6 %
+
+fast sum of lengths
+10000 elements
+java.util.ArrayList
+  String, serial stream      ####################=             0.821 +-  10.1 %
+
+fast sum of lengths
+10000 elements
+java.util.LinkedList
+  String, serial stream      ###################               0.755 +-   3.9 %
+
+fast sum of lengths
+10000 elements
+collection.mutable.LinkedHashSet
+  String, base collection    #################-                0.691 +-   2.3 %
+  String, iterator on coll   ##########-                       0.412 +-  11.4 %
+  String, serial stream      #############=                    0.551 +-  30.5 %
+  String Stepper (seq only)  ##########                        0.402 +-   3.8 %
+
+fast sum of lengths
+10000 elements
+collection.immutable.List
+  String, base collection    #################=                0.713 +-   1.4 %
+  String, iterator on coll   #########-                        0.372 +-  11.2 %
+  String, serial stream      ###########-                      0.459 +-   0.6 %
+  String Stepper (seq only)  #######=                          0.304 +-   1.5 %
+
+fast sum of lengths
+10000 elements
+collection.mutable.HashSet
+  String, base collection    ###-                              0.127 +-   0.2 %
+  String, iterator on coll   ##=                               0.113 +-   0.3 %
+  String, serial stream      ##                                0.086 +-   0.4 %
+  String Stepper (can par)   ###-                              0.133 +-   0.9 %
+
+fast sum of lengths
+10000 elements
+collection.mutable.Queue
+  String, base collection    #=                                0.072 +-   1.4 %
+  String, iterator on coll   #########-                        0.367 +-  26.7 %
+  String, serial stream      ###                               0.115 +-   1.7 %
+  String Stepper (seq only)  ##                                0.080 +-   1.2 %
+
+fast sum of lengths
+10000 elements
+collection.mutable.PriorityQueue
+  String, base collection    ########-                         0.338 +-  30.0 %
+  String, iterator on coll   ########                          0.319 +-  30.9 %
+  String, serial stream      ####                              0.166 +-  16.9 %
+  String Stepper (seq only)  ######                            0.243 +-   5.6 %
+
+fast sum of lengths
+10000 elements
+collection.immutable.Queue
+  String, base collection    #########=                        0.381 +-  32.4 %
+  String, iterator on coll   ##########                        0.399 +-  11.0 %
+  String, serial stream      ######-                           0.254 +-   2.7 %
+  String Stepper (seq only)  #####=                            0.220 +-   0.8 %
+
+fast sum of lengths
+10000 elements
+collection.immutable.Stream
+  String, base collection    #######-                          0.287 +-   4.8 %
+  String, iterator on coll   ##-                               0.095 +-   7.2 %
+  String, serial stream      #####=                            0.220 +-   8.0 %
+  String Stepper (seq only)  ######-                           0.258 +-   1.7 %
+
+fast sum of lengths
+10000 elements
+collection.immutable.TreeSet
+  String, base collection    ####=                             0.180 +-   0.7 %
+  String, iterator on coll   #####                             0.194 +-   8.2 %
+  String, serial stream      ##=                               0.110 +-   0.9 %
+  String Stepper (seq only)  ####=                             0.190 +-   2.3 %
+
+fast sum of lengths
+10000 elements
+collection.immutable.Vector
+  String, base collection    ##########-                       0.412 +-  15.0 %
+  String, iterator on coll   #########                         0.355 +-  22.0 %
+  String, serial stream      ###########=                      0.460 +-  16.9 %
+  String Stepper (can par)   ###########-                      0.452 +-   3.0 %
+
+fast sum of lengths
+10000 elements
+collection.mutable.WrappedArray
+  String, base collection    ########=                         0.353 +-   0.3 %
+  String, iterator on coll   ########-                         0.340 +-   0.8 %
+  String, serial stream      #################                 0.683 +-  32.7 %
+  String Stepper (can par)   #############-                    0.533 +-   2.6 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+parallel filter/map/sum trio
+10 elements
+collection.mutable.ArrayBuffer
+  Int, par collection        ########################-         0.968 +-   3.4 %
+  Int, parallel stream       ##############################~~# 4.299 +-   2.7 %
+
+parallel filter/map/sum trio
+10 elements
+Array
+  Int, par collection        #########################         1.000 +-   2.1 %
+  Int, parallel stream       ##############################~~# 4.361 +-   1.2 %
+
+parallel filter/map/sum trio
+10 elements
+collection.mutable.ArraySeq
+  Int, par collection        #########################-        1.014 +-   1.2 %
+  Int, parallel stream       ##############################~~# 4.362 +-   2.0 %
+
+parallel filter/map/sum trio
+10 elements
+collection.immutable.HashSet
+  Int, par collection        ####################=             0.830 +-   2.2 %
+  Int, parallel stream       ##############################~~# 3.569 +-   1.5 %
+
+parallel filter/map/sum trio
+10 elements
+java.util.ArrayList
+  Int, parallel stream       ##############################~~# 4.389 +-   1.1 %
+
+parallel filter/map/sum trio
+10 elements
+java.util.LinkedList
+  Int, parallel stream       ##############################~~# 4.299 +-   2.4 %
+
+parallel filter/map/sum trio
+10 elements
+collection.mutable.HashSet
+  Int, par collection        ###########################       1.079 +-   1.1 %
+  Int, parallel stream       ##############################~~# 5.277 +-   2.3 %
+
+parallel filter/map/sum trio
+10 elements
+collection.immutable.Vector
+  Int, par collection        #####################-            0.847 +-   1.7 %
+  Int, parallel stream       ##############################~~# 4.289 +-   1.2 %
+
+parallel filter/map/sum trio
+10 elements
+collection.mutable.WrappedArray
+  Int, par collection        #########################         1.003 +-   1.4 %
+  Int, parallel stream       ##############################~~# 4.399 +-   0.6 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+parallel filter/map/sum trio
+10000 elements
+collection.mutable.ArrayBuffer
+  Int, par collection        ##############################~~# 1.469 +-   1.3 %
+  Int, parallel stream       ##############################~~# 6.310 +-  10.2 %
+
+parallel filter/map/sum trio
+10000 elements
+Array
+  Int, par collection        #########################         1.000 +-   1.0 %
+  Int, parallel stream       ##############################~~# 11.043 +-   1.0 %
+
+parallel filter/map/sum trio
+10000 elements
+collection.mutable.ArraySeq
+  Int, par collection        ##############################~~# 1.469 +-   1.5 %
+  Int, parallel stream       ##############################~~# 6.301 +-   4.2 %
+
+parallel filter/map/sum trio
+10000 elements
+collection.immutable.HashSet
+  Int, par collection        ################=                 0.664 +-   0.8 %
+  Int, parallel stream       ##############################~~# 3.468 +-   1.0 %
+
+parallel filter/map/sum trio
+10000 elements
+java.util.ArrayList
+  Int, parallel stream       ##############################~~# 9.264 +-   3.0 %
+
+parallel filter/map/sum trio
+10000 elements
+java.util.LinkedList
+  Int, parallel stream       ##############################~~# 4.247 +-  10.6 %
+
+parallel filter/map/sum trio
+10000 elements
+collection.mutable.HashSet
+  Int, par collection        ##################                0.727 +-   1.2 %
+  Int, parallel stream       ##############################~~# 3.579 +-   7.4 %
+
+parallel filter/map/sum trio
+10000 elements
+collection.immutable.Vector
+  Int, par collection        ##############################-   1.216 +-   2.2 %
+  Int, parallel stream       ##############################~~# 5.987 +-   3.6 %
+
+parallel filter/map/sum trio
+10000 elements
+collection.mutable.WrappedArray
+  Int, par collection        ###########################       1.074 +-   1.1 %
+  Int, parallel stream       ##############################~~# 5.150 +-   0.7 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+parallel filter/map/sum trio
+10 elements
+collection.mutable.ArrayBuffer
+  String, par collection     #########################-        1.014 +-   0.8 %
+  String, parallel stream    ##############################~~# 4.219 +-   3.2 %
+
+parallel filter/map/sum trio
+10 elements
+Array
+  String, par collection     #########################         1.000 +-   2.8 %
+  String, parallel stream    ##############################~~# 4.299 +-   1.1 %
+
+parallel filter/map/sum trio
+10 elements
+collection.mutable.ArraySeq
+  String, par collection     #########################         1.002 +-   1.6 %
+  String, parallel stream    ##############################~~# 4.326 +-   1.5 %
+
+parallel filter/map/sum trio
+10 elements
+collection.immutable.HashSet
+  String, par collection     #####################=            0.861 +-   1.1 %
+  String, parallel stream    ##############################~~# 3.656 +-   1.1 %
+
+parallel filter/map/sum trio
+10 elements
+java.util.ArrayList
+  String, parallel stream    ##############################~~# 4.173 +-   3.2 %
+
+parallel filter/map/sum trio
+10 elements
+java.util.LinkedList
+  String, parallel stream    ##############################~~# 4.073 +-   3.0 %
+
+parallel filter/map/sum trio
+10 elements
+collection.mutable.HashSet
+  String, par collection     ########################          0.964 +-   1.3 %
+  String, parallel stream    ##############################~~# 4.613 +-   1.2 %
+
+parallel filter/map/sum trio
+10 elements
+collection.immutable.Vector
+  String, par collection     #####################-            0.857 +-   1.2 %
+  String, parallel stream    ##############################~~# 4.221 +-   1.6 %
+
+parallel filter/map/sum trio
+10 elements
+collection.mutable.WrappedArray
+  String, par collection     ########################=         0.982 +-   2.7 %
+  String, parallel stream    ##############################~~# 4.370 +-   1.6 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+parallel filter/map/sum trio
+10000 elements
+collection.mutable.ArrayBuffer
+  String, par collection     #########################         0.994 +-   1.4 %
+  String, parallel stream    ##############################~~# 5.317 +-   7.5 %
+
+parallel filter/map/sum trio
+10000 elements
+Array
+  String, par collection     #########################         1.000 +-   1.3 %
+  String, parallel stream    ##############################~~# 6.147 +-   1.0 %
+
+parallel filter/map/sum trio
+10000 elements
+collection.mutable.ArraySeq
+  String, par collection     #########################         1.004 +-   1.5 %
+  String, parallel stream    ##############################~~# 5.464 +-   5.9 %
+
+parallel filter/map/sum trio
+10000 elements
+collection.immutable.HashSet
+  String, par collection     ###########                       0.434 +-   2.2 %
+  String, parallel stream    ##############################~~# 2.221 +-   6.4 %
+
+parallel filter/map/sum trio
+10000 elements
+java.util.ArrayList
+  String, parallel stream    ##############################~~# 6.477 +-   0.4 %
+
+parallel filter/map/sum trio
+10000 elements
+java.util.LinkedList
+  String, parallel stream    ##############################~~# 2.252 +-  10.3 %
+
+parallel filter/map/sum trio
+10000 elements
+collection.mutable.HashSet
+  String, par collection     ###########=                      0.470 +-   0.9 %
+  String, parallel stream    ##############################~~# 2.477 +-   8.0 %
+
+parallel filter/map/sum trio
+10000 elements
+collection.immutable.Vector
+  String, par collection     ###################=              0.786 +-   0.7 %
+  String, parallel stream    ##############################~~# 5.795 +-   1.1 %
+
+parallel filter/map/sum trio
+10000 elements
+collection.mutable.WrappedArray
+  String, par collection     ########################=         0.985 +-   1.7 %
+  String, parallel stream    ##############################~~# 5.575 +-   5.4 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+slow parallel trig on hashCode
+10 elements
+collection.mutable.ArrayBuffer
+  String, par collection     #########################         0.999 +-   1.3 %
+  String, parallel stream    ##############################~~# 3.106 +-   0.7 %
+
+slow parallel trig on hashCode
+10 elements
+Array
+  String, par collection     #########################         1.000 +-   1.1 %
+  String, parallel stream    ##############################~~# 3.144 +-   0.8 %
+
+slow parallel trig on hashCode
+10 elements
+collection.mutable.ArraySeq
+  String, par collection     #########################-        1.016 +-   1.1 %
+  String, parallel stream    ##############################~~# 3.117 +-   1.0 %
+
+slow parallel trig on hashCode
+10 elements
+collection.immutable.HashSet
+  String, par collection     ################                  0.638 +-   1.3 %
+  String, parallel stream    ##############################~~# 2.879 +-   0.6 %
+
+slow parallel trig on hashCode
+10 elements
+java.util.ArrayList
+  String, parallel stream    ##############################~~# 3.144 +-   0.7 %
+
+slow parallel trig on hashCode
+10 elements
+java.util.LinkedList
+  String, parallel stream    ##############################~~# 3.126 +-   1.0 %
+
+slow parallel trig on hashCode
+10 elements
+collection.mutable.HashSet
+  String, par collection     #######################-          0.937 +-   1.0 %
+  String, parallel stream    ##############################~~# 2.938 +-   0.5 %
+
+slow parallel trig on hashCode
+10 elements
+collection.immutable.Vector
+  String, par collection     ##################=               0.741 +-   1.5 %
+  String, parallel stream    ##############################~~# 3.139 +-   1.0 %
+
+slow parallel trig on hashCode
+10 elements
+collection.mutable.WrappedArray
+  String, par collection     #########################         1.000 +-   1.0 %
+  String, parallel stream    ##############################~~# 3.104 +-   1.1 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+slow parallel trig on hashCode
+10000 elements
+collection.mutable.ArrayBuffer
+  String, par collection     ########################-         0.978 +-   2.1 %
+  String, parallel stream    ##############################-   1.209 +-   0.9 %
+
+slow parallel trig on hashCode
+10000 elements
+Array
+  String, par collection     #########################         1.000 +-   0.9 %
+  String, parallel stream    ##############################-   1.211 +-   0.9 %
+
+slow parallel trig on hashCode
+10000 elements
+collection.mutable.ArraySeq
+  String, par collection     ########################-         0.975 +-   2.2 %
+  String, parallel stream    ##############################-   1.215 +-   0.7 %
+
+slow parallel trig on hashCode
+10000 elements
+collection.immutable.HashSet
+  String, par collection     ####################-             0.809 +-   1.9 %
+  String, parallel stream    ############################-     1.129 +-   0.5 %
+
+slow parallel trig on hashCode
+10000 elements
+java.util.ArrayList
+  String, parallel stream    ##############################    1.200 +-   2.0 %
+
+slow parallel trig on hashCode
+10000 elements
+java.util.LinkedList
+  String, parallel stream    ############################      1.121 +-   0.6 %
+
+slow parallel trig on hashCode
+10000 elements
+collection.mutable.HashSet
+  String, par collection     ##################-               0.734 +-   1.8 %
+  String, parallel stream    #############################-    1.176 +-   0.4 %
+
+slow parallel trig on hashCode
+10000 elements
+collection.immutable.Vector
+  String, par collection     #################-                0.698 +-   1.3 %
+  String, parallel stream    ##############################-   1.216 +-   0.6 %
+
+slow parallel trig on hashCode
+10000 elements
+collection.mutable.WrappedArray
+  String, par collection     ########################-         0.969 +-   2.4 %
+  String, parallel stream    ##############################-   1.213 +-   0.7 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+fast parallel sum of lengths
+10 elements
+collection.mutable.ArrayBuffer
+  String, par collection     ##########################        1.036 +-   6.6 %
+  String, parallel stream    ##############################~~# 1.759 +-   1.2 %
+
+fast parallel sum of lengths
+10 elements
+Array
+  String, par collection     #########################         1.000 +-   6.4 %
+  String, parallel stream    ##############################~~# 1.740 +-   1.8 %
+
+fast parallel sum of lengths
+10 elements
+collection.mutable.ArraySeq
+  String, par collection     ###########################-      1.099 +-  12.3 %
+  String, parallel stream    ##############################~~# 1.748 +-   2.1 %
+
+fast parallel sum of lengths
+10 elements
+collection.immutable.HashSet
+  String, par collection     #########################-        1.019 +-   2.9 %
+  String, parallel stream    ##############################~~# 1.470 +-   1.1 %
+
+fast parallel sum of lengths
+10 elements
+java.util.ArrayList
+  String, parallel stream    ##############################~~# 1.729 +-   1.0 %
+
+fast parallel sum of lengths
+10 elements
+java.util.LinkedList
+  String, parallel stream    ##############################~~# 1.690 +-   1.4 %
+
+fast parallel sum of lengths
+10 elements
+collection.mutable.HashSet
+  String, par collection     ###########################-      1.092 +-   3.1 %
+  String, parallel stream    ##############################~~# 1.902 +-   3.4 %
+
+fast parallel sum of lengths
+10 elements
+collection.immutable.Vector
+  String, par collection     ######################=           0.908 +-   3.1 %
+  String, parallel stream    ##############################~~# 1.761 +-   1.4 %
+
+fast parallel sum of lengths
+10 elements
+collection.mutable.WrappedArray
+  String, par collection     #########################=        1.032 +-  10.0 %
+  String, parallel stream    ##############################~~# 1.751 +-   1.7 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+fast parallel sum of lengths
+10000 elements
+collection.mutable.ArrayBuffer
+  String, par collection     #########################         1.002 +-   1.0 %
+  String, parallel stream    ############################      1.122 +-   0.9 %
+
+fast parallel sum of lengths
+10000 elements
+Array
+  String, par collection     #########################         1.000 +-   0.9 %
+  String, parallel stream    ################################  1.284 +-   1.7 %
+
+fast parallel sum of lengths
+10000 elements
+collection.mutable.ArraySeq
+  String, par collection     ########################=         0.992 +-   1.6 %
+  String, parallel stream    ################################- 1.287 +-   6.4 %
+
+fast parallel sum of lengths
+10000 elements
+collection.immutable.HashSet
+  String, par collection     ##########-                       0.408 +-   0.9 %
+  String, parallel stream    ################-                 0.648 +-   0.6 %
+
+fast parallel sum of lengths
+10000 elements
+java.util.ArrayList
+  String, parallel stream    ##############################~~# 1.432 +-  13.1 %
+
+fast parallel sum of lengths
+10000 elements
+java.util.LinkedList
+  String, parallel stream    #############=                    0.550 +-  12.9 %
+
+fast parallel sum of lengths
+10000 elements
+collection.mutable.HashSet
+  String, par collection     ##########-                       0.411 +-   0.8 %
+  String, parallel stream    ##############=                   0.583 +-   0.6 %
+
+fast parallel sum of lengths
+10000 elements
+collection.immutable.Vector
+  String, par collection     ###################               0.759 +-   1.2 %
+  String, parallel stream    ##############################=   1.221 +-   0.8 %
+
+fast parallel sum of lengths
+10000 elements
+collection.mutable.WrappedArray
+  String, par collection     #########################         0.999 +-   1.0 %
+  String, parallel stream    ################################- 1.294 +-   7.0 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+fast parallel summation
+10 elements
+collection.mutable.ArrayBuffer
+  Int, par collection        ######################-           0.890 +-   6.7 %
+  Int, parallel stream       ##############################~~# 1.483 +-   1.2 %
+
+fast parallel summation
+10 elements
+Array
+  Int, par collection        #########################         1.000 +-   6.0 %
+  Int, parallel stream       ##############################~~# 1.467 +-   1.2 %
+
+fast parallel summation
+10 elements
+collection.mutable.ArraySeq
+  Int, par collection        ######################=           0.904 +-   6.7 %
+  Int, parallel stream       ##############################~~# 1.471 +-   1.4 %
+
+fast parallel summation
+10 elements
+collection.immutable.HashSet
+  Int, par collection        ##################-               0.737 +-   5.1 %
+  Int, parallel stream       ###############################-  1.257 +-   1.4 %
+
+fast parallel summation
+10 elements
+java.util.ArrayList
+  Int, parallel stream       ##############################~~# 1.497 +-   1.0 %
+
+fast parallel summation
+10 elements
+java.util.LinkedList
+  Int, parallel stream       ##############################~~# 1.463 +-   1.4 %
+
+fast parallel summation
+10 elements
+collection.mutable.HashSet
+  Int, par collection        ##########################-       1.060 +-   1.0 %
+  Int, parallel stream       ##############################~~# 1.800 +-   1.4 %
+
+fast parallel summation
+10 elements
+collection.immutable.Vector
+  Int, par collection        ####################=             0.829 +-   0.7 %
+  Int, parallel stream       ##############################~~# 1.459 +-   2.1 %
+
+fast parallel summation
+10 elements
+collection.mutable.WrappedArray
+  Int, par collection        #########################-        1.008 +-   7.5 %
+  Int, parallel stream       ##############################~~# 1.489 +-   0.8 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+fast parallel summation
+10000 elements
+collection.mutable.ArrayBuffer
+  Int, par collection        ##############################~~# 2.489 +-   0.8 %
+  Int, parallel stream       ##############################~~# 3.404 +-   1.4 %
+
+fast parallel summation
+10000 elements
+Array
+  Int, par collection        #########################         1.000 +-   9.6 %
+  Int, parallel stream       ##############################~~# 6.862 +-   4.9 %
+
+fast parallel summation
+10000 elements
+collection.mutable.ArraySeq
+  Int, par collection        ##############################~~# 2.482 +-   0.8 %
+  Int, parallel stream       ##############################~~# 3.686 +-   0.8 %
+
+fast parallel summation
+10000 elements
+collection.immutable.HashSet
+  Int, par collection        ################################- 1.300 +-   1.0 %
+  Int, parallel stream       ##############################~~# 1.898 +-   0.5 %
+
+fast parallel summation
+10000 elements
+java.util.ArrayList
+  Int, parallel stream       ##############################~~# 5.781 +-  16.3 %
+
+fast parallel summation
+10000 elements
+java.util.LinkedList
+  Int, parallel stream       ##############################~~# 2.435 +-   8.6 %
+
+fast parallel summation
+10000 elements
+collection.mutable.HashSet
+  Int, par collection        ###############################-  1.259 +-   0.9 %
+  Int, parallel stream       ##############################~~# 1.749 +-   0.4 %
+
+fast parallel summation
+10000 elements
+collection.immutable.Vector
+  Int, par collection        ##############################~~# 1.993 +-   1.1 %
+  Int, parallel stream       ##############################~~# 3.596 +-   0.9 %
+
+fast parallel summation
+10000 elements
+collection.mutable.WrappedArray
+  Int, par collection        ###############################=  1.272 +-   4.8 %
+  Int, parallel stream       ##############################~~# 2.706 +-   0.6 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+slow parallel trigonometry
+10 elements
+collection.mutable.ArrayBuffer
+  Int, par collection        #########################         0.999 +-   1.6 %
+  Int, parallel stream       ##############################~~# 3.251 +-   0.9 %
+
+slow parallel trigonometry
+10 elements
+Array
+  Int, par collection        #########################         1.000 +-   1.0 %
+  Int, parallel stream       ##############################~~# 3.257 +-   0.6 %
+
+slow parallel trigonometry
+10 elements
+collection.mutable.ArraySeq
+  Int, par collection        #########################-        1.009 +-   1.4 %
+  Int, parallel stream       ##############################~~# 3.252 +-   0.9 %
+
+slow parallel trigonometry
+10 elements
+collection.immutable.HashSet
+  Int, par collection        ###############-                  0.610 +-   1.2 %
+  Int, parallel stream       ##############################~~# 2.825 +-   0.9 %
+
+slow parallel trigonometry
+10 elements
+java.util.ArrayList
+  Int, parallel stream       ##############################~~# 3.210 +-   1.3 %
+
+slow parallel trigonometry
+10 elements
+java.util.LinkedList
+  Int, parallel stream       ##############################~~# 3.196 +-   0.4 %
+
+slow parallel trigonometry
+10 elements
+collection.mutable.HashSet
+  Int, par collection        ########################-         0.969 +-   2.4 %
+  Int, parallel stream       ##############################~~# 3.086 +-   0.4 %
+
+slow parallel trigonometry
+10 elements
+collection.immutable.Vector
+  Int, par collection        ##################                0.721 +-   2.2 %
+  Int, parallel stream       ##############################~~# 3.180 +-   0.9 %
+
+slow parallel trigonometry
+10 elements
+collection.mutable.WrappedArray
+  Int, par collection        #########################         1.000 +-   1.1 %
+  Int, parallel stream       ##############################~~# 3.259 +-   1.1 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+slow parallel trigonometry
+10000 elements
+collection.mutable.ArrayBuffer
+  Int, par collection        ###########################-      1.096 +-   0.7 %
+  Int, parallel stream       ##############################~~# 1.369 +-   0.5 %
+
+slow parallel trigonometry
+10000 elements
+Array
+  Int, par collection        #########################         1.000 +-   2.1 %
+  Int, parallel stream       ##############################~~# 1.385 +-   0.7 %
+
+slow parallel trigonometry
+10000 elements
+collection.mutable.ArraySeq
+  Int, par collection        ###########################       1.078 +-   2.1 %
+  Int, parallel stream       ##############################~~# 1.347 +-   2.6 %
+
+slow parallel trigonometry
+10000 elements
+collection.immutable.HashSet
+  Int, par collection        #####################-            0.854 +-   2.2 %
+  Int, parallel stream       ################################- 1.290 +-   0.7 %
+
+slow parallel trigonometry
+10000 elements
+java.util.ArrayList
+  Int, parallel stream       ##############################~~# 1.381 +-   0.9 %
+
+slow parallel trigonometry
+10000 elements
+java.util.LinkedList
+  Int, parallel stream       ###############################=  1.273 +-   0.6 %
+
+slow parallel trigonometry
+10000 elements
+collection.mutable.HashSet
+  Int, par collection        ##################-               0.731 +-   3.7 %
+  Int, parallel stream       ##############################~~# 1.338 +-   0.5 %
+
+slow parallel trigonometry
+10000 elements
+collection.immutable.Vector
+  Int, par collection        #################-                0.699 +-   1.7 %
+  Int, parallel stream       ##############################~~# 1.358 +-   1.2 %
+
+slow parallel trigonometry
+10000 elements
+collection.mutable.WrappedArray
+  Int, par collection        #########################-        1.018 +-   2.1 %
+  Int, parallel stream       ##############################~~# 1.356 +-   0.7 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+fast summation
+10 elements
+collection.mutable.ArrayBuffer
+  Int, base collection       ####                              0.162 +-   4.7 %
+  Int, iterator on coll      ###                               0.121 +-   1.4 %
+  Int, serial stream         ##                                0.086 +-   2.3 %
+  Int Stepper (can par)      ######                            0.236 +-   1.3 %
+
+fast summation
+10 elements
+Array
+  Int, base collection       #########################         1.000 +-   0.2 %
+  Int, iterator on coll      ##-                               0.097 +-   2.3 %
+  Int, serial stream         #####-                            0.217 +-   1.0 %
+  Int Stepper (can par)      #####################-            0.855 +-   0.3 %
+
+fast summation
+10 elements
+collection.mutable.ArraySeq
+  Int, base collection       ####-                             0.167 +-   0.3 %
+  Int, iterator on coll      ###-                              0.140 +-   2.3 %
+  Int, serial stream         ##                                0.084 +-   4.9 %
+  Int Stepper (can par)      #############=                    0.552 +-   0.4 %
+
+fast summation
+10 elements
+collection.mutable.ArrayStack
+  Int, base collection       ####-                             0.169 +-   4.1 %
+  Int, iterator on coll      ####                              0.157 +-   2.3 %
+  Int, serial stream         ##                                0.074 +-   4.7 %
+  Int Stepper (seq only)     ######-                           0.258 +-   1.3 %
+
+fast summation
+10 elements
+collection.immutable.ListSet
+  Int, base collection       ##=                               0.107 +-   0.9 %
+  Int, iterator on coll      ####                              0.163 +-   1.3 %
+  Int, serial stream         ###=                              0.140 +-   2.2 %
+  Int Stepper (seq only)     ##=                               0.111 +-  18.1 %
+
+fast summation
+10 elements
+collection.immutable.HashSet
+  Int, base collection       ###=                              0.148 +-   3.7 %
+  Int, iterator on coll      ##                                0.086 +-   0.8 %
+  Int, serial stream         ###                               0.120 +-   1.1 %
+  Int Stepper (can par)      ###                               0.119 +-   4.0 %
+
+fast summation
+10 elements
+java.util.ArrayList
+  Int, serial stream         #####=                            0.232 +-   0.6 %
+
+fast summation
+10 elements
+java.util.LinkedList
+  Int, serial stream         #####-                            0.214 +-   0.5 %
+
+fast summation
+10 elements
+collection.mutable.LinkedHashSet
+  Int, base collection       ####                              0.159 +-   5.0 %
+  Int, iterator on coll      ####                              0.157 +-   2.3 %
+  Int, serial stream         ##                                0.080 +-   2.9 %
+  Int Stepper (seq only)     ####-                             0.168 +-   0.5 %
+
+fast summation
+10 elements
+collection.immutable.List
+  Int, base collection       ######=                           0.263 +-   0.2 %
+  Int, iterator on coll      ####                              0.155 +-   1.4 %
+  Int, serial stream         ###                               0.121 +-   2.4 %
+  Int Stepper (seq only)     ###                               0.117 +-   2.1 %
+
+fast summation
+10 elements
+collection.mutable.HashSet
+  Int, base collection       ##=                               0.109 +-   2.1 %
+  Int, iterator on coll      #=                                0.070 +-   0.3 %
+  Int, serial stream         ##-                               0.093 +-   0.8 %
+  Int Stepper (can par)      #######=                          0.308 +-   0.5 %
+
+fast summation
+10 elements
+collection.mutable.Queue
+  Int, base collection       #                                 0.041 +-   0.8 %
+  Int, iterator on coll      ##-                               0.088 +-   0.3 %
+  Int, serial stream         #                                 0.034 +-   7.5 %
+  Int Stepper (seq only)     #-                                0.055 +-   0.8 %
+
+fast summation
+10 elements
+collection.mutable.PriorityQueue
+  Int, base collection       ##=                               0.104 +-   2.7 %
+  Int, iterator on coll      ###-                              0.133 +-   2.1 %
+  Int, serial stream         #=                                0.073 +-   2.1 %
+  Int Stepper (seq only)     ###-                              0.136 +-   0.4 %
+
+fast summation
+10 elements
+collection.immutable.Queue
+  Int, base collection       ##=                               0.108 +-   0.7 %
+  Int, iterator on coll      ###=                              0.146 +-   0.8 %
+  Int, serial stream         ##                                0.081 +-  18.1 %
+  Int Stepper (seq only)     #-                                0.058 +-   1.4 %
+
+fast summation
+10 elements
+collection.immutable.Stream
+  Int, base collection       ######=                           0.261 +-   0.2 %
+  Int, iterator on coll      #                                 0.035 +-   5.4 %
+  Int, serial stream         ###                               0.116 +-   1.7 %
+  Int Stepper (seq only)     ##=                               0.113 +-   0.3 %
+
+fast summation
+10 elements
+collection.immutable.TreeSet
+  Int, base collection       ####                              0.166 +-   0.6 %
+  Int, iterator on coll      ##                                0.081 +-   0.6 %
+  Int, serial stream         ##=                               0.102 +-   1.5 %
+  Int Stepper (seq only)     ##-                               0.097 +-   0.3 %
+
+fast summation
+10 elements
+collection.immutable.Vector
+  Int, base collection       ##=                               0.104 +-   0.5 %
+  Int, iterator on coll      ###-                              0.130 +-   2.2 %
+  Int, serial stream         ##                                0.078 +-   2.1 %
+  Int Stepper (can par)      #########                         0.359 +-   0.8 %
+
+fast summation
+10 elements
+collection.mutable.WrappedArray
+  Int, base collection       ###=                              0.141 +-   0.3 %
+  Int, iterator on coll      ##-                               0.096 +-   5.1 %
+  Int, serial stream         ##                                0.079 +-   0.4 %
+  Int Stepper (can par)      ####=                             0.186 +-   1.5 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+fast summation
+10000 elements
+collection.mutable.ArrayBuffer
+  Int, base collection       #                                 0.043 +-   2.8 %
+  Int, iterator on coll      #                                 0.038 +-   8.6 %
+  Int, serial stream         =                                 0.027 +-  14.9 %
+  Int Stepper (can par)      ##                                0.083 +-   0.5 %
+
+fast summation
+10000 elements
+Array
+  Int, base collection       #########################         1.000 +-   0.1 %
+  Int, iterator on coll      =                                 0.027 +-   5.5 %
+  Int, serial stream         ###-                              0.128 +-   0.3 %
+  Int Stepper (can par)      #########################         1.000 +-   0.1 %
+
+fast summation
+10000 elements
+collection.mutable.ArraySeq
+  Int, base collection       #                                 0.044 +-   4.0 %
+  Int, iterator on coll      #                                 0.042 +-   2.9 %
+  Int, serial stream         =                                 0.026 +-  15.1 %
+  Int Stepper (can par)      #######=                          0.309 +-   1.5 %
+
+fast summation
+10000 elements
+collection.mutable.ArrayStack
+  Int, base collection       #                                 0.043 +-  15.3 %
+  Int, iterator on coll      #                                 0.044 +-   1.8 %
+  Int, serial stream         =                                 0.026 +-  11.4 %
+  Int Stepper (seq only)     ##-                               0.089 +-   0.6 %
+
+fast summation
+10000 elements
+collection.immutable.ListSet
+  Int, base collection       #-                                0.058 +-   1.8 %
+  Int, iterator on coll      #-                                0.059 +-   2.7 %
+  Int, serial stream         =                                 0.022 +-   2.4 %
+  Int Stepper (seq only)     #-                                0.048 +-  35.9 %
+
+fast summation
+10000 elements
+collection.immutable.HashSet
+  Int, base collection       =                                 0.028 +-   1.6 %
+  Int, iterator on coll      =                                 0.023 +-   1.2 %
+  Int, serial stream         -                                 0.014 +-   0.9 %
+  Int Stepper (can par)      -                                 0.016 +-   1.2 %
+
+fast summation
+10000 elements
+java.util.ArrayList
+  Int, serial stream         ######-                           0.252 +-  11.9 %
+
+fast summation
+10000 elements
+java.util.LinkedList
+  Int, serial stream         ##=                               0.103 +-   7.4 %
+
+fast summation
+10000 elements
+collection.mutable.LinkedHashSet
+  Int, base collection       #                                 0.044 +-  12.3 %
+  Int, iterator on coll      #-                                0.047 +-   2.8 %
+  Int, serial stream         =                                 0.026 +-  14.3 %
+  Int Stepper (seq only)     #-                                0.049 +-   9.0 %
+
+fast summation
+10000 elements
+collection.immutable.List
+  Int, base collection       #-                                0.053 +-   9.6 %
+  Int, iterator on coll      #-                                0.055 +-   3.4 %
+  Int, serial stream         #                                 0.040 +-   1.0 %
+  Int Stepper (seq only)     #-                                0.048 +-  34.9 %
+
+fast summation
+10000 elements
+collection.mutable.HashSet
+  Int, base collection       =                                 0.021 +-   8.1 %
+  Int, iterator on coll      =                                 0.023 +-   5.8 %
+  Int, serial stream         -                                 0.011 +-   0.8 %
+  Int Stepper (can par)      #=                                0.067 +-  14.8 %
+
+fast summation
+10000 elements
+collection.mutable.Queue
+  Int, base collection       -                                 0.009 +-   1.0 %
+  Int, iterator on coll      =                                 0.028 +-   4.4 %
+  Int, serial stream         -                                 0.012 +-   1.3 %
+  Int Stepper (seq only)     -                                 0.016 +-   1.0 %
+
+fast summation
+10000 elements
+collection.mutable.PriorityQueue
+  Int, base collection       #                                 0.034 +-  29.3 %
+  Int, iterator on coll      #                                 0.043 +-   1.3 %
+  Int, serial stream         =                                 0.024 +-   8.8 %
+  Int Stepper (seq only)     #                                 0.036 +-   0.3 %
+
+fast summation
+10000 elements
+collection.immutable.Queue
+  Int, base collection       #-                                0.056 +-   3.3 %
+  Int, iterator on coll      #-                                0.055 +-   2.0 %
+  Int, serial stream         =                                 0.026 +-   1.2 %
+  Int Stepper (seq only)     -                                 0.017 +-   1.1 %
+
+fast summation
+10000 elements
+collection.immutable.Stream
+  Int, base collection       #                                 0.042 +-  11.4 %
+  Int, iterator on coll      -                                 0.010 +-   8.4 %
+  Int, serial stream         =                                 0.022 +-   2.1 %
+  Int Stepper (seq only)     =                                 0.031 +-   3.1 %
+
+fast summation
+10000 elements
+collection.immutable.TreeSet
+  Int, base collection       #-                                0.048 +-   1.4 %
+  Int, iterator on coll      =                                 0.032 +-   3.8 %
+  Int, serial stream         -                                 0.019 +-   2.7 %
+  Int Stepper (seq only)     =                                 0.030 +-   2.5 %
+
+fast summation
+10000 elements
+collection.immutable.Vector
+  Int, base collection       #                                 0.039 +-  12.1 %
+  Int, iterator on coll      #                                 0.041 +-   3.3 %
+  Int, serial stream         =                                 0.027 +-  14.5 %
+  Int Stepper (can par)      ###-                              0.131 +-   0.8 %
+
+fast summation
+10000 elements
+collection.mutable.WrappedArray
+  Int, base collection       #                                 0.035 +-   2.0 %
+  Int, iterator on coll      =                                 0.028 +-   2.5 %
+  Int, serial stream         =                                 0.025 +-  17.6 %
+  Int Stepper (can par)      #-                                0.050 +-   7.6 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+slow trigonometry
+10 elements
+collection.mutable.ArrayBuffer
+  Int, base collection       ########################-         0.980 +-   0.2 %
+  Int, iterator on coll      ########################=         0.980 +-   0.2 %
+  Int, serial stream         ########################=         0.982 +-   0.2 %
+  Int Stepper (can par)      #########################         0.997 +-   0.1 %
+
+slow trigonometry
+10 elements
+Array
+  Int, base collection       #########################         1.000 +-   0.1 %
+  Int, iterator on coll      ########################=         0.981 +-   0.2 %
+  Int, serial stream         ########################=         0.989 +-   0.1 %
+  Int Stepper (can par)      #########################         1.000 +-   0.1 %
+
+slow trigonometry
+10 elements
+collection.mutable.ArraySeq
+  Int, base collection       ################                  0.645 +-   0.1 %
+  Int, iterator on coll      ########################=         0.980 +-   0.2 %
+  Int, serial stream         ########################=         0.984 +-   0.1 %
+  Int Stepper (can par)      #########################         0.998 +-   0.2 %
+
+slow trigonometry
+10 elements
+collection.mutable.ArrayStack
+  Int, base collection       ################                  0.642 +-   0.2 %
+  Int, iterator on coll      ########################=         0.981 +-   0.5 %
+  Int, serial stream         ########################=         0.983 +-   0.2 %
+  Int Stepper (seq only)     #########################         0.994 +-   0.2 %
+
+slow trigonometry
+10 elements
+collection.immutable.ListSet
+  Int, base collection       ######################=           0.910 +-   0.3 %
+  Int, iterator on coll      ########################-         0.978 +-   0.3 %
+  Int, serial stream         ########################=         0.980 +-   0.2 %
+  Int Stepper (seq only)     ########################=         0.991 +-   0.2 %
+
+slow trigonometry
+10 elements
+collection.immutable.HashSet
+  Int, base collection       ###############=                  0.628 +-   0.2 %
+  Int, iterator on coll      ########################-         0.978 +-   0.4 %
+  Int, serial stream         ########################-         0.977 +-   0.2 %
+  Int Stepper (can par)      ########################=         0.989 +-   0.2 %
+
+slow trigonometry
+10 elements
+java.util.ArrayList
+  Int, serial stream         ########################=         0.985 +-   0.2 %
+
+slow trigonometry
+10 elements
+java.util.LinkedList
+  Int, serial stream         ########################=         0.988 +-   0.1 %
+
+slow trigonometry
+10 elements
+collection.mutable.LinkedHashSet
+  Int, base collection       #######################=          0.950 +-   0.3 %
+  Int, iterator on coll      ########################=         0.981 +-   0.2 %
+  Int, serial stream         ########################=         0.984 +-   0.2 %
+  Int Stepper (seq only)     #########################         0.995 +-   0.3 %
+
+slow trigonometry
+10 elements
+collection.immutable.List
+  Int, base collection       ########################-         0.974 +-   0.3 %
+  Int, iterator on coll      ########################-         0.977 +-   0.2 %
+  Int, serial stream         ########################-         0.978 +-   0.3 %
+  Int Stepper (seq only)     ########################=         0.990 +-   0.1 %
+
+slow trigonometry
+10 elements
+collection.mutable.HashSet
+  Int, base collection       #######################=          0.944 +-   0.2 %
+  Int, iterator on coll      ########################=         0.981 +-   0.2 %
+  Int, serial stream         ########################-         0.979 +-   0.6 %
+  Int Stepper (can par)      ########################=         0.993 +-   0.1 %
+
+slow trigonometry
+10 elements
+collection.mutable.Queue
+  Int, base collection       ######################=           0.909 +-   0.3 %
+  Int, iterator on coll      ########################-         0.977 +-   0.1 %
+  Int, serial stream         ########################          0.962 +-   0.2 %
+  Int Stepper (seq only)     ########################-         0.976 +-   0.2 %
+
+slow trigonometry
+10 elements
+collection.mutable.PriorityQueue
+  Int, base collection       ########################-         0.970 +-   0.3 %
+  Int, iterator on coll      ########################-         0.976 +-   0.2 %
+  Int, serial stream         ########################-         0.978 +-   0.3 %
+  Int Stepper (seq only)     ########################=         0.990 +-   0.1 %
+
+slow trigonometry
+10 elements
+collection.immutable.Queue
+  Int, base collection       ########################          0.956 +-   0.2 %
+  Int, iterator on coll      ########################-         0.976 +-   0.3 %
+  Int, serial stream         ########################-         0.978 +-   0.6 %
+  Int Stepper (seq only)     ########################-         0.977 +-   0.2 %
+
+slow trigonometry
+10 elements
+collection.immutable.Stream
+  Int, base collection       #######################=          0.941 +-   0.3 %
+  Int, iterator on coll      ########################          0.960 +-   0.3 %
+  Int, serial stream         ########################-         0.978 +-   0.2 %
+  Int Stepper (seq only)     ########################=         0.991 +-   0.1 %
+
+slow trigonometry
+10 elements
+collection.immutable.TreeSet
+  Int, base collection       ###############=                  0.624 +-   0.2 %
+  Int, iterator on coll      ########################-         0.972 +-   0.2 %
+  Int, serial stream         ########################-         0.978 +-   0.2 %
+  Int Stepper (seq only)     ########################=         0.987 +-   0.1 %
+
+slow trigonometry
+10 elements
+collection.immutable.Vector
+  Int, base collection       ########################-         0.975 +-   0.2 %
+  Int, iterator on coll      ########################=         0.981 +-   0.1 %
+  Int, serial stream         ########################=         0.984 +-   0.1 %
+  Int Stepper (can par)      #########################         0.997 +-   0.2 %
+
+slow trigonometry
+10 elements
+collection.mutable.WrappedArray
+  Int, base collection       ########################-         0.974 +-   0.2 %
+  Int, iterator on coll      ########################-         0.980 +-   0.2 %
+  Int, serial stream         ########################=         0.985 +-   0.2 %
+  Int Stepper (can par)      #########################         0.996 +-   0.1 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+slow trigonometry
+10000 elements
+collection.mutable.ArrayBuffer
+  Int, base collection       ########################=         0.985 +-   0.2 %
+  Int, iterator on coll      ########################=         0.986 +-   0.8 %
+  Int, serial stream         ########################=         0.988 +-   0.2 %
+  Int Stepper (can par)      #########################         0.996 +-   0.1 %
+
+slow trigonometry
+10000 elements
+Array
+  Int, base collection       #########################         1.000 +-   0.2 %
+  Int, iterator on coll      ########################=         0.987 +-   0.2 %
+  Int, serial stream         ########################=         0.990 +-   0.1 %
+  Int Stepper (can par)      #########################         1.000 +-   0.1 %
+
+slow trigonometry
+10000 elements
+collection.mutable.ArraySeq
+  Int, base collection       ##################                0.725 +-  13.6 %
+  Int, iterator on coll      ########################=         0.988 +-   0.2 %
+  Int, serial stream         ########################=         0.987 +-   0.3 %
+  Int Stepper (can par)      #########################         0.995 +-   0.2 %
+
+slow trigonometry
+10000 elements
+collection.mutable.ArrayStack
+  Int, base collection       ################-                 0.651 +-   0.2 %
+  Int, iterator on coll      ########################=         0.986 +-   0.5 %
+  Int, serial stream         ########################=         0.988 +-   0.2 %
+  Int Stepper (seq only)     #########################         0.995 +-   0.1 %
+
+slow trigonometry
+10000 elements
+collection.immutable.ListSet
+  Int, base collection       ######################-           0.888 +-   0.4 %
+  Int, iterator on coll      ########################=         0.988 +-   0.2 %
+  Int, serial stream         ########################=         0.986 +-   0.2 %
+  Int Stepper (seq only)     ########################=         0.992 +-   0.2 %
+
+slow trigonometry
+10000 elements
+collection.immutable.HashSet
+  Int, base collection       ##############-                   0.569 +-   0.4 %
+  Int, iterator on coll      ########################-         0.977 +-   0.4 %
+  Int, serial stream         ########################-         0.969 +-   0.7 %
+  Int Stepper (can par)      ########################-         0.969 +-   0.1 %
+
+slow trigonometry
+10000 elements
+java.util.ArrayList
+  Int, serial stream         ########################=         0.989 +-   0.1 %
+
+slow trigonometry
+10000 elements
+java.util.LinkedList
+  Int, serial stream         ########################=         0.989 +-   0.2 %
+
+slow trigonometry
+10000 elements
+collection.mutable.LinkedHashSet
+  Int, base collection       #######################           0.922 +-   0.3 %
+  Int, iterator on coll      ########################=         0.991 +-   0.2 %
+  Int, serial stream         ########################=         0.986 +-   0.2 %
+  Int Stepper (seq only)     #########################         0.996 +-   0.1 %
+
+slow trigonometry
+10000 elements
+collection.immutable.List
+  Int, base collection       ########################=         0.982 +-   0.2 %
+  Int, iterator on coll      ########################=         0.990 +-   0.2 %
+  Int, serial stream         ########################=         0.987 +-   0.2 %
+  Int Stepper (seq only)     #########################         0.995 +-   0.1 %
+
+slow trigonometry
+10000 elements
+collection.mutable.HashSet
+  Int, base collection       ######################=           0.904 +-   0.3 %
+  Int, iterator on coll      ########################-         0.979 +-   0.3 %
+  Int, serial stream         ########################-         0.977 +-   0.3 %
+  Int Stepper (can par)      ########################=         0.982 +-   0.2 %
+
+slow trigonometry
+10000 elements
+collection.mutable.Queue
+  Int, base collection       #######################=          0.945 +-   0.2 %
+  Int, iterator on coll      ########################=         0.990 +-   0.2 %
+  Int, serial stream         ########################          0.960 +-   0.7 %
+  Int Stepper (seq only)     ########################          0.959 +-   0.2 %
+
+slow trigonometry
+10000 elements
+collection.mutable.PriorityQueue
+  Int, base collection       ################-                 0.650 +-   0.2 %
+  Int, iterator on coll      ########################=         0.984 +-   0.4 %
+  Int, serial stream         ########################=         0.982 +-   0.3 %
+  Int Stepper (seq only)     ########################=         0.983 +-   0.2 %
+
+slow trigonometry
+10000 elements
+collection.immutable.Queue
+  Int, base collection       ########################          0.966 +-   0.2 %
+  Int, iterator on coll      ########################=         0.990 +-   0.3 %
+  Int, serial stream         ########################-         0.975 +-   1.1 %
+  Int Stepper (seq only)     ########################=         0.982 +-   0.3 %
+
+slow trigonometry
+10000 elements
+collection.immutable.Stream
+  Int, base collection       #######################=          0.941 +-   0.3 %
+  Int, iterator on coll      ########################          0.962 +-   0.4 %
+  Int, serial stream         ########################=         0.982 +-   0.3 %
+  Int Stepper (seq only)     ########################=         0.988 +-   0.3 %
+
+slow trigonometry
+10000 elements
+collection.immutable.TreeSet
+  Int, base collection       ##############-                   0.571 +-   0.4 %
+  Int, iterator on coll      ########################-         0.978 +-   0.3 %
+  Int, serial stream         ########################-         0.973 +-   0.3 %
+  Int Stepper (seq only)     ########################-         0.972 +-   0.6 %
+
+slow trigonometry
+10000 elements
+collection.immutable.Vector
+  Int, base collection       ########################=         0.982 +-   0.2 %
+  Int, iterator on coll      ########################=         0.990 +-   0.2 %
+  Int, serial stream         ########################=         0.988 +-   0.1 %
+  Int Stepper (can par)      #########################         0.996 +-   0.1 %
+
+slow trigonometry
+10000 elements
+collection.mutable.WrappedArray
+  Int, base collection       ########################=         0.982 +-   0.2 %
+  Int, iterator on coll      ########################=         0.989 +-   0.1 %
+  Int, serial stream         ########################=         0.988 +-   0.1 %
+  Int Stepper (can par)      ########################=         0.992 +-   0.2 %
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
