@@ -208,25 +208,25 @@ extends Priority1StreamConverters
 with converterImpl.Priority1StepConverters
 with converterImpl.Priority1AccumulatorConverters
 {
-  implicit class EnrichDoubleArrayWithStream(a: Array[Double])   
-  extends MakesSequentialStream[java.lang.Double, DoubleStream] with MakesParallelStream[java.lang.Double, DoubleStream] {
+  implicit final class EnrichDoubleArrayWithStream(private val a: Array[Double])
+  extends AnyVal with MakesSequentialStream[java.lang.Double, DoubleStream] with MakesParallelStream[java.lang.Double, DoubleStream] {
     def seqStream: DoubleStream = java.util.Arrays.stream(a)
     def parStream: DoubleStream = seqStream.parallel
   }
 
-  implicit class EnrichIntArrayWithStream(a: Array[Int])   
-  extends MakesSequentialStream[java.lang.Integer, IntStream] with MakesParallelStream[java.lang.Integer, IntStream] {
+  implicit final class EnrichIntArrayWithStream(private val a: Array[Int])
+  extends AnyVal with MakesSequentialStream[java.lang.Integer, IntStream] with MakesParallelStream[java.lang.Integer, IntStream] {
     def seqStream: IntStream = java.util.Arrays.stream(a)
     def parStream: IntStream = seqStream.parallel
   }
 
-  implicit class EnrichLongArrayWithStream(a: Array[Long])   
-  extends MakesSequentialStream[java.lang.Long, LongStream] with MakesParallelStream[java.lang.Long, LongStream] {
+  implicit final class EnrichLongArrayWithStream(private val a: Array[Long])
+  extends AnyVal with MakesSequentialStream[java.lang.Long, LongStream] with MakesParallelStream[java.lang.Long, LongStream] {
     def seqStream: LongStream = java.util.Arrays.stream(a)
     def parStream: LongStream = seqStream.parallel
   }
 
-  implicit val primitiveAccumulateDoubleStream = new PrimitiveStreamAccumulator[Stream[Double], DoubleAccumulator] { 
+  implicit val primitiveAccumulateDoubleStream = new PrimitiveStreamAccumulator[Stream[Double], DoubleAccumulator] {
     def streamAccumulate(stream: Stream[Double]): DoubleAccumulator = 
       stream.collect(DoubleAccumulator.supplier, DoubleAccumulator.boxedAdder, DoubleAccumulator.merger)
   }
@@ -274,7 +274,7 @@ with converterImpl.Priority1AccumulatorConverters
   implicit val primitiveUnboxLongStream2 =
     primitiveUnboxLongStream.asInstanceOf[PrimitiveStreamUnboxer[java.lang.Long, LongStream]]
   
-  implicit class RichDoubleStream(stream: DoubleStream) {
+  implicit final class RichDoubleStream(private val stream: DoubleStream) extends AnyVal {
     def accumulate = stream.collect(DoubleAccumulator.supplier, DoubleAccumulator.adder, DoubleAccumulator.merger)
     
     def toScala[Coll[_]](implicit cbf: collection.generic.CanBuildFrom[Nothing, Double, Coll[Double]]): Coll[Double] = {
@@ -287,7 +287,7 @@ with converterImpl.Priority1AccumulatorConverters
     }
   }
   
-  implicit class RichIntStream(stream: IntStream) {
+  implicit final class RichIntStream(private val stream: IntStream) extends AnyVal {
     def accumulate = stream.collect(IntAccumulator.supplier, IntAccumulator.adder, IntAccumulator.merger)
 
     def toScala[Coll[_]](implicit cbf: collection.generic.CanBuildFrom[Nothing, Int, Coll[Int]]): Coll[Int] = {
@@ -300,7 +300,7 @@ with converterImpl.Priority1AccumulatorConverters
     }
   }
   
-  implicit class RichLongStream(stream: LongStream) {
+  implicit final class RichLongStream(private val stream: LongStream) extends AnyVal {
     def accumulate = stream.collect(LongAccumulator.supplier, LongAccumulator.adder, LongAccumulator.merger)
 
     def toScala[Coll[_]](implicit cbf: collection.generic.CanBuildFrom[Nothing, Long, Coll[Long]]): Coll[Long] = {
