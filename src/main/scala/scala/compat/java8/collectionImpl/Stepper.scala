@@ -53,7 +53,7 @@ trait EfficientSubstep {}
 
 /** Provides functionality for Stepper while keeping track of a more precise type of the collection.
   */
-trait StepperLike[@specialized(Double, Int, Long) A, +CC] { self =>
+trait StepperLike[@specialized(Double, Int, Long) A, +CC] { self: CC =>
   /** Characteristics are bit flags that indicate runtime characteristics of this Stepper.
     *
     * - `Distinct` means that no duplicates exist
@@ -89,9 +89,6 @@ trait StepperLike[@specialized(Double, Int, Long) A, +CC] { self =>
     * possible or not advisable, `substep()` will return `null`.
     */
   def substep(): CC
-
-  /** Returns the precise underlying type of this `Stepper`. */
-  def typedPrecisely: CC
 
   /** Warns this `Stepper` that it is likely to be used in a parallel context (used for efficiency only) */
   def anticipateParallelism: this.type = this
@@ -236,8 +233,7 @@ trait AnyStepper[A] extends Stepper[A] with java.util.Iterator[A] with Spliterat
   def nextStep = next
   def tryAdvance(c: java.util.function.Consumer[_ >: A]): Boolean = if (hasNext) { c.accept(next); true } else false
   def tryStep(f: A => Unit): Boolean = if (hasNext) { f(next); true } else false
-  def trySplit() = substep match { case null => null; case x => x.typedPrecisely }
-  final def typedPrecisely: AnyStepper[A] = this
+  def trySplit() = substep
   override def spliterator: Spliterator[A] = this
   def seqStream: java.util.stream.Stream[A] = java.util.stream.StreamSupport.stream(this, false)
   def parStream: java.util.stream.Stream[A] = java.util.stream.StreamSupport.stream(this, true)
@@ -253,8 +249,7 @@ trait DoubleStepper extends Stepper[Double] with java.util.PrimitiveIterator.OfD
   def tryAdvance(c: java.util.function.Consumer[_ >: java.lang.Double]): Boolean = if (hasNext) { c.accept(java.lang.Double.valueOf(nextDouble)); true } else false
   def tryAdvance(c: java.util.function.DoubleConsumer): Boolean = if (hasNext) { c.accept(nextDouble); true } else false
   def tryStep(f: Double => Unit): Boolean = if (hasNext) { f(nextDouble); true } else false
-  def trySplit() = substep match { case null => null; case x => x.typedPrecisely }
-  final def typedPrecisely: DoubleStepper = this
+  def trySplit() = substep
   override def spliterator: Spliterator[Double] = this.asInstanceOf[Spliterator[Double]]  // Scala and Java disagree about whether it's java.lang.Double or double
   def seqStream: java.util.stream.DoubleStream = java.util.stream.StreamSupport.doubleStream(this, false)
   def parStream: java.util.stream.DoubleStream = java.util.stream.StreamSupport.doubleStream(this, true)
@@ -270,8 +265,7 @@ trait IntStepper extends Stepper[Int] with java.util.PrimitiveIterator.OfInt wit
   def tryAdvance(c: java.util.function.Consumer[_ >: java.lang.Integer]): Boolean = if (hasNext) { c.accept(java.lang.Integer.valueOf(nextInt)); true } else false
   def tryAdvance(c: java.util.function.IntConsumer): Boolean = if (hasNext) { c.accept(nextInt); true } else false
   def tryStep(f: Int => Unit): Boolean = if (hasNext) { f(nextInt); true } else false
-  def trySplit() = substep match { case null => null; case x => x.typedPrecisely }
-  final def typedPrecisely = this
+  def trySplit() = substep
   override def spliterator: Spliterator[Int] = this.asInstanceOf[Spliterator[Int]]  // Scala and Java disagree about whether it's java.lang.Integer or int
   def seqStream: java.util.stream.IntStream = java.util.stream.StreamSupport.intStream(this, false)
   def parStream: java.util.stream.IntStream = java.util.stream.StreamSupport.intStream(this, true)
@@ -287,8 +281,7 @@ trait LongStepper extends Stepper[Long] with java.util.PrimitiveIterator.OfLong 
   def tryAdvance(c: java.util.function.Consumer[_ >: java.lang.Long]): Boolean = if (hasNext) { c.accept(java.lang.Long.valueOf(nextLong)); true } else false
   def tryAdvance(c: java.util.function.LongConsumer): Boolean = if (hasNext) { c.accept(nextLong); true } else false
   def tryStep(f: Long => Unit): Boolean = if (hasNext) { f(nextLong); true } else false
-  def trySplit() = substep match { case null => null; case x => x.typedPrecisely }
-  final def typedPrecisely = this
+  def trySplit() = substep
   override def spliterator: Spliterator[Long] = this.asInstanceOf[Spliterator[Long]]  // Scala and Java disagree about whether it's java.lang.Long or long
   def seqStream: java.util.stream.LongStream = java.util.stream.StreamSupport.longStream(this, false)
   def parStream: java.util.stream.LongStream = java.util.stream.StreamSupport.longStream(this, true)
