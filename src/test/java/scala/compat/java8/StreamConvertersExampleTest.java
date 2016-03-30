@@ -5,7 +5,7 @@
 import org.junit.Test;
 
 import scala.collection.mutable.ArrayBuffer;
-import scala.compat.java8.ScalaStreaming;
+import scala.compat.java8.ScalaStreamSupport;
 
 
 public class StreamConvertersExampleTest {
@@ -14,7 +14,7 @@ public class StreamConvertersExampleTest {
     ArrayBuffer<String> ab = new ArrayBuffer<String>();
     ab.$plus$eq("salmon");
     ab.$plus$eq("herring");
-    assert( ScalaStreaming.from(ab).mapToInt(x -> x.length()).sum() == 13 );
+    assert( ScalaStreamSupport.stream(ab).mapToInt(x -> x.length()).sum() == 13 );
   }
 }
 
