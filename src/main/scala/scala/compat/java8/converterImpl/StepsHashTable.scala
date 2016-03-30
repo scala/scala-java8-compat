@@ -141,7 +141,7 @@ extends StepsLongLikeGapped[StepsLongLinkedHashTableValue[K]](_underlying.asInst
 // Steppers for keys (type of HashEntry doesn't matter)
 
 final class RichHashTableKeyCanStep[K, HE >: Null <: collection.mutable.HashEntry[K, HE]](private val underlying: collection.mutable.HashTable[K, HE])
-extends AnyVal with MakesAnyKeyStepper[K] {
+extends AnyVal with MakesKeyStepper[AnyStepper[K] with EfficientSubstep] {
   @inline def keyStepper: AnyStepper[K] with EfficientSubstep = {
     val tbl = CollectionInternals.getTable[K, HE](underlying)
     new StepsAnyHashTableKey(tbl, 0, tbl.length)
@@ -149,7 +149,7 @@ extends AnyVal with MakesAnyKeyStepper[K] {
 }
 
 final class RichHashTableDoubleKeyCanStep[HE >: Null <: collection.mutable.HashEntry[Double, HE]](private val underlying: collection.mutable.HashTable[Double, HE])
-extends AnyVal with MakesDoubleKeyStepper {
+extends AnyVal with MakesKeyStepper[DoubleStepper with EfficientSubstep] {
   @inline def keyStepper: DoubleStepper with EfficientSubstep = {
     val tbl = CollectionInternals.getTable[Double, HE](underlying)
     new StepsDoubleHashTableKey(tbl, 0, tbl.length)
@@ -157,7 +157,7 @@ extends AnyVal with MakesDoubleKeyStepper {
 }
 
 final class RichHashTableIntKeyCanStep[HE >: Null <: collection.mutable.HashEntry[Int, HE]](private val underlying: collection.mutable.HashTable[Int, HE])
-extends AnyVal with MakesIntKeyStepper {
+extends AnyVal with MakesKeyStepper[IntStepper with EfficientSubstep] {
   @inline def keyStepper: IntStepper with EfficientSubstep = {
     val tbl = CollectionInternals.getTable[Int, HE](underlying)
     new StepsIntHashTableKey(tbl, 0, tbl.length)
@@ -165,7 +165,7 @@ extends AnyVal with MakesIntKeyStepper {
 }
 
 final class RichHashTableLongKeyCanStep[HE >: Null <: collection.mutable.HashEntry[Long, HE]](private val underlying: collection.mutable.HashTable[Long, HE])
-extends AnyVal with MakesLongKeyStepper {
+extends AnyVal with MakesKeyStepper[LongStepper with EfficientSubstep] {
   @inline def keyStepper: LongStepper with EfficientSubstep = {
     val tbl = CollectionInternals.getTable[Long, HE](underlying)
     new StepsLongHashTableKey(tbl, 0, tbl.length)
@@ -176,7 +176,7 @@ extends AnyVal with MakesLongKeyStepper {
 // (both for key-value pair and for values alone)
 
 final class RichDefaultHashTableCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, V]])
-extends AnyVal with MakesAnyStepper[(K, V)] {
+extends AnyVal with MakesStepper[AnyStepper[(K,V)] with EfficientSubstep] {
   @inline def stepper: AnyStepper[(K,V)] with EfficientSubstep = {
     val tbl = CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, V]](underlying)
     new StepsAnyDefaultHashTable(tbl, 0, tbl.length)
@@ -184,7 +184,7 @@ extends AnyVal with MakesAnyStepper[(K, V)] {
 }
 
 final class RichDefaultHashTableValueCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, V]])
-extends AnyVal with MakesAnyValueStepper[V] {
+extends AnyVal with MakesValueStepper[AnyStepper[V] with EfficientSubstep] {
   @inline def valueStepper: AnyStepper[V] with EfficientSubstep = {
     val tbl = CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, V]](underlying)
     new StepsAnyDefaultHashTableValue(tbl, 0, tbl.length)
@@ -192,7 +192,7 @@ extends AnyVal with MakesAnyValueStepper[V] {
 }
 
 final class RichDefaultHashTableDoubleValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, Double]])
-extends AnyVal with MakesDoubleValueStepper {
+extends AnyVal with MakesValueStepper[DoubleStepper with EfficientSubstep] {
   @inline def valueStepper: DoubleStepper with EfficientSubstep = {
     val tbl = CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, Double]](underlying)
     new StepsDoubleDefaultHashTableValue(tbl, 0, tbl.length)
@@ -200,7 +200,7 @@ extends AnyVal with MakesDoubleValueStepper {
 }
 
 final class RichDefaultHashTableIntValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, Int]])
-extends AnyVal with MakesIntValueStepper {
+extends AnyVal with MakesValueStepper[IntStepper with EfficientSubstep] {
   @inline def valueStepper: IntStepper with EfficientSubstep = {
     val tbl = CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, Int]](underlying)
     new StepsIntDefaultHashTableValue(tbl, 0, tbl.length)
@@ -208,7 +208,7 @@ extends AnyVal with MakesIntValueStepper {
 }
 
 final class RichDefaultHashTableLongValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, Long]])
-extends AnyVal with MakesLongValueStepper {
+extends AnyVal with MakesValueStepper[LongStepper with EfficientSubstep] {
   @inline def valueStepper: LongStepper with EfficientSubstep = {
     val tbl = CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, Long]](underlying)
     new StepsLongDefaultHashTableValue(tbl, 0, tbl.length)
@@ -219,7 +219,7 @@ extends AnyVal with MakesLongValueStepper {
 // (both for key-value pair and for values alone)
 
 final class RichLinkedHashTableCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, V]])
-extends AnyVal with MakesAnyStepper[(K,V)] {
+extends AnyVal with MakesStepper[AnyStepper[(K,V)] with EfficientSubstep] {
   @inline def stepper: AnyStepper[(K,V)] with EfficientSubstep = {
     val tbl = CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, V]](underlying)
     new StepsAnyLinkedHashTable(tbl, 0, tbl.length)
@@ -227,7 +227,7 @@ extends AnyVal with MakesAnyStepper[(K,V)] {
 }
 
 final class RichLinkedHashTableValueCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, V]])
-extends AnyVal with MakesAnyValueStepper[V] {
+extends AnyVal with MakesValueStepper[AnyStepper[V] with EfficientSubstep] {
   @inline def valueStepper: AnyStepper[V] with EfficientSubstep = {
     val tbl = CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, V]](underlying)
     new StepsAnyLinkedHashTableValue(tbl, 0, tbl.length)
@@ -235,7 +235,7 @@ extends AnyVal with MakesAnyValueStepper[V] {
 }
 
 final class RichLinkedHashTableDoubleValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, Double]])
-extends AnyVal with MakesDoubleValueStepper {
+extends AnyVal with MakesValueStepper[DoubleStepper with EfficientSubstep] {
   @inline def valueStepper: DoubleStepper with EfficientSubstep = {
     val tbl = CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, Double]](underlying)
     new StepsDoubleLinkedHashTableValue(tbl, 0, tbl.length)
@@ -243,7 +243,7 @@ extends AnyVal with MakesDoubleValueStepper {
 }
 
 final class RichLinkedHashTableIntValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, Int]])
-extends AnyVal with MakesIntValueStepper {
+extends AnyVal with MakesValueStepper[IntStepper with EfficientSubstep] {
   @inline def valueStepper: IntStepper with EfficientSubstep = {
     val tbl = CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, Int]](underlying)
     new StepsIntLinkedHashTableValue(tbl, 0, tbl.length)
@@ -251,7 +251,7 @@ extends AnyVal with MakesIntValueStepper {
 }
 
 final class RichLinkedHashTableLongValueCanStep[K](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, Long]])
-extends AnyVal with MakesLongValueStepper {
+extends AnyVal with MakesValueStepper[LongStepper with EfficientSubstep] {
   @inline def valueStepper: LongStepper with EfficientSubstep = {
     val tbl = CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, Long]](underlying)
     new StepsLongLinkedHashTableValue(tbl, 0, tbl.length)

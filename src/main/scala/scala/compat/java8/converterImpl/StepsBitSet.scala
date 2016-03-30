@@ -53,7 +53,7 @@ extends StepsIntLikeSliced[Array[Long], StepsIntBitSet](_underlying, _i0, _iN) {
 // Value class adapter //
 /////////////////////////
 
-final class RichBitSetCanStep(private val underlying: collection.BitSet) extends AnyVal with MakesIntStepper {
+final class RichBitSetCanStep(private val underlying: collection.BitSet) extends AnyVal with MakesStepper[IntStepper with EfficientSubstep] {
   def stepper: IntStepper with EfficientSubstep = {
     val bits: Array[Long] = underlying match {
       case m: collection.mutable.BitSet => CollectionInternals.getBitSetInternals(m)

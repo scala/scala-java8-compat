@@ -81,46 +81,46 @@ extends StepsLongLikeIndexed[StepsLongArray](_i0, _iN) {
 // Value class adapters //
 //////////////////////////
 
-final class RichArrayAnyCanStep[A](private val underlying: Array[A]) extends AnyVal with MakesAnyStepper[A] {
+final class RichArrayAnyCanStep[A](private val underlying: Array[A]) extends AnyVal with MakesStepper[AnyStepper[A] with EfficientSubstep] {
   @inline def stepper: AnyStepper[A] with EfficientSubstep = new StepsAnyArray[A](underlying, 0, underlying.length)
 }
 
-final class RichArrayObjectCanStep[A <: Object](private val underlying: Array[A]) extends AnyVal with MakesAnyStepper[A] {
+final class RichArrayObjectCanStep[A <: Object](private val underlying: Array[A]) extends AnyVal with MakesStepper[AnyStepper[A] with EfficientSubstep] {
   @inline def stepper: AnyStepper[A] with EfficientSubstep = new StepsObjectArray[A](underlying, 0, underlying.length)
 }
 
-final class RichArrayUnitCanStep(private val underlying: Array[Unit]) extends AnyVal with MakesAnyStepper[Unit] {
+final class RichArrayUnitCanStep(private val underlying: Array[Unit]) extends AnyVal with MakesStepper[AnyStepper[Unit] with EfficientSubstep] {
   @inline def stepper: AnyStepper[Unit] with EfficientSubstep = new StepsUnitArray(underlying, 0, underlying.length)
 }
 
-final class RichArrayBooleanCanStep(private val underlying: Array[Boolean]) extends AnyVal with MakesAnyStepper[Boolean] {
+final class RichArrayBooleanCanStep(private val underlying: Array[Boolean]) extends AnyVal with MakesStepper[AnyStepper[Boolean] with EfficientSubstep] {
   @inline def stepper: AnyStepper[Boolean] with EfficientSubstep = new StepsBoxedBooleanArray(underlying, 0, underlying.length)
 }
 
-final class RichArrayByteCanStep(private val underlying: Array[Byte]) extends AnyVal with MakesAnyStepper[Byte] {
+final class RichArrayByteCanStep(private val underlying: Array[Byte]) extends AnyVal with MakesStepper[AnyStepper[Byte] with EfficientSubstep] {
   @inline def stepper: AnyStepper[Byte] with EfficientSubstep = new StepsBoxedByteArray(underlying, 0, underlying.length)
 }
 
-final class RichArrayCharCanStep(private val underlying: Array[Char]) extends AnyVal with MakesAnyStepper[Char] {
+final class RichArrayCharCanStep(private val underlying: Array[Char]) extends AnyVal with MakesStepper[AnyStepper[Char] with EfficientSubstep] {
   @inline def stepper: AnyStepper[Char] with EfficientSubstep = new StepsBoxedCharArray(underlying, 0, underlying.length)
 }
 
-final class RichArrayShortCanStep(private val underlying: Array[Short]) extends AnyVal with MakesAnyStepper[Short] {
+final class RichArrayShortCanStep(private val underlying: Array[Short]) extends AnyVal with MakesStepper[AnyStepper[Short] with EfficientSubstep] {
   @inline def stepper: AnyStepper[Short] with EfficientSubstep = new StepsBoxedShortArray(underlying, 0, underlying.length)
 }
 
-final class RichArrayFloatCanStep(private val underlying: Array[Float]) extends AnyVal with MakesAnyStepper[Float] {
+final class RichArrayFloatCanStep(private val underlying: Array[Float]) extends AnyVal with MakesStepper[AnyStepper[Float] with EfficientSubstep] {
   @inline def stepper: AnyStepper[Float] with EfficientSubstep = new StepsBoxedFloatArray(underlying, 0, underlying.length)
 }
 
-final class RichArrayDoubleCanStep(private val underlying: Array[Double]) extends AnyVal with MakesDoubleStepper {
+final class RichArrayDoubleCanStep(private val underlying: Array[Double]) extends AnyVal with MakesStepper[DoubleStepper with EfficientSubstep] {
   @inline def stepper: DoubleStepper with EfficientSubstep = new StepsDoubleArray(underlying, 0, underlying.length)
 }
 
-final class RichArrayIntCanStep(private val underlying: Array[Int]) extends AnyVal with MakesIntStepper {
+final class RichArrayIntCanStep(private val underlying: Array[Int]) extends AnyVal with MakesStepper[IntStepper with EfficientSubstep] {
   @inline def stepper: IntStepper with EfficientSubstep = new StepsIntArray(underlying, 0, underlying.length)
 }
 
-final class RichArrayLongCanStep(private val underlying: Array[Long]) extends AnyVal with MakesLongStepper {
+final class RichArrayLongCanStep(private val underlying: Array[Long]) extends AnyVal with MakesStepper[LongStepper with EfficientSubstep] {
   @inline def stepper: LongStepper with EfficientSubstep = new StepsLongArray(underlying, 0, underlying.length)
 }

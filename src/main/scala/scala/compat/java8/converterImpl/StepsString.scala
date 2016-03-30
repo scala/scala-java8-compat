@@ -45,7 +45,7 @@ private[java8] class StepperStringCodePoint(underlying: String, var i0: Int, var
 // Value class adapter //
 /////////////////////////
 
-final class RichStringCanStep(private val underlying: String) extends AnyVal with MakesIntStepper {
+final class RichStringCanStep(private val underlying: String) extends AnyVal with MakesStepper[IntStepper with EfficientSubstep] {
   @inline def stepper: IntStepper with EfficientSubstep = charStepper
   @inline def charStepper: IntStepper with EfficientSubstep = new StepperStringChar(underlying, 0, underlying.length)
   @inline def codepointStepper: IntStepper with EfficientSubstep = new StepperStringCodePoint(underlying, 0, underlying.length)

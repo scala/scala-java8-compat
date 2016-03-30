@@ -126,33 +126,33 @@ extends StepsLongLikeImmHashMap[K, Long, StepsLongImmHashMapValue[K]](_underlyin
 //////////////////////////
 
 final class RichImmHashMapCanStep[K, V](private val underlying: collection.immutable.HashMap[K, V])
-extends AnyVal with MakesAnyStepper[(K, V)] with MakesAnyKeyStepper[K] with MakesAnyValueStepper[V] {
+extends AnyVal with MakesStepper[AnyStepper[(K, V)] with EfficientSubstep] with MakesKeyStepper[AnyStepper[K] with EfficientSubstep] with MakesValueStepper[AnyStepper[V] with EfficientSubstep] {
   @inline def stepper: AnyStepper[(K, V)] with EfficientSubstep = new StepsAnyImmHashMap[K, V](underlying, 0, underlying.size)
   @inline def keyStepper: AnyStepper[K] with EfficientSubstep = new StepsAnyImmHashMapKey[K, V](underlying, 0, underlying.size)
   @inline def valueStepper: AnyStepper[V] with EfficientSubstep = new StepsAnyImmHashMapValue[K, V](underlying, 0, underlying.size)
 }
 
-final class RichImmHashMapDoubleKeyCanStep[V](private val underlying: collection.immutable.HashMap[Double, V]) extends AnyVal with MakesDoubleKeyStepper {
+final class RichImmHashMapDoubleKeyCanStep[V](private val underlying: collection.immutable.HashMap[Double, V]) extends AnyVal with MakesKeyStepper[DoubleStepper with EfficientSubstep] {
   @inline def keyStepper: DoubleStepper with EfficientSubstep = new StepsDoubleImmHashMapKey[V](underlying, 0, underlying.size)
 }
 
-final class RichImmHashMapDoubleValueCanStep[K](private val underlying: collection.immutable.HashMap[K, Double]) extends AnyVal with MakesDoubleValueStepper {
+final class RichImmHashMapDoubleValueCanStep[K](private val underlying: collection.immutable.HashMap[K, Double]) extends AnyVal with MakesValueStepper[DoubleStepper with EfficientSubstep] {
   @inline def valueStepper: DoubleStepper with EfficientSubstep = new StepsDoubleImmHashMapValue[K](underlying, 0, underlying.size)
 }
   
-final class RichImmHashMapIntKeyCanStep[V](private val underlying: collection.immutable.HashMap[Int, V]) extends AnyVal with MakesIntKeyStepper {
+final class RichImmHashMapIntKeyCanStep[V](private val underlying: collection.immutable.HashMap[Int, V]) extends AnyVal with MakesKeyStepper[IntStepper with EfficientSubstep] {
   @inline def keyStepper: IntStepper with EfficientSubstep = new StepsIntImmHashMapKey[V](underlying, 0, underlying.size)
 }
 
-final class RichImmHashMapIntValueCanStep[K](private val underlying: collection.immutable.HashMap[K, Int]) extends AnyVal with MakesIntValueStepper {
+final class RichImmHashMapIntValueCanStep[K](private val underlying: collection.immutable.HashMap[K, Int]) extends AnyVal with MakesValueStepper[IntStepper with EfficientSubstep] {
   @inline def valueStepper: IntStepper with EfficientSubstep = new StepsIntImmHashMapValue[K](underlying, 0, underlying.size)
 }
   
-final class RichImmHashMapLongKeyCanStep[V](private val underlying: collection.immutable.HashMap[Long, V]) extends AnyVal with MakesLongKeyStepper {
+final class RichImmHashMapLongKeyCanStep[V](private val underlying: collection.immutable.HashMap[Long, V]) extends AnyVal with MakesKeyStepper[LongStepper with EfficientSubstep] {
   @inline def keyStepper: LongStepper with EfficientSubstep = new StepsLongImmHashMapKey[V](underlying, 0, underlying.size)
 }
 
-final class RichImmHashMapLongValueCanStep[K](private val underlying: collection.immutable.HashMap[K, Long]) extends AnyVal with MakesLongValueStepper {
+final class RichImmHashMapLongValueCanStep[K](private val underlying: collection.immutable.HashMap[K, Long]) extends AnyVal with MakesValueStepper[LongStepper with EfficientSubstep] {
   @inline def valueStepper: LongStepper with EfficientSubstep = new StepsLongImmHashMapValue[K](underlying, 0, underlying.size)
 }
   
