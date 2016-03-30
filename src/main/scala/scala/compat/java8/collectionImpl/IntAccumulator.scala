@@ -253,7 +253,7 @@ private[java8] class IntAccumulatorStepper(private val acc: IntAccumulator) exte
     i = 0
   }
   
-  def characteristics = ORDERED | SIZED | SUBSIZED
+  def characteristics = ORDERED | SIZED | SUBSIZED | NONNULL
   
   def estimateSize = N
 
