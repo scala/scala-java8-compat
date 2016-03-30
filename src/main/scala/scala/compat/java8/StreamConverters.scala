@@ -14,10 +14,20 @@ trait PrimitiveStreamUnboxer[A, S] {
   def apply(boxed: Stream[A]): S
 }
 
-trait Priority5StreamConverters {
+trait Priority3StreamConverters {
+  implicit class EnrichAnySteppableWithParStream[A, CC](cc: CC)(implicit steppize: CC => MakesStepper[AnyStepper[A] with EfficientSubstep])
+  extends MakesParallelStream[A, Stream[A]] {
+    def parStream: Stream[A] = StreamSupport.stream(steppize(cc).stepper.anticipateParallelism, true)
+  }
+  implicit class EnrichAnyKeySteppableWithParKeyStream[K, CC](cc: CC)(implicit steppize: CC => MakesKeyStepper[AnyStepper[K] with EfficientSubstep]) {
+    def parKeyStream: Stream[K] = StreamSupport.stream(steppize(cc).keyStepper.anticipateParallelism, true)
+  }
+  implicit class EnrichAnyValueSteppableWithParValueStream[V, CC](cc: CC)(implicit steppize: CC => MakesValueStepper[AnyStepper[V] with EfficientSubstep]) {
+    def parValueStream: Stream[V] = StreamSupport.stream(steppize(cc).valueStepper.anticipateParallelism, true)
+  }
   // Note--conversion is only to make sure implicit conversion priority is lower than alternatives.
   implicit class EnrichScalaCollectionWithSeqStream[A, CC](cc: CC)(implicit steppize: CC => MakesStepper[AnyStepper[A]])
-  extends MakesSequentialStream[A, Stream[A]] {
+    extends MakesSequentialStream[A, Stream[A]] {
     def seqStream: Stream[A] = StreamSupport.stream(steppize(cc).stepper, false)
   }
   implicit class EnrichScalaCollectionWithKeySeqStream[K, CC](cc: CC)(implicit steppize: CC => MakesKeyStepper[AnyStepper[K]]) {
@@ -28,94 +38,66 @@ trait Priority5StreamConverters {
   }
 }
 
-trait Priority4StreamConverters extends Priority5StreamConverters {
+trait Priority2StreamConverters extends Priority3StreamConverters {
+  implicit class EnrichDoubleSteppableWithParStream[CC](cc: CC)(implicit steppize: CC => MakesStepper[DoubleStepper with EfficientSubstep])
+  extends MakesParallelStream[java.lang.Double, DoubleStream] {
+    def parStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).stepper.anticipateParallelism, true)
+  }
+  implicit class EnrichDoubleKeySteppableWithParKeyStream[CC](cc: CC)(implicit steppize: CC => MakesKeyStepper[DoubleStepper with EfficientSubstep]) {
+    def parKeyStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).keyStepper.anticipateParallelism, true)
+  }
+  implicit class EnrichDoubleValueSteppableWithParValueStream[CC](cc: CC)(implicit steppize: CC => MakesValueStepper[DoubleStepper with EfficientSubstep]) {
+    def parValueStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).valueStepper.anticipateParallelism, true)
+  }
+  implicit class EnrichIntSteppableWithParStream[CC](cc: CC)(implicit steppize: CC => MakesStepper[IntStepper with EfficientSubstep])
+  extends MakesParallelStream[java.lang.Integer, IntStream] {
+    def parStream: IntStream = StreamSupport.intStream(steppize(cc).stepper.anticipateParallelism, true)
+  }
+  implicit class EnrichIntKeySteppableWithParKeyStream[CC](cc: CC)(implicit steppize: CC => MakesKeyStepper[IntStepper with EfficientSubstep]) {
+    def parKeyStream: IntStream = StreamSupport.intStream(steppize(cc).keyStepper.anticipateParallelism, true)
+  }
+  implicit class EnrichIntValueSteppableWithParValueStream[CC](cc: CC)(implicit steppize: CC => MakesValueStepper[IntStepper with EfficientSubstep]) {
+    def parValueStream: IntStream = StreamSupport.intStream(steppize(cc).valueStepper.anticipateParallelism, true)
+  }
+  implicit class EnrichLongSteppableWithParStream[CC](cc: CC)(implicit steppize: CC => MakesStepper[LongStepper with EfficientSubstep])
+  extends MakesParallelStream[java.lang.Long, LongStream] {
+    def parStream: LongStream = StreamSupport.longStream(steppize(cc).stepper.anticipateParallelism, true)
+  }
+  implicit class EnrichLongKeySteppableWithParKeyStream[CC](cc: CC)(implicit steppize: CC => MakesKeyStepper[LongStepper with EfficientSubstep]) {
+    def parKeyStream: LongStream = StreamSupport.longStream(steppize(cc).keyStepper.anticipateParallelism, true)
+  }
+  implicit class EnrichLongValueSteppableWithParValueStream[CC](cc: CC)(implicit steppize: CC => MakesValueStepper[LongStepper with EfficientSubstep]) {
+    def parValueStream: LongStream = StreamSupport.longStream(steppize(cc).valueStepper.anticipateParallelism, true)
+  }
   implicit class EnrichScalaCollectionWithSeqDoubleStream[CC](cc: CC)(implicit steppize: CC => MakesStepper[DoubleStepper])
-  extends MakesSequentialStream[java.lang.Double, DoubleStream] {
+    extends MakesSequentialStream[java.lang.Double, DoubleStream] {
     def seqStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).stepper, false)
-  }  
+  }
   implicit class EnrichScalaCollectionWithSeqIntStream[CC](cc: CC)(implicit steppize: CC => MakesStepper[IntStepper])
-  extends MakesSequentialStream[java.lang.Integer, IntStream] {
+    extends MakesSequentialStream[java.lang.Integer, IntStream] {
     def seqStream: IntStream = StreamSupport.intStream(steppize(cc).stepper, false)
-  }  
+  }
   implicit class EnrichScalaCollectionWithSeqLongStream[CC](cc: CC)(implicit steppize: CC => MakesStepper[LongStepper])
-  extends MakesSequentialStream[java.lang.Long, LongStream] {
+    extends MakesSequentialStream[java.lang.Long, LongStream] {
     def seqStream: LongStream = StreamSupport.longStream(steppize(cc).stepper, false)
   }
   implicit class EnrichScalaCollectionWithSeqDoubleKeyStream[CC](cc: CC)(implicit steppize: CC => MakesKeyStepper[DoubleStepper]) {
     def seqKeyStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).keyStepper, false)
-  }  
+  }
   implicit class EnrichScalaCollectionWithSeqIntKeyStream[CC](cc: CC)(implicit steppize: CC => MakesKeyStepper[IntStepper]) {
     def seqKeyStream: IntStream = StreamSupport.intStream(steppize(cc).keyStepper, false)
-  }  
+  }
   implicit class EnrichScalaCollectionWithSeqLongKeyStream[CC](cc: CC)(implicit steppize: CC => MakesKeyStepper[LongStepper]) {
     def seqKeyStream: LongStream = StreamSupport.longStream(steppize(cc).keyStepper, false)
   }
   implicit class EnrichScalaCollectionWithSeqDoubleValueStream[CC](cc: CC)(implicit steppize: CC => MakesValueStepper[DoubleStepper]) {
     def seqValueStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).valueStepper, false)
-  }  
+  }
   implicit class EnrichScalaCollectionWithSeqIntValueStream[CC](cc: CC)(implicit steppize: CC => MakesValueStepper[IntStepper]) {
     def seqValueStream: IntStream = StreamSupport.intStream(steppize(cc).valueStepper, false)
-  }  
+  }
   implicit class EnrichScalaCollectionWithSeqLongValueStream[CC](cc: CC)(implicit steppize: CC => MakesValueStepper[LongStepper]) {
     def seqValueStream: LongStream = StreamSupport.longStream(steppize(cc).valueStepper, false)
-  }
-}
-
-trait Priority3StreamConverters extends Priority4StreamConverters {
-  implicit class EnrichAnySteppableWithStream[A, CC](cc: CC)(implicit steppize: CC => MakesStepper[AnyStepper[A] with EfficientSubstep])
-  extends MakesSequentialStream[A, Stream[A]] with MakesParallelStream[A, Stream[A]] {
-    def seqStream: Stream[A] = StreamSupport.stream(steppize(cc).stepper, false)
-    def parStream: Stream[A] = StreamSupport.stream(steppize(cc).stepper.anticipateParallelism, true)
-  }
-  implicit class EnrichAnyKeySteppableWithStream[K, CC](cc: CC)(implicit steppize: CC => MakesKeyStepper[AnyStepper[K] with EfficientSubstep]) {
-    def seqKeyStream: Stream[K] = StreamSupport.stream(steppize(cc).keyStepper, false)
-    def parKeyStream: Stream[K] = StreamSupport.stream(steppize(cc).keyStepper.anticipateParallelism, true)    
-  }
-  implicit class EnrichAnyValueSteppableWithStream[V, CC](cc: CC)(implicit steppize: CC => MakesValueStepper[AnyStepper[V] with EfficientSubstep]) {
-    def seqValueStream: Stream[V] = StreamSupport.stream(steppize(cc).valueStepper, false)
-    def parValueStream: Stream[V] = StreamSupport.stream(steppize(cc).valueStepper.anticipateParallelism, true)    
-  }
-}
-
-trait Priority2StreamConverters extends Priority3StreamConverters {
-  implicit class EnrichDoubleSteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesStepper[DoubleStepper with EfficientSubstep])
-  extends MakesSequentialStream[java.lang.Double, DoubleStream] with MakesParallelStream[java.lang.Double, DoubleStream] {
-    def seqStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).stepper, false)
-    def parStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).stepper.anticipateParallelism, true)
-  }
-  implicit class EnrichDoubleKeySteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesKeyStepper[DoubleStepper with EfficientSubstep]) {
-    def seqKeyStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).keyStepper, false)
-    def parKeyStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).keyStepper.anticipateParallelism, true)
-  }
-  implicit class EnrichDoubleValueSteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesValueStepper[DoubleStepper with EfficientSubstep]) {
-    def seqValueStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).valueStepper, false)
-    def parValueStream: DoubleStream = StreamSupport.doubleStream(steppize(cc).valueStepper.anticipateParallelism, true)
-  }
-  implicit class EnrichIntSteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesStepper[IntStepper with EfficientSubstep])
-  extends MakesSequentialStream[java.lang.Integer, IntStream] with MakesParallelStream[java.lang.Integer, IntStream] {
-    def seqStream: IntStream = StreamSupport.intStream(steppize(cc).stepper, false)
-    def parStream: IntStream = StreamSupport.intStream(steppize(cc).stepper.anticipateParallelism, true)
-  }
-  implicit class EnrichIntKeySteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesKeyStepper[IntStepper with EfficientSubstep]) {
-    def seqKeyStream: IntStream = StreamSupport.intStream(steppize(cc).keyStepper, false)
-    def parKeyStream: IntStream = StreamSupport.intStream(steppize(cc).keyStepper.anticipateParallelism, true)
-  }
-  implicit class EnrichIntValueSteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesValueStepper[IntStepper with EfficientSubstep]) {
-    def seqValueStream: IntStream = StreamSupport.intStream(steppize(cc).valueStepper, false)
-    def parValueStream: IntStream = StreamSupport.intStream(steppize(cc).valueStepper.anticipateParallelism, true)
-  }
-  implicit class EnrichLongSteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesStepper[LongStepper with EfficientSubstep])
-  extends MakesSequentialStream[java.lang.Long, LongStream] with MakesParallelStream[java.lang.Long, LongStream] {
-    def seqStream: LongStream = StreamSupport.longStream(steppize(cc).stepper, false)
-    def parStream: LongStream = StreamSupport.longStream(steppize(cc).stepper.anticipateParallelism, true)
-  }
-  implicit class EnrichLongKeySteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesKeyStepper[LongStepper with EfficientSubstep]) {
-    def seqKeyStream: LongStream = StreamSupport.longStream(steppize(cc).keyStepper, false)
-    def parKeyStream: LongStream = StreamSupport.longStream(steppize(cc).keyStepper.anticipateParallelism, true)
-  }
-  implicit class EnrichLongValueSteppableWithStream[CC](cc: CC)(implicit steppize: CC => MakesValueStepper[LongStepper with EfficientSubstep]) {
-    def seqValueStream: LongStream = StreamSupport.longStream(steppize(cc).valueStepper, false)
-    def parValueStream: LongStream = StreamSupport.longStream(steppize(cc).valueStepper.anticipateParallelism, true)
   }
 }
 

@@ -11,21 +11,21 @@ trait MakesSequentialStream[A, SS <: java.util.stream.BaseStream[A, SS]] extends
 }
 
 /** Classes or objects implementing this trait create streams suitable for parallel use */
-trait MakesParallelStream[A, SS <: java.util.stream.BaseStream[A, SS]] extends Any with MakesSequentialStream[A, SS] {
+trait MakesParallelStream[A, SS <: java.util.stream.BaseStream[A, SS]] extends Any {
   def parStream: SS
 }
 
-trait MakesStepper[T <: Stepper[_]] extends Any {
+trait MakesStepper[+T <: Stepper[_]] extends Any {
   /** Generates a fresh stepper of type `T` */
   def stepper: T
 }
 
-trait MakesKeyStepper[T <: Stepper[_]] extends Any {
+trait MakesKeyStepper[+T <: Stepper[_]] extends Any {
   /** Generates a fresh stepper of type `T` over map keys */
   def keyStepper: T
 }
 
-trait MakesValueStepper[T <: Stepper[_]] extends Any {
+trait MakesValueStepper[+T <: Stepper[_]] extends Any {
   /** Generates a fresh stepper of type `T` over map values */
   def valueStepper: T
 }
