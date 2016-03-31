@@ -239,6 +239,32 @@ trait AnyStepper[A] extends Stepper[A] with java.util.Iterator[A] with Spliterat
   def parStream: java.util.stream.Stream[A] = java.util.stream.StreamSupport.stream(this, true)
 }
 
+object AnyStepper {
+  private[collectionImpl] class BoxedDoubleStepper(st: DoubleStepper) extends AnyStepper[Double] {
+    def hasNext(): Boolean = st.hasNext()
+    def next(): Double = st.next()
+    def characteristics(): Int = st.characteristics()
+    def estimateSize(): Long = st.estimateSize()
+    def substep(): AnyStepper[Double] = new BoxedDoubleStepper(st.substep())
+  }
+
+  private[collectionImpl] class BoxedIntStepper(st: IntStepper) extends AnyStepper[Int] {
+    def hasNext(): Boolean = st.hasNext()
+    def next(): Int = st.next()
+    def characteristics(): Int = st.characteristics()
+    def estimateSize(): Long = st.estimateSize()
+    def substep(): AnyStepper[Int] = new BoxedIntStepper(st.substep())
+  }
+
+  private[collectionImpl] class BoxedLongStepper(st: LongStepper) extends AnyStepper[Long] {
+    def hasNext(): Boolean = st.hasNext()
+    def next(): Long = st.next()
+    def characteristics(): Int = st.characteristics()
+    def estimateSize(): Long = st.estimateSize()
+    def substep(): AnyStepper[Long] = new BoxedLongStepper(st.substep())
+  }
+}
+
 /** A `DoubleStepper` combines the functionality of a Java `PrimitiveIterator`, a Java `Spliterator`, and a `Stepper`, all specialized for `Double` values. */
 trait DoubleStepper extends Stepper[Double] with java.util.PrimitiveIterator.OfDouble with Spliterator.OfDouble with StepperLike[Double, DoubleStepper] {
   def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Double]) { while (hasNext) { c.accept(java.lang.Double.valueOf(nextDouble)) } }
@@ -512,6 +538,9 @@ object Stepper {
   /** Creates a `Stepper` over a generic `Spliterator`. */
   def ofSpliterator[A](sp: Spliterator[A]): AnyStepper[A] = sp match {
     case as: AnyStepper[A] => as
+    case s: DoubleStepper => new AnyStepper.BoxedDoubleStepper(s).asInstanceOf[AnyStepper[A]]
+    case s: IntStepper => new AnyStepper.BoxedIntStepper(s).asInstanceOf[AnyStepper[A]]
+    case s: LongStepper => new AnyStepper.BoxedLongStepper(s).asInstanceOf[AnyStepper[A]]
     case _ => new OfSpliterator[A](sp)
   }
 
