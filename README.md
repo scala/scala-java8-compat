@@ -117,6 +117,134 @@ class Test {
 ```
 
 
-## Future work
-  - Converters for `java.util.stream`
-  - [`Spliterator`](https://docs.oracle.com/javase/8/docs/api/java/util/Spliterator.html)s for Scala collections
+## Converters from Scala collections to Java 8 Streams
+
+Scala collections gain `seqStream` and `parStream` as extension methods that produce a Java 8 Stream
+running sequentially or in parallel, respectively.  These are automatically specialized to a primitive
+type if possible.  For instance, `List(1,2).seqStream` produces an `IntStream`.  Maps additionally have
+`seqKeyStream`, `seqValueStream`, `parKeyStream`, and `parValueStream` methods.
+
+Scala collections also gain `accumulate` and `stepper` methods that produce utility collections that
+can be useful when working with Java 8 Streams.  `accumulate` produces an `Accumulator` or its primitive
+counterpart (`DoubleAccumulator`, etc.), which is a low-level collection designed for efficient collection
+and dispatching of results to and from Streams.  Unlike most collections, it can contain more than
+`Int.MaxValue` elements.  `stepper` produces a `Stepper` which is a fusion of `Spliterator` and `Iterator`.
+`Stepper`s underlie the Scala collections' instances of Java 8 Streams.
+
+Java 8 Streams gain `toScala[Coll]` and `accumulate` methods, to make it easy to produce Scala collections
+or Accumulators, respectively, from Java 8 Streams. For instance, `myStream.to[Vector]` will collect the
+contents of a Stream into a `scala.collection.immutable.Vector`.  Note that standard sequential builders
+are used for collections, so this is best done to gather the results of an expensive computation.
+
+Finally, there is a Java class, `ScalaStreamer`, that has a series of `from` methods that can be used to
+obtain Java 8 Streams from Scala collections from within Java.
+
+#### Performance Considerations
+
+For sequential operations, Scala's `iterator` almost always equals or exceeds the performance of a Java 8 stream.  Thus,
+one should favor `iterator` (and its richer set of operations) over `seqStream` for general use.  However, long
+chains of processing of primitive types can sometimes benefit from the manually specialized methods in `DoubleStream`,
+`IntStream`, and `LongStream`.
+
+Note that although `iterator` typically has superior performance in a sequential context, the advantage is modest
+(usually less than 50% higher throughput for `iterator`).
+
+For parallel operations, `parStream` and even `seqStream.parallel` meets or exceeds the performance of Scala parallel
+collections methods (invoked with `.par`).  Especially for small collections, the difference can be substantial.  In
+some cases, when a Scala (parallel) collection is the ultimate result, Scala parallel collections can have an advantage
+as the collection can (in some cases) be built in parallel.
+
+Because the wrappers are invoked based on the static type of the collection, there are also cases where parallelization
+is inefficient when interfacing with Java 8 Streams (e.g. when a collection is typed as `Seq[String]` so might have linear
+access like `List`, but actually is a `WrappedArray[String]` that can be efficiently parallelized) but can be efficient
+with Scala parallel collections.  The `parStream` method is only available when the static type is known to be compatible
+with rapid parallel operation; `seqStream` can be parallelized by using `.parallel`, but may or may not be efficient.
+
+If the operations available on Java 8 Streams are sufficient, the collection type is known statically with enough precision
+to enable parStream,  and an `Accumulator` or non-collection type is an acceptable result, Java 8 Streams will essentially
+always outperform the Scala parallel collections.
+
+#### Scala Usage Example
+
+```scala
+import scala.compat.java8.StreamConverters._
+
+object Test {
+  val m = collection.immutable.HashMap("fish" -> 2, "bird" -> 4)
+  val s = m.parValueStream.sum          // 6, potientially computed in parallel
+  val t = m.seqKeyStream.toScala[List]  // List("fish", "bird")
+  val a = m.accumulate                  // Accumulator[(String, Int)]
+
+  val n = a.stepper.fold(0)(_ + _._1.length) +
+          a.parStream.count             // 8 + 2 = 10
+
+  val b = java.util.Arrays.stream(Array(2L, 3L, 4L)).
+          accumulate                    // LongAccumulator
+	val l = b.to[List]                    // List(2L, 3L, 4L)
+}
+```
+
+#### Using Java 8 Streams with Scala Function Converters
+
+Scala can emit Java SAMs for lambda expressions that are arguments to methods that take a Java SAM rather than
+a Scala Function.  However, it can be convenient to restrict the SAM interface to interactions with Java code
+(including Java 8 Streams) rather than having it propagate throughout Scala code.
+
+Using Java 8 Stream converters together with function converters allows one to accomplish this with only a modest
+amount of fuss.
+
+Example:
+
+```scala
+import scala.compat.java8.FunctionConverters._
+import scala.compat.java8.StreamConverters._
+
+def mapToSortedString[A](xs: Vector[A], f: A => String, sep: String) =
+  xs.parStream.                     // Creates java.util.stream.Stream[String]
+    map[String](f.asJava).sorted.   // Maps A to String and sorts (in parallel)
+    toArray.mkString(sep)           // Back to an Array to use Scala's mkString
+```
+
+Note that explicit creation of a new lambda will tend to lead to improved type inference and at least equal
+performance:
+
+```scala
+def mapToSortedString[A](xs: Vector[A], f: A => String, sep: String) =
+  xs.parStream.
+    map[String](a => f(a)).sorted.  // Explicit lambda creates a SAM wrapper for f
+    toArray.mkString(sep)
+```
+
+#### Java Usage Example
+
+To convert a Scala collection to a Java 8 Stream from within Java, it usually
+suffices to call `ScalaStreaming.from(xs)` on your collection `xs`.  If `xs` is
+a map, you may wish to get the keys or values alone by using `fromKeys` or
+`fromValues`.  If the collection has an underlying representation that is not
+efficiently parallelized (e.g. `scala.collection.immutable.List`), then
+`fromAccumulated` (and `fromAccumulatedKeys` and `fromAccumulatedValues`) will
+first gather the collection into an `Accumulator` and then return a stream over
+that accumulator.  If not running in parallel, `from` is preferable (faster and
+less memory usage).
+
+Note that a Scala `Iterator` cannot fulfill the contract of a Java 8 Stream
+(because it cannot support `trySplit` if it is called).  Presently, one must
+call `fromAccumulated` on the `Iterator` to cache it, even if the Stream will
+be evaluated sequentially, or wrap it as a Java Iterator and use static
+methods in `Spliterator` to wrap that as a `Spliterator` and then a `Stream`.
+
+Here is an example of conversion of a Scala collection within Java 8:
+
+```java
+import scala.collection.mutable.ArrayBuffer;
+import scala.compat.java8.ScalaStreaming;
+
+public class StreamConvertersExample {
+  public int MakeAndUseArrayBuffer() {
+    ArrayBuffer<String> ab = new ArrayBuffer<String>();
+    ab.$plus$eq("salmon");
+    ab.$plus$eq("herring");
+    return ScalaStreaming.from(ab).mapToInt(x -> x.length()).sum();  // 6+7 = 13
+  }
+}
+```
