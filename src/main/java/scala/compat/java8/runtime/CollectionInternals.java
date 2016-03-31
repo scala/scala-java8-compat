@@ -1,6 +1,6 @@
 package scala.compat.java8.runtime;
 
-import scala.collection.immutable.*;  // Don't rely on this!  Refer to everything explicitly!
+// No imports! All type names are fully qualified to avoid confusion!
 
 public class CollectionInternals {
     public static <A> Object[] getTable(scala.collection.mutable.FlatHashTable<A> fht) { return fht.hashTableContents().table(); }
