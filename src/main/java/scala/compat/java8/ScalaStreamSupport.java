@@ -5,6 +5,16 @@ import scala.compat.java8.collectionImpl.*;
 import java.util.stream.*;
 import scala.compat.java8.runtime.CollectionInternals;
 
+/**
+ * This class contains static utility methods for creating Java Streams from Scala Collections, similar
+ * to the methods in {@code java.util.stream.StreamSupport} for other Java types. It is intended for
+ * use from Java code. In Scala code, you can use the extension methods provided by
+ * {@code scala.compat.java8.StreamConverters} instead.
+ *
+ * Streams created from immutable Scala collections are also immutable. Mutable collections should
+ * not be modified concurrently. There are no guarantees for success or failure modes of existing
+ * streams in case of concurrent modifications.
+ */
 public class ScalaStreamSupport {
     /////////////////////
     // Generic Streams //
