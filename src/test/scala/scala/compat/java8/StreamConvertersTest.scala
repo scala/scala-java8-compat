@@ -234,4 +234,17 @@ class StreamConvertersTest {
       assert(hsL.parStream.isInstanceOf[LongStream])
     }
   }
+
+  @Test
+  def primitiveStreamTypes(): Unit = {
+    // Unboxed native + widening Steppers available:
+    assertEquals(Vector[Int](1, 2, 3), (Array[Int](1, 2, 3).seqStream: IntStream).toScala[Vector])
+    assertEquals(Vector[Short](1.toShort, 2.toShort, 3.toShort), (Array[Short](1.toShort, 2.toShort, 3.toShort).seqStream: IntStream).toScala[Vector])
+    assertEquals(Vector[String]("a", "b"), (Array[String]("a", "b").seqStream: Stream[String]).toScala[Vector])
+
+    // Boxed collections, widening via boxed AnySteppers:
+    assertEquals(Vector[Int](1, 2, 3), (Vector[Int](1, 2, 3).seqStream: IntStream).toScala[Vector])
+    assertEquals(Vector[Short](1.toShort, 2.toShort, 3.toShort), (Vector[Short](1.toShort, 2.toShort, 3.toShort).seqStream: IntStream).toScala[Vector])
+    assertEquals(Vector[String]("a", "b"), (Vector[String]("a", "b").seqStream: Stream[String]).toScala[Vector])
+  }
 }
