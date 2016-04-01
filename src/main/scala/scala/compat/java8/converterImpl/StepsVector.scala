@@ -134,18 +134,18 @@ with StepsVectorLike[Long] {
 // Value class adapters //
 //////////////////////////
 
-final class RichVectorCanStep[A](private val underlying: Vector[A]) extends AnyVal with MakesAnyStepper[A] {
+final class RichVectorCanStep[A](private val underlying: Vector[A]) extends AnyVal with MakesStepper[AnyStepper[A] with EfficientSubstep] {
   @inline def stepper: AnyStepper[A] with EfficientSubstep = new StepsAnyVector[A](underlying, 0, underlying.length)
 }
 
-final class RichDoubleVectorCanStep[A](private val underlying: Vector[Double]) extends AnyVal with MakesDoubleStepper {
+final class RichDoubleVectorCanStep[A](private val underlying: Vector[Double]) extends AnyVal with MakesStepper[DoubleStepper with EfficientSubstep] {
   @inline def stepper: DoubleStepper with EfficientSubstep = new StepsDoubleVector(underlying, 0, underlying.length)
 }
 
-final class RichIntVectorCanStep[A](private val underlying: Vector[Int]) extends AnyVal with MakesIntStepper {
+final class RichIntVectorCanStep[A](private val underlying: Vector[Int]) extends AnyVal with MakesStepper[IntStepper with EfficientSubstep] {
   @inline def stepper: IntStepper with EfficientSubstep = new StepsIntVector(underlying, 0, underlying.length)
 }
 
-final class RichLongVectorCanStep[A](private val underlying: Vector[Long]) extends AnyVal with MakesLongStepper {
+final class RichLongVectorCanStep[A](private val underlying: Vector[Long]) extends AnyVal with MakesStepper[LongStepper with EfficientSubstep] {
   @inline def stepper: LongStepper with EfficientSubstep = new StepsLongVector(underlying, 0, underlying.length)
 }

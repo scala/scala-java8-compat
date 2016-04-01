@@ -96,13 +96,13 @@ object PrimitiveIteratorConverters {
   }
   
   /** Provides conversions from Java `Iterator` to manually specialized `PrimitiveIterator` variants, when available */
-  implicit class RichJavaIteratorToPrimitives[A](val underlying: JIterator[A]) extends AnyVal {
+  implicit final class RichJavaIteratorToPrimitives[A](private val underlying: JIterator[A]) extends AnyVal {
     /** Wraps this `java.util.Iterator` as a manually specialized variant, if possible */
     def asPrimitive[That](implicit specOp: SpecializerOfIterators[A, That]): That = specOp.fromJava(underlying)
   }
   
   /** Provides conversions from Scala `Iterator` to manually specialized `PrimitiveIterator` variants, when available */
-  implicit class RichIteratorToPrimitives[A](val underlying: Iterator[A]) extends AnyVal {
+  implicit final class RichIteratorToPrimitives[A](private val underlying: Iterator[A]) extends AnyVal {
     /** Wraps this `scala.collection.Iterator` as a manually specialized `java.util.PrimitiveIterator` variant, if possible */
     def asPrimitive[That](implicit specOp: SpecializerOfIterators[A, That]): That = specOp.fromScala(underlying)
   }

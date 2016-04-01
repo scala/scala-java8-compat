@@ -21,7 +21,6 @@ class IncStepperA(private val size0: Long) extends NextStepper[Int] {
     i = sub.size0
     sub
   }
-  def typedPrecisely = this
 }
 
 class IncStepperB(private val size0: Long) extends TryStepper[Int] {
@@ -37,7 +36,6 @@ class IncStepperB(private val size0: Long) extends TryStepper[Int] {
     i = sub.size0
     sub
   }
-  def typedPrecisely = this
 }
 
 class IncSpliterator(private val size0: Long) extends Spliterator.OfInt {
@@ -67,7 +65,6 @@ class MappingStepper[@specialized (Double, Int, Long) A, @specialized(Double, In
     if (undersub == null) null
     else new MappingStepper(undersub, mapping)
   }
-  def typedPrecisely = this
   def spliterator: Spliterator[B] = new MappingSpliterator[A, B](underlying.spliterator, mapping)
 }
 
@@ -209,12 +206,6 @@ class StepperTest {
   def knownSizes() {
     sources.foreach{ case (i,s) => assertEquals(i.toLong, s.knownSize) }
     sources.foreach{ case (i,s) => if (i > 0) subs(0)(s)(x => { assertEquals(x.knownSize, 1L); 0 }, _ + _) }
-  }
-
-  @Test
-  def consistentPrecision() {
-    sources.foreach{ case (_,s) => assert(s eq s.typedPrecisely) }
-    sources.foreach{ case (_,s) => subs(0)(s)(x => { assert(x eq x.typedPrecisely); 0}, _ + _) }
   }
 
   @Test

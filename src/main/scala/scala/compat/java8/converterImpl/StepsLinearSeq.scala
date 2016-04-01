@@ -47,18 +47,18 @@ extends StepsLongWithTail[CC, StepsLongLinearSeq[CC]](_underlying, _maxN) {
 // Value class adapters //
 //////////////////////////
 
-final class RichLinearSeqCanStep[A, CC >: Null <: collection.LinearSeqLike[A, CC]](private val underlying: CC) extends AnyVal with MakesAnySeqStepper[A] {
+final class RichLinearSeqCanStep[A, CC >: Null <: collection.LinearSeqLike[A, CC]](private val underlying: CC) extends AnyVal with MakesStepper[AnyStepper[A]] {
   @inline def stepper: AnyStepper[A] = new StepsAnyLinearSeq[A, CC](underlying, Long.MaxValue)
 }
 
-final class RichDoubleLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Double, CC]](private val underlying: CC) extends AnyVal with MakesDoubleSeqStepper {
+final class RichDoubleLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Double, CC]](private val underlying: CC) extends AnyVal with MakesStepper[DoubleStepper] {
   @inline def stepper: DoubleStepper = new StepsDoubleLinearSeq[CC](underlying, Long.MaxValue)
 }
 
-final class RichIntLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Int, CC]](private val underlying: CC) extends AnyVal with MakesIntSeqStepper {
+final class RichIntLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Int, CC]](private val underlying: CC) extends AnyVal with MakesStepper[IntStepper] {
   @inline def stepper: IntStepper = new StepsIntLinearSeq[CC](underlying, Long.MaxValue)
 }
 
-final class RichLongLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Long, CC]](private val underlying: CC) extends AnyVal with MakesLongSeqStepper {
+final class RichLongLinearSeqCanStep[CC >: Null <: collection.LinearSeqLike[Long, CC]](private val underlying: CC) extends AnyVal with MakesStepper[LongStepper] {
   @inline def stepper: LongStepper = new StepsLongLinearSeq[CC](underlying, Long.MaxValue)
 }

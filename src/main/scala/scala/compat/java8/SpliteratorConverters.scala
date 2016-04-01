@@ -17,13 +17,13 @@ package SpliteratorConverters {
 
 
 package object SpliteratorConverters extends SpliteratorConverters.Priority2SpliteratorConverters {
-  implicit class SpliteratorOfDoubleToStepper(private val underlying: Spliterator.OfDouble) extends AnyVal {
+  implicit final class SpliteratorOfDoubleToStepper(private val underlying: Spliterator.OfDouble) extends AnyVal {
     def stepper: DoubleStepper = Stepper.ofSpliterator(underlying)
   }
-  implicit class SpliteratorOfIntToStepper(private val underlying: Spliterator.OfInt) extends AnyVal {
+  implicit final class SpliteratorOfIntToStepper(private val underlying: Spliterator.OfInt) extends AnyVal {
     def stepper: IntStepper = Stepper.ofSpliterator(underlying)
   }
-  implicit class SpliteratorOfLongToStepper(private val underlying: Spliterator.OfLong) extends AnyVal {
+  implicit final class SpliteratorOfLongToStepper(private val underlying: Spliterator.OfLong) extends AnyVal {
     def stepper: LongStepper = Stepper.ofSpliterator(underlying)
   }
 }

@@ -247,7 +247,7 @@ private[java8] class LongAccumulatorStepper(private val acc: LongAccumulator) ex
     i = 0
   }
   
-  def characteristics = ORDERED | SIZED | SUBSIZED
+  def characteristics = ORDERED | SIZED | SUBSIZED | NONNULL
   
   def estimateSize = N
 

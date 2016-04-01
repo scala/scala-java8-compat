@@ -246,7 +246,7 @@ private[java8] class DoubleAccumulatorStepper(private val acc: DoubleAccumulator
     i = 0
   }
     
-  def characteristics = ORDERED | SIZED | SUBSIZED
+  def characteristics = ORDERED | SIZED | SUBSIZED | NONNULL
   
   def estimateSize = N
 
