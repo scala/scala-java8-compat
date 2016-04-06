@@ -239,8 +239,8 @@ trait AnyStepper[A] extends Stepper[A] with java.util.Iterator[A] with Spliterat
   def parStream: java.util.stream.Stream[A] = java.util.stream.StreamSupport.stream(this, true)
 }
 
-object AnyStepper {
-  private[collectionImpl] class BoxedDoubleStepper(st: DoubleStepper) extends AnyStepper[Double] {
+private[collectionImpl] object AnyStepper {
+  final class BoxedDoubleStepper(st: DoubleStepper) extends AnyStepper[Double] {
     def hasNext(): Boolean = st.hasNext()
     def next(): Double = st.next()
     def characteristics(): Int = st.characteristics()
@@ -248,7 +248,7 @@ object AnyStepper {
     def substep(): AnyStepper[Double] = new BoxedDoubleStepper(st.substep())
   }
 
-  private[collectionImpl] class BoxedIntStepper(st: IntStepper) extends AnyStepper[Int] {
+  final class BoxedIntStepper(st: IntStepper) extends AnyStepper[Int] {
     def hasNext(): Boolean = st.hasNext()
     def next(): Int = st.next()
     def characteristics(): Int = st.characteristics()
@@ -256,7 +256,7 @@ object AnyStepper {
     def substep(): AnyStepper[Int] = new BoxedIntStepper(st.substep())
   }
 
-  private[collectionImpl] class BoxedLongStepper(st: LongStepper) extends AnyStepper[Long] {
+  final class BoxedLongStepper(st: LongStepper) extends AnyStepper[Long] {
     def hasNext(): Boolean = st.hasNext()
     def next(): Long = st.next()
     def characteristics(): Int = st.characteristics()
@@ -564,4 +564,41 @@ object Stepper {
     case _ => new OfLongSpliterator(sp)
   }
 
+  /* These adapter classes can wrap an AnyStepper of a small numeric type into the appropriately widened
+   * primitive Stepper type. This provides a basis for more efficient stream processing on unboxed values
+   * provided that the original source of the data is already boxed. In other cases the widening conversion
+   * should always be performed directly on the original unboxed values in a custom Stepper implementation
+   * (see for example StepsWidenedByteArray). */
+
+  private[java8] class WideningByteStepper(st: AnyStepper[Byte]) extends IntStepper {
+    def hasNext(): Boolean = st.hasNext()
+    def nextInt(): Int = st.next()
+    def characteristics(): Int = st.characteristics() | NonNull
+    def estimateSize(): Long = st.estimateSize()
+    def substep(): IntStepper = new WideningByteStepper(st.substep())
+  }
+
+  private[java8] class WideningCharStepper(st: AnyStepper[Char]) extends IntStepper {
+    def hasNext(): Boolean = st.hasNext()
+    def nextInt(): Int = st.next()
+    def characteristics(): Int = st.characteristics() | NonNull
+    def estimateSize(): Long = st.estimateSize()
+    def substep(): IntStepper = new WideningCharStepper(st.substep())
+  }
+
+  private[java8] class WideningShortStepper(st: AnyStepper[Short]) extends IntStepper {
+    def hasNext(): Boolean = st.hasNext()
+    def nextInt(): Int = st.next()
+    def characteristics(): Int = st.characteristics() | NonNull
+    def estimateSize(): Long = st.estimateSize()
+    def substep(): IntStepper = new WideningShortStepper(st.substep())
+  }
+
+  private[java8] class WideningFloatStepper(st: AnyStepper[Float]) extends DoubleStepper {
+    def hasNext(): Boolean = st.hasNext()
+    def nextDouble(): Double = st.next()
+    def characteristics(): Int = st.characteristics() | NonNull
+    def estimateSize(): Long = st.estimateSize()
+    def substep(): DoubleStepper = new WideningFloatStepper(st.substep())
+  }
 }

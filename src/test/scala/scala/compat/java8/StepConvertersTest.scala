@@ -438,6 +438,23 @@ class StepConvertersTest {
   }
 
   @Test
+  def shortWidening() {
+    implicit val spec = SpecCheck(_.isInstanceOf[IntStepper])
+
+    good( Array[Short](654321.toShort).stepper )
+
+    //TODO: None of these currently work because there are no native Stepper implementations. This does not only
+    // affect widening conversions though. While you can get, for example, an IntStepper for a WrappedArray[Int],
+    // all values have to go through a boxing/unboxing step!
+
+    //good( ci.NumericRange(123456.toShort, 123458.toShort, 1.toShort).stepper )
+    //good( ((Array[Short](654321.toShort): cm.WrappedArray[Short]): cm.ArrayLike[Short, cm.WrappedArray[Short]]).stepper )
+    //good( (Array[Short](654321.toShort): cm.ArrayOps[Short]).stepper )
+    //good( cm.ResizableArray[Short](654321.toShort).stepper )
+    //good( (Array[Short](654321.toShort): cm.WrappedArray[Short]).stepper )
+  }
+
+  @Test
   def comprehensivelyLong() {
     implicit val spec = SpecCheck(_.isInstanceOf[LongStepper])
 
