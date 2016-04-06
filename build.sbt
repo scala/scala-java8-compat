@@ -3,16 +3,16 @@ val disableDocs = sys.props("nodocs") == "true"
 lazy val JavaDoc = config("genjavadoc") extend Compile
 
 def jwrite(dir: java.io.File)(name: String, content: String) = {
-  val f = dir / "scala" / "compat" / "java8" / s"${name}.java"
+  val f = dir / "scala" / "runtime" / "java8" / s"${name}.java"
   IO.write(f, content)
   f
 }
 
 lazy val commonSettings = Seq(
-  scalaVersion := "2.11.7",
-  crossScalaVersions := List("2.11.7", "2.12.0-M3"),
+  scalaVersion := "2.11.8",
+  crossScalaVersions := List("2.11.8", "2.12.0-M4"),
   organization := "org.scala-lang.modules",
-  version := "0.6.0-SNAPSHOT"
+  version := "0.8.0-SNAPSHOT"
 )
 
 lazy val fnGen = (project in file("fnGen")).
@@ -61,14 +61,16 @@ lazy val root = (project in file(".")).
       (out ** "*.scala").get
     }.taskValue,
 
-    sourceGenerators in Compile <+= sourceManaged in Compile map { dir =>
-      val write = jwrite(dir) _
-      Seq(write("JFunction", CodeGen.factory)) ++
-      (0 to 22).map(n => write("JFunction" + n, CodeGen.fN(n))) ++
-      (0 to 22).map(n => write("JProcedure" + n, CodeGen.pN(n))) ++
-      CodeGen.specializedF0.map(write.tupled) ++
-      CodeGen.specializedF1.map(write.tupled) ++
-      CodeGen.specializedF2.map(write.tupled)
+    sourceGenerators in Compile <+= (sourceManaged in Compile, scalaVersion) map { (dir, v) =>
+      if(v.startsWith("2.11.")) {
+        val write = jwrite(dir) _
+        Seq(write("JFunction", CodeGen.factory)) ++
+        (0 to 22).map(n => write("JFunction" + n, CodeGen.fN(n))) ++
+        (0 to 22).map(n => write("JProcedure" + n, CodeGen.pN(n))) ++
+        CodeGen.specializedF0.map(write.tupled) ++
+        CodeGen.specializedF1.map(write.tupled) ++
+        CodeGen.specializedF2.map(write.tupled)
+      } else Seq.empty
     },
 
     sourceGenerators in Test <+= sourceManaged in Test map { dir =>

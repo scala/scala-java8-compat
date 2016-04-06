@@ -22,4 +22,8 @@ if [ "$TRAVIS_JDK_VERSION" == "$PUBLISH_JDK" ] && [[ "$TRAVIS_TAG" =~ ^v[0-9]+\.
   openssl aes-256-cbc -K $K -iv $IV -in admin/secring.asc.enc -out admin/secring.asc -d
 fi
 
-sbt ++$TRAVIS_SCALA_VERSION "$publishVersion" clean update test publishLocal $extraTarget
+if [ "$TRAVIS_SCALA_VERSION" == "2.12.0-M4" ]; then
+  extraSbtOpts="-Dnodocs=true"
+fi
+
+sbt $extraSbtOpts ++$TRAVIS_SCALA_VERSION "$publishVersion" clean update test publishLocal $extraTarget
