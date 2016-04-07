@@ -6,11 +6,9 @@ Because the benchmarking is **very computationally expensive** it should be done
 
 ## Code generation step
 
-1. Run `sbt console`
+1. Make sure the parent project has been built by running `sbt package` in it.
 
-2. If the `JmhBench.scala` file already exists, delete it.
-
-3. Enter `bench.codegen.Generate.jmhBench()` to generate the `JmhBench.scala` file.
+2. `cd` to the benchmark project and run `sbt generateJmh`
 
 ## Benchmarking step
 

@@ -232,3 +232,11 @@ object Generator {
     }
   }
 }
+
+object GenJmhBench {
+  def main(args: Array[String]): Unit = {
+    val f = new java.io.File("JmhBench.scala")
+    f.delete()
+    Generator.jmhBench(f)
+  }
+}

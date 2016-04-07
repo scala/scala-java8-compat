@@ -25,30 +25,30 @@ package object generate {
   }
 
   object Pstep {
-    def i[CC](cc: CC)(implicit steppize: CC => MakesIntStepper): IntStepper =
+    def i[CC](cc: CC)(implicit steppize: CC => MakesStepper[IntStepper with EfficientSubstep]): IntStepper =
       steppize(cc).stepper
-    def s[CC](cc: CC)(implicit steppize: CC => MakesAnyStepper[String]): AnyStepper[String] =
+    def s[CC](cc: CC)(implicit steppize: CC => MakesStepper[AnyStepper[String] with EfficientSubstep]): AnyStepper[String] =
       steppize(cc).stepper
   }
 
   object Sstep {
-    def i[CC](cc: CC)(implicit steppize: CC => MakesIntSeqStepper): IntStepper =
+    def i[CC](cc: CC)(implicit steppize: CC => MakesStepper[IntStepper]): IntStepper =
       steppize(cc).stepper
-    def s[CC](cc: CC)(implicit steppize: CC => MakesAnySeqStepper[String]): AnyStepper[String] =
+    def s[CC](cc: CC)(implicit steppize: CC => MakesStepper[AnyStepper[String]]): AnyStepper[String] =
       steppize(cc).stepper
   }
 
   object PsStream {
-    def i[CC](cc: CC)(implicit steppize: CC => MakesIntStepper): IntStream =
+    def i[CC](cc: CC)(implicit steppize: CC => MakesStepper[IntStepper with EfficientSubstep]): IntStream =
       steppize(cc).stepper.parStream
-    def s[CC](cc: CC)(implicit steppize: CC => MakesAnyStepper[String]): Stream[String] =
+    def s[CC](cc: CC)(implicit steppize: CC => MakesStepper[AnyStepper[String] with EfficientSubstep]): Stream[String] =
       steppize(cc).stepper.parStream
   }
 
   object SsStream {
-    def i[CC](cc: CC)(implicit steppize: CC => MakesIntSeqStepper): IntStream =
+    def i[CC](cc: CC)(implicit steppize: CC => MakesStepper[IntStepper]): IntStream =
       steppize(cc).stepper.seqStream
-    def s[CC](cc: CC)(implicit steppize: CC => MakesAnySeqStepper[String]): Stream[String] =
+    def s[CC](cc: CC)(implicit steppize: CC => MakesStepper[AnyStepper[String]]): Stream[String] =
       steppize(cc).stepper.seqStream
   }
 
@@ -78,14 +78,14 @@ package object generate {
     // Iterator
     def iI(j: Int)(implicit x: CC[Int] => Iterator[Int]) = x(cI(j))
     // Steppers (second letter--s = sequential, p = parallel)
-    def tsI(j: Int)(implicit x: CC[Int] => MakesIntSeqStepper) = Sstep i cI(j)
-    def tpI(j: Int)(implicit x: CC[Int] => MakesIntStepper) = Pstep i cI(j)
+    def tsI(j: Int)(implicit x: CC[Int] => MakesStepper[IntStepper]) = Sstep i cI(j)
+    def tpI(j: Int)(implicit x: CC[Int] => MakesStepper[IntStepper with EfficientSubstep]) = Pstep i cI(j)
     // Streams
     def ssI(j: Int)(implicit x: CC[Int] => MakesSequentialStream[java.lang.Integer, IntStream]) = Sstream i cI(j)
     def spI(j: Int)(implicit x: CC[Int] => MakesParallelStream[java.lang.Integer, IntStream]) = Pstream i cI(j)
     // Streams via steppers
-    def zsI(j: Int)(implicit x: CC[Int] => MakesIntSeqStepper) = SsStream i cI(j)
-    def zpI(j: Int)(implicit x: CC[Int] => MakesIntStepper) = PsStream i cI(j)
+    def zsI(j: Int)(implicit x: CC[Int] => MakesStepper[IntStepper]) = SsStream i cI(j)
+    def zpI(j: Int)(implicit x: CC[Int] => MakesStepper[IntStepper with EfficientSubstep]) = PsStream i cI(j)
   }
 
   trait StringThingsOf[CC[_]] extends GenThingsOf[CC] {
@@ -95,14 +95,14 @@ package object generate {
     // Iterator
     def iS(j: Int)(implicit x: CC[String] => Iterator[String]) = x(cS(j))
     // Steppers (second letter--s = sequential, p = parallel)
-    def tsS(j: Int)(implicit x: CC[String] => MakesAnySeqStepper[String]) = Sstep s cS(j)
-    def tpS(j: Int)(implicit x: CC[String] => MakesAnyStepper[String]) = Pstep s cS(j)
+    def tsS(j: Int)(implicit x: CC[String] => MakesStepper[AnyStepper[String]]) = Sstep s cS(j)
+    def tpS(j: Int)(implicit x: CC[String] => MakesStepper[AnyStepper[String] with EfficientSubstep]) = Pstep s cS(j)
     // Streams
     def ssS(j: Int)(implicit x: CC[String] => MakesSequentialStream[String, Stream[String]]) = Sstream s cS(j)
     def spS(j: Int)(implicit x: CC[String] => MakesParallelStream[String, Stream[String]]) = Pstream s cS(j)
     // Streams via steppers
-    def zsS(j: Int)(implicit x: CC[String] => MakesAnySeqStepper[String]) = SsStream s cS(j)
-    def zpS(j: Int)(implicit x: CC[String] => MakesAnyStepper[String]) = PsStream s cS(j)
+    def zsS(j: Int)(implicit x: CC[String] => MakesStepper[AnyStepper[String]]) = SsStream s cS(j)
+    def zpS(j: Int)(implicit x: CC[String] => MakesStepper[AnyStepper[String] with EfficientSubstep]) = PsStream s cS(j)
   }
 
   trait ThingsOf[CC[_]] extends IntThingsOf[CC] with StringThingsOf[CC] {}

@@ -109,6 +109,6 @@ lazy val root = (project in file(".")).
     """|import scala.concurrent._
        |import ExecutionContext.Implicits.global
        |import java.util.concurrent.{CompletionStage,CompletableFuture}
-       |import scala.compat.java8.FutureConverter._
+       |import scala.compat.java8.FutureConverters._
        |""".stripMargin
   )
