@@ -5,3 +5,4 @@ target
 /.settings
 /.target
 /bin
+benchmark/JmhBench.scala
