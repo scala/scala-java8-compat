@@ -84,6 +84,13 @@ trait Priority2StepConverters extends Priority3StepConverters {
   implicit def richArrayCharCanStep(underlying: Array[Char]) = new RichArrayCharCanStep(underlying)
   implicit def richArrayShortCanStep(underlying: Array[Short]) = new RichArrayShortCanStep(underlying)
   implicit def richArrayFloatCanStep(underlying: Array[Float]) = new RichArrayFloatCanStep(underlying)
+
+  // No special cases for AnyStepper-producing WrappedArrays; they are treated as IndexedSeqs
+  implicit def richWrappedArrayByteCanStep(underlying: collection.mutable.WrappedArray[Byte]) = new RichArrayByteCanStep(underlying.array)
+  implicit def richWrappedArrayCharCanStep(underlying: collection.mutable.WrappedArray[Char]) = new RichArrayCharCanStep(underlying.array)
+  implicit def richWrappedArrayShortCanStep(underlying: collection.mutable.WrappedArray[Short]) = new RichArrayShortCanStep(underlying.array)
+  implicit def richWrappedArrayFloatCanStep(underlying: collection.mutable.WrappedArray[Float]) = new RichArrayFloatCanStep(underlying.array)
+
   implicit def richDoubleIndexedSeqCanStep[CC <: collection.IndexedSeqLike[Double, _]](underlying: CC) =
     new RichDoubleIndexedSeqCanStep[CC](underlying)
   implicit def richIntIndexedSeqCanStep[CC <: collection.IndexedSeqLike[Int, _]](underlying: CC) =
@@ -113,7 +120,11 @@ trait Priority1StepConverters extends Priority2StepConverters {
   implicit def richArrayDoubleCanStep(underlying: Array[Double]) = new RichArrayDoubleCanStep(underlying)
   implicit def richArrayIntCanStep(underlying: Array[Int]) = new RichArrayIntCanStep(underlying)
   implicit def richArrayLongCanStep(underlying: Array[Long]) = new RichArrayLongCanStep(underlying)
-  
+
+  implicit def richWrappedArrayDoubleCanStep(underlying: collection.mutable.WrappedArray[Double]) = new RichArrayDoubleCanStep(underlying.array)
+  implicit def richWrappedArrayIntCanStep(underlying: collection.mutable.WrappedArray[Int]) = new RichArrayIntCanStep(underlying.array)
+  implicit def richWrappedArrayLongCanStep(underlying: collection.mutable.WrappedArray[Long]) = new RichArrayLongCanStep(underlying.array)
+
   implicit def richIntNumericRangeCanStep(underlying: collection.immutable.NumericRange[Int]) = new RichIntNumericRangeCanStep(underlying)
   implicit def richLongNumericRangeCanStep(underlying: collection.immutable.NumericRange[Long]) = new RichLongNumericRangeCanStep(underlying)
   implicit def richRangeCanStep(underlying: Range) = new RichRangeCanStep(underlying)

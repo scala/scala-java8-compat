@@ -14,18 +14,14 @@ Because the benchmarking is **very computationally expensive** it should be done
 
 1. Make sure your terminal has plenty of lines of scrollback.  (A couple thousand should do.)
 
-2. Run `sbt`
+2. Run `sbt "jmh:run -i 5 -wi 3 -f 5"`. Wait overnight.
 
-3. Enter `jmh:run -i 5 -wi 3 -f5`.  Wait overnight.
+3. Clip off the last set of lines from the terminal window starting before the line that contains `[info] # Run complete. Total time:` and including that line until the end.
 
-4. Clip off the last set of lines from the terminal window starting before the line that contains `[info] # Run complete. Total time:` and including that line until the end.
-
-5. Save that in the file `results/jmhbench.log`
+4. Save that in the file `results/jmhbench.log`
 
 ## Comparison step
 
-1. Run `sbt console`
+1. Run `sbt parseJmh`
 
-2. Enter `bench.examine.SpeedReports()`
-
-3. Look at the ASCII art results showing speed comparisons.
+2. Look at the ASCII art results showing speed comparisons.

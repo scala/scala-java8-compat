@@ -3,10 +3,13 @@ package scala.compat.java8
 import org.junit.Test
 import org.junit.Assert._
 
+import java.util.stream._
+import StreamConverters._
+import scala.compat.java8.collectionImpl.IntStepper
+import scala.compat.java8.converterImpl.{MakesStepper, MakesSequentialStream}
+
 class StreamConvertersTest {
-  import java.util.stream._
-  import StreamConverters._
-  
+
   def assertEq[A](a1: A, a2: A, s: String) { assertEquals(s, a1, a2) }  // Weird order normally!
   def assertEq[A](a1: A, a2: A) { assertEq(a1, a2, "not equal") }
   
@@ -246,5 +249,14 @@ class StreamConvertersTest {
     assertEquals(Vector[Int](1, 2, 3), (Vector[Int](1, 2, 3).seqStream: IntStream).toScala[Vector])
     assertEquals(Vector[Short](1.toShort, 2.toShort, 3.toShort), (Vector[Short](1.toShort, 2.toShort, 3.toShort).seqStream: IntStream).toScala[Vector])
     assertEquals(Vector[String]("a", "b"), (Vector[String]("a", "b").seqStream: Stream[String]).toScala[Vector])
+  }
+
+  @Test
+  def streamMaterialization(): Unit = {
+    val coll = collection.mutable.WrappedArray.make[Int](Array(1,2,3))
+    val streamize = implicitly[collection.mutable.WrappedArray[Int] => MakesSequentialStream[java.lang.Integer, IntStream]]
+    assertTrue(streamize(coll).getClass.getName.contains("EnrichScalaCollectionWithSeqIntStream"))
+    val steppize = implicitly[collection.mutable.WrappedArray[Int] => MakesStepper[IntStepper]]
+    assertTrue(steppize(coll).getClass.getName.contains("RichArrayIntCanStep"))
   }
 }

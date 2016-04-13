@@ -25,46 +25,54 @@ class StepConvertersTest {
     case _ => false
   }
 
-  trait SpecCheck { def apply[X](x: X): Boolean }
+  trait SpecCheck {
+    def check[X](x: X): Boolean
+    def msg[X](x: X): String
+    def assert(x: Any): Unit =
+      if(!check(x)) assertTrue(msg(x), false)
+  }
   object SpecCheck {
-    def apply(f: Any => Boolean) = new SpecCheck { def apply[X](x: X): Boolean = f(x) }
+    def apply(f: Any => Boolean, err: Any => String = (_ => "SpecCheck failed")) = new SpecCheck {
+      def check[X](x: X): Boolean = f(x)
+      def msg[X](x: X): String = err(x)
+    }
   }
 
   def _eh_[X](x: => X)(implicit correctSpec: SpecCheck) { 
-    assert(x.isInstanceOf[Stepper[_]])
-    assert(correctSpec(x))
+    assertTrue(x.isInstanceOf[Stepper[_]])
+    correctSpec.assert(x)
   }
 
   def IFFY[X](x: => X)(implicit correctSpec: SpecCheck) {
-    assert(x.isInstanceOf[Stepper[_]])
-    assert(correctSpec(x))
-    assert(isAcc(x))
+    assertTrue(x.isInstanceOf[Stepper[_]])
+    correctSpec.assert(x)
+    assertTrue(isAcc(x))
   }
 
   def Okay[X](x: => X)(implicit correctSpec: SpecCheck) {
-    assert(x.isInstanceOf[Stepper[_]])
-    assert(correctSpec(x))
-    assert(!isAcc(x))
-    assert(isLin(x))
+    assertTrue(x.isInstanceOf[Stepper[_]])
+    correctSpec.assert(x)
+    assertTrue(!isAcc(x))
+    assertTrue(isLin(x))
   }
 
   def Fine[X](x: => X)(implicit correctSpec: SpecCheck) {
-    assert(x.isInstanceOf[Stepper[_]])
-    assert(correctSpec(x))
-    assert(!isAcc(x))
+    assertTrue(x.isInstanceOf[Stepper[_]])
+    correctSpec.assert(x)
+    assertTrue(!isAcc(x))
   }
 
   def good[X](x: => X)(implicit correctSpec: SpecCheck) {
-    assert(x.isInstanceOf[Stepper[_]])
-    assert(correctSpec(x))
-    assert(!isAcc(x))
-    assert(!isLin(x))
+    assertTrue(x.isInstanceOf[Stepper[_]])
+    correctSpec.assert(x)
+    assertTrue(!isAcc(x))
+    assertTrue(!isLin(x))
   }
 
   def Tell[X](x: => X)(implicit correctSpec: SpecCheck) {
     println(x.getClass.getName + " -> " + isAcc(x))
-    assert(x.isInstanceOf[Stepper[_]])
-    assert(correctSpec(x))
+    assertTrue(x.isInstanceOf[Stepper[_]])
+    correctSpec.assert(x)
   }
 
   @Test
@@ -439,19 +447,17 @@ class StepConvertersTest {
 
   @Test
   def shortWidening() {
-    implicit val spec = SpecCheck(_.isInstanceOf[IntStepper])
+    implicit val spec = SpecCheck(_.isInstanceOf[IntStepper], x => s"$x should be an IntStepper")
 
     good( Array[Short](654321.toShort).stepper )
+    good( (Array[Short](654321.toShort): cm.WrappedArray[Short]).stepper )
 
-    //TODO: None of these currently work because there are no native Stepper implementations. This does not only
-    // affect widening conversions though. While you can get, for example, an IntStepper for a WrappedArray[Int],
-    // all values have to go through a boxing/unboxing step!
+    //TODO: None of these currently work because there are no native Stepper implementations:
 
     //good( ci.NumericRange(123456.toShort, 123458.toShort, 1.toShort).stepper )
     //good( ((Array[Short](654321.toShort): cm.WrappedArray[Short]): cm.ArrayLike[Short, cm.WrappedArray[Short]]).stepper )
     //good( (Array[Short](654321.toShort): cm.ArrayOps[Short]).stepper )
     //good( cm.ResizableArray[Short](654321.toShort).stepper )
-    //good( (Array[Short](654321.toShort): cm.WrappedArray[Short]).stepper )
   }
 
   @Test
