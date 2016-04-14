@@ -255,7 +255,7 @@ class StreamConvertersTest {
   def streamMaterialization(): Unit = {
     val coll = collection.mutable.WrappedArray.make[Int](Array(1,2,3))
     val streamize = implicitly[collection.mutable.WrappedArray[Int] => MakesSequentialStream[java.lang.Integer, IntStream]]
-    assertTrue(streamize(coll).getClass.getName.contains("EnrichScalaCollectionWithSeqIntStream"))
+    assertTrue(streamize(coll).getClass.getName.contains("EnrichIntWrappedArrayWithStream"))
     val steppize = implicitly[collection.mutable.WrappedArray[Int] => MakesStepper[IntStepper]]
     assertTrue(steppize(coll).getClass.getName.contains("RichArrayIntCanStep"))
   }

@@ -292,6 +292,24 @@ with converterImpl.Priority1AccumulatorConverters
     def parStream: LongStream = seqStream.parallel
   }
 
+  implicit final class EnrichDoubleWrappedArrayWithStream(private val a: collection.mutable.WrappedArray[Double])
+    extends AnyVal with MakesSequentialStream[java.lang.Double, DoubleStream] with MakesParallelStream[java.lang.Double, DoubleStream] {
+    def seqStream: DoubleStream = java.util.Arrays.stream(a.array)
+    def parStream: DoubleStream = seqStream.parallel
+  }
+
+  implicit final class EnrichIntWrappedArrayWithStream(private val a: collection.mutable.WrappedArray[Int])
+    extends AnyVal with MakesSequentialStream[java.lang.Integer, IntStream] with MakesParallelStream[java.lang.Integer, IntStream] {
+    def seqStream: IntStream = java.util.Arrays.stream(a.array)
+    def parStream: IntStream = seqStream.parallel
+  }
+
+  implicit final class EnrichLongWrappedArrayWithStream(private val a: collection.mutable.WrappedArray[Long])
+    extends AnyVal with MakesSequentialStream[java.lang.Long, LongStream] with MakesParallelStream[java.lang.Long, LongStream] {
+    def seqStream: LongStream = java.util.Arrays.stream(a.array)
+    def parStream: LongStream = seqStream.parallel
+  }
+
   implicit val primitiveAccumulateDoubleStream = new PrimitiveStreamAccumulator[Stream[Double], DoubleAccumulator] {
     def streamAccumulate(stream: Stream[Double]): DoubleAccumulator = 
       stream.collect(DoubleAccumulator.supplier, DoubleAccumulator.boxedAdder, DoubleAccumulator.merger)
