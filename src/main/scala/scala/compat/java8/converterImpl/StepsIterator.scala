@@ -39,19 +39,12 @@ extends StepsLongLikeIterator[StepsLongIterator](_underlying) {
 // Value class adapters //
 //////////////////////////
 
-final class RichIteratorCanStep[A](private val underlying: Iterator[A]) extends AnyVal with MakesStepper[AnyStepper[A]] {
-  @inline def stepper: AnyStepper[A] = new StepsAnyIterator[A](underlying)
+final class RichIteratorCanStep[T](private val underlying: Iterator[T]) extends AnyVal with MakesSeqStepper[T] {
+  override def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = (ss match {
+    case ss if ss.ref             => new StepsAnyIterator[T](underlying)
+    case StepperShape.IntValue    => new StepsIntIterator   (underlying.asInstanceOf[Iterator[Int]])
+    case StepperShape.LongValue   => new StepsLongIterator  (underlying.asInstanceOf[Iterator[Long]])
+    case StepperShape.DoubleValue => new StepsDoubleIterator(underlying.asInstanceOf[Iterator[Double]])
+    case ss                       => super.stepper(ss)
+  }).asInstanceOf[S]
 }
-
-final class RichDoubleIteratorCanStep(private val underlying: Iterator[Double]) extends AnyVal with MakesStepper[DoubleStepper] {
-  @inline def stepper: DoubleStepper = new StepsDoubleIterator(underlying)
-}
-
-final class RichIntIteratorCanStep(private val underlying: Iterator[Int]) extends AnyVal with MakesStepper[IntStepper] {
-  @inline def stepper: IntStepper = new StepsIntIterator(underlying)
-}
-
-final class RichLongIteratorCanStep(private val underlying: Iterator[Long]) extends AnyVal with MakesStepper[LongStepper] {
-  @inline def stepper: LongStepper = new StepsLongIterator(underlying)
-}
-

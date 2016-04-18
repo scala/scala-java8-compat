@@ -564,41 +564,64 @@ object Stepper {
     case _ => new OfLongSpliterator(sp)
   }
 
-  /* These adapter classes can wrap an AnyStepper of a small numeric type into the appropriately widened
-   * primitive Stepper type. This provides a basis for more efficient stream processing on unboxed values
-   * provided that the original source of the data is already boxed. In other cases the widening conversion
-   * should always be performed directly on the original unboxed values in a custom Stepper implementation
-   * (see for example StepsWidenedByteArray). */
+  /* These adapter classes can wrap an AnyStepper of anumeric type into a possibly widened primitive Stepper type.
+   * This provides a basis for more efficient stream processing on unboxed values provided that the original source
+   * of the data is boxed. In other cases native implementations of the primitive stepper types should be provided
+   * (see for example StepsIntArray and StepsWidenedByteArray). */
 
-  private[java8] class WideningByteStepper(st: AnyStepper[Byte]) extends IntStepper {
+  private[java8] class UnboxingDoubleStepper(st: AnyStepper[Double]) extends DoubleStepper {
+    def hasNext(): Boolean = st.hasNext()
+    def nextDouble(): Double = st.next()
+    def characteristics(): Int = st.characteristics()
+    def estimateSize(): Long = st.estimateSize()
+    def substep(): DoubleStepper = new UnboxingDoubleStepper(st.substep())
+  }
+
+  private[java8] class UnboxingIntStepper(st: AnyStepper[Int]) extends IntStepper {
+    def hasNext(): Boolean = st.hasNext()
+    def nextInt(): Int = st.next()
+    def characteristics(): Int = st.characteristics()
+    def estimateSize(): Long = st.estimateSize()
+    def substep(): IntStepper = new UnboxingIntStepper(st.substep())
+  }
+
+  private[java8] class UnboxingLongStepper(st: AnyStepper[Long]) extends LongStepper {
+    def hasNext(): Boolean = st.hasNext()
+    def nextLong(): Long = st.next()
+    def characteristics(): Int = st.characteristics()
+    def estimateSize(): Long = st.estimateSize()
+    def substep(): LongStepper = new UnboxingLongStepper(st.substep())
+  }
+
+  private[java8] class UnboxingByteStepper(st: AnyStepper[Byte]) extends IntStepper {
     def hasNext(): Boolean = st.hasNext()
     def nextInt(): Int = st.next()
     def characteristics(): Int = st.characteristics() | NonNull
     def estimateSize(): Long = st.estimateSize()
-    def substep(): IntStepper = new WideningByteStepper(st.substep())
+    def substep(): IntStepper = new UnboxingByteStepper(st.substep())
   }
 
-  private[java8] class WideningCharStepper(st: AnyStepper[Char]) extends IntStepper {
+  private[java8] class UnboxingCharStepper(st: AnyStepper[Char]) extends IntStepper {
     def hasNext(): Boolean = st.hasNext()
     def nextInt(): Int = st.next()
     def characteristics(): Int = st.characteristics() | NonNull
     def estimateSize(): Long = st.estimateSize()
-    def substep(): IntStepper = new WideningCharStepper(st.substep())
+    def substep(): IntStepper = new UnboxingCharStepper(st.substep())
   }
 
-  private[java8] class WideningShortStepper(st: AnyStepper[Short]) extends IntStepper {
+  private[java8] class UnboxingShortStepper(st: AnyStepper[Short]) extends IntStepper {
     def hasNext(): Boolean = st.hasNext()
     def nextInt(): Int = st.next()
     def characteristics(): Int = st.characteristics() | NonNull
     def estimateSize(): Long = st.estimateSize()
-    def substep(): IntStepper = new WideningShortStepper(st.substep())
+    def substep(): IntStepper = new UnboxingShortStepper(st.substep())
   }
 
-  private[java8] class WideningFloatStepper(st: AnyStepper[Float]) extends DoubleStepper {
+  private[java8] class UnboxingFloatStepper(st: AnyStepper[Float]) extends DoubleStepper {
     def hasNext(): Boolean = st.hasNext()
     def nextDouble(): Double = st.next()
     def characteristics(): Int = st.characteristics() | NonNull
     def estimateSize(): Long = st.estimateSize()
-    def substep(): DoubleStepper = new WideningFloatStepper(st.substep())
+    def substep(): DoubleStepper = new UnboxingFloatStepper(st.substep())
   }
 }

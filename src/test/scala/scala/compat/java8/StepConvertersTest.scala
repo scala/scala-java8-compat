@@ -324,7 +324,7 @@ class StepConvertersTest {
 
   @Test
   def comprehensivelyInt() {
-    implicit val spec = SpecCheck(_.isInstanceOf[IntStepper])
+    implicit val spec = SpecCheck(_.isInstanceOf[IntStepper], x => s"$x should be an IntStepper")
 
     // Int-specific tests
     good( co.BitSet(42).stepper )
@@ -585,7 +585,7 @@ class StepConvertersTest {
 
   @Test
   def comprehensivelySpecific() {
-    implicit val spec = SpecCheck(_.isInstanceOf[AnyStepper[_]])
+    implicit val spec = SpecCheck(_.isInstanceOf[IntStepper], x => s"$x should be an IntStepper")
 
     good( ci.NumericRange(277: Short, 279: Short, 1: Short).stepper )
     _eh_( ci.PagedSeq.fromLines(Array("salmon").iterator).stepper )

@@ -53,16 +53,17 @@ extends StepsIntLikeSliced[Array[Long], StepsIntBitSet](_underlying, _i0, _iN) {
 // Value class adapter //
 /////////////////////////
 
-final class RichBitSetCanStep(private val underlying: collection.BitSet) extends AnyVal with MakesStepper[IntStepper with EfficientSubstep] {
-  def stepper: IntStepper with EfficientSubstep = {
+final class RichBitSetCanStep(private val underlying: collection.BitSet) extends AnyVal with MakesParStepper[Int] {
+  override def stepper[S <: Stepper[_]](implicit ss: StepperShape[Int, S]) = {
     val bits: Array[Long] = underlying match {
       case m: collection.mutable.BitSet => CollectionInternals.getBitSetInternals(m)
       case n: collection.immutable.BitSet.BitSetN => RichBitSetCanStep.reflectInternalsN(n)
       case x => x.toBitMask
     }
-    new StepsIntBitSet(bits, 0, math.min(bits.length*64L, Int.MaxValue).toInt)
+    new StepsIntBitSet(bits, 0, math.min(bits.length*64L, Int.MaxValue).toInt).asInstanceOf[S with EfficientSubstep]
   }
 }
+
 private[java8] object RichBitSetCanStep {
   private val reflector = classOf[collection.immutable.BitSet.BitSetN].getMethod("elems")
   def reflectInternalsN(bsn: collection.immutable.BitSet.BitSetN): Array[Long] = reflector.invoke(bsn).asInstanceOf[Array[Long]]

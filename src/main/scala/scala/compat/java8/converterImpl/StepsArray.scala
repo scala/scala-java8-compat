@@ -17,18 +17,6 @@ extends StepsLikeIndexed[A, StepsObjectArray[A]](_i0, _iN) {
   def semiclone(half: Int) = new StepsObjectArray[A](underlying, i0, half)
 }
 
-private[java8] class StepsAnyArray[A](underlying: Array[A], _i0: Int, _iN: Int)
-extends StepsLikeIndexed[A, StepsAnyArray[A]](_i0, _iN) {
-  def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
-  def semiclone(half: Int) = new StepsAnyArray[A](underlying, i0, half)
-}
-
-private[java8] class StepsUnitArray(underlying: Array[Unit], _i0: Int, _iN: Int)
-extends StepsLikeIndexed[Unit, StepsUnitArray](_i0, _iN) {
-  def next() = if (hasNext()) { val j = i0; i0 += 1; () } else throwNSEE
-  def semiclone(half: Int) = new StepsUnitArray(underlying, i0, half)
-}
-
 private[java8] class StepsBoxedBooleanArray(underlying: Array[Boolean], _i0: Int, _iN: Int)
 extends StepsLikeIndexed[Boolean, StepsBoxedBooleanArray](_i0, _iN) {
   def next() = if (hasNext()) { val j = i0; i0 += 1; underlying(j) } else throwNSEE
@@ -81,46 +69,19 @@ extends StepsLongLikeIndexed[StepsLongArray](_i0, _iN) {
 // Value class adapters //
 //////////////////////////
 
-final class RichArrayAnyCanStep[A](private val underlying: Array[A]) extends AnyVal with MakesStepper[AnyStepper[A] with EfficientSubstep] {
-  @inline def stepper: AnyStepper[A] with EfficientSubstep = new StepsAnyArray[A](underlying, 0, underlying.length)
-}
-
-final class RichArrayObjectCanStep[A <: Object](private val underlying: Array[A]) extends AnyVal with MakesStepper[AnyStepper[A] with EfficientSubstep] {
-  @inline def stepper: AnyStepper[A] with EfficientSubstep = new StepsObjectArray[A](underlying, 0, underlying.length)
-}
-
-final class RichArrayUnitCanStep(private val underlying: Array[Unit]) extends AnyVal with MakesStepper[AnyStepper[Unit] with EfficientSubstep] {
-  @inline def stepper: AnyStepper[Unit] with EfficientSubstep = new StepsUnitArray(underlying, 0, underlying.length)
-}
-
-final class RichArrayBooleanCanStep(private val underlying: Array[Boolean]) extends AnyVal with MakesStepper[AnyStepper[Boolean] with EfficientSubstep] {
-  @inline def stepper: AnyStepper[Boolean] with EfficientSubstep = new StepsBoxedBooleanArray(underlying, 0, underlying.length)
-}
-
-final class RichArrayByteCanStep(private val underlying: Array[Byte]) extends AnyVal with MakesStepper[IntStepper with EfficientSubstep] {
-  @inline def stepper: IntStepper with EfficientSubstep = new StepsWidenedByteArray(underlying, 0, underlying.length)
-}
-
-final class RichArrayCharCanStep(private val underlying: Array[Char]) extends AnyVal with MakesStepper[IntStepper with EfficientSubstep] {
-  @inline def stepper: IntStepper with EfficientSubstep = new StepsWidenedCharArray(underlying, 0, underlying.length)
-}
-
-final class RichArrayShortCanStep(private val underlying: Array[Short]) extends AnyVal with MakesStepper[IntStepper with EfficientSubstep] {
-  @inline def stepper: IntStepper with EfficientSubstep = new StepsWidenedShortArray(underlying, 0, underlying.length)
-}
-
-final class RichArrayFloatCanStep(private val underlying: Array[Float]) extends AnyVal with MakesStepper[DoubleStepper with EfficientSubstep] {
-  @inline def stepper: DoubleStepper with EfficientSubstep = new StepsWidenedFloatArray(underlying, 0, underlying.length)
-}
-
-final class RichArrayDoubleCanStep(private val underlying: Array[Double]) extends AnyVal with MakesStepper[DoubleStepper with EfficientSubstep] {
-  @inline def stepper: DoubleStepper with EfficientSubstep = new StepsDoubleArray(underlying, 0, underlying.length)
-}
-
-final class RichArrayIntCanStep(private val underlying: Array[Int]) extends AnyVal with MakesStepper[IntStepper with EfficientSubstep] {
-  @inline def stepper: IntStepper with EfficientSubstep = new StepsIntArray(underlying, 0, underlying.length)
-}
-
-final class RichArrayLongCanStep(private val underlying: Array[Long]) extends AnyVal with MakesStepper[LongStepper with EfficientSubstep] {
-  @inline def stepper: LongStepper with EfficientSubstep = new StepsLongArray(underlying, 0, underlying.length)
+final class RichArrayCanStep[T](private val underlying: Array[T]) extends AnyVal with MakesParStepper[T] {
+  override def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = (ss match {
+    case ss if ss.ref             =>
+      if(underlying.isInstanceOf[Array[Boolean]])
+                                     new StepsBoxedBooleanArray  (underlying.asInstanceOf[Array[Boolean]], 0, underlying.length)
+      else                           new StepsObjectArray[AnyRef](underlying.asInstanceOf[Array[AnyRef ]], 0, underlying.length)
+    case StepperShape.IntValue    => new StepsIntArray           (underlying.asInstanceOf[Array[Int    ]], 0, underlying.length)
+    case StepperShape.LongValue   => new StepsLongArray          (underlying.asInstanceOf[Array[Long   ]], 0, underlying.length)
+    case StepperShape.DoubleValue => new StepsDoubleArray        (underlying.asInstanceOf[Array[Double ]], 0, underlying.length)
+    case StepperShape.ByteValue   => new StepsWidenedByteArray   (underlying.asInstanceOf[Array[Byte   ]], 0, underlying.length)
+    case StepperShape.ShortValue  => new StepsWidenedShortArray  (underlying.asInstanceOf[Array[Short  ]], 0, underlying.length)
+    case StepperShape.CharValue   => new StepsWidenedCharArray   (underlying.asInstanceOf[Array[Char   ]], 0, underlying.length)
+    case StepperShape.FloatValue  => new StepsWidenedFloatArray  (underlying.asInstanceOf[Array[Float  ]], 0, underlying.length)
+    case ss                       => super.stepper(ss)
+  }).asInstanceOf[S with EfficientSubstep]
 }

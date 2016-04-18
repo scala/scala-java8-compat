@@ -6,6 +6,7 @@ import scala.collection.generic.CanBuildFrom
 import scala.compat.java8.StreamConverters._
 import scala.compat.java8.collectionImpl._
 import scala.compat.java8.converterImpl._
+import scala.compat.java8.{MakesSequentialStream, MakesParallelStream}
 
 package object generate {
   private def myInty(n: Int) = 0 until n
@@ -25,42 +26,42 @@ package object generate {
   }
 
   object Pstep {
-    def i[CC](cc: CC)(implicit steppize: CC => MakesStepper[IntStepper with EfficientSubstep]): IntStepper =
+    def i[CC](cc: CC)(implicit steppize: CC => MakesStepper[Int, EfficientSubstep]): IntStepper =
       steppize(cc).stepper
-    def s[CC](cc: CC)(implicit steppize: CC => MakesStepper[AnyStepper[String] with EfficientSubstep]): AnyStepper[String] =
+    def s[CC](cc: CC)(implicit steppize: CC => MakesStepper[String, EfficientSubstep]): AnyStepper[String] =
       steppize(cc).stepper
   }
 
   object Sstep {
-    def i[CC](cc: CC)(implicit steppize: CC => MakesStepper[IntStepper]): IntStepper =
+    def i[CC](cc: CC)(implicit steppize: CC => MakesStepper[Int, Any]): IntStepper =
       steppize(cc).stepper
-    def s[CC](cc: CC)(implicit steppize: CC => MakesStepper[AnyStepper[String]]): AnyStepper[String] =
+    def s[CC](cc: CC)(implicit steppize: CC => MakesStepper[String, Any]): AnyStepper[String] =
       steppize(cc).stepper
   }
 
   object PsStream {
-    def i[CC](cc: CC)(implicit steppize: CC => MakesStepper[IntStepper with EfficientSubstep]): IntStream =
+    def i[CC](cc: CC)(implicit steppize: CC => MakesStepper[Int, EfficientSubstep]): IntStream =
       steppize(cc).stepper.parStream
-    def s[CC](cc: CC)(implicit steppize: CC => MakesStepper[AnyStepper[String] with EfficientSubstep]): Stream[String] =
+    def s[CC](cc: CC)(implicit steppize: CC => MakesStepper[String, EfficientSubstep]): Stream[String] =
       steppize(cc).stepper.parStream
   }
 
   object SsStream {
-    def i[CC](cc: CC)(implicit steppize: CC => MakesStepper[IntStepper]): IntStream =
+    def i[CC](cc: CC)(implicit steppize: CC => MakesStepper[Int, Any]): IntStream =
       steppize(cc).stepper.seqStream
-    def s[CC](cc: CC)(implicit steppize: CC => MakesStepper[AnyStepper[String]]): Stream[String] =
+    def s[CC](cc: CC)(implicit steppize: CC => MakesStepper[String, Any]): Stream[String] =
       steppize(cc).stepper.seqStream
   }
 
   object Sstream {
-    def i[CC](cc: CC)(implicit streamize: CC => MakesSequentialStream[java.lang.Integer, IntStream]) =
+    def i[CC](cc: CC)(implicit streamize: CC => MakesSequentialStream[Int, IntStream]) =
       streamize(cc).seqStream
     def s[CC](cc: CC)(implicit streamize: CC => MakesSequentialStream[String, Stream[String]]) =
       streamize(cc).seqStream
   }
 
   object Pstream {
-    def i[CC](cc: CC)(implicit streamize: CC => MakesParallelStream[java.lang.Integer, IntStream]) =
+    def i[CC](cc: CC)(implicit streamize: CC => MakesParallelStream[Int, IntStream]) =
       streamize(cc).parStream
     def s[CC](cc: CC)(implicit streamize: CC => MakesParallelStream[String, Stream[String]]) =
       streamize(cc).parStream
@@ -78,14 +79,14 @@ package object generate {
     // Iterator
     def iI(j: Int)(implicit x: CC[Int] => Iterator[Int]) = x(cI(j))
     // Steppers (second letter--s = sequential, p = parallel)
-    def tsI(j: Int)(implicit x: CC[Int] => MakesStepper[IntStepper]) = Sstep i cI(j)
-    def tpI(j: Int)(implicit x: CC[Int] => MakesStepper[IntStepper with EfficientSubstep]) = Pstep i cI(j)
+    def tsI(j: Int)(implicit x: CC[Int] => MakesStepper[Int, Any]) = Sstep i cI(j)
+    def tpI(j: Int)(implicit x: CC[Int] => MakesStepper[Int, EfficientSubstep]) = Pstep i cI(j)
     // Streams
-    def ssI(j: Int)(implicit x: CC[Int] => MakesSequentialStream[java.lang.Integer, IntStream]) = Sstream i cI(j)
-    def spI(j: Int)(implicit x: CC[Int] => MakesParallelStream[java.lang.Integer, IntStream]) = Pstream i cI(j)
+    def ssI(j: Int)(implicit x: CC[Int] => MakesSequentialStream[Int, IntStream]) = Sstream i cI(j)
+    def spI(j: Int)(implicit x: CC[Int] => MakesParallelStream[Int, IntStream]) = Pstream i cI(j)
     // Streams via steppers
-    def zsI(j: Int)(implicit x: CC[Int] => MakesStepper[IntStepper]) = SsStream i cI(j)
-    def zpI(j: Int)(implicit x: CC[Int] => MakesStepper[IntStepper with EfficientSubstep]) = PsStream i cI(j)
+    def zsI(j: Int)(implicit x: CC[Int] => MakesStepper[Int, Any]) = SsStream i cI(j)
+    def zpI(j: Int)(implicit x: CC[Int] => MakesStepper[Int, EfficientSubstep]) = PsStream i cI(j)
   }
 
   trait StringThingsOf[CC[_]] extends GenThingsOf[CC] {
@@ -95,14 +96,14 @@ package object generate {
     // Iterator
     def iS(j: Int)(implicit x: CC[String] => Iterator[String]) = x(cS(j))
     // Steppers (second letter--s = sequential, p = parallel)
-    def tsS(j: Int)(implicit x: CC[String] => MakesStepper[AnyStepper[String]]) = Sstep s cS(j)
-    def tpS(j: Int)(implicit x: CC[String] => MakesStepper[AnyStepper[String] with EfficientSubstep]) = Pstep s cS(j)
+    def tsS(j: Int)(implicit x: CC[String] => MakesStepper[String, Any]) = Sstep s cS(j)
+    def tpS(j: Int)(implicit x: CC[String] => MakesStepper[String, EfficientSubstep]) = Pstep s cS(j)
     // Streams
     def ssS(j: Int)(implicit x: CC[String] => MakesSequentialStream[String, Stream[String]]) = Sstream s cS(j)
     def spS(j: Int)(implicit x: CC[String] => MakesParallelStream[String, Stream[String]]) = Pstream s cS(j)
     // Streams via steppers
-    def zsS(j: Int)(implicit x: CC[String] => MakesStepper[AnyStepper[String]]) = SsStream s cS(j)
-    def zpS(j: Int)(implicit x: CC[String] => MakesStepper[AnyStepper[String] with EfficientSubstep]) = PsStream s cS(j)
+    def zsS(j: Int)(implicit x: CC[String] => MakesStepper[String, Any]) = SsStream s cS(j)
+    def zpS(j: Int)(implicit x: CC[String] => MakesStepper[String, EfficientSubstep]) = PsStream s cS(j)
   }
 
   trait ThingsOf[CC[_]] extends IntThingsOf[CC] with StringThingsOf[CC] {}
@@ -158,16 +159,16 @@ package object generate {
 
   // Streams from ArrayList (Java)
 
-  implicit val getsParStreamFromArrayListInt: (java.util.ArrayList[Int] => MakesParallelStream[java.lang.Integer, IntStream]) = ali => {
-    new MakesParallelStream[java.lang.Integer, IntStream] {
+  implicit val getsParStreamFromArrayListInt: (java.util.ArrayList[Int] => MakesParallelStream[Int, IntStream]) = ali => {
+    new MakesParallelStream[Int, IntStream] {
       def parStream: IntStream = ali.
         asInstanceOf[java.util.ArrayList[java.lang.Integer]].
         parallelStream.parallel.
         mapToInt(new java.util.function.ToIntFunction[java.lang.Integer]{ def applyAsInt(i: java.lang.Integer) = i.intValue })
     }
   }
-  implicit val getsSeqStreamFromArrayListInt: (java.util.ArrayList[Int] => MakesSequentialStream[java.lang.Integer, IntStream]) = ali => {
-    new MakesSequentialStream[java.lang.Integer, IntStream] {
+  implicit val getsSeqStreamFromArrayListInt: (java.util.ArrayList[Int] => MakesSequentialStream[Int, IntStream]) = ali => {
+    new MakesSequentialStream[Int, IntStream] {
       def seqStream: IntStream = ali.
         asInstanceOf[java.util.ArrayList[java.lang.Integer]].
         stream().
@@ -187,16 +188,16 @@ package object generate {
 
   // Streams from LinkedList (Java)
 
-  implicit val getsParStreamFromLinkedListInt: (java.util.LinkedList[Int] => MakesParallelStream[java.lang.Integer, IntStream]) = ali => {
-    new MakesParallelStream[java.lang.Integer, IntStream] {
+  implicit val getsParStreamFromLinkedListInt: (java.util.LinkedList[Int] => MakesParallelStream[Int, IntStream]) = ali => {
+    new MakesParallelStream[Int, IntStream] {
       def parStream: IntStream = ali.
         asInstanceOf[java.util.LinkedList[java.lang.Integer]].
         parallelStream.parallel.
         mapToInt(new java.util.function.ToIntFunction[java.lang.Integer]{ def applyAsInt(i: java.lang.Integer) = i.intValue })
     }
   }
-  implicit val getsSeqStreamFromLinkedListInt: (java.util.LinkedList[Int] => MakesSequentialStream[java.lang.Integer, IntStream]) = ali => {
-    new MakesSequentialStream[java.lang.Integer, IntStream] {
+  implicit val getsSeqStreamFromLinkedListInt: (java.util.LinkedList[Int] => MakesSequentialStream[Int, IntStream]) = ali => {
+    new MakesSequentialStream[Int, IntStream] {
       def seqStream: IntStream = ali.
         asInstanceOf[java.util.LinkedList[java.lang.Integer]].
         stream().

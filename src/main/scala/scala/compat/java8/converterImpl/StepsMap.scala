@@ -10,32 +10,22 @@ import Stepper._
 // Generic maps defer to the iterator steppers if a more precise type cannot be found via pattern matching
 // TODO: implement pattern matching
 
-final class RichMapCanStep[K, V](private val underlying: collection.Map[K, V]) extends AnyVal with MakesKeyStepper[AnyStepper[K]] with MakesValueStepper[AnyStepper[V]] {
+final class RichMapCanStep[K, V](private val underlying: collection.Map[K, V]) extends AnyVal with MakesKeyValueSeqStepper[K, V] {
   // No generic stepper because RichIterableCanStep will get that anyway, and we don't pattern match here
-  def keyStepper: AnyStepper[K] = new StepsAnyIterator[K](underlying.keysIterator)
-  def valueStepper: AnyStepper[V] = new StepsAnyIterator[V](underlying.valuesIterator)
-}
 
-final class RichDoubleKeyMapCanStep[V](private val underlying: collection.Map[Double, V]) extends AnyVal with MakesKeyStepper[DoubleStepper] {
-  def keyStepper: DoubleStepper = new StepsDoubleIterator(underlying.keysIterator)
-}
+  override def keyStepper[S <: Stepper[_]](implicit ss: StepperShape[K, S]) = (ss match {
+    case ss if ss.ref             => new StepsAnyIterator   (underlying.keysIterator)
+    case StepperShape.IntValue    => new StepsIntIterator   (underlying.keysIterator.asInstanceOf[Iterator[Int]])
+    case StepperShape.LongValue   => new StepsLongIterator  (underlying.keysIterator.asInstanceOf[Iterator[Long]])
+    case StepperShape.DoubleValue => new StepsDoubleIterator(underlying.keysIterator.asInstanceOf[Iterator[Double]])
+    case ss                       => super.keyStepper(ss)
+  }).asInstanceOf[S]
 
-final class RichDoubleValueMapCanStep[K](private val underlying: collection.Map[K, Double]) extends AnyVal with MakesValueStepper[DoubleStepper] {
-  def valueStepper: DoubleStepper = new StepsDoubleIterator(underlying.valuesIterator)
-}
-
-final class RichIntKeyMapCanStep[V](private val underlying: collection.Map[Int, V]) extends AnyVal with MakesKeyStepper[IntStepper] {
-  def keyStepper: IntStepper = new StepsIntIterator(underlying.keysIterator)
-}
-
-final class RichIntValueMapCanStep[K](private val underlying: collection.Map[K, Int]) extends AnyVal with MakesValueStepper[IntStepper] {
-  def valueStepper: IntStepper = new StepsIntIterator(underlying.valuesIterator)
-}
-
-final class RichLongKeyMapCanStep[V](private val underlying: collection.Map[Long, V]) extends AnyVal with MakesKeyStepper[LongStepper] {
-  def keyStepper: LongStepper = new StepsLongIterator(underlying.keysIterator)
-}
-
-final class RichLongValueMapCanStep[K](private val underlying: collection.Map[K, Long]) extends AnyVal with MakesValueStepper[LongStepper] {
-  def valueStepper: LongStepper = new StepsLongIterator(underlying.valuesIterator)
+  override def valueStepper[S <: Stepper[_]](implicit ss: StepperShape[V, S]) = (ss match {
+    case ss if ss.ref             => new StepsAnyIterator   (underlying.valuesIterator)
+    case StepperShape.IntValue    => new StepsIntIterator   (underlying.valuesIterator.asInstanceOf[Iterator[Int]])
+    case StepperShape.LongValue   => new StepsLongIterator  (underlying.valuesIterator.asInstanceOf[Iterator[Long]])
+    case StepperShape.DoubleValue => new StepsDoubleIterator(underlying.valuesIterator.asInstanceOf[Iterator[Double]])
+    case ss                       => super.valueStepper(ss)
+  }).asInstanceOf[S]
 }

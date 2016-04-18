@@ -39,18 +39,16 @@ extends StepsLongLikeIndexed[StepsLongNumericRange](_i0, _iN) {
 // Value class adapters //
 //////////////////////////
 
-final class RichRangeCanStep(private val underlying: Range) extends AnyVal with MakesStepper[IntStepper with EfficientSubstep] {
-  @inline def stepper: IntStepper with EfficientSubstep = new StepsIntRange(underlying, 0, underlying.length)
-}  
-
-final class RichNumericRangeCanStep[T](private val underlying: collection.immutable.NumericRange[T]) extends AnyVal with MakesStepper[AnyStepper[T] with EfficientSubstep] {
-  @inline def stepper: AnyStepper[T] with EfficientSubstep = new StepsAnyNumericRange[T](underlying, 0, underlying.length)
+final class RichRangeCanStep[T](private val underlying: Range) extends AnyVal with MakesParStepper[Int] {
+  override def stepper[S <: Stepper[_]](implicit ss: StepperShape[Int, S]) =
+    new StepsIntRange(underlying, 0, underlying.length).asInstanceOf[S with EfficientSubstep]
 }
 
-final class RichIntNumericRangeCanStep(private val underlying: collection.immutable.NumericRange[Int]) extends AnyVal with MakesStepper[IntStepper with EfficientSubstep] {
-  @inline def stepper: IntStepper with EfficientSubstep = new StepsIntNumericRange(underlying, 0, underlying.length)
-}
-
-final class RichLongNumericRangeCanStep(private val underlying: collection.immutable.NumericRange[Long]) extends AnyVal with MakesStepper[LongStepper with EfficientSubstep] {
-  @inline def stepper: LongStepper with EfficientSubstep = new StepsLongNumericRange(underlying, 0, underlying.length)
+final class RichNumericRangeCanStep[T](private val underlying: collection.immutable.NumericRange[T]) extends AnyVal with MakesParStepper[T] {
+  override def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = (ss match {
+    case ss if ss.ref             => new StepsAnyNumericRange[T](underlying,                                                       0, underlying.length)
+    case StepperShape.IntValue    => new StepsIntNumericRange   (underlying.asInstanceOf[collection.immutable.NumericRange[Int]],  0, underlying.length)
+    case StepperShape.LongValue   => new StepsLongNumericRange  (underlying.asInstanceOf[collection.immutable.NumericRange[Long]], 0, underlying.length)
+    case ss                       => super.stepper(ss)
+  }).asInstanceOf[S with EfficientSubstep]
 }
