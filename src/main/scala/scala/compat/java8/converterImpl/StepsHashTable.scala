@@ -1,6 +1,7 @@
 package scala.compat.java8.converterImpl
 
 import language.implicitConversions
+import scala.annotation.switch
 
 import scala.compat.java8.collectionImpl._
 import scala.compat.java8.runtime._
@@ -140,62 +141,58 @@ extends StepsLongLikeGapped[StepsLongLinkedHashTableValue[K]](_underlying.asInst
 
 // Steppers for entries stored in DefaultEntry HashEntry
 
-final class RichDefaultHashTableCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, V]]) extends AnyVal with MakesKeyValueParStepper[K, V] with MakesParStepper[(K, V)] {
-  override def stepper[S <: Stepper[_]](implicit ss: StepperShape[(K, V), S]) = {
+final class RichDefaultHashTableCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, V]]) extends AnyVal with MakesKeyValueStepper[K, V, EfficientSubstep] with MakesStepper[(K, V), EfficientSubstep] {
+  def stepper[S <: Stepper[_]](implicit ss: StepperShape[(K, V), S]) = {
     val tbl = CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, V]](underlying)
     new StepsAnyDefaultHashTable(tbl, 0, tbl.length).asInstanceOf[S with EfficientSubstep]
   }
 
-  override def keyStepper[S <: Stepper[_]](implicit ss: StepperShape[K, S]) = {
+  def keyStepper[S <: Stepper[_]](implicit ss: StepperShape[K, S]) = {
     val tbl = CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, V]](underlying)
-    (ss match {
-      case ss if ss.ref             => new StepsAnyHashTableKey   (tbl.asInstanceOf[Array[collection.mutable.HashEntry[K,      _]]], 0, tbl.length)
+    ((ss.shape: @switch) match {
       case StepperShape.IntValue    => new StepsIntHashTableKey   (tbl.asInstanceOf[Array[collection.mutable.HashEntry[Int,    _]]], 0, tbl.length)
       case StepperShape.LongValue   => new StepsLongHashTableKey  (tbl.asInstanceOf[Array[collection.mutable.HashEntry[Long,   _]]], 0, tbl.length)
       case StepperShape.DoubleValue => new StepsDoubleHashTableKey(tbl.asInstanceOf[Array[collection.mutable.HashEntry[Double, _]]], 0, tbl.length)
-      case ss                       => super.keyStepper(ss)
+      case _            => ss.parUnbox(new StepsAnyHashTableKey   (tbl.asInstanceOf[Array[collection.mutable.HashEntry[K,      _]]], 0, tbl.length))
     }).asInstanceOf[S with EfficientSubstep]
   }
 
-  override def valueStepper[S <: Stepper[_]](implicit ss: StepperShape[V, S]) = {
+  def valueStepper[S <: Stepper[_]](implicit ss: StepperShape[V, S]) = {
     val tbl = CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, V]](underlying)
-    (ss match {
-      case ss if ss.ref             => new StepsAnyDefaultHashTableValue   (tbl,                                                                                                  0, tbl.length)
+    ((ss.shape: @switch) match {
       case StepperShape.IntValue    => new StepsIntDefaultHashTableValue   (tbl.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, Int   ]]]], 0, tbl.length)
       case StepperShape.LongValue   => new StepsLongDefaultHashTableValue  (tbl.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, Long  ]]]], 0, tbl.length)
       case StepperShape.DoubleValue => new StepsDoubleDefaultHashTableValue(tbl.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, Double]]]], 0, tbl.length)
-      case ss                       => super.valueStepper(ss)
+      case _            => ss.parUnbox(new StepsAnyDefaultHashTableValue   (tbl,                                                                                                  0, tbl.length))
     }).asInstanceOf[S with EfficientSubstep]
   }
 }
 
 // Steppers for entries stored in LinkedEntry HashEntry
 
-final class RichLinkedHashTableCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, V]]) extends AnyVal with MakesKeyValueParStepper[K, V] with MakesParStepper[(K, V)] {
-  override def stepper[S <: Stepper[_]](implicit ss: StepperShape[(K, V), S]) = {
+final class RichLinkedHashTableCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, V]]) extends AnyVal with MakesKeyValueStepper[K, V, EfficientSubstep] with MakesStepper[(K, V), EfficientSubstep] {
+  def stepper[S <: Stepper[_]](implicit ss: StepperShape[(K, V), S]) = {
     val tbl = CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, V]](underlying)
     new StepsAnyLinkedHashTable(tbl, 0, tbl.length).asInstanceOf[S with EfficientSubstep]
   }
 
-  override def keyStepper[S <: Stepper[_]](implicit ss: StepperShape[K, S]) = {
+  def keyStepper[S <: Stepper[_]](implicit ss: StepperShape[K, S]) = {
     val tbl = CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, V]](underlying)
-    (ss match {
-      case ss if ss.ref             => new StepsAnyHashTableKey   (tbl.asInstanceOf[Array[collection.mutable.HashEntry[K,      _]]], 0, tbl.length)
+    ((ss.shape: @switch) match {
       case StepperShape.IntValue    => new StepsIntHashTableKey   (tbl.asInstanceOf[Array[collection.mutable.HashEntry[Int,    _]]], 0, tbl.length)
       case StepperShape.LongValue   => new StepsLongHashTableKey  (tbl.asInstanceOf[Array[collection.mutable.HashEntry[Long,   _]]], 0, tbl.length)
       case StepperShape.DoubleValue => new StepsDoubleHashTableKey(tbl.asInstanceOf[Array[collection.mutable.HashEntry[Double, _]]], 0, tbl.length)
-      case ss                       => super.keyStepper(ss)
+      case _            => ss.parUnbox(new StepsAnyHashTableKey   (tbl.asInstanceOf[Array[collection.mutable.HashEntry[K,      _]]], 0, tbl.length))
     }).asInstanceOf[S with EfficientSubstep]
   }
 
-  override def valueStepper[S <: Stepper[_]](implicit ss: StepperShape[V, S]) = {
+  def valueStepper[S <: Stepper[_]](implicit ss: StepperShape[V, S]) = {
     val tbl = CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, V]](underlying)
-    (ss match {
-      case ss if ss.ref             => new StepsAnyLinkedHashTableValue   (tbl,                                                                                                  0, tbl.length)
+    ((ss.shape: @switch) match {
       case StepperShape.IntValue    => new StepsIntLinkedHashTableValue   (tbl.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, Int   ]]]], 0, tbl.length)
       case StepperShape.LongValue   => new StepsLongLinkedHashTableValue  (tbl.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, Long  ]]]], 0, tbl.length)
       case StepperShape.DoubleValue => new StepsDoubleLinkedHashTableValue(tbl.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, Double]]]], 0, tbl.length)
-      case ss                       => super.valueStepper(ss)
+      case _            => ss.parUnbox(new StepsAnyLinkedHashTableValue   (tbl,                                                                                                  0, tbl.length))
     }).asInstanceOf[S with EfficientSubstep]
   }
 }

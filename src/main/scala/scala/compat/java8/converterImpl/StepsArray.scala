@@ -1,6 +1,7 @@
 package scala.compat.java8.converterImpl
 
 import language.implicitConversions
+import scala.annotation.switch
 
 import scala.compat.java8.collectionImpl._
 import scala.compat.java8.runtime._
@@ -69,9 +70,9 @@ extends StepsLongLikeIndexed[StepsLongArray](_i0, _iN) {
 // Value class adapters //
 //////////////////////////
 
-final class RichArrayCanStep[T](private val underlying: Array[T]) extends AnyVal with MakesParStepper[T] {
-  override def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = (ss match {
-    case ss if ss.ref             =>
+final class RichArrayCanStep[T](private val underlying: Array[T]) extends AnyVal with MakesStepper[T, EfficientSubstep] {
+  override def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = ((ss.shape: @switch) match {
+    case StepperShape.Reference =>
       if(underlying.isInstanceOf[Array[Boolean]])
                                      new StepsBoxedBooleanArray  (underlying.asInstanceOf[Array[Boolean]], 0, underlying.length)
       else                           new StepsObjectArray[AnyRef](underlying.asInstanceOf[Array[AnyRef ]], 0, underlying.length)
@@ -82,6 +83,5 @@ final class RichArrayCanStep[T](private val underlying: Array[T]) extends AnyVal
     case StepperShape.ShortValue  => new StepsWidenedShortArray  (underlying.asInstanceOf[Array[Short  ]], 0, underlying.length)
     case StepperShape.CharValue   => new StepsWidenedCharArray   (underlying.asInstanceOf[Array[Char   ]], 0, underlying.length)
     case StepperShape.FloatValue  => new StepsWidenedFloatArray  (underlying.asInstanceOf[Array[Float  ]], 0, underlying.length)
-    case ss                       => super.stepper(ss)
   }).asInstanceOf[S with EfficientSubstep]
 }

@@ -21,7 +21,7 @@ sealed trait StreamShape[T, S <: BaseStream[_, S]] {
   def fromKeyStepper  (mk: MakesKeyValueStepper[T, _, _], par: Boolean): S
   def fromValueStepper(mk: MakesKeyValueStepper[_, T, _], par: Boolean): S
 }
-object StreamShape extends StreamShapeLowPrio {
+object StreamShape extends StreamShapeLowPriority {
   // primitive
   implicit val IntValue =    intStreamShape[Int]
   implicit val LongValue =   longStreamShape[Long]
@@ -33,7 +33,7 @@ object StreamShape extends StreamShapeLowPrio {
   implicit val CharValue    = intStreamShape[Char]
   implicit val FloatValue   = doubleStreamShape[Float]
 }
-trait StreamShapeLowPrio {
+trait StreamShapeLowPriority {
   protected[this] abstract class BaseStreamShape[T, S <: BaseStream[_, S], St <: Stepper[_]](implicit ss: StepperShape[T, St]) extends StreamShape[T, S] {
     final def fromStepper     (mk: MakesStepper[T, _],            par: Boolean): S = stream(mk.stepper,      par)
     final def fromKeyStepper  (mk: MakesKeyValueStepper[T, _, _], par: Boolean): S = stream(mk.keyStepper,   par)

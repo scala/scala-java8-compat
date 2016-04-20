@@ -1,6 +1,7 @@
 package scala.compat.java8.converterImpl
 
 import language.implicitConversions
+import scala.annotation.switch
 
 import scala.compat.java8.collectionImpl._
 import scala.compat.java8.runtime._
@@ -39,12 +40,11 @@ extends StepsLongLikeIterator[StepsLongIterator](_underlying) {
 // Value class adapters //
 //////////////////////////
 
-final class RichIteratorCanStep[T](private val underlying: Iterator[T]) extends AnyVal with MakesSeqStepper[T] {
-  override def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = (ss match {
-    case ss if ss.ref             => new StepsAnyIterator[T](underlying)
+final class RichIteratorCanStep[T](private val underlying: Iterator[T]) extends AnyVal with MakesStepper[T, Any] {
+  def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = ((ss.shape: @switch) match {
     case StepperShape.IntValue    => new StepsIntIterator   (underlying.asInstanceOf[Iterator[Int]])
     case StepperShape.LongValue   => new StepsLongIterator  (underlying.asInstanceOf[Iterator[Long]])
     case StepperShape.DoubleValue => new StepsDoubleIterator(underlying.asInstanceOf[Iterator[Double]])
-    case ss                       => super.stepper(ss)
+    case _            => ss.seqUnbox(new StepsAnyIterator[T](underlying))
   }).asInstanceOf[S]
 }

@@ -1,6 +1,7 @@
 package scala.compat.java8.converterImpl
 
 import language.implicitConversions
+import scala.annotation.switch
 
 import scala.compat.java8.collectionImpl._
 import scala.compat.java8.runtime._
@@ -47,12 +48,11 @@ extends StepsLongWithTail[collection.LinearSeq[Long], StepsLongLinearSeq](_under
 // Value class adapters //
 //////////////////////////
 
-final class RichLinearSeqCanStep[T](private val underlying: collection.LinearSeq[T]) extends AnyVal with MakesSeqStepper[T] {
-  override def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = (ss match {
-    case ss if ss.ref             => new StepsAnyLinearSeq[T](underlying,                                            Long.MaxValue)
+final class RichLinearSeqCanStep[T](private val underlying: collection.LinearSeq[T]) extends AnyVal with MakesStepper[T, Any] {
+  def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = ((ss.shape: @switch) match {
     case StepperShape.IntValue    => new StepsIntLinearSeq   (underlying.asInstanceOf[collection.LinearSeq[Int]],    Long.MaxValue)
     case StepperShape.LongValue   => new StepsLongLinearSeq  (underlying.asInstanceOf[collection.LinearSeq[Long]],   Long.MaxValue)
     case StepperShape.DoubleValue => new StepsDoubleLinearSeq(underlying.asInstanceOf[collection.LinearSeq[Double]], Long.MaxValue)
-    case ss                       => super.stepper(ss)
+    case _            => ss.seqUnbox(new StepsAnyLinearSeq[T](underlying,                                            Long.MaxValue))
   }).asInstanceOf[S]
 }

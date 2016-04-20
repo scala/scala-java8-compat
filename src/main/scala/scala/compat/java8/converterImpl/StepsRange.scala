@@ -1,6 +1,7 @@
 package scala.compat.java8.converterImpl
 
 import language.implicitConversions
+import scala.annotation.switch
 
 import scala.compat.java8.collectionImpl._
 import scala.compat.java8.runtime._
@@ -39,16 +40,15 @@ extends StepsLongLikeIndexed[StepsLongNumericRange](_i0, _iN) {
 // Value class adapters //
 //////////////////////////
 
-final class RichRangeCanStep[T](private val underlying: Range) extends AnyVal with MakesParStepper[Int] {
-  override def stepper[S <: Stepper[_]](implicit ss: StepperShape[Int, S]) =
+final class RichRangeCanStep[T](private val underlying: Range) extends AnyVal with MakesStepper[Int, EfficientSubstep] {
+  def stepper[S <: Stepper[_]](implicit ss: StepperShape[Int, S]) =
     new StepsIntRange(underlying, 0, underlying.length).asInstanceOf[S with EfficientSubstep]
 }
 
-final class RichNumericRangeCanStep[T](private val underlying: collection.immutable.NumericRange[T]) extends AnyVal with MakesParStepper[T] {
-  override def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = (ss match {
-    case ss if ss.ref             => new StepsAnyNumericRange[T](underlying,                                                       0, underlying.length)
+final class RichNumericRangeCanStep[T](private val underlying: collection.immutable.NumericRange[T]) extends AnyVal with MakesStepper[T, EfficientSubstep] {
+  def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = ((ss.shape: @switch) match {
     case StepperShape.IntValue    => new StepsIntNumericRange   (underlying.asInstanceOf[collection.immutable.NumericRange[Int]],  0, underlying.length)
     case StepperShape.LongValue   => new StepsLongNumericRange  (underlying.asInstanceOf[collection.immutable.NumericRange[Long]], 0, underlying.length)
-    case ss                       => super.stepper(ss)
+    case _            => ss.parUnbox(new StepsAnyNumericRange[T](underlying,                                                       0, underlying.length))
   }).asInstanceOf[S with EfficientSubstep]
 }

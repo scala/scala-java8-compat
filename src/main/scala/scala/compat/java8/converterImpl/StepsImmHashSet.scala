@@ -1,6 +1,7 @@
 package scala.compat.java8.converterImpl
 
 import language.implicitConversions
+import scala.annotation.switch
 
 import scala.compat.java8.collectionImpl._
 import scala.compat.java8.runtime._
@@ -39,12 +40,11 @@ extends StepsLongLikeTrieIterator[StepsLongImmHashSet](_underlying, _N) {
 // Value class adapters //
 //////////////////////////
 
-final class RichImmHashSetCanStep[T](private val underlying: collection.immutable.HashSet[T]) extends AnyVal with MakesParStepper[T] {
-  override def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = (ss match {
-    case ss if ss.ref             => new StepsAnyImmHashSet[T](underlying.iterator,                                underlying.size)
+final class RichImmHashSetCanStep[T](private val underlying: collection.immutable.HashSet[T]) extends AnyVal with MakesStepper[T, EfficientSubstep] {
+  def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = ((ss.shape: @switch) match {
     case StepperShape.IntValue    => new StepsIntImmHashSet   (underlying.iterator.asInstanceOf[Iterator[Int]],    underlying.size)
     case StepperShape.LongValue   => new StepsLongImmHashSet  (underlying.iterator.asInstanceOf[Iterator[Long]],   underlying.size)
     case StepperShape.DoubleValue => new StepsDoubleImmHashSet(underlying.iterator.asInstanceOf[Iterator[Double]], underlying.size)
-    case ss                       => super.stepper(ss)
+    case _            => ss.parUnbox(new StepsAnyImmHashSet[T](underlying.iterator,                                underlying.size))
   }).asInstanceOf[S with EfficientSubstep]
 }

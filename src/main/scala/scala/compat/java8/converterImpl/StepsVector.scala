@@ -1,6 +1,7 @@
 package scala.compat.java8.converterImpl
 
 import language.implicitConversions
+import scala.annotation.switch
 
 import scala.compat.java8.collectionImpl._
 import scala.compat.java8.runtime._
@@ -134,12 +135,11 @@ with StepsVectorLike[Long] {
 // Value class adapters //
 //////////////////////////
 
-final class RichVectorCanStep[T](private val underlying: Vector[T]) extends AnyVal with MakesParStepper[T] {
-  override def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = (ss match {
-    case ss if ss.ref             => new StepsAnyVector[T](underlying,                              0, underlying.length)
+final class RichVectorCanStep[T](private val underlying: Vector[T]) extends AnyVal with MakesStepper[T, EfficientSubstep] {
+  def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = ((ss.shape: @switch) match {
     case StepperShape.IntValue    => new StepsIntVector   (underlying.asInstanceOf[Vector[Int]],    0, underlying.length)
     case StepperShape.LongValue   => new StepsLongVector  (underlying.asInstanceOf[Vector[Long]],   0, underlying.length)
     case StepperShape.DoubleValue => new StepsDoubleVector(underlying.asInstanceOf[Vector[Double]], 0, underlying.length)
-    case ss                       => super.stepper(ss)
+    case _            => ss.parUnbox(new StepsAnyVector[T](underlying,                              0, underlying.length))
   }).asInstanceOf[S with EfficientSubstep]
 }

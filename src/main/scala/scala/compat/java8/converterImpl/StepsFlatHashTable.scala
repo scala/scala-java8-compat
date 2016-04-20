@@ -1,6 +1,7 @@
 package scala.compat.java8.converterImpl
 
 import language.implicitConversions
+import scala.annotation.switch
 
 import scala.compat.java8.collectionImpl._
 import scala.compat.java8.runtime._
@@ -39,15 +40,14 @@ extends StepsLongLikeGapped[StepsLongFlatHashTable](_underlying, _i0, _iN) {
 // Value class adapters //
 //////////////////////////
 
-final class RichFlatHashTableCanStep[T](private val underlying: collection.mutable.FlatHashTable[T]) extends AnyVal with MakesParStepper[T] {
+final class RichFlatHashTableCanStep[T](private val underlying: collection.mutable.FlatHashTable[T]) extends AnyVal with MakesStepper[T, EfficientSubstep] {
   override def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = {
     val tbl = CollectionInternals.getTable(underlying)
-    (ss match {
-      case ss if ss.ref             => new StepsAnyFlatHashTable[T](tbl, 0, tbl.length)
+    ((ss.shape: @switch) match {
       case StepperShape.IntValue    => new StepsIntFlatHashTable   (tbl, 0, tbl.length)
       case StepperShape.LongValue   => new StepsLongFlatHashTable  (tbl, 0, tbl.length)
       case StepperShape.DoubleValue => new StepsDoubleFlatHashTable(tbl, 0, tbl.length)
-      case ss                       => super.stepper(ss)
+      case _            => ss.parUnbox(new StepsAnyFlatHashTable[T](tbl, 0, tbl.length))
     }).asInstanceOf[S with EfficientSubstep]
   }
 }

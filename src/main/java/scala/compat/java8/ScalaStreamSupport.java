@@ -484,7 +484,7 @@ public class ScalaStreamSupport {
         // Let the value class figure out the casting!
         scala.compat.java8.converterImpl.RichBitSetCanStep rbscs =
           new scala.compat.java8.converterImpl.RichBitSetCanStep(coll);
-        return StreamSupport.intStream(rbscs.stepper(StepperShape$.MODULE$.IntValue()), false);
+        return StreamSupport.intStream(rbscs.stepper(StepperShape$.MODULE$.intStepperShape()), false);
     }
 
     /** 

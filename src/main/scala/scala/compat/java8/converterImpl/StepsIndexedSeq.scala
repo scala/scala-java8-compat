@@ -1,6 +1,7 @@
 package scala.compat.java8.converterImpl
 
 import language.implicitConversions
+import scala.annotation.switch
 
 import scala.compat.java8.collectionImpl._
 import scala.compat.java8.runtime._
@@ -39,12 +40,11 @@ extends StepsLongLikeIndexed[StepsLongIndexedSeq[CC]](_i0, _iN) {
 // Value class adapters //
 //////////////////////////
 
-final class RichIndexedSeqCanStep[T](private val underlying: collection.IndexedSeqLike[T, _]) extends AnyVal with MakesParStepper[T] {
-  override def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = (ss match {
-    case ss if ss.ref             => new StepsAnyIndexedSeq[T](underlying,                                                    0, underlying.length)
+final class RichIndexedSeqCanStep[T](private val underlying: collection.IndexedSeqLike[T, _]) extends AnyVal with MakesStepper[T, EfficientSubstep] {
+  def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = ((ss.shape: @switch) match {
     case StepperShape.IntValue    => new StepsIntIndexedSeq   (underlying.asInstanceOf[collection.IndexedSeqLike[Int, _]],    0, underlying.length)
     case StepperShape.LongValue   => new StepsLongIndexedSeq  (underlying.asInstanceOf[collection.IndexedSeqLike[Long, _]],   0, underlying.length)
     case StepperShape.DoubleValue => new StepsDoubleIndexedSeq(underlying.asInstanceOf[collection.IndexedSeqLike[Double, _]], 0, underlying.length)
-    case ss                       => super.stepper(ss)
+    case _            => ss.parUnbox(new StepsAnyIndexedSeq[T](underlying,                                                    0, underlying.length))
   }).asInstanceOf[S with EfficientSubstep]
 }

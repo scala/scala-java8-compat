@@ -18,104 +18,76 @@ trait MakesKeyValueStepper[K, V, +Extra] extends Any {
   def valueStepper[S <: Stepper[_]](implicit ss: StepperShape[V, S]): S with Extra
 }
 
-sealed trait StepperShape[T, S <: Stepper[_]] { def ref: Boolean }
-object StepperShape extends StepperShapeLowPrio {
-  private[this] def valueShape[T, S <: Stepper[_]]: StepperShape[T, S] = new StepperShape[T, S] { def ref = false }
+/** Encodes the translation from an element type `T` to the corresponding Stepper type `S` */
+sealed trait StepperShape[T, S <: Stepper[_]] {
+  /** Return the Int constant (as defined in the `StepperShape` companion object) for this `StepperShape`. */
+  def shape: Int
+
+  /** Create an unboxing primitive sequential Stepper from a boxed `AnyStepper`.
+    * This is an identity operation for reference shapes. */
+  def seqUnbox(st: AnyStepper[T]): S
+
+  /** Create an unboxing primitive parallel (i.e. `with EfficientSubstep`) Stepper from a boxed `AnyStepper`.
+    * This is an identity operation for reference shapes. */
+  def parUnbox(st: AnyStepper[T] with EfficientSubstep): S with EfficientSubstep
+}
+object StepperShape extends StepperShapeLowPriority {
+  // reference
+  final val Reference   = 0
 
   // primitive
-  implicit val IntValue     = valueShape[Int, IntStepper]
-  implicit val LongValue    = valueShape[Long, LongStepper]
-  implicit val DoubleValue  = valueShape[Double, DoubleStepper]
+  final val IntValue    = 1
+  final val LongValue   = 2
+  final val DoubleValue = 3
 
   // widening
-  implicit val ByteValue    = valueShape[Byte, IntStepper]
-  implicit val ShortValue   = valueShape[Short, IntStepper]
-  implicit val CharValue    = valueShape[Char, IntStepper]
-  implicit val FloatValue   = valueShape[Float, DoubleStepper]
+  final val ByteValue   = 4
+  final val ShortValue  = 5
+  final val CharValue   = 6
+  final val FloatValue  = 7
+
+  implicit val intStepperShape: StepperShape[Int, IntStepper] = new StepperShape[Int, IntStepper] {
+    def shape = IntValue
+    def seqUnbox(st: AnyStepper[Int]): IntStepper = new Stepper.UnboxingIntStepper(st)
+    def parUnbox(st: AnyStepper[Int] with EfficientSubstep): IntStepper with EfficientSubstep = new Stepper.UnboxingIntStepper(st) with EfficientSubstep
+  }
+  implicit val longStepperShape: StepperShape[Long, LongStepper] = new StepperShape[Long, LongStepper] {
+    def shape = LongValue
+    def seqUnbox(st: AnyStepper[Long]): LongStepper = new Stepper.UnboxingLongStepper(st)
+    def parUnbox(st: AnyStepper[Long] with EfficientSubstep): LongStepper with EfficientSubstep = new Stepper.UnboxingLongStepper(st) with EfficientSubstep
+  }
+  implicit val doubleStepperShape: StepperShape[Double, DoubleStepper] = new StepperShape[Double, DoubleStepper] {
+    def shape = DoubleValue
+    def seqUnbox(st: AnyStepper[Double]): DoubleStepper = new Stepper.UnboxingDoubleStepper(st)
+    def parUnbox(st: AnyStepper[Double] with EfficientSubstep): DoubleStepper with EfficientSubstep = new Stepper.UnboxingDoubleStepper(st) with EfficientSubstep
+  }
+  implicit val byteStepperShape: StepperShape[Byte, IntStepper] = new StepperShape[Byte, IntStepper] {
+    def shape = ByteValue
+    def seqUnbox(st: AnyStepper[Byte]): IntStepper = new Stepper.UnboxingByteStepper(st)
+    def parUnbox(st: AnyStepper[Byte] with EfficientSubstep): IntStepper with EfficientSubstep = new Stepper.UnboxingByteStepper(st) with EfficientSubstep
+  }
+  implicit val shortStepperShape: StepperShape[Short, IntStepper] = new StepperShape[Short, IntStepper] {
+    def shape = ShortValue
+    def seqUnbox(st: AnyStepper[Short]): IntStepper = new Stepper.UnboxingShortStepper(st)
+    def parUnbox(st: AnyStepper[Short] with EfficientSubstep): IntStepper with EfficientSubstep = new Stepper.UnboxingShortStepper(st) with EfficientSubstep
+  }
+  implicit val charStepperShape: StepperShape[Char, IntStepper] = new StepperShape[Char, IntStepper] {
+    def shape = CharValue
+    def seqUnbox(st: AnyStepper[Char]): IntStepper = new Stepper.UnboxingCharStepper(st)
+    def parUnbox(st: AnyStepper[Char] with EfficientSubstep): IntStepper with EfficientSubstep = new Stepper.UnboxingCharStepper(st) with EfficientSubstep
+  }
+  implicit val floatStepperShape: StepperShape[Float, DoubleStepper] = new StepperShape[Float, DoubleStepper] {
+    def shape = FloatValue
+    def seqUnbox(st: AnyStepper[Float]): DoubleStepper = new Stepper.UnboxingFloatStepper(st)
+    def parUnbox(st: AnyStepper[Float] with EfficientSubstep): DoubleStepper with EfficientSubstep = new Stepper.UnboxingFloatStepper(st) with EfficientSubstep
+  }
 }
-trait StepperShapeLowPrio {
-  // reference
-  implicit def anyStepperShape[T]: StepperShape[T, AnyStepper[T]] = new StepperShape[T, AnyStepper[T]] { def ref = true }
-}
+trait StepperShapeLowPriority {
+  implicit def anyStepperShape[T] = anyStepperShapePrototype.asInstanceOf[StepperShape[T, AnyStepper[T]]]
 
-/** Superclass for `MakesStepper` implementations which support parallelization. At least the `AnyStepper` case must be
-  * implemented, all others default to building an `AnyStepper` and putting an unboxing conversion on top. */
-trait MakesParStepper[T] extends Any with MakesStepper[T, EfficientSubstep] {
-  def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = (ss match {
-    case StepperShape.IntValue    => new Stepper.UnboxingIntStepper   (stepper(StepperShape.anyStepperShape[T]).asInstanceOf[AnyStepper[Int   ]]) with EfficientSubstep
-    case StepperShape.LongValue   => new Stepper.UnboxingLongStepper  (stepper(StepperShape.anyStepperShape[T]).asInstanceOf[AnyStepper[Long  ]]) with EfficientSubstep
-    case StepperShape.DoubleValue => new Stepper.UnboxingDoubleStepper(stepper(StepperShape.anyStepperShape[T]).asInstanceOf[AnyStepper[Double]]) with EfficientSubstep
-    case StepperShape.ByteValue   => new Stepper.UnboxingByteStepper  (stepper(StepperShape.anyStepperShape[T]).asInstanceOf[AnyStepper[Byte  ]]) with EfficientSubstep
-    case StepperShape.ShortValue  => new Stepper.UnboxingShortStepper (stepper(StepperShape.anyStepperShape[T]).asInstanceOf[AnyStepper[Short ]]) with EfficientSubstep
-    case StepperShape.CharValue   => new Stepper.UnboxingCharStepper  (stepper(StepperShape.anyStepperShape[T]).asInstanceOf[AnyStepper[Char  ]]) with EfficientSubstep
-    case StepperShape.FloatValue  => new Stepper.UnboxingFloatStepper (stepper(StepperShape.anyStepperShape[T]).asInstanceOf[AnyStepper[Float ]]) with EfficientSubstep
-    case _                        => throw new NotImplementedError("AnyStepper must be handled in `stepper` implementations")
-  }).asInstanceOf[S with EfficientSubstep]
-}
-
-/** Superclass for `MakesStepper` implementations which do not support parallelization. At least the `AnyStepper` case must be
-  * implemented, all others default to building an `AnyStepper` and putting an unboxing conversion on top. */
-trait MakesSeqStepper[T] extends Any with MakesStepper[T, Any] {
-  def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = (ss match {
-    case StepperShape.IntValue    => new Stepper.UnboxingIntStepper   (stepper(StepperShape.anyStepperShape[T]).asInstanceOf[AnyStepper[Int   ]])
-    case StepperShape.LongValue   => new Stepper.UnboxingLongStepper  (stepper(StepperShape.anyStepperShape[T]).asInstanceOf[AnyStepper[Long  ]])
-    case StepperShape.DoubleValue => new Stepper.UnboxingDoubleStepper(stepper(StepperShape.anyStepperShape[T]).asInstanceOf[AnyStepper[Double]])
-    case StepperShape.ByteValue   => new Stepper.UnboxingByteStepper  (stepper(StepperShape.anyStepperShape[T]).asInstanceOf[AnyStepper[Byte  ]])
-    case StepperShape.ShortValue  => new Stepper.UnboxingShortStepper (stepper(StepperShape.anyStepperShape[T]).asInstanceOf[AnyStepper[Short ]])
-    case StepperShape.CharValue   => new Stepper.UnboxingCharStepper  (stepper(StepperShape.anyStepperShape[T]).asInstanceOf[AnyStepper[Char  ]])
-    case StepperShape.FloatValue  => new Stepper.UnboxingFloatStepper (stepper(StepperShape.anyStepperShape[T]).asInstanceOf[AnyStepper[Float ]])
-    case _                        => throw new NotImplementedError("AnyStepper must be handled in `stepper` implementations")
-  }).asInstanceOf[S]
-}
-
-/** Superclass for `MakesKeyalueStepper` implementations which support parallelization. At least the `AnyStepper` case must be
-  * implemented, all others default to building an `AnyStepper` and putting an unboxing conversion on top. */
-trait MakesKeyValueParStepper[K, V] extends Any with MakesKeyValueStepper[K, V, EfficientSubstep] {
-  def keyStepper[S <: Stepper[_]](implicit ss: StepperShape[K, S]) = (ss match {
-    case StepperShape.IntValue    => new Stepper.UnboxingIntStepper   (keyStepper(StepperShape.anyStepperShape[K]).asInstanceOf[AnyStepper[Int   ]]) with EfficientSubstep
-    case StepperShape.LongValue   => new Stepper.UnboxingLongStepper  (keyStepper(StepperShape.anyStepperShape[K]).asInstanceOf[AnyStepper[Long  ]]) with EfficientSubstep
-    case StepperShape.DoubleValue => new Stepper.UnboxingDoubleStepper(keyStepper(StepperShape.anyStepperShape[K]).asInstanceOf[AnyStepper[Double]]) with EfficientSubstep
-    case StepperShape.ByteValue   => new Stepper.UnboxingByteStepper  (keyStepper(StepperShape.anyStepperShape[K]).asInstanceOf[AnyStepper[Byte  ]]) with EfficientSubstep
-    case StepperShape.ShortValue  => new Stepper.UnboxingShortStepper (keyStepper(StepperShape.anyStepperShape[K]).asInstanceOf[AnyStepper[Short ]]) with EfficientSubstep
-    case StepperShape.CharValue   => new Stepper.UnboxingCharStepper  (keyStepper(StepperShape.anyStepperShape[K]).asInstanceOf[AnyStepper[Char  ]]) with EfficientSubstep
-    case StepperShape.FloatValue  => new Stepper.UnboxingFloatStepper (keyStepper(StepperShape.anyStepperShape[K]).asInstanceOf[AnyStepper[Float ]]) with EfficientSubstep
-    case _                        => throw new NotImplementedError("AnyStepper case must be handled in `keyStepper` implementations")
-  }).asInstanceOf[S with EfficientSubstep]
-
-  def valueStepper[S <: Stepper[_]](implicit ss: StepperShape[V, S]) = (ss match {
-    case StepperShape.IntValue    => new Stepper.UnboxingIntStepper   (valueStepper(StepperShape.anyStepperShape[V]).asInstanceOf[AnyStepper[Int   ]]) with EfficientSubstep
-    case StepperShape.LongValue   => new Stepper.UnboxingLongStepper  (valueStepper(StepperShape.anyStepperShape[V]).asInstanceOf[AnyStepper[Long  ]]) with EfficientSubstep
-    case StepperShape.DoubleValue => new Stepper.UnboxingDoubleStepper(valueStepper(StepperShape.anyStepperShape[V]).asInstanceOf[AnyStepper[Double]]) with EfficientSubstep
-    case StepperShape.ByteValue   => new Stepper.UnboxingByteStepper  (valueStepper(StepperShape.anyStepperShape[V]).asInstanceOf[AnyStepper[Byte  ]]) with EfficientSubstep
-    case StepperShape.ShortValue  => new Stepper.UnboxingShortStepper (valueStepper(StepperShape.anyStepperShape[V]).asInstanceOf[AnyStepper[Short ]]) with EfficientSubstep
-    case StepperShape.CharValue   => new Stepper.UnboxingCharStepper  (valueStepper(StepperShape.anyStepperShape[V]).asInstanceOf[AnyStepper[Char  ]]) with EfficientSubstep
-    case StepperShape.FloatValue  => new Stepper.UnboxingFloatStepper (valueStepper(StepperShape.anyStepperShape[V]).asInstanceOf[AnyStepper[Float ]]) with EfficientSubstep
-    case _                        => throw new NotImplementedError("AnyStepper case must be handled in `valueStepper` implementations")
-  }).asInstanceOf[S with EfficientSubstep]
-}
-
-/** Superclass for `MakesKeyalueStepper` implementations which do not support parallelization. At least the `AnyStepper` case must be
-  * implemented, all others default to building an `AnyStepper` and putting an unboxing conversion on top. */
-trait MakesKeyValueSeqStepper[K, V] extends Any with MakesKeyValueStepper[K, V, Any] {
-  def keyStepper[S <: Stepper[_]](implicit ss: StepperShape[K, S]) = (ss match {
-    case StepperShape.IntValue    => new Stepper.UnboxingIntStepper   (keyStepper(StepperShape.anyStepperShape[K]).asInstanceOf[AnyStepper[Int   ]])
-    case StepperShape.LongValue   => new Stepper.UnboxingLongStepper  (keyStepper(StepperShape.anyStepperShape[K]).asInstanceOf[AnyStepper[Long  ]])
-    case StepperShape.DoubleValue => new Stepper.UnboxingDoubleStepper(keyStepper(StepperShape.anyStepperShape[K]).asInstanceOf[AnyStepper[Double]])
-    case StepperShape.ByteValue   => new Stepper.UnboxingByteStepper  (keyStepper(StepperShape.anyStepperShape[K]).asInstanceOf[AnyStepper[Byte  ]])
-    case StepperShape.ShortValue  => new Stepper.UnboxingShortStepper (keyStepper(StepperShape.anyStepperShape[K]).asInstanceOf[AnyStepper[Short ]])
-    case StepperShape.CharValue   => new Stepper.UnboxingCharStepper  (keyStepper(StepperShape.anyStepperShape[K]).asInstanceOf[AnyStepper[Char  ]])
-    case StepperShape.FloatValue  => new Stepper.UnboxingFloatStepper (keyStepper(StepperShape.anyStepperShape[K]).asInstanceOf[AnyStepper[Float ]])
-    case _                        => throw new NotImplementedError("AnyStepper case must be handled in `keyStepper` implementations")
-  }).asInstanceOf[S]
-
-  def valueStepper[S <: Stepper[_]](implicit ss: StepperShape[V, S]) = (ss match {
-    case StepperShape.IntValue    => new Stepper.UnboxingIntStepper   (valueStepper(StepperShape.anyStepperShape[V]).asInstanceOf[AnyStepper[Int   ]])
-    case StepperShape.LongValue   => new Stepper.UnboxingLongStepper  (valueStepper(StepperShape.anyStepperShape[V]).asInstanceOf[AnyStepper[Long  ]])
-    case StepperShape.DoubleValue => new Stepper.UnboxingDoubleStepper(valueStepper(StepperShape.anyStepperShape[V]).asInstanceOf[AnyStepper[Double]])
-    case StepperShape.ByteValue   => new Stepper.UnboxingByteStepper  (valueStepper(StepperShape.anyStepperShape[V]).asInstanceOf[AnyStepper[Byte  ]])
-    case StepperShape.ShortValue  => new Stepper.UnboxingShortStepper (valueStepper(StepperShape.anyStepperShape[V]).asInstanceOf[AnyStepper[Short ]])
-    case StepperShape.CharValue   => new Stepper.UnboxingCharStepper  (valueStepper(StepperShape.anyStepperShape[V]).asInstanceOf[AnyStepper[Char  ]])
-    case StepperShape.FloatValue  => new Stepper.UnboxingFloatStepper (valueStepper(StepperShape.anyStepperShape[V]).asInstanceOf[AnyStepper[Float ]])
-    case _                        => throw new NotImplementedError("AnyStepper case must be handled in `valueStepper` implementations")
-  }).asInstanceOf[S]
+  private[this] val anyStepperShapePrototype: StepperShape[AnyRef, AnyStepper[AnyRef]] = new StepperShape[AnyRef, AnyStepper[AnyRef]] {
+    def shape = StepperShape.Reference
+    def seqUnbox(st: AnyStepper[AnyRef]): AnyStepper[AnyRef] = st
+    def parUnbox(st: AnyStepper[AnyRef] with EfficientSubstep): AnyStepper[AnyRef] with EfficientSubstep = st
+  }
 }
