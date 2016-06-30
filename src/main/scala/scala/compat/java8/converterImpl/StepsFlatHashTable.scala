@@ -1,6 +1,7 @@
 package scala.compat.java8.converterImpl
 
 import language.implicitConversions
+import scala.annotation.switch
 
 import scala.compat.java8.collectionImpl._
 import scala.compat.java8.runtime._
@@ -39,30 +40,14 @@ extends StepsLongLikeGapped[StepsLongFlatHashTable](_underlying, _i0, _iN) {
 // Value class adapters //
 //////////////////////////
 
-final class RichFlatHashTableCanStep[A](private val underlying: collection.mutable.FlatHashTable[A]) extends AnyVal with MakesStepper[AnyStepper[A] with EfficientSubstep] {
-  @inline def stepper: AnyStepper[A] with EfficientSubstep = {
+final class RichFlatHashTableCanStep[T](private val underlying: collection.mutable.FlatHashTable[T]) extends AnyVal with MakesStepper[T, EfficientSubstep] {
+  override def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = {
     val tbl = CollectionInternals.getTable(underlying)
-    new StepsAnyFlatHashTable(tbl, 0, tbl.length)
-  }
-}
-
-final class RichDoubleFlatHashTableCanStep(private val underlying: collection.mutable.FlatHashTable[Double]) extends AnyVal with MakesStepper[DoubleStepper with EfficientSubstep] {
-  @inline def stepper: DoubleStepper with EfficientSubstep = {
-    val tbl = CollectionInternals.getTable(underlying)
-    new StepsDoubleFlatHashTable(tbl, 0, tbl.length)
-  }
-}
-
-final class RichIntFlatHashTableCanStep(private val underlying: collection.mutable.FlatHashTable[Int]) extends AnyVal with MakesStepper[IntStepper with EfficientSubstep] {
-  @inline def stepper: IntStepper with EfficientSubstep = {
-    val tbl = CollectionInternals.getTable(underlying)
-    new StepsIntFlatHashTable(tbl, 0, tbl.length)
-  }
-}
-
-final class RichLongFlatHashTableCanStep(private val underlying: collection.mutable.FlatHashTable[Long]) extends AnyVal with MakesStepper[LongStepper with EfficientSubstep] {
-  @inline def stepper: LongStepper with EfficientSubstep = {
-    val tbl = CollectionInternals.getTable(underlying)
-    new StepsLongFlatHashTable(tbl, 0, tbl.length)
+    ((ss.shape: @switch) match {
+      case StepperShape.IntValue    => new StepsIntFlatHashTable   (tbl, 0, tbl.length)
+      case StepperShape.LongValue   => new StepsLongFlatHashTable  (tbl, 0, tbl.length)
+      case StepperShape.DoubleValue => new StepsDoubleFlatHashTable(tbl, 0, tbl.length)
+      case _            => ss.parUnbox(new StepsAnyFlatHashTable[T](tbl, 0, tbl.length))
+    }).asInstanceOf[S with EfficientSubstep]
   }
 }

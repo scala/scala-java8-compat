@@ -143,4 +143,6 @@ object ParseJmhLog {
     println("-"*79)
     println
   }
+
+  def main(args: Array[String]): Unit = apply()
 }

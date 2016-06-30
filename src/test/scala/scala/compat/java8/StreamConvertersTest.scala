@@ -3,13 +3,18 @@ package scala.compat.java8
 import org.junit.Test
 import org.junit.Assert._
 
+import java.util.stream._
+import StreamConverters._
+import scala.compat.java8.collectionImpl.IntStepper
+import scala.compat.java8.converterImpl.MakesStepper
+
 class StreamConvertersTest {
-  import java.util.stream._
-  import StreamConverters._
-  
+
   def assertEq[A](a1: A, a2: A, s: String) { assertEquals(s, a1, a2) }  // Weird order normally!
   def assertEq[A](a1: A, a2: A) { assertEq(a1, a2, "not equal") }
-  
+  def assert(b: Boolean) { assertTrue(b) }
+  def assert(b: Boolean, s: String) { assertTrue(s, b) }
+
   def arrayO(n: Int) = (1 to n).map(_.toString).toArray
   def arrayD(n: Int) = (1 to n).map(_.toDouble).toArray
   def arrayI(n: Int) = (1 to n).toArray
@@ -34,7 +39,7 @@ class StreamConvertersTest {
       assertEq(vecO, accO.toList.toVector, s"stream $n to vector via list in parallel")
       assert((0 until accO.size.toInt).forall(i => vecO(i) == accO(i)), s"stream $n indexed via accumulator")
       assert(accO.isInstanceOf[scala.compat.java8.collectionImpl.Accumulator[_]], s"stream $n to generic accumulator")
-      
+
       for (boxless <- Seq(false, true)) {
         val sbox = (if (boxless) "" else "(boxed)")
         val vecD = arrayD(n).toVector
@@ -75,28 +80,28 @@ class StreamConvertersTest {
       }
     }
   }
-  
+
   @Test
   def streamToScala() {
     for (n <- ns) {
       val vecO = arrayO(n).toVector
       assertEq(vecO, newStream(n).toScala[Vector])
       assertEq(vecO, newStream(n).parallel.toScala[Vector])
-      
+
       val vecD = arrayD(n).toVector
       assertEq(vecD, newDoubleStream(n).toScala[Vector])
       assertEq(vecD, newDoubleStream(n).parallel.toScala[Vector])
-      
+
       val vecI = arrayI(n).toVector
       assertEq(vecI, newIntStream(n).toScala[Vector])
       assertEq(vecI, newIntStream(n).parallel.toScala[Vector])
-      
+
       val vecL = arrayL(n).toVector
       assertEq(vecL, newLongStream(n).toScala[Vector])
       assertEq(vecL, newLongStream(n).parallel.toScala[Vector])
     }
   }
-  
+
   @Test
   def streamUnbox() {
     assert(newDoubleStream(1).boxed.unboxed.isInstanceOf[DoubleStream])
@@ -145,7 +150,7 @@ class StreamConvertersTest {
       assertEq(seqO, vecO.parStream.toScala[Seq])
       assertEq(seqO, hsO.seqStream.toScala[Seq].sortBy(_.toInt))
       assertEq(seqO, hsO.parStream.toScala[Seq].sortBy(_.toInt))
-      
+
       val arrD = arrayD(n)
       val seqD = arrD.toSeq
       val abD = abufD(n)
@@ -174,7 +179,7 @@ class StreamConvertersTest {
       assertEq(seqD, hsD.parStream.toScala[Seq].sorted)
       assert(hsD.seqStream.isInstanceOf[DoubleStream])
       assert(hsD.parStream.isInstanceOf[DoubleStream])
-      
+
       val arrI = arrayI(n)
       val seqI = arrI.toSeq
       val abI = abufI(n)
@@ -203,7 +208,7 @@ class StreamConvertersTest {
       assertEq(seqI, hsI.parStream.toScala[Seq].sorted)
       assert(hsI.seqStream.isInstanceOf[IntStream])
       assert(hsI.parStream.isInstanceOf[IntStream])
-      
+
       val arrL = arrayL(n)
       val seqL = arrL.toSeq
       val abL = abufL(n)
@@ -246,5 +251,27 @@ class StreamConvertersTest {
     assertEquals(Vector[Int](1, 2, 3), (Vector[Int](1, 2, 3).seqStream: IntStream).toScala[Vector])
     assertEquals(Vector[Short](1.toShort, 2.toShort, 3.toShort), (Vector[Short](1.toShort, 2.toShort, 3.toShort).seqStream: IntStream).toScala[Vector])
     assertEquals(Vector[String]("a", "b"), (Vector[String]("a", "b").seqStream: Stream[String]).toScala[Vector])
+  }
+
+  @Test
+  def streamMaterialization(): Unit = {
+    val coll = collection.mutable.WrappedArray.make[Int](Array(1,2,3))
+    val streamize = implicitly[collection.mutable.WrappedArray[Int] => MakesSequentialStream[Int, IntStream]]
+    assertTrue(streamize(coll).getClass.getName.contains("EnrichIntWrappedArrayWithStream"))
+    val steppize = implicitly[collection.mutable.WrappedArray[Int] => MakesStepper[Int, Any]]
+    assertTrue(steppize(coll).getClass.getName.contains("RichArrayCanStep"))
+    val stepper = steppize(coll).stepper
+    assertTrue(stepper.getClass.getName.contains("StepsIntArray"))
+
+    val ss = Vector(1,2,3).seqStream
+    val ss2: IntStream = ss
+
+    val coll2 = Vector(1,2,3)
+    val streamize2 = implicitly[Vector[Int] => MakesSequentialStream[Int, IntStream]]
+    assertTrue(streamize2(coll2).getClass.getName.contains("EnrichAnySteppableWithSeqStream"))
+    val steppize2 = implicitly[Vector[Int] => MakesStepper[Int, Any]]
+    assertTrue(steppize2(coll2).getClass.getName.contains("RichVectorCanStep"))
+    val stepper2 = steppize2(coll2).stepper
+    assertTrue(stepper2.getClass.getName.contains("StepsIntVector"))
   }
 }

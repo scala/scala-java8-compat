@@ -1,6 +1,7 @@
 package scala.compat.java8.converterImpl
 
 import language.implicitConversions
+import scala.annotation.switch
 
 import scala.compat.java8.collectionImpl._
 import scala.compat.java8.runtime._
@@ -39,18 +40,11 @@ extends StepsLongLikeTrieIterator[StepsLongImmHashSet](_underlying, _N) {
 // Value class adapters //
 //////////////////////////
 
-final class RichImmHashSetCanStep[A](private val underlying: collection.immutable.HashSet[A]) extends AnyVal with MakesStepper[AnyStepper[A] with EfficientSubstep] {
-  @inline def stepper: AnyStepper[A] with EfficientSubstep = new StepsAnyImmHashSet(underlying.iterator, underlying.size)
-}
-
-final class RichDoubleHashSetCanStep(private val underlying: collection.immutable.HashSet[Double]) extends AnyVal with MakesStepper[DoubleStepper with EfficientSubstep] {
-  @inline def stepper: DoubleStepper with EfficientSubstep = new StepsDoubleImmHashSet(underlying.iterator, underlying.size)
-}
-
-final class RichIntHashSetCanStep(private val underlying: collection.immutable.HashSet[Int]) extends AnyVal with MakesStepper[IntStepper with EfficientSubstep] {
-  @inline def stepper: IntStepper with EfficientSubstep = new StepsIntImmHashSet(underlying.iterator, underlying.size)
-}
-
-final class RichLongHashSetCanStep(private val underlying: collection.immutable.HashSet[Long]) extends AnyVal with MakesStepper[LongStepper with EfficientSubstep] {
-  @inline def stepper: LongStepper with EfficientSubstep = new StepsLongImmHashSet(underlying.iterator, underlying.size)
+final class RichImmHashSetCanStep[T](private val underlying: collection.immutable.HashSet[T]) extends AnyVal with MakesStepper[T, EfficientSubstep] {
+  def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = ((ss.shape: @switch) match {
+    case StepperShape.IntValue    => new StepsIntImmHashSet   (underlying.iterator.asInstanceOf[Iterator[Int]],    underlying.size)
+    case StepperShape.LongValue   => new StepsLongImmHashSet  (underlying.iterator.asInstanceOf[Iterator[Long]],   underlying.size)
+    case StepperShape.DoubleValue => new StepsDoubleImmHashSet(underlying.iterator.asInstanceOf[Iterator[Double]], underlying.size)
+    case _            => ss.parUnbox(new StepsAnyImmHashSet[T](underlying.iterator,                                underlying.size))
+  }).asInstanceOf[S with EfficientSubstep]
 }

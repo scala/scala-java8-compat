@@ -1,6 +1,7 @@
 package scala.compat.java8.converterImpl
 
 import language.implicitConversions
+import scala.annotation.switch
 
 import scala.compat.java8.collectionImpl._
 import scala.compat.java8.runtime._
@@ -39,18 +40,11 @@ extends StepsLongLikeIndexed[StepsLongIndexedSeq[CC]](_i0, _iN) {
 // Value class adapters //
 //////////////////////////
 
-final class RichIndexedSeqCanStep[A](private val underlying: collection.IndexedSeqLike[A, _]) extends AnyVal with MakesStepper[AnyStepper[A] with EfficientSubstep] {
-  @inline def stepper: AnyStepper[A] with EfficientSubstep = new StepsAnyIndexedSeq[A](underlying, 0, underlying.length)
-}
-
-final class RichDoubleIndexedSeqCanStep[CC <: collection.IndexedSeqLike[Double, _]](private val underlying: CC) extends AnyVal with MakesStepper[DoubleStepper with EfficientSubstep] {
-  @inline def stepper: DoubleStepper with EfficientSubstep = new StepsDoubleIndexedSeq[CC](underlying, 0, underlying.length)
-}
-
-final class RichIntIndexedSeqCanStep[CC <: collection.IndexedSeqLike[Int, _]](private val underlying: CC) extends AnyVal with MakesStepper[IntStepper with EfficientSubstep] {
-  @inline def stepper: IntStepper with EfficientSubstep = new StepsIntIndexedSeq[CC](underlying, 0, underlying.length)
-}
-
-final class RichLongIndexedSeqCanStep[CC <: collection.IndexedSeqLike[Long, _]](private val underlying: CC) extends AnyVal with MakesStepper[LongStepper with EfficientSubstep] {
-  @inline def stepper: LongStepper with EfficientSubstep = new StepsLongIndexedSeq[CC](underlying, 0, underlying.length)
+final class RichIndexedSeqCanStep[T](private val underlying: collection.IndexedSeqLike[T, _]) extends AnyVal with MakesStepper[T, EfficientSubstep] {
+  def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = ((ss.shape: @switch) match {
+    case StepperShape.IntValue    => new StepsIntIndexedSeq   (underlying.asInstanceOf[collection.IndexedSeqLike[Int, _]],    0, underlying.length)
+    case StepperShape.LongValue   => new StepsLongIndexedSeq  (underlying.asInstanceOf[collection.IndexedSeqLike[Long, _]],   0, underlying.length)
+    case StepperShape.DoubleValue => new StepsDoubleIndexedSeq(underlying.asInstanceOf[collection.IndexedSeqLike[Double, _]], 0, underlying.length)
+    case _            => ss.parUnbox(new StepsAnyIndexedSeq[T](underlying,                                                    0, underlying.length))
+  }).asInstanceOf[S with EfficientSubstep]
 }

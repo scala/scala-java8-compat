@@ -11,7 +11,7 @@ import Stepper._
 // Stepper implementation //
 ////////////////////////////
 
-private[java8] class StepperStringChar(underlying: String, _i0: Int, _iN: Int)
+private[java8] class StepperStringChar(underlying: CharSequence, _i0: Int, _iN: Int)
   extends StepsIntLikeIndexed[StepperStringChar](_i0, _iN) {
   def nextInt() = if (hasNext()) { val j = i0; i0 += 1; underlying.charAt(j) } else throwNSEE
   def semiclone(half: Int) = new StepperStringChar(underlying, i0, half)
@@ -45,8 +45,8 @@ private[java8] class StepperStringCodePoint(underlying: String, var i0: Int, var
 // Value class adapter //
 /////////////////////////
 
-final class RichStringCanStep(private val underlying: String) extends AnyVal with MakesStepper[IntStepper with EfficientSubstep] {
-  @inline def stepper: IntStepper with EfficientSubstep = charStepper
+final class RichStringCanStep(private val underlying: String) extends AnyVal with MakesStepper[Char, EfficientSubstep] {
+  def stepper[S <: Stepper[_]](implicit ss: StepperShape[Char, S]) = charStepper.asInstanceOf[S with EfficientSubstep]
   @inline def charStepper: IntStepper with EfficientSubstep = new StepperStringChar(underlying, 0, underlying.length)
   @inline def codepointStepper: IntStepper with EfficientSubstep = new StepperStringCodePoint(underlying, 0, underlying.length)
 }

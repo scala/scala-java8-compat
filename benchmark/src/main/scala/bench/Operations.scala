@@ -27,7 +27,13 @@ object OnInt {
   def sum(t: Traversable[Int]): Int = t.sum
   def sum(i: Iterator[Int]): Int = i.sum
   def sum(s: IntStepper): Int = s.fold(0)(_ + _)
-  def sum(s: IntStream): Int = s.sum
+  def sum(s: IntStream): Int = {
+    s.sum
+    /*var r = 0
+    val it = s.iterator()
+    while(it.hasNext) r += it.nextInt()
+    r*/
+  }
   def psum(i: ParIterable[Int]): Int = i.sum
   def psum(s: IntStream): Int = s.sum
 
