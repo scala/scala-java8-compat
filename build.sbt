@@ -10,7 +10,7 @@ def jwrite(dir: java.io.File)(name: String, content: String) = {
 
 lazy val commonSettings = Seq(
   scalaVersion := "2.11.8",
-  crossScalaVersions := List("2.11.8", "2.12.0-M4"),
+  crossScalaVersions := List("2.11.8", "2.12.0-M5"),
   organization := "org.scala-lang.modules",
   version := "0.8.0-SNAPSHOT"
 )
@@ -102,7 +102,7 @@ lazy val root = (project in file(".")).
       },
       javacOptions in JavaDoc := Seq(),
       artifactName in packageDoc in JavaDoc := ((sv, mod, art) => "" + mod.name + "_" + sv.binary + "-" + mod.revision + "-javadoc.jar"),
-      libraryDependencies += compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.9" cross CrossVersion.full),
+      libraryDependencies += compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.10" cross CrossVersion.full),
       scalacOptions in Compile += "-P:genjavadoc:out=" + (target.value / "java")
     ))): _*
   ).
