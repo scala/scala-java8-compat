@@ -8,6 +8,13 @@ def jwrite(dir: java.io.File)(name: String, content: String) = {
   f
 }
 
+def osgiExport(scalaVersion: String, version: String) = {
+  (CrossVersion.partialVersion(scalaVersion) match {
+    case Some((2, 11)) => Seq(s"scala.runtime.java8.*;version=${version}")
+    case _ => Nil
+  }) ++ Seq(s"scala.compat.java8.*;version=${version}")
+}
+
 lazy val commonSettings = Seq(
   scalaVersion := "2.11.8",
   crossScalaVersions := List("2.11.8", "2.12.0-M5"),
@@ -36,7 +43,7 @@ lazy val root = (project in file(".")).
   settings(
     fork := true, // This must be set so that runner task is forked when it runs fnGen and the compiler gets a proper classpath
 
-    OsgiKeys.exportPackage := Seq(s"scala.compat.java8.*;version=${version.value}"),
+    OsgiKeys.exportPackage := osgiExport(scalaVersion.value, version.value),
 
     OsgiKeys.privatePackage := List("scala.concurrent.java8.*"),
 
