@@ -159,7 +159,7 @@ trait Priority1StreamConverters extends Priority2StreamConverters {
   *
   * Examples:
   * {{{
-  * import scala.compat.java8.StreamConverers._
+  * import scala.compat.java8.StreamConverters._
   *
   * val s = Vector(1,2,3,4).parStream    // Stream[Int]
   * val si = s.unboxed                   // Stream.OfInt
