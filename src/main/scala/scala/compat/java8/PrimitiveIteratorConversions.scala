@@ -41,13 +41,13 @@ object PrimitiveIteratorConverters {
     /** Packages a `scala.collection.Iterator[Double]` as a `java.util.PrimitiveIterator.OfDouble` */
     def fromScala(it: Iterator[Double]): PrimitiveIterator.OfDouble = new PrimitiveIterator.OfDouble {
       def hasNext = it.hasNext
-      def next() = it.next()
+      override def next() = it.next().asInstanceOf[java.lang.Double]
       def nextDouble() = it.next()
-      def remove() { throw new UnsupportedOperationException("remove on scala.collection.Iterator") }
-      def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Double]) {
+      override def remove() { throw new UnsupportedOperationException("remove on scala.collection.Iterator") }
+      override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Double]) {
         while (it.hasNext) c.accept(it.next)
       }
-      def forEachRemaining(c: java.util.function.DoubleConsumer) {
+      override def forEachRemaining(c: java.util.function.DoubleConsumer) {
         while (it.hasNext) c.accept(it.next)
       }
     }
@@ -62,13 +62,13 @@ object PrimitiveIteratorConverters {
     /** Packages a `scala.collection.Iterator[Int]` as a `java.util.PrimitiveIterator.OfInt` */
     def fromScala(it: Iterator[Int]): PrimitiveIterator.OfInt = new PrimitiveIterator.OfInt {
       def hasNext = it.hasNext
-      def next() = it.next()
+      override def next() = it.next().asInstanceOf[java.lang.Integer]
       def nextInt() = it.next()
-      def remove() { throw new UnsupportedOperationException("remove on scala.collection.Iterator") }
-      def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Integer]) {
+      override def remove() { throw new UnsupportedOperationException("remove on scala.collection.Iterator") }
+      override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Integer]) {
         while (it.hasNext) c.accept(it.next)
       }
-      def forEachRemaining(c: java.util.function.IntConsumer) {
+      override def forEachRemaining(c: java.util.function.IntConsumer) {
         while (it.hasNext) c.accept(it.next)
       }
     }
@@ -83,13 +83,13 @@ object PrimitiveIteratorConverters {
     /** Packages a `scala.collection.Iterator[Long]` as a `java.util.PrimitiveIterator.OfLong` */
     def fromScala(it: Iterator[Long]): PrimitiveIterator.OfLong = new PrimitiveIterator.OfLong {
       def hasNext = it.hasNext
-      def next() = it.next()
+      override def next() = it.next().asInstanceOf[java.lang.Long]
       def nextLong() = it.next()
-      def remove() { throw new UnsupportedOperationException("remove on scala.collection.Iterator") }
-      def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Long]) {
+      override def remove() { throw new UnsupportedOperationException("remove on scala.collection.Iterator") }
+      override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Long]) {
         while (it.hasNext) c.accept(it.next)
       }
-      def forEachRemaining(c: java.util.function.LongConsumer) {
+      override def forEachRemaining(c: java.util.function.LongConsumer) {
         while (it.hasNext) c.accept(it.next)
       }
     }
