@@ -9,8 +9,9 @@ def jwrite(dir: java.io.File)(name: String, content: String) = {
 }
 
 lazy val commonSettings = Seq(
-  scalaVersion := "2.11.8",
-  crossScalaVersions := List("2.11.8", "2.12.0-M5"),
+  resolvers += "scala-pr" at "https://scala-ci.typesafe.com/artifactory/scala-pr-validation-snapshots/",
+  crossScalaVersions := List("2.12.0-ab61fed-SNAPSHOT", "2.11.8", "2.12.0-M5"),
+  scalaVersion := crossScalaVersions.value.head,
   organization := "org.scala-lang.modules",
   version := "0.8.0-SNAPSHOT"
 )
@@ -79,7 +80,7 @@ lazy val root = (project in file(".")).
 
     initialize := {
       // Run previously configured inialization...
-      initialize.value
+      val _ = initialize.value
       // ... and then check the Java version.
       val specVersion = sys.props("java.specification.version")
       if (Set("1.5", "1.6", "1.7") contains specVersion)
@@ -87,6 +88,11 @@ lazy val root = (project in file(".")).
     },
 
     publishArtifact in packageDoc := !disableDocs,
+
+    unmanagedSourceDirectories in Compile += {
+      val isPre212 = scalaVersion.value.startsWith("2.11") || scalaVersion.value == "2.12.0-M5"
+      sourceDirectory.value / "main" / (if(isPre212) "java-for-scala-2.11" else "java-for-scala-2.12")
+    },
 
     sources in (Compile, doc) := {
       val orig = (sources in (Compile, doc)).value

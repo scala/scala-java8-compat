@@ -8,7 +8,7 @@ import org.junit.Test;
 public class BoxingTest {
     @Test
     public void nullBoxesInterpretedAsZeroF1() {
-        JFunction1$mcII$sp jFunction1 = new JFunction1$mcII$sp() {
+        scala.Function1<Integer, Integer> jFunction1 = new JFunction1$mcII$sp() {
             @Override
             public int apply$mcII$sp(int v1) {
                 return v1 + 1;
@@ -20,7 +20,7 @@ public class BoxingTest {
 
     @Test
     public void nullBoxesInterpretedAsZeroF2() {
-        JFunction2$mcIII$sp jFunction2 = new JFunction2$mcIII$sp() {
+        scala.Function2<Integer, Integer, Integer> jFunction2 = new JFunction2$mcIII$sp() {
             @Override
             public int apply$mcIII$sp(int v1, int v2) {
                 return v1 + v2 + 1;
