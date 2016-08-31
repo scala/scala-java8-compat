@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Typesafe Inc. <http://www.typesafe.com>
+ * Copyright (C) 2012-2016 Lightbend Inc. <https://www.lightbend.com>
  */
 
 sealed abstract class Type(val code: Char, val prim: String, val ref: String) {
@@ -288,7 +288,7 @@ object CodeGen {
   private val copyright =
     """
     |/*
-    | * Copyright (C) 2012-2015 Typesafe Inc. <http://www.typesafe.com>
+    | * Copyright (C) 2012-2016 Lightbend Inc. <https://www.lightbend.com>
     | */""".stripMargin.trim
 
   private def function0SpecMethods = {
@@ -433,4 +433,85 @@ object CodeGen {
   }
 
   def indent(s: String) = s.linesIterator.map("    " + _).mkString("\n")
+
+  /** Create the simpler JFunction and JProcedure sources for Scala 2.12+ */
+  def create212: Seq[(String, String)] = {
+    val blocks = for(i <- 0 to 22) yield {
+      val ts = (1 to i).map(i => s"T$i").mkString(", ")
+      val tsComma = if(ts.isEmpty) "" else s"$ts,"
+      val tsAngled = if(ts.isEmpty) "" else s"<$ts>"
+      val paramTs = (1 to i).map(i => s"T$i t$i").mkString(", ")
+      val argTs = (1 to i).map(i => s"t$i").mkString(", ")
+
+      (
+        ( s"JFunction$i",
+          s"""$copyright
+             |$packaging
+             |
+             |/** @deprecated Use scala.Function$i in Scala 2.12 */
+             |@Deprecated
+             |@FunctionalInterface
+             |public interface JFunction$i<$tsComma R> extends scala.Function$i<$tsComma R>, java.io.Serializable {}
+           """.stripMargin),
+        ( s"JProcedure$i",
+          s"""$copyright
+             |$packaging
+             |
+             |import scala.runtime.BoxedUnit;
+             |
+             |@FunctionalInterface
+             |public interface JProcedure$i$tsAngled extends scala.Function$i<$tsComma BoxedUnit> {
+             |  void applyVoid($paramTs);
+             |  default BoxedUnit apply($paramTs) { applyVoid($argTs); return BoxedUnit.UNIT; }
+             |}
+           """.stripMargin),
+        s"""  /** @deprecated Not needed anymore in Scala 2.12 */
+           |  @Deprecated
+           |  public static <$tsComma R> scala.Function$i<$tsComma R> func(scala.Function$i<$tsComma R> f) { return f; }
+           |  public static $tsAngled scala.Function$i<$tsComma BoxedUnit> proc(JProcedure$i$tsAngled p) { return p; }
+         """.stripMargin
+      )
+    }
+
+    def specialize(args: String): List[(Int, String, String)] = {
+      def combinations(l: List[String]): List[List[Char]] =
+        l.foldRight(List(Nil: List[Char])) { (s, z) => s.toList.flatMap(c => z.map(c :: _)) }
+      val split = args.split(",")
+      combinations(split.toList).map { s =>
+        val types = s.map {
+          case 'B' => "Byte"
+          case 'S' => "Short"
+          case 'V' => "BoxedUnit"
+          case 'I' => "Integer"
+          case 'J' => "Long"
+          case 'C' => "Character"
+          case 'F' => "Float"
+          case 'D' => "Double"
+          case 'Z' => "Boolean"
+        }
+        (split.length-1, (types.tail :+ types.head).mkString(", "), "$mc" + s.mkString + "$sp")
+      }
+    }
+
+    val specialized =
+      List("V", "V,IJFD", "V,IJD,IJD").flatMap(specialize).map { case (i, a, sp) =>
+        s"  public static scala.Function$i<$a> procSpecialized(JFunction$i$sp f) { return f; }" } ++
+      List("BSIJCFDZ", "ZIFJD,IJFD", "ZIFJD,IJD,IJD").flatMap(specialize).map { case (i, a, sp) =>
+        s"  public static scala.Function$i<$a> funcSpecialized(JFunction$i$sp f) { return f; }" }
+
+    (blocks.map(_._1) ++ blocks.map(_._2)) :+
+      ( "JFunction",
+        s"""$copyright
+           |$packaging
+           |
+           |import scala.runtime.BoxedUnit;
+           |import scala.runtime.java8.*;
+           |
+           |public final class JFunction {
+           |  private JFunction() {}
+           |${specialized.mkString("\n")}
+           |${blocks.map(_._3).mkString("\n")}
+           |}
+           """.stripMargin)
+  }
 }

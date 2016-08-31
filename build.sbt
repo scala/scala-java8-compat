@@ -63,14 +63,16 @@ lazy val root = (project in file(".")).
     }.taskValue,
 
     sourceGenerators in Compile <+= (sourceManaged in Compile, scalaVersion) map { (dir, v) =>
+      val write = jwrite(dir) _
       if(v.startsWith("2.11.")) {
-        val write = jwrite(dir) _
         Seq(write("JFunction", CodeGen.factory)) ++
-        (0 to 22).map(n => write("JFunction" + n, CodeGen.fN(n))) ++
-        (0 to 22).map(n => write("JProcedure" + n, CodeGen.pN(n))) ++
-        CodeGen.specializedF0.map(write.tupled) ++
-        CodeGen.specializedF1.map(write.tupled) ++
-        CodeGen.specializedF2.map(write.tupled)
+          (0 to 22).map(n => write("JFunction" + n, CodeGen.fN(n))) ++
+          (0 to 22).map(n => write("JProcedure" + n, CodeGen.pN(n))) ++
+          CodeGen.specializedF0.map(write.tupled) ++
+          CodeGen.specializedF1.map(write.tupled) ++
+          CodeGen.specializedF2.map(write.tupled)
+      } else if(v.startsWith("2.12.") && v != "2.12.0-M5") {
+        CodeGen.create212.map(write.tupled)
       } else Seq.empty
     },
 
