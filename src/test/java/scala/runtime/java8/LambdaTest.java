@@ -7,32 +7,20 @@ import org.apache.commons.lang3.SerializationUtils;
 import scala.runtime.*;
 
 import static junit.framework.Assert.assertEquals;
-import static scala.runtime.java8.JFunction.*;
 import static scala.runtime.java8.TestAPI.*;
 
 import org.junit.Test;
 
 
 public class LambdaTest {
+    /*
+    // This version is for Scala 2.12.0-RC1 and is not compatible with 2.11. It's commented out to allow cross-building.
     @Test
     public void lambdaDemo() {
-        // Not allowed with Scala 2.10 nor 2.11
-        // "incompatible types: Function1 is not a functional interface"
-        // scala.Function1<String, String> f = (String s) -> s;
-
-        // Function1 is not a functional interface because it has abstract
-        // methods in addition to apply, namely `compose` and `andThen`
-        // (which are implemented in Scala-derived subclasses with mixin
-        // inheritance), and the specialized variants of apply (also provided
-        // by scalac.)
-
-        // That's a pity, but we can get pretty close with this library!
-
-        // We have to tell javac to use `JFunction1` as the functional interface.
-        JFunction1<String, String> f1 = (String s) -> s;
+        scala.Function1<String, String> f1 = (String s) -> s;
 
         // That's more or less equivalent to the old, anonymous class syntax:
-        new JFunction1<String, String>() {
+        new scala.Function1<String, String>() {
             public String apply(String s) { return s; }
         };
 
@@ -47,80 +35,73 @@ public class LambdaTest {
         // F1 is a subclass of Function1:
         scala.Function1<String, String> f2 = f1;
 
-        // Factory methods in `JFunction` can reduce the verbosity a little:
-        // `func` is actually just an identity method; it only exists to
-        // trigger lambda creation using the `JFunction1` functional interface.
-        scala.Function1<String, String> f3 = func((String s) -> s);
-
-        // Note that javac's type inference can infer the parameter type here,
-        // based on the acribed type of `f4`.
-        scala.Function1<String, String> f4 = func(s -> s);
-
-        // f1.apply("");
+        scala.Function1<String, String> f3 = (String s) -> s;
+        scala.Function1<String, String> f4 = s -> s;
 
         // Specialized variants of the `apply` method are implenented in the
         // functional interface
-        JFunction1<Integer, Integer> f5 = (i) -> -i;
+        scala.Function1<Integer, Integer> f5 = (i -> -i);
         assert(f5.apply(1) == -1);
         assert(f5.apply$mcII$sp(1) == -1);
 
         // as are `curried`, `tupled`, `compose`, `andThen`.
         f3.compose(f3).andThen(f3).apply("");
-        scala.Function2<String, String, String> f6 = func((s1, s2) -> join(s1, s2));
+        scala.Function2<String, String, String> f6 = ((s1, s2) -> join(s1, s2));
         assert(f6.curried().apply("1").apply("2").equals("12"));
 
-        // Functions returning unit must use the `JProcedure1`, ... functional interfaces
-        // in order to convert a void lamdba return to Scala's Unit.
-        //
-        // The easiest way to do this is via `JFunction.proc`, ....
+        // Functions returning unit must return BoxedUnit.UNIT explicitly.
         //
         // Note that the lambda has a return type of `void` if the last
         // statement is a call to a `void` returning method, or if it is
         // a `return`.
-        scala.Function1<String, BoxedUnit> f7 = proc(s -> sideEffect());
-        scala.Function1<String, BoxedUnit> f8 = proc(s -> {s.toUpperCase(); return;});
+        scala.Function1<String, BoxedUnit> f7 = (s -> { sideEffect(); return scala.runtime.BoxedUnit.UNIT; });
+        scala.Function1<String, BoxedUnit> f8 = (s -> { s.toUpperCase(); return scala.runtime.BoxedUnit.UNIT; });
 
         // Function0 is also available
-        scala.Function0<String> f9 = func(() -> "42");
+        scala.Function0<String> f9 = (() -> "42");
         assert(f9.apply().equals("42"));
 
         // You can go up to 22 (the highest arity function defined in the Scala standard library.)
-        assert(acceptFunction1(func(v1 -> v1.toUpperCase())).equals("1"));
-        acceptFunction1Unit(proc(v1 -> sideEffect()));
-        acceptFunction1Unit(proc(v1 -> {v1.toUpperCase(); return;}));
+        assert(acceptFunction1((v1 -> v1.toUpperCase())).equals("1"));
+        acceptFunction1Unit((v1 -> {sideEffect(); return scala.runtime.BoxedUnit.UNIT;}));
+        acceptFunction1Unit((v1 -> {v1.toUpperCase(); return scala.runtime.BoxedUnit.UNIT;}));
 
-        assert(acceptFunction2(func((v1, v2) -> join(v1, v2))).equals("12"));
-        acceptFunction2Unit(proc((v1, v2) -> {v1.toUpperCase(); return;}));
+        assert(acceptFunction2(((v1, v2) -> join(v1, v2))).equals("12"));
+        acceptFunction2Unit(((v1, v2) -> {v1.toUpperCase(); return scala.runtime.BoxedUnit.UNIT;}));
 
-        assert(acceptFunction3(func((v1, v2, v3) -> join(v1, v2, v3))).equals("123"));
-        acceptFunction3Unit(proc((v1, v2, v3) -> {v1.toUpperCase(); return;}));
+        assert(acceptFunction3(((v1, v2, v3) -> join(v1, v2, v3))).equals("123"));
+        acceptFunction3Unit(((v1, v2, v3) -> {v1.toUpperCase(); return scala.runtime.BoxedUnit.UNIT;}));
 
-        assert(acceptFunction22(func((v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22) -> join(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22))).equals("12345678910111213141516171819202122"));
-        acceptFunction22Unit(   proc((v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22) -> {v1.toUpperCase(); return;}));
+        assert(acceptFunction22(((v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22) -> join(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22))).equals("12345678910111213141516171819202122"));
+        acceptFunction22Unit(   ((v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22) -> {v1.toUpperCase(); return scala.runtime.BoxedUnit.UNIT;}));
     }
+    */
 
     /*
     // The JFunctions in 2.12.0-M4 are not Serializable anymore
     @Test
     public void isSerializable() {
-        scala.runtime.java8.JFunction0<String> f0 = () -> "foo";
+        scala.Function0<String> f0 = () -> "foo";
         assertEquals("foo", SerializationUtils.clone(f0).apply());
 
-        scala.runtime.java8.JFunction1<String, String> f1 = (a) -> a.toUpperCase();
+        scala.Function1<String, String> f1 = (a) -> a.toUpperCase();
         assertEquals("FOO", SerializationUtils.clone(f1).apply("foo"));
 
-        scala.runtime.java8.JFunction2<String, String, String> f2 = (a, b) -> a + b;
+        scala.Function2<String, String, String> f2 = (a, b) -> a + b;
         assertEquals("foobar", SerializationUtils.clone(f2).apply("foo", "bar"));
 
-        scala.runtime.java8.JFunction3<String, String, String, String> f3 = (a, b, c) -> a + b + c;
+        scala.Function3<String, String, String, String> f3 = (a, b, c) -> a + b + c;
         assertEquals("foobarbaz", SerializationUtils.clone(f3).apply("foo", "bar", "baz"));
     }
     */
 
+    /*
+    // This version is for Scala 2.12.0-RC1 and is not compatible with 2.11. It's commented out to allow cross-building.
     private static scala.concurrent.Future<Integer> futureExample(
         scala.concurrent.Future<String> future, scala.concurrent.ExecutionContext ec) {
-        return future.map(func(s -> s.toUpperCase()), ec).map(func(s -> s.length()), ec);
+        return future.map(s -> s.toUpperCase(), ec).map(s -> s.length(), ec);
     }
+    */
 
     private static void sideEffect() {
     }
