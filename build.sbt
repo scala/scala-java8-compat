@@ -2,15 +2,15 @@ val disableDocs = sys.props("nodocs") == "true"
 
 lazy val JavaDoc = config("genjavadoc") extend Compile
 
-def jwrite(dir: java.io.File)(name: String, content: String) = {
-  val f = dir / "scala" / "runtime" / "java8" / s"${name}.java"
+def jwrite(dir: java.io.File, pck: String = "scala/compat/java8")(name: String, content: String) = {
+  val f = dir / pck / s"${name}.java"
   IO.write(f, content)
   f
 }
 
 lazy val commonSettings = Seq(
-  resolvers += "scala-pr" at "https://scala-ci.typesafe.com/artifactory/scala-pr-validation-snapshots/",
-  crossScalaVersions := List("2.12.0-ab61fed-SNAPSHOT", "2.11.8", "2.12.0-M5"),
+  resolvers += "scala-nightly" at "https://scala-ci.typesafe.com/artifactory/scala-release-temp/",
+  crossScalaVersions := List("2.12.0-45edf86-nightly", "2.11.8"),
   scalaVersion := crossScalaVersions.value.head,
   organization := "org.scala-lang.modules",
   version := "0.8.0-SNAPSHOT"
@@ -70,10 +70,9 @@ lazy val root = (project in file(".")).
           (0 to 22).map(n => write("JProcedure" + n, CodeGen.pN(n))) ++
           CodeGen.specializedF0.map(write.tupled) ++
           CodeGen.specializedF1.map(write.tupled) ++
-          CodeGen.specializedF2.map(write.tupled)
-      } else if(v.startsWith("2.12.") && v != "2.12.0-M5") {
-        CodeGen.create212.map(write.tupled)
-      } else Seq.empty
+          CodeGen.specializedF2.map(write.tupled) ++
+          CodeGen.packageDummy.map((jwrite(dir, "java/runtime/java8") _).tupled)
+      } else CodeGen.create212.map(write.tupled)
     },
 
     sourceGenerators in Test <+= sourceManaged in Test map { dir =>
@@ -90,11 +89,6 @@ lazy val root = (project in file(".")).
     },
 
     publishArtifact in packageDoc := !disableDocs,
-
-    unmanagedSourceDirectories in Compile += {
-      val isPre212 = scalaVersion.value.startsWith("2.11") || scalaVersion.value == "2.12.0-M5"
-      sourceDirectory.value / "main" / (if(isPre212) "java-for-scala-2.11" else "java-for-scala-2.12")
-    },
 
     sources in (Compile, doc) := {
       val orig = (sources in (Compile, doc)).value

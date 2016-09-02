@@ -25,7 +25,7 @@ object Type {
 }
 
 object CodeGen {
-  def packaging = "package scala.runtime.java8;"
+  def packaging = "package scala.compat.java8;"
   case class arity(n: Int) {
     val ns = (1 to n).toList
 
@@ -433,6 +433,22 @@ object CodeGen {
   }
 
   def indent(s: String) = s.linesIterator.map("    " + _).mkString("\n")
+
+  /** Create a dummy class to put into scala.runtime.java8 for Scala 2.11 so that wildcard imports from the
+    * package won't fail. This allows importing both `scala.runtime.java8.*` and `scala.compat.java8.*` for
+    * source compatibility between 2.11 and 2.12.
+    */
+  def packageDummy: Seq[(String, String)] = Seq(
+    ( "PackageDummy",
+      s"""$copyright
+         |
+         |package scala.runtime.java8;
+         |
+         |public final class PackageDummy {
+         |  private PackageDummy() {}
+         |}
+       """.stripMargin)
+  )
 
   /** Create the simpler JFunction and JProcedure sources for Scala 2.12+ */
   def create212: Seq[(String, String)] = {

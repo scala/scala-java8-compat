@@ -1,11 +1,12 @@
 /*
  * Copyright (C) 2012-2015 Typesafe Inc. <http://www.typesafe.com>
  */
-package scala.runtime.java8;
+package scala.compat.java8;
 
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Assert;
+import scala.runtime.java8.*;
 
 public class SpecializedTestSupport {
     public static class IntIdentity implements JFunction1$mcII$sp {

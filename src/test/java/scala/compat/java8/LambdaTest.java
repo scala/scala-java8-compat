@@ -1,14 +1,14 @@
 /*
  * Copyright (C) 2012-2015 Typesafe Inc. <http://www.typesafe.com>
  */
-package scala.runtime.java8;
+package scala.compat.java8;
 
 import org.apache.commons.lang3.SerializationUtils;
 import scala.runtime.*;
 
 import static junit.framework.Assert.assertEquals;
-import static scala.runtime.java8.JFunction.*;
-import static scala.runtime.java8.TestAPI.*;
+import static scala.compat.java8.JFunction.*;
+import static scala.compat.java8.TestAPI.*;
 
 import org.junit.Test;
 
