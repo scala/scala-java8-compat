@@ -2,8 +2,8 @@ val disableDocs = sys.props("nodocs") == "true"
 
 lazy val JavaDoc = config("genjavadoc") extend Compile
 
-def jwrite(dir: java.io.File)(name: String, content: String) = {
-  val f = dir / "scala" / "runtime" / "java8" / s"${name}.java"
+def jwrite(dir: java.io.File, pck: String = "scala/compat/java8")(name: String, content: String) = {
+  val f = dir / pck / s"${name}.java"
   IO.write(f, content)
   f
 }
@@ -16,8 +16,8 @@ def osgiExport(scalaVersion: String, version: String) = {
 }
 
 lazy val commonSettings = Seq(
-  scalaVersion := "2.11.8",
-  crossScalaVersions := List("2.11.8", "2.12.0-M5"),
+  crossScalaVersions := List("2.12.0-RC1", "2.11.8"),
+  scalaVersion := crossScalaVersions.value.head,
   organization := "org.scala-lang.modules",
   version := "0.8.0-SNAPSHOT"
 )
@@ -69,15 +69,16 @@ lazy val root = (project in file(".")).
     }.taskValue,
 
     sourceGenerators in Compile <+= (sourceManaged in Compile, scalaVersion) map { (dir, v) =>
+      val write = jwrite(dir) _
       if(v.startsWith("2.11.")) {
-        val write = jwrite(dir) _
         Seq(write("JFunction", CodeGen.factory)) ++
-        (0 to 22).map(n => write("JFunction" + n, CodeGen.fN(n))) ++
-        (0 to 22).map(n => write("JProcedure" + n, CodeGen.pN(n))) ++
-        CodeGen.specializedF0.map(write.tupled) ++
-        CodeGen.specializedF1.map(write.tupled) ++
-        CodeGen.specializedF2.map(write.tupled)
-      } else Seq.empty
+          (0 to 22).map(n => write("JFunction" + n, CodeGen.fN(n))) ++
+          (0 to 22).map(n => write("JProcedure" + n, CodeGen.pN(n))) ++
+          CodeGen.specializedF0.map(write.tupled) ++
+          CodeGen.specializedF1.map(write.tupled) ++
+          CodeGen.specializedF2.map(write.tupled) ++
+          CodeGen.packageDummy.map((jwrite(dir, "java/runtime/java8") _).tupled)
+      } else CodeGen.create212.map(write.tupled)
     },
 
     sourceGenerators in Test <+= sourceManaged in Test map { dir =>
@@ -86,7 +87,7 @@ lazy val root = (project in file(".")).
 
     initialize := {
       // Run previously configured inialization...
-      initialize.value
+      val _ = initialize.value
       // ... and then check the Java version.
       val specVersion = sys.props("java.specification.version")
       if (Set("1.5", "1.6", "1.7") contains specVersion)

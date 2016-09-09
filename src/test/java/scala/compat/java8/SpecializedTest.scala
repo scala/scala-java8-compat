@@ -4,7 +4,7 @@
 package scala.compat.java8
 
 import org.junit.Test
-import scala.runtime.java8.SpecializedTestSupport.IntIdentity
+import SpecializedTestSupport.IntIdentity
 
 class SpecializedTest {
   @Test def specializationWorks() {
