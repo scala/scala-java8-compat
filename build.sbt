@@ -9,8 +9,7 @@ def jwrite(dir: java.io.File, pck: String = "scala/compat/java8")(name: String, 
 }
 
 lazy val commonSettings = Seq(
-  resolvers += "scala-nightly" at "https://scala-ci.typesafe.com/artifactory/scala-release-temp/",
-  crossScalaVersions := List("2.12.0-45edf86-nightly", "2.11.8"),
+  crossScalaVersions := List("2.12.0-RC1", "2.11.8"),
   scalaVersion := crossScalaVersions.value.head,
   organization := "org.scala-lang.modules",
   version := "0.8.0-SNAPSHOT"
