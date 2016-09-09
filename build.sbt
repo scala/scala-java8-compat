@@ -16,7 +16,7 @@ def osgiExport(scalaVersion: String, version: String) = {
 }
 
 lazy val commonSettings = Seq(
-  crossScalaVersions := List("2.12.0-RC1", "2.11.8"),
+  crossScalaVersions := List("2.12.0-RC1", "2.12.0-M5", "2.11.8"),
   scalaVersion := crossScalaVersions.value.head,
   organization := "org.scala-lang.modules",
   version := "0.8.0-SNAPSHOT"
