@@ -19,7 +19,7 @@ lazy val commonSettings = Seq(
   crossScalaVersions := List("2.12.0", "2.11.8"),
   scalaVersion := crossScalaVersions.value.head,
   organization := "org.scala-lang.modules",
-  version := "0.8.0-SNAPSHOT"
+  version := "0.9.0-SNAPSHOT"
 )
 
 lazy val fnGen = (project in file("fnGen")).
