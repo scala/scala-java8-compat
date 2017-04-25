@@ -2,7 +2,6 @@ language: scala
 sudo: false
 env:
   global:
-    - PUBLISH_JDK=oraclejdk8
     # PGP_PASSPHRASE
     - secure: "BzgzRZLYa52rS/hBfzf43b++CfDhdcd3Mmu8tsyBHgThSQOd2YBLbV5kWD8aYVFKVHfW7XX0PTe3F+rR/fFZqGItE6o8Px0Y7Vzb5pqjlaQdxFEJ+WrsnshS0xuAKZ7OwVHRp+d+jznaCwRxEo2vpW3ko1OPAJ8cxfhVL/4C1I0="
     # SONA_USER
@@ -11,9 +10,6 @@ env:
     - secure: "FZC+FZnBNeklA150vW5QDZJ5J7t+DExJrgyXWM46Wh0MobjH8cvydgC3qatItb0rDBV8l7zO1LDwl2KEi92aefw2a8E49z6qVOHgUXiI3SAx7M0UO0FFeKPmTXCLcBlbnGLcUqNjIZfuIEufQvPblKTl8qN4eMmcMn9jsNzJr28="
 script:
   - admin/build.sh
-scala:
-  - 2.11.8
-  - 2.12.0
 jdk:
   - oraclejdk8
 notifications:

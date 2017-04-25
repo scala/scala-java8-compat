@@ -1,3 +1,9 @@
+import ScalaModulePlugin._
+
+scalaVersionsByJvm in ThisBuild := Map(
+  8 -> List("2.12.0", "2.11.8").map(_ -> true)
+)
+
 val disableDocs = sys.props("nodocs") == "true"
 
 lazy val JavaDoc = config("genjavadoc") extend Compile
@@ -16,8 +22,6 @@ def osgiExport(scalaVersion: String, version: String) = {
 }
 
 lazy val commonSettings = Seq(
-  crossScalaVersions := List("2.12.0", "2.11.8"),
-  scalaVersion := crossScalaVersions.value.head,
   organization := "org.scala-lang.modules",
   version := "0.9.0-SNAPSHOT"
 )
@@ -35,10 +39,6 @@ lazy val root = (project in file(".")).
   settings(commonSettings: _*).
   settings(
     name := "scala-java8-compat"
-  ).
-  settings(
-    // important!! must come here (why?)
-    scalaModuleOsgiSettings: _*
   ).
   settings(
     fork := true, // This must be set so that runner task is forked when it runs fnGen and the compiler gets a proper classpath
