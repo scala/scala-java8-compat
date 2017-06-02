@@ -4,10 +4,11 @@
 package scala.compat.java8
 
 import scala.concurrent.java8.FuturesConvertersImpl._
-import scala.concurrent.{ Future, Promise, ExecutionContext, ExecutionContextExecutorService, ExecutionContextExecutor, impl }
-import java.util.concurrent.{ CompletionStage, Executor, ExecutorService, CompletableFuture }
-import scala.util.{ Try, Success, Failure }
-import java.util.function.{ BiConsumer, Function ⇒ JF, Consumer, BiFunction }
+import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, ExecutionContextExecutorService, Future, Promise}
+import java.util.concurrent.{CompletableFuture, CompletionStage, ExecutionException, Executor, ExecutorService}
+
+import scala.util.{Failure, Try}
+import java.util.function.Consumer
 
 /**
  * This class contains static methods which convert between Java CompletionStage
@@ -77,6 +78,8 @@ object FutureConverters {
   def toScala[T](cs: CompletionStage[T]): Future[T] = {
     cs match {
       case cf: CF[T] => cf.wrapped
+      case cf: CompletableFuture[T] if cf.isDone =>
+        Future fromTry Try(cf.get()).recoverWith { case e: ExecutionException => Failure(e.getCause) }
       case _ =>
         val p = new P[T](cs)
         cs whenComplete p
