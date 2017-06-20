@@ -1,7 +1,7 @@
 import ScalaModulePlugin._
 
 scalaVersionsByJvm in ThisBuild := Map(
-  8 -> List("2.12.0", "2.11.8", "2.13.0-M1").map(_ -> true)
+  8 -> List("2.12.2", "2.11.11", "2.13.0-M1").map(_ -> true)
 )
 
 val disableDocs = sys.props("nodocs") == "true"
@@ -23,7 +23,8 @@ def osgiExport(scalaVersion: String, version: String) = {
 
 lazy val commonSettings = Seq(
   organization := "org.scala-lang.modules",
-  version := "0.9.0-SNAPSHOT"
+  version := "0.9.0-SNAPSHOT",
+  scalacOptions ++= Seq("-feature", "-deprecation", "-unchecked")
 )
 
 lazy val fnGen = (project in file("fnGen")).
@@ -68,9 +69,10 @@ lazy val root = (project in file(".")).
       (out ** "*.scala").get
     }.taskValue,
 
-    sourceGenerators in Compile <+= (sourceManaged in Compile, scalaVersion) map { (dir, v) =>
+    sourceGenerators in Compile += Def.task {
+      val dir = (sourceManaged in Compile).value
       val write = jwrite(dir) _
-      if(v.startsWith("2.11.")) {
+      if(scalaVersion.value.startsWith("2.11.")) {
         Seq(write("JFunction", CodeGen.factory)) ++
           (0 to 22).map(n => write("JFunction" + n, CodeGen.fN(n))) ++
           (0 to 22).map(n => write("JProcedure" + n, CodeGen.pN(n))) ++
@@ -79,11 +81,11 @@ lazy val root = (project in file(".")).
           CodeGen.specializedF2.map(write.tupled) ++
           CodeGen.packageDummy.map((jwrite(dir, "java/runtime/java8") _).tupled)
       } else CodeGen.create212.map(write.tupled)
-    },
+    }.taskValue,
 
-    sourceGenerators in Test <+= sourceManaged in Test map { dir =>
-      Seq(jwrite(dir)("TestApi", CodeGen.testApi))
-    },
+    sourceGenerators in Test += Def.task {
+      Seq(jwrite((sourceManaged in Test).value)("TestApi", CodeGen.testApi))
+    }.taskValue,
 
     initialize := {
       // Run previously configured inialization...
@@ -103,14 +105,16 @@ lazy val root = (project in file(".")).
   ).
   settings(
     (inConfig(JavaDoc)(Defaults.configSettings) ++ (if (disableDocs) Nil else Seq(
-      packageDoc in Compile <<= packageDoc in JavaDoc,
-      sources in JavaDoc <<= (target, compile in Compile, sources in Compile) map {(t, c, s) =>
-        val allJavaSources = (t / "java" ** "*.java").get ++ s.filter(_.getName.endsWith(".java"))
+      packageDoc in Compile := (packageDoc in JavaDoc).value,
+      sources in JavaDoc := {
+        val allJavaSources =
+          (target.value / "java" ** "*.java").get ++
+            (sources in Compile).value.filter(_.getName.endsWith(".java"))
         allJavaSources.filterNot(_.getName.contains("FuturesConvertersImpl.java")) // this file triggers bugs in genjavadoc
       },
       javacOptions in JavaDoc := Seq(),
       artifactName in packageDoc in JavaDoc := ((sv, mod, art) => "" + mod.name + "_" + sv.binary + "-" + mod.revision + "-javadoc.jar"),
-      libraryDependencies += compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.10" cross CrossVersion.fullMapped { case "2.12.0" => "2.12.0-RC1" case x => x}),
+      libraryDependencies += compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.10" cross CrossVersion.full),
       scalacOptions in Compile += "-P:genjavadoc:out=" + (target.value / "java")
     ))): _*
   ).

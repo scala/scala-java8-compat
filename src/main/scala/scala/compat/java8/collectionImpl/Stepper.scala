@@ -1,5 +1,7 @@
 package scala.compat.java8.collectionImpl
 
+import scala.language.higherKinds
+
 import java.util.Spliterator
 
 /** A Stepper is a specialized collection that can step through its
@@ -66,7 +68,7 @@ trait StepperLike[@specialized(Double, Int, Long) A, +CC] { self: CC =>
     * guaranteed to be any safer than modification of any generic mutable collection, and if the underlying collection is ordered by
     * virtue of sorting, `Stepper` will not keep track of that fact.
     */
-  def characteristics: Int
+  def characteristics(): Int
 
   /** Returns the size of the collection, if known exactly, or `-1` if not. */
   def knownSize: Long

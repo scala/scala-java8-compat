@@ -1,5 +1,7 @@
 package scala.compat.java8.collectionImpl
 
+import scala.language.higherKinds
+
 /** A `DoubleAccumulator` is a low-level collection specialized for gathering
   * elements in parallel and then joining them in order by merging them.
   * This is a manually specialized variant of `Accumulator` with no actual
@@ -229,7 +231,7 @@ private[java8] class DoubleAccumulatorStepper(private val acc: DoubleAccumulator
   private var n = if (acc.hIndex > 0) acc.cumulative(0) else acc.index
   private var N = acc.totalSize
   
-  private def duplicateSelf(limit: Long = N): DoubleAccumulatorStepper = {
+  private def duplicateSelf(limit: Long): DoubleAccumulatorStepper = {
     val ans = new DoubleAccumulatorStepper(acc)
     ans.h = h
     ans.i = i
@@ -246,7 +248,7 @@ private[java8] class DoubleAccumulatorStepper(private val acc: DoubleAccumulator
     i = 0
   }
     
-  def characteristics = ORDERED | SIZED | SUBSIZED | NONNULL
+  def characteristics() = ORDERED | SIZED | SUBSIZED | NONNULL
   
   def estimateSize = N
 

@@ -1,5 +1,7 @@
 package scala.compat.java8
 
+import scala.language.higherKinds
+
 import org.junit.Test
 import org.junit.Assert._
 

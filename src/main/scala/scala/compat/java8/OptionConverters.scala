@@ -1,9 +1,8 @@
 /*
- * Copyright (C) 2012-2015 Typesafe Inc. <http://www.typesafe.com>
+ * Copyright (C) 2012-2015 Lightbend Inc. <http://www.lightbend.com>
  */
 package scala.compat.java8
 
-import language.implicitConversions
 import java.util.{Optional, OptionalDouble, OptionalInt, OptionalLong}
 
 /** This class enables bidirectional conversion between `scala.Option` and the
