@@ -14,4 +14,4 @@ jdk:
   - oraclejdk8
 notifications:
   email:
-    - jason.zaugg@typesafe.com
+    - jason.zaugg@lightbend.com
