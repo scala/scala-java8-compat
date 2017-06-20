@@ -1,7 +1,5 @@
 package scala.compat.java8.converterImpl
 
-import annotation.tailrec
-
 import scala.compat.java8.collectionImpl._
 import Stepper._
 

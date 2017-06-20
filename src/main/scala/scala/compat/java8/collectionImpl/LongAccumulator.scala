@@ -1,5 +1,7 @@
 package scala.compat.java8.collectionImpl
 
+import scala.language.higherKinds
+
 /** A `LongAccumulator` is a low-level collection specialized for gathering
   * elements in parallel and then joining them in order by merging them.
   * This is a manually specialized variant of `Accumulator` with no actual
@@ -230,7 +232,7 @@ private[java8] class LongAccumulatorStepper(private val acc: LongAccumulator) ex
   private var n = if (acc.hIndex > 0) acc.cumulative(0) else acc.index
   private var N = acc.totalSize
   
-  private def duplicateSelf(limit: Long = N): LongAccumulatorStepper = {
+  private def duplicateSelf(limit: Long): LongAccumulatorStepper = {
     val ans = new LongAccumulatorStepper(acc)
     ans.h = h
     ans.i = i
@@ -247,7 +249,7 @@ private[java8] class LongAccumulatorStepper(private val acc: LongAccumulator) ex
     i = 0
   }
   
-  def characteristics = ORDERED | SIZED | SUBSIZED | NONNULL
+  def characteristics() = ORDERED | SIZED | SUBSIZED | NONNULL
   
   def estimateSize = N
 

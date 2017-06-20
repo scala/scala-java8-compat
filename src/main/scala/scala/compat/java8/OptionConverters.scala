@@ -3,7 +3,6 @@
  */
 package scala.compat.java8
 
-import language.implicitConversions
 import java.util.{Optional, OptionalDouble, OptionalInt, OptionalLong}
 
 /** This class enables bidirectional conversion between `scala.Option` and the

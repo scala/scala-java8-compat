@@ -3,11 +3,12 @@
  */
 package scala.compat.java8
 
+import scala.language.implicitConversions
+
 import scala.concurrent.java8.FuturesConvertersImpl._
-import scala.concurrent.{ Future, Promise, ExecutionContext, ExecutionContextExecutorService, ExecutionContextExecutor, impl }
-import java.util.concurrent.{ CompletionStage, Executor, ExecutorService, CompletableFuture }
-import scala.util.{ Try, Success, Failure }
-import java.util.function.{ BiConsumer, Function ⇒ JF, Consumer, BiFunction }
+import scala.concurrent.{ Future, Promise, ExecutionContext, ExecutionContextExecutorService, ExecutionContextExecutor }
+import java.util.concurrent.{ CompletionStage, Executor, ExecutorService }
+import java.util.function.Consumer
 
 /**
  * This class contains static methods which convert between Java CompletionStage

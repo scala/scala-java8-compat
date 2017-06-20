@@ -1,9 +1,6 @@
 package scala.compat.java8.converterImpl
 
-import language.implicitConversions
-
 import scala.compat.java8.collectionImpl._
-import scala.compat.java8.runtime._
 
 import Stepper._
 

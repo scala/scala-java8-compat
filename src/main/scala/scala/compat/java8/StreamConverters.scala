@@ -1,6 +1,6 @@
 package scala.compat.java8
 
-import language.implicitConversions
+import scala.language.higherKinds
 
 import java.util.stream._
 import scala.compat.java8.collectionImpl._

@@ -1,12 +1,8 @@
 package scala.compat.java8.converterImpl
 
-import language.implicitConversions
 import scala.annotation.switch
 
 import scala.compat.java8.collectionImpl._
-import scala.compat.java8.runtime._
-
-import Stepper._
 
 // Generic maps defer to the iterator steppers if a more precise type cannot be found via pattern matching
 // TODO: implement pattern matching

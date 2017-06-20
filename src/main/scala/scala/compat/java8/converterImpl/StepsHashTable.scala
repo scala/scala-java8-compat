@@ -1,6 +1,5 @@
 package scala.compat.java8.converterImpl
 
-import language.implicitConversions
 import scala.annotation.switch
 
 import scala.compat.java8.collectionImpl._

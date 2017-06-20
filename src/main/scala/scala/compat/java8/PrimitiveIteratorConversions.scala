@@ -3,7 +3,6 @@
  */
 package scala.compat.java8
 
-import language.implicitConversions
 import java.util.{ Iterator => JIterator, PrimitiveIterator }
 
 /** This class enables conversion from `scala.Iterator` to the set of

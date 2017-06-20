@@ -2,11 +2,6 @@ package scala.compat.java8.converterImpl
 
 import language.implicitConversions
 
-import scala.compat.java8.collectionImpl._
-import scala.compat.java8.runtime._
-
-import Stepper._
-
 trait Priority3StepConverters {
   implicit def richIterableCanStep[A](underlying: Iterable[A]) = new RichIterableCanStep(underlying)
   implicit def richMapCanStep[K, V](underlying: collection.Map[K, V]) = new RichMapCanStep[K, V](underlying)
