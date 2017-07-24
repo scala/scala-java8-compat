@@ -65,7 +65,8 @@ lazy val root = (project in file(".")).
       val args = (new File(canon, "FunctionConverters.scala")).toString :: Nil
       val runTarget = (mainClass in Compile in fnGen).value getOrElse "No main class defined for function conversion generator"
       val classPath = (fullClasspath in Compile in fnGen).value
-      toError(runner.value.run(runTarget, classPath.files, args, streams.value.log))
+      runner.value.run(runTarget, classPath.files, args, streams.value.log)
+        .foreach(sys.error)
       (out ** "*.scala").get
     }.taskValue,
 
