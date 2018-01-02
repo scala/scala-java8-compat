@@ -12,6 +12,7 @@ script:
   - admin/build.sh
 jdk:
   - oraclejdk8
+  - oraclejdk9
 notifications:
   email:
     - jason.zaugg@lightbend.com
