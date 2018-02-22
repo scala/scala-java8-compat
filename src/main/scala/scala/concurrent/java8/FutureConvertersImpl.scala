@@ -87,8 +87,6 @@ object FuturesConvertersImpl {
   }
 
   class P[T](val wrapped: CompletionStage[T]) extends DefaultPromise[T] with BiConsumer[T, Throwable] {
-    override def onSuccess[U](pf: PartialFunction[T, U])(implicit executor: ExecutionContext): Unit = super.onSuccess(pf)
-
     override def accept(v: T, e: Throwable): Unit = {
       if (e == null) complete(Success(v))
       else complete(Failure(e))
