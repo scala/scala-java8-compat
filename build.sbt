@@ -1,8 +1,9 @@
 import ScalaModulePlugin._
 
-scalaVersionsByJvm in ThisBuild := Map(
-  8 -> List("2.12.4", "2.11.12", "2.13.0-M3").map(_ -> true)
-)
+scalaVersionsByJvm in ThisBuild := {
+  val versions = List("2.12.4", "2.11.12", "2.13.0-M3").map(_ -> true)
+  Map(8 -> versions, 9 -> versions, 10 -> versions)
+}
 
 val disableDocs = sys.props("nodocs") == "true"
 
