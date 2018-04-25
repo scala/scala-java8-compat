@@ -1,12 +1,8 @@
 package scala.compat.java8.converterImpl
 
-import language.implicitConversions
 import scala.annotation.switch
 
 import scala.compat.java8.collectionImpl._
-import scala.compat.java8.runtime._
-
-import Stepper._
 
 // Iterables just defer to iterator unless they can pattern match something better.
 // TODO: implement pattern matching!

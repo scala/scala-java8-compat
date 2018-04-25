@@ -588,7 +588,6 @@ class StepConvertersTest {
     implicit val spec = SpecCheck(_.isInstanceOf[IntStepper], x => s"$x should be an IntStepper")
 
     good( ci.NumericRange(277: Short, 279: Short, 1: Short).stepper )
-    _eh_( ci.PagedSeq.fromLines(Array("salmon").iterator).stepper )
     good( ("salmon": ci.StringOps).stepper )
     good( ("salmon": ci.WrappedString).stepper )
   }

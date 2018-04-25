@@ -1,1 +1,3 @@
-addSbtPlugin("org.scala-lang.modules" % "scala-module-plugin" % "1.0.8")
+scalacOptions += "-Xfatal-warnings"
+
+addSbtPlugin("org.scala-lang.modules" % "sbt-scala-module" % "1.0.13")

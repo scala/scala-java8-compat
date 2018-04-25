@@ -14,7 +14,6 @@ object WrapFnGen {
   val packaging = "package scala.compat.java8"
 
   import scala.tools.nsc._
-  import scala.reflect.internal._
   val settings = new Settings(msg => sys.error(msg))
   settings.usejavacp.value = true
   val compiler = new Global(settings)
@@ -59,12 +58,12 @@ object WrapFnGen {
   }
 
   implicit class SplitMyLinesAndStuff(s: String) {
-    def toVec = s.linesIterator.toVector
+    def toVec = s.lines.toVector
     def nonBlank = s.trim.length > 0
   }
 
   implicit class TreeToText(t: Tree) {
-    def text = showCode(t).replace("$", "").linesIterator.toVector
+    def text = showCode(t).replace("$", "").lines.toVector
   }
 
   case class Prioritized(lines: Vector[String], priority: Int) {
@@ -253,7 +252,6 @@ object WrapFnGen {
             q"""@inline implicit def $s2jImpN[..$scalafnTdefs](sf: $scalaType[..$scalafnTnames])(implicit ..$evs): $s2jValCN[..$tnParams] =
               new $s2jValCN[..$tnParams](sf.asInstanceOf[$scalaType[..$scalaTargs]])
             """
-          val depth = numberedA.size
           (tree, tdParams.length)
         }
 
@@ -290,7 +288,7 @@ object WrapFnGen {
   def sameText(f: java.io.File, text: String): Boolean = {
     val x = scala.io.Source.fromFile(f)
     val lines = try { x.getLines.toVector } finally { x.close }
-    lines.iterator.filter(_.nonBlank) == text.linesIterator.filter(_.nonBlank)
+    lines.iterator.filter(_.nonBlank) == text.lines.filter(_.nonBlank)
   }
 
   def write(f: java.io.File, text: String) {

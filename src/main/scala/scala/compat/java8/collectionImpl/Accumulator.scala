@@ -1,5 +1,7 @@
 package scala.compat.java8.collectionImpl
 
+import scala.language.higherKinds
+
 /** An `Accumulator` is a low-level collection specialized for gathering
   * elements in parallel and then joining them in order by merging Accumulators.
   * Accumulators can contain more than `Int.MaxValue` elements.
@@ -232,7 +234,7 @@ private[java8] class AccumulatorStepper[A](private val acc: Accumulator[A]) exte
   private var n = if (acc.hIndex > 0) acc.cumulative(0) else acc.index
   private var N = acc.totalSize
   
-  private def duplicateSelf(limit: Long = N): AccumulatorStepper[A] = {
+  private def duplicateSelf(limit: Long): AccumulatorStepper[A] = {
     val ans = new AccumulatorStepper(acc)
     ans.h = h
     ans.i = i
@@ -249,7 +251,7 @@ private[java8] class AccumulatorStepper[A](private val acc: Accumulator[A]) exte
     i = 0
   }
   
-  def characteristics = ORDERED | SIZED | SUBSIZED
+  def characteristics() = ORDERED | SIZED | SUBSIZED
   
   def estimateSize = N
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Typesafe Inc. <http://www.typesafe.com>
+ * Copyright (C) 2012-2015 Lightbend Inc. <http://www.lightbend.com>
  */
 package scala.compat.java8.wrappers;
 

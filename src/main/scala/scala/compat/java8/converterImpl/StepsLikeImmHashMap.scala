@@ -1,7 +1,5 @@
 package scala.compat.java8.converterImpl
 
-import java.util.Spliterator
-
 import scala.compat.java8.collectionImpl._
 import Stepper._
 

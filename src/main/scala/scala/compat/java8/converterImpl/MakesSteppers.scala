@@ -1,9 +1,6 @@
 package scala.compat.java8.converterImpl
 
-import language.implicitConversions
-
 import scala.compat.java8.collectionImpl._
-import scala.compat.java8.runtime._
 
 trait MakesStepper[T, +Extra] extends Any {
   /** Generates a fresh stepper of type `S` for element type `T` */

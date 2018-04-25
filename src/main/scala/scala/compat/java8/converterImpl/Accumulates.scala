@@ -1,9 +1,6 @@
 package scala.compat.java8.converterImpl
 
-import language.implicitConversions
-
 import scala.compat.java8.collectionImpl._
-import scala.compat.java8.runtime._
 
 trait AccumulatesFromStepper[@specialized(Double, Int, Long) A, Acc <: AccumulatorLike[A, Acc]] {
   def apply(stepper: Stepper[A]): Acc

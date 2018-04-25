@@ -1,13 +1,14 @@
 /*
- * Copyright (C) 2012-2015 Typesafe Inc. <http://www.typesafe.com>
+ * Copyright (C) 2012-2015 Lightbend Inc. <http://www.lightbend.com>
  */
 package scala.compat.java8
 
-import scala.concurrent.java8.FuturesConvertersImpl._
-import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, ExecutionContextExecutorService, Future, Promise}
-import java.util.concurrent.{CompletableFuture, CompletionStage, ExecutionException, Executor, ExecutorService}
+import scala.language.implicitConversions
 
+import scala.concurrent.java8.FuturesConvertersImpl._
 import scala.util.{Failure, Try}
+import scala.concurrent.{ Future, Promise, ExecutionContext, ExecutionContextExecutorService, ExecutionContextExecutor }
+import java.util.concurrent.{CompletableFuture, CompletionStage, ExecutionException, Executor, ExecutorService}
 import java.util.function.Consumer
 
 /**
