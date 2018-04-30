@@ -23,29 +23,33 @@ object DurationConverters {
    * unit of nanoseconds.
    *
    * @throws IllegalArgumentException If the given Java Duration is out of bounds of what can be expressed with the
-   *                                  Scala Durations.
+   *                                  Scala FiniteDuration.
    */
-  final def toScala(duration: java.time.Duration): scala.concurrent.duration.Duration = {
-    if (duration.getNano == 0) {
-      if (duration.getSeconds == 0) ScalaDuration.Zero
-      else FiniteDuration(duration.getSeconds, TimeUnit.SECONDS)
+  final def toScala(duration: java.time.Duration): scala.concurrent.duration.FiniteDuration = {
+    val originalSeconds = duration.getSeconds
+    val originalNanos = duration.getNano
+    if (originalNanos == 0) {
+      if (originalSeconds == 0) ScalaDuration.Zero
+      else FiniteDuration(originalSeconds, TimeUnit.SECONDS)
+    } else if (originalSeconds == 0) {
+      FiniteDuration(originalNanos, TimeUnit.NANOSECONDS)
     } else {
-      FiniteDuration(
-        duration.getSeconds * 1000000000 + duration.getNano,
-        TimeUnit.NANOSECONDS
-      )
+      try {
+        val secondsAsNanos = Math.multiplyExact(originalSeconds, 1000000000)
+        val totalNanos = secondsAsNanos + originalNanos
+        if ((totalNanos < 0 && secondsAsNanos < 0) || (totalNanos > 0 && secondsAsNanos > 0)) FiniteDuration(totalNanos, TimeUnit.NANOSECONDS)
+        else throw new ArithmeticException()
+      } catch {
+        case _: ArithmeticException => throw new IllegalArgumentException(s"Java duration $duration cannot be expressed as a Scala duration")
+      }
     }
   }
 
   /**
-   * Transform a Scala duration into a Java duration. Note that the Scala duration keeps the time unit it was created
+   * Transform a Scala FiniteDuration into a Java duration. Note that the Scala duration keeps the time unit it was created
    * with while a Java duration always is a pair of seconds and nanos, so the unit it lost.
-   *
-   * @throws IllegalArgumentException If the Scala duration express a amount of time for the time unit that
-   *                                  a Java Duration can not express (infinite durations and undefined durations)
    */
-  final def toJava(duration: scala.concurrent.duration.Duration): java.time.Duration = {
-    require(duration.isFinite(), s"Got [$duration] but only finite Scala durations can be expressed as a Java Durations")
+  final def toJava(duration: scala.concurrent.duration.FiniteDuration): java.time.Duration = {
     if (duration.length == 0) JavaDuration.ZERO
     else duration.unit match {
       case TimeUnit.NANOSECONDS => JavaDuration.ofNanos(duration.length)
@@ -56,6 +60,20 @@ object DurationConverters {
       case TimeUnit.HOURS => JavaDuration.ofHours(duration.length)
       case TimeUnit.DAYS => JavaDuration.ofDays(duration.length)
     }
+  }
+
+  implicit final class DurationOps(val duration: java.time.Duration) extends AnyVal {
+    /**
+     * See [[DurationConverters.toScala]]
+     */
+    def toScala: scala.concurrent.duration.FiniteDuration = DurationConverters.toScala(duration)
+  }
+
+  implicit final class FiniteDurationops(val duration: scala.concurrent.duration.FiniteDuration) extends AnyVal {
+    /**
+     * See [[DurationConverters.toJava]]
+     */
+    def toJava: java.time.Duration = DurationConverters.toJava(duration)
   }
 
 }

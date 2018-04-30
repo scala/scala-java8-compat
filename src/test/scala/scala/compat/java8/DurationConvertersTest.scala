@@ -3,9 +3,10 @@
  */
 package scala.compat.java8
 
-import org.junit.Test
-import org.junit.Assert._
 import java.time.{Duration => JavaDuration}
+
+import org.junit.Assert._
+import org.junit.Test
 
 import scala.util.Try
 
@@ -25,7 +26,7 @@ class DurationConvertersTest {
       1000000001L         -> (1,1),
       Long.MaxValue       -> (9223372036L, 854775807)
     ).foreach { case (n, (expSecs, expNanos)) =>
-      val result = toJava(n.nanos)
+      val result = n.nanos.toJava
       assertEquals(s"toJava($n nanos) -> $expSecs s)", expSecs, result.getSeconds)
       assertEquals(s"toJava($n nanos) -> $expNanos n)", expNanos, result.getNano)
     }
@@ -40,7 +41,7 @@ class DurationConvertersTest {
       1L              -> (0L,  1000000),
       9223372036854L  -> (9223372036L, 854000000)
     ).foreach { case (n, (expSecs, expNanos)) =>
-      val result = toJava(n.millis)
+      val result = n.millis.toJava
       assertEquals(s"toJava($n millis) -> $expSecs s)", expSecs, result.getSeconds)
       assertEquals(s"toJava($n millis) -> $expNanos n)", expNanos, result.getNano)
     }
@@ -55,7 +56,7 @@ class DurationConvertersTest {
       1L                 -> (0L,  1000),
       9223372036854775L  -> (9223372036L, 854775000)
     ).foreach { case (n, (expSecs, expNanos)) =>
-      val result = toJava(n.micros)
+      val result = n.micros.toJava
       assertEquals(s"toJava($n micros) -> $expSecs s)", expSecs, result.getSeconds)
       assertEquals(s"toJava($n micros) -> $expNanos n)", expNanos, result.getNano)
     }
@@ -70,7 +71,7 @@ class DurationConvertersTest {
       1L           -> (1L,  0),
       9223372036L  -> (9223372036L, 0)
     ).foreach { case (n, (expSecs, expNanos)) =>
-      val result = toJava(n.seconds)
+      val result = n.seconds.toJava
       assertEquals(expSecs, result.getSeconds)
       assertEquals(expNanos, result.getNano)
     }
@@ -87,16 +88,9 @@ class DurationConvertersTest {
 
   @Test
   def javaNanosPartToScalaDuration(): Unit = {
-    Seq[Long](Long.MinValue + 1L, -1L, 0L, 1L, Long.MaxValue).foreach { n =>
+    val nanosPerSecond = 1000000000L
+    Seq[Long](-nanosPerSecond - 1L, 0L, 1L, nanosPerSecond - 1L).foreach { n =>
       assertEquals(n, toScala(JavaDuration.ofNanos(n)).toNanos)
-    }
-  }
-
-  @Test
-  def unsupportedScalaDurationThrows(): Unit = {
-    Seq(Duration.Inf, Duration.MinusInf, Duration.Undefined).foreach { d =>
-      val res = Try { toJava(d) }
-      assertTrue(s"Expected exception for $d but got success", res.isFailure)
     }
   }
 

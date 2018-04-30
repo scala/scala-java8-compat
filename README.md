@@ -253,3 +253,34 @@ public class StreamConvertersExample {
   }
 }
 ```
+
+## Converters between `scala.concurrent.duration.FiniteDuration` and `java.time.Duration`
+
+Interconversion between Java's standard `java.time.Duration` type 
+and the `scala.concurrent.duration.FiniteDuration` types. The Java `Duration` does 
+not contain a time unit, so when converting from `FiniteDuration` the time unit used 
+to create it is lost. 
+
+For the opposite conversion a `Duration` can potentially express a larger time span than
+a `FiniteDuration`, for such cases an exception is thrown.
+
+Example of conversions from the Java type ways: 
+
+```scala
+import scala.concurrent.duration._
+import scala.compat.java8.DurationConverters
+
+val javaDuration: java.time.Duration = 5.seconds.toJava
+val finiteDuration: FiniteDuration = javaDuration.toScala
+```
+
+From Java:
+```java
+import scala.compat.java8.DurationConverters;
+import scala.concurrent.duration.FiniteDuration;
+
+DurationConverters.toScala(Duration.of(5, ChronoUnit.SECONDS));
+DurationConverters.toJava(FiniteDuration.create(5, TimeUnit.SECONDS));
+```
+
+
