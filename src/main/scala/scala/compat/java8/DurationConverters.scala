@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Typesafe Inc. <http://www.typesafe.com>
+ * Copyright (C) 2012-2018 Lightbend Inc. <http://www.lightbend.com>
  */
 package scala.compat.java8
 
