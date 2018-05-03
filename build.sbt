@@ -26,7 +26,7 @@ def osgiExport(scalaVersion: String, version: String) = {
 
 lazy val commonSettings = Seq(
   organization := "org.scala-lang.modules",
-  version := "0.9.0-SNAPSHOT",
+  version := "0.9.1-SNAPSHOT",
   scalacOptions ++= Seq("-feature", "-deprecation", "-unchecked")
 )
 
