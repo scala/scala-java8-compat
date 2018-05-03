@@ -1,7 +1,9 @@
 import ScalaModulePlugin._
 
 scalaVersionsByJvm in ThisBuild := {
-  val versions = List("2.12.4", "2.11.12", "2.13.0-M3").map(_ -> true)
+  // no 2.13 for now in cross-build because of
+  // https://github.com/scala/scala-java8-compat/issues/97
+  val versions = List("2.12.4", "2.11.12").map(_ -> true)
   Map(8 -> versions, 9 -> versions, 10 -> versions)
 }
 
