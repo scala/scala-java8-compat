@@ -51,15 +51,16 @@ object FutureConverters {
    *
    * @param f The Scala Future which may eventually supply the completion for
    * the returned CompletionStage
+   * @param ec The ExecutionContext on which to run the future computation
    * @return a CompletionStage that runs all callbacks asynchronously and does
    * not support the CompletableFuture interface
    */
-  def toJava[T](f: Future[T]): CompletionStage[T] = {
+  def toJava[T](f: Future[T], ec: ExecutionContext = InternalCallbackExecutor): CompletionStage[T] = {
     f match {
       case p: P[T] => p.wrapped
       case _ =>
         val cf = new CF[T](f)
-        implicit val ec = InternalCallbackExecutor
+        implicit val _ = ec
         f onComplete cf
         cf
     }
