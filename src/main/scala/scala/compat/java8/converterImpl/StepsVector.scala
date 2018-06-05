@@ -17,7 +17,7 @@ private[java8] trait StepsVectorLike[A] {
   protected var data: Array[AnyRef] = null
   protected var index1: Int = 32
   protected var data1: Array[AnyRef] = null
-  protected final def advanceData(iX: Int) {
+  protected final def advanceData(iX: Int): Unit = {
     index1 += 1
     if (index >= 32) initTo(iX)
     else {
@@ -25,7 +25,7 @@ private[java8] trait StepsVectorLike[A] {
       index = 0
     }
   }
-  protected final def initTo(iX: Int) {
+  protected final def initTo(iX: Int): Unit = {
     myVector.length match {
       case x if x <=  0x20 => 
         index = iX

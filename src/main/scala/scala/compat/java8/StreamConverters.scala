@@ -96,7 +96,7 @@ trait Priority1StreamConverters extends Priority2StreamConverters {
       if (stream.isParallel) accumulate.to[Coll](cbf)
       else {
         val b = cbf()
-        stream.forEachOrdered(new java.util.function.Consumer[A]{ def accept(a: A) { b += a } })
+        stream.forEachOrdered(new java.util.function.Consumer[A]{ def accept(a: A): Unit = { b += a } })
         b.result()
       }
     }
@@ -268,7 +268,7 @@ with converterImpl.Priority1AccumulatorConverters
       if (stream.isParallel) accumulate.to[Coll](cbf)
       else {
         val b = cbf()
-        stream.forEachOrdered(new java.util.function.DoubleConsumer{ def accept(d: Double) { b += d } })
+        stream.forEachOrdered(new java.util.function.DoubleConsumer{ def accept(d: Double): Unit = { b += d } })
         b.result()
       }
     }
@@ -281,7 +281,7 @@ with converterImpl.Priority1AccumulatorConverters
       if (stream.isParallel) accumulate.to[Coll](cbf)
       else {
         val b = cbf()
-        stream.forEachOrdered(new java.util.function.IntConsumer{ def accept(d: Int) { b += d } })
+        stream.forEachOrdered(new java.util.function.IntConsumer{ def accept(d: Int): Unit = { b += d } })
         b.result()
       }
     }
@@ -294,7 +294,7 @@ with converterImpl.Priority1AccumulatorConverters
       if (stream.isParallel) accumulate.to[Coll](cbf)
       else {
         val b = cbf()
-        stream.forEachOrdered(new java.util.function.LongConsumer{ def accept(d: Long) { b += d } })
+        stream.forEachOrdered(new java.util.function.LongConsumer{ def accept(d: Long): Unit = { b += d } })
         b.result()
       }
     }

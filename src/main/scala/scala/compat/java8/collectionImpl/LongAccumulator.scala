@@ -207,13 +207,13 @@ object LongAccumulator {
   def supplier = new java.util.function.Supplier[LongAccumulator]{ def get: LongAccumulator = new LongAccumulator }
   
   /** A `BiConsumer` that adds an element to an `Accumulator`, suitable for use with `java.util.stream.LongStream`'s `collect` method. */
-  def adder = new java.util.function.ObjLongConsumer[LongAccumulator]{ def accept(ac: LongAccumulator, a: Long) { ac += a } }
+  def adder = new java.util.function.ObjLongConsumer[LongAccumulator]{ def accept(ac: LongAccumulator, a: Long): Unit = { ac += a } }
 
   /** A `BiConsumer` that adds a boxed `Long` to an `LongAccumulator`, suitable for use with `java.util.stream.Stream`'s `collect` method. */
-  def boxedAdder = new java.util.function.BiConsumer[LongAccumulator, Long]{ def accept(ac: LongAccumulator, a: Long) { ac += a } }
+  def boxedAdder = new java.util.function.BiConsumer[LongAccumulator, Long]{ def accept(ac: LongAccumulator, a: Long): Unit = { ac += a } }
   
   /** A `BiConsumer` that merges `LongAccumulator`s, suitable for use with `java.util.stream.LongStream`'s `collect` method.  Suitable for `Stream[Long]` also. */
-  def merger = new java.util.function.BiConsumer[LongAccumulator, LongAccumulator]{ def accept(a1: LongAccumulator, a2: LongAccumulator) { a1 drain a2 } }
+  def merger = new java.util.function.BiConsumer[LongAccumulator, LongAccumulator]{ def accept(a1: LongAccumulator, a2: LongAccumulator): Unit = { a1 drain a2 } }
 
   /** Builds a `LongAccumulator` from any `Long`-valued `TraversableOnce` */
   def from[A](source: TraversableOnce[Long]) = {
@@ -288,7 +288,7 @@ private[java8] class LongAccumulatorStepper(private val acc: LongAccumulator) ex
     }
     
   // Overridden for efficiency
-  override def foreach(f: Long => Unit) {
+  override def foreach(f: Long => Unit): Unit = {
     while (N > 0) {
       if (i >= n) loadMore()
       val i0 = i
@@ -302,7 +302,7 @@ private[java8] class LongAccumulatorStepper(private val acc: LongAccumulator) ex
   }
   
   // Overridden for efficiency
-  override def forEachRemaining(f: java.util.function.LongConsumer) {
+  override def forEachRemaining(f: java.util.function.LongConsumer): Unit = {
     while (N > 0) {
       if (i >= n) loadMore()
       val i0 = i

@@ -206,13 +206,13 @@ object DoubleAccumulator {
   def supplier = new java.util.function.Supplier[DoubleAccumulator]{ def get: DoubleAccumulator = new DoubleAccumulator }
   
   /** A `BiConsumer` that adds an element to an `Accumulator`, suitable for use with `java.util.stream.DoubleStream`'s `collect` method. */
-  def adder = new java.util.function.ObjDoubleConsumer[DoubleAccumulator]{ def accept(ac: DoubleAccumulator, a: Double) { ac += a } }
+  def adder = new java.util.function.ObjDoubleConsumer[DoubleAccumulator]{ def accept(ac: DoubleAccumulator, a: Double): Unit = { ac += a } }
 
   /** A `BiConsumer` that adds a boxed `Double` to an `DoubleAccumulator`, suitable for use with `java.util.stream.Stream`'s `collect` method. */
-  def boxedAdder = new java.util.function.BiConsumer[DoubleAccumulator, Double]{ def accept(ac: DoubleAccumulator, a: Double) { ac += a } }
+  def boxedAdder = new java.util.function.BiConsumer[DoubleAccumulator, Double]{ def accept(ac: DoubleAccumulator, a: Double): Unit = { ac += a } }
   
   /** A `BiConsumer` that merges `DoubleAccumulator`s, suitable for use with `java.util.stream.DoubleStream`'s `collect` method.  Suitable for `Stream[Double]` also. */
-  def merger = new java.util.function.BiConsumer[DoubleAccumulator, DoubleAccumulator]{ def accept(a1: DoubleAccumulator, a2: DoubleAccumulator) { a1 drain a2 } }
+  def merger = new java.util.function.BiConsumer[DoubleAccumulator, DoubleAccumulator]{ def accept(a1: DoubleAccumulator, a2: DoubleAccumulator): Unit = { a1 drain a2 } }
 
   /** Builds a `DoubleAccumulator` from any `Double`-valued `TraversableOnce` */
   def from[A](source: TraversableOnce[Double]) = {
@@ -287,7 +287,7 @@ private[java8] class DoubleAccumulatorStepper(private val acc: DoubleAccumulator
     }
     
   // Overridden for efficiency
-  override def foreach(f: Double => Unit) {
+  override def foreach(f: Double => Unit): Unit = {
     while (N > 0) {
       if (i >= n) loadMore()
       val i0 = i
@@ -301,7 +301,7 @@ private[java8] class DoubleAccumulatorStepper(private val acc: DoubleAccumulator
   }
 
   // Overridden for efficiency
-  override def forEachRemaining(f: java.util.function.DoubleConsumer) {
+  override def forEachRemaining(f: java.util.function.DoubleConsumer): Unit = {
     while (N > 0) {
       if (i >= n) loadMore()
       val i0 = i

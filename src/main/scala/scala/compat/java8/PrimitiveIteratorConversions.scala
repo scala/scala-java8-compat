@@ -42,11 +42,11 @@ object PrimitiveIteratorConverters {
       def hasNext = it.hasNext
       override def next() = it.next().asInstanceOf[java.lang.Double]
       def nextDouble() = it.next()
-      override def remove() { throw new UnsupportedOperationException("remove on scala.collection.Iterator") }
-      override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Double]) {
+      override def remove(): Unit = { throw new UnsupportedOperationException("remove on scala.collection.Iterator") }
+      override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Double]): Unit = {
         while (it.hasNext) c.accept(it.next)
       }
-      override def forEachRemaining(c: java.util.function.DoubleConsumer) {
+      override def forEachRemaining(c: java.util.function.DoubleConsumer): Unit = {
         while (it.hasNext) c.accept(it.next)
       }
     }
@@ -63,11 +63,11 @@ object PrimitiveIteratorConverters {
       def hasNext = it.hasNext
       override def next() = it.next().asInstanceOf[java.lang.Integer]
       def nextInt() = it.next()
-      override def remove() { throw new UnsupportedOperationException("remove on scala.collection.Iterator") }
-      override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Integer]) {
+      override def remove(): Unit = { throw new UnsupportedOperationException("remove on scala.collection.Iterator") }
+      override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Integer]): Unit = {
         while (it.hasNext) c.accept(it.next)
       }
-      override def forEachRemaining(c: java.util.function.IntConsumer) {
+      override def forEachRemaining(c: java.util.function.IntConsumer): Unit = {
         while (it.hasNext) c.accept(it.next)
       }
     }
@@ -84,11 +84,11 @@ object PrimitiveIteratorConverters {
       def hasNext = it.hasNext
       override def next() = it.next().asInstanceOf[java.lang.Long]
       def nextLong() = it.next()
-      override def remove() { throw new UnsupportedOperationException("remove on scala.collection.Iterator") }
-      override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Long]) {
+      override def remove(): Unit = { throw new UnsupportedOperationException("remove on scala.collection.Iterator") }
+      override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Long]): Unit = {
         while (it.hasNext) c.accept(it.next)
       }
-      override def forEachRemaining(c: java.util.function.LongConsumer) {
+      override def forEachRemaining(c: java.util.function.LongConsumer): Unit = {
         while (it.hasNext) c.accept(it.next)
       }
     }

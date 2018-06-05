@@ -291,7 +291,7 @@ object WrapFnGen {
     lines.iterator.filter(_.nonBlank) == text.lines.filter(_.nonBlank)
   }
 
-  def write(f: java.io.File, text: String) {
+  def write(f: java.io.File, text: String): Unit = {
     if (!f.exists || !sameText(f, text)) {
       val p = new java.io.PrintWriter(f)
       try { p.println(text) }
@@ -299,7 +299,7 @@ object WrapFnGen {
     }
   }
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     val names = args.iterator.map(x => new java.io.File(x))
     write(names.next, converterContents)
   }

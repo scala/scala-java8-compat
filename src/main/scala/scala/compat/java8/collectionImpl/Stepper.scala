@@ -139,7 +139,7 @@ trait StepperLike[@specialized(Double, Int, Long) A, +CC] { self: CC =>
   /** Applies `f` to every remaining element in the collection.
     * This is a terminal operation.
     */
-  def foreach(f: A => Unit) { while (hasStep) f(nextStep) }
+  def foreach(f: A => Unit): Unit = { while (hasStep) f(nextStep) }
 
   /** Repeatedly merges elements with `op` until only a single element remains.
     * Throws an exception if the `Stepper` is empty.
@@ -215,21 +215,21 @@ trait TryStepper[@specialized(Double, Int, Long) A] extends Stepper[A] with Step
   protected def knownUncachedSize: Long
   final def tryStep(f: A => Unit): Boolean = if (myCacheIsFull) { f(myCache); myCacheIsFull = false; true } else tryUncached(f)
   protected def tryUncached(f: A => Unit): Boolean
-  final override def foreach(f: A => Unit) { if (myCacheIsFull) { f(myCache); myCacheIsFull = false }; foreachUncached(f) }
-  protected def foreachUncached(f: A => Unit) { while (tryUncached(f)) {} }
+  final override def foreach(f: A => Unit): Unit = { if (myCacheIsFull) { f(myCache); myCacheIsFull = false }; foreachUncached(f) }
+  protected def foreachUncached(f: A => Unit): Unit = { while (tryUncached(f)) {} }
   def spliterator: Spliterator[A] = new ProxySpliteratorViaTry[A](this)
 }
 private[collectionImpl] class ProxySpliteratorViaTry[A](underlying: TryStepper[A]) extends Spliterator[A] {
   def characteristics() = underlying.characteristics
   def estimateSize() = underlying.knownSize
   def tryAdvance(f: java.util.function.Consumer[_ >: A]): Boolean = underlying.tryStep(a => f.accept(a))
-  override def forEachRemaining(f: java.util.function.Consumer[_ >: A]) { underlying.foreach(a => f.accept(a)) }
+  override def forEachRemaining(f: java.util.function.Consumer[_ >: A]): Unit = { underlying.foreach(a => f.accept(a)) }
   def trySplit() = underlying.substep() match { case null => null; case x => new ProxySpliteratorViaTry[A](x) }
 }
 
 /** Any `AnyStepper` combines the functionality of a Java `Iterator`, a Java `Spliterator`, and a `Stepper`. */
 trait AnyStepper[A] extends Stepper[A] with java.util.Iterator[A] with Spliterator[A] with StepperLike[A, AnyStepper[A]] {
-  override def forEachRemaining(c: java.util.function.Consumer[_ >: A]) { while (hasNext) { c.accept(next) } }
+  override def forEachRemaining(c: java.util.function.Consumer[_ >: A]): Unit = { while (hasNext) { c.accept(next) } }
   def hasStep = hasNext()
   def knownSize = getExactSizeIfKnown
   def nextStep = next
@@ -269,8 +269,8 @@ private[collectionImpl] object AnyStepper {
 
 /** A `DoubleStepper` combines the functionality of a Java `PrimitiveIterator`, a Java `Spliterator`, and a `Stepper`, all specialized for `Double` values. */
 trait DoubleStepper extends Stepper[Double] with java.util.PrimitiveIterator.OfDouble with Spliterator.OfDouble with StepperLike[Double, DoubleStepper] {
-  override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Double]) { while (hasNext) { c.accept(java.lang.Double.valueOf(nextDouble)) } }
-  override def forEachRemaining(c: java.util.function.DoubleConsumer) { while (hasNext) { c.accept(nextDouble) } }
+  override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Double]): Unit = { while (hasNext) { c.accept(java.lang.Double.valueOf(nextDouble)) } }
+  override def forEachRemaining(c: java.util.function.DoubleConsumer): Unit = { while (hasNext) { c.accept(nextDouble) } }
   def hasStep = hasNext()
   def knownSize = getExactSizeIfKnown
   def nextStep = nextDouble
@@ -285,8 +285,8 @@ trait DoubleStepper extends Stepper[Double] with java.util.PrimitiveIterator.OfD
 
 /** An `IntStepper` combines the functionality of a Java `PrimitiveIterator`, a Java `Spliterator`, and a `Stepper`, all specialized for `Int` values. */
 trait IntStepper extends Stepper[Int] with java.util.PrimitiveIterator.OfInt with Spliterator.OfInt with StepperLike[Int, IntStepper] {
-  override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Integer]) { while (hasNext) { c.accept(java.lang.Integer.valueOf(nextInt)) } }
-  override def forEachRemaining(c: java.util.function.IntConsumer) { while (hasNext) { c.accept(nextInt) } }
+  override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Integer]): Unit = { while (hasNext) { c.accept(java.lang.Integer.valueOf(nextInt)) } }
+  override def forEachRemaining(c: java.util.function.IntConsumer): Unit = { while (hasNext) { c.accept(nextInt) } }
   def hasStep = hasNext()
   def knownSize = getExactSizeIfKnown
   def nextStep = nextInt
@@ -301,8 +301,8 @@ trait IntStepper extends Stepper[Int] with java.util.PrimitiveIterator.OfInt wit
 
 /** A `LongStepper` combines the functionality of a Java `PrimitiveIterator`, a Java `Spliterator`, and a `Stepper`, all specialized for `Long` values. */
 trait LongStepper extends Stepper[Long] with java.util.PrimitiveIterator.OfLong with Spliterator.OfLong with StepperLike[Long, LongStepper] {
-  override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Long]) { while (hasNext) { c.accept(java.lang.Long.valueOf(nextLong)) } }
-  override def forEachRemaining(c: java.util.function.LongConsumer) { while (hasNext) { c.accept(nextLong) } }
+  override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Long]): Unit = { while (hasNext) { c.accept(java.lang.Long.valueOf(nextLong)) } }
+  override def forEachRemaining(c: java.util.function.LongConsumer): Unit = { while (hasNext) { c.accept(nextLong) } }
   def hasStep = hasNext()
   def knownSize = getExactSizeIfKnown
   def nextStep = nextLong
@@ -342,7 +342,7 @@ object Stepper {
   extends AnyStepper[A] with java.util.function.Consumer[A] {
     private var cache: A = null.asInstanceOf[A]
     private var cached: Boolean = false
-    def accept(a: A) { cache = a; cached = true }
+    def accept(a: A): Unit = { cache = a; cached = true }
     
     private def loadCache: Boolean = sp.tryAdvance(this)
     private def useCache(c: java.util.function.Consumer[_ >: A]): Boolean = {
@@ -361,7 +361,7 @@ object Stepper {
       if (cached && sz < Long.MaxValue && sz >= 0) sz + 1
       else sz
     }
-    override def forEachRemaining(c: java.util.function.Consumer[_ >: A]) {
+    override def forEachRemaining(c: java.util.function.Consumer[_ >: A]): Unit = {
       useCache(c)
       sp.forEachRemaining(c)
     }
@@ -394,7 +394,7 @@ object Stepper {
   extends DoubleStepper with java.util.function.DoubleConsumer {
     private var cache: Double = Double.NaN
     private var cached: Boolean = false
-    def accept(d: Double) { cache = d; cached = true }
+    def accept(d: Double): Unit = { cache = d; cached = true }
     
     private def loadCache: Boolean = sp.tryAdvance(this)
     private def useCache(c: java.util.function.DoubleConsumer): Boolean = {
@@ -412,7 +412,7 @@ object Stepper {
       if (cached && sz < Long.MaxValue && sz >= 0) sz + 1
       else sz
     }
-    override def forEachRemaining(c: java.util.function.DoubleConsumer) {
+    override def forEachRemaining(c: java.util.function.DoubleConsumer): Unit = {
       useCache(c)
       sp.forEachRemaining(c)
     }
@@ -443,7 +443,7 @@ object Stepper {
   extends IntStepper with java.util.function.IntConsumer {
     private var cache: Int = 0
     private var cached: Boolean = false
-    def accept(i: Int) { cache = i; cached = true }
+    def accept(i: Int): Unit = { cache = i; cached = true }
     
     private def loadCache: Boolean = sp.tryAdvance(this)
     private def useCache(c: java.util.function.IntConsumer): Boolean = {
@@ -461,7 +461,7 @@ object Stepper {
       if (cached && sz < Long.MaxValue && sz >= 0) sz + 1
       else sz
     }
-    override def forEachRemaining(c: java.util.function.IntConsumer) {
+    override def forEachRemaining(c: java.util.function.IntConsumer): Unit = {
       useCache(c)
       sp.forEachRemaining(c)
     }
@@ -492,7 +492,7 @@ object Stepper {
   extends LongStepper with java.util.function.LongConsumer {
     private var cache: Long = 0L
     private var cached: Boolean = false
-    def accept(l: Long) { cache = l; cached = true }
+    def accept(l: Long): Unit = { cache = l; cached = true }
     
     private def loadCache: Boolean = sp.tryAdvance(this)
     private def useCache(c: java.util.function.LongConsumer): Boolean = {
@@ -510,7 +510,7 @@ object Stepper {
       if (cached && sz < Long.MaxValue && sz >= 0) sz + 1
       else sz
     }
-    override def forEachRemaining(c: java.util.function.LongConsumer) {
+    override def forEachRemaining(c: java.util.function.LongConsumer): Unit = {
       useCache(c)
       sp.forEachRemaining(c)
     }

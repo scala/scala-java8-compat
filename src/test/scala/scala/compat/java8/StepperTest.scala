@@ -50,7 +50,7 @@ class IncSpliterator(private val size0: Long) extends Spliterator.OfInt {
     i = sub.size0
     sub
   }
-  override def forEachRemaining(f: java.util.function.IntConsumer) { while (i < size0) { f.accept(i.toInt); i += 1 } }
+  override def forEachRemaining(f: java.util.function.IntConsumer): Unit = { while (i < size0) { f.accept(i.toInt); i += 1 } }
 }
 
 class MappingStepper[@specialized (Double, Int, Long) A, @specialized(Double, Int, Long) B](underlying: Stepper[A], mapping: A => B) extends Stepper[B] {
@@ -59,7 +59,7 @@ class MappingStepper[@specialized (Double, Int, Long) A, @specialized(Double, In
   def hasStep = underlying.hasStep
   def nextStep() = mapping(underlying.nextStep())
   def tryStep(f: B => Unit): Boolean = underlying.tryStep(a => f(mapping(a)))
-  override def foreach(f: B => Unit) { underlying.foreach(a => f(mapping(a))) }
+  override def foreach(f: B => Unit): Unit = { underlying.foreach(a => f(mapping(a))) }
   def substep() = {
     val undersub = underlying.substep()
     if (undersub == null) null
@@ -71,7 +71,7 @@ class MappingStepper[@specialized (Double, Int, Long) A, @specialized(Double, In
 class MappingSpliterator[A, B](private val underlying: Spliterator[A], mapping: A => B) extends Spliterator[B] {
   def characteristics = underlying.characteristics
   def estimateSize() = underlying.estimateSize()
-  def tryAdvance(f: java.util.function.Consumer[_ >: B]): Boolean = underlying.tryAdvance(new java.util.function.Consumer[A]{ def accept(a: A) { f.accept(mapping(a)) } })
+  def tryAdvance(f: java.util.function.Consumer[_ >: B]): Boolean = underlying.tryAdvance(new java.util.function.Consumer[A]{ def accept(a: A): Unit = { f.accept(mapping(a)) } })
   def trySplit(): Spliterator[B] = {
     val undersplit = underlying.trySplit()
     if (undersplit == null) null
@@ -81,7 +81,7 @@ class MappingSpliterator[A, B](private val underlying: Spliterator[A], mapping: 
 class IntToGenericSpliterator[A](private val underlying: Spliterator.OfInt, mapping: Int => A) extends Spliterator[A] {
   def characteristics = underlying.characteristics
   def estimateSize() = underlying.estimateSize()
-  def tryAdvance(f: java.util.function.Consumer[_ >: A]): Boolean = underlying.tryAdvance(new java.util.function.IntConsumer{ def accept(a: Int) { f.accept(mapping(a)) } })
+  def tryAdvance(f: java.util.function.Consumer[_ >: A]): Boolean = underlying.tryAdvance(new java.util.function.IntConsumer{ def accept(a: Int): Unit = { f.accept(mapping(a)) } })
   def trySplit(): Spliterator[A] = {
     val undersplit = underlying.trySplit()
     if (undersplit == null) null
@@ -91,7 +91,7 @@ class IntToGenericSpliterator[A](private val underlying: Spliterator.OfInt, mapp
 class IntToDoubleSpliterator(private val underlying: Spliterator.OfInt, mapping: Int => Double) extends Spliterator.OfDouble {
   def characteristics = underlying.characteristics
   def estimateSize() = underlying.estimateSize()
-  def tryAdvance(f: java.util.function.DoubleConsumer): Boolean = underlying.tryAdvance(new java.util.function.IntConsumer{ def accept(a: Int) { f.accept(mapping(a)) } })
+  def tryAdvance(f: java.util.function.DoubleConsumer): Boolean = underlying.tryAdvance(new java.util.function.IntConsumer{ def accept(a: Int): Unit = { f.accept(mapping(a)) } })
   def trySplit(): Spliterator.OfDouble = {
     val undersplit = underlying.trySplit()
     if (undersplit == null) null
@@ -101,7 +101,7 @@ class IntToDoubleSpliterator(private val underlying: Spliterator.OfInt, mapping:
 class IntToLongSpliterator(private val underlying: Spliterator.OfInt, mapping: Int => Long) extends Spliterator.OfLong {
   def characteristics = underlying.characteristics
   def estimateSize() = underlying.estimateSize()
-  def tryAdvance(f: java.util.function.LongConsumer): Boolean = underlying.tryAdvance(new java.util.function.IntConsumer{ def accept(a: Int) { f.accept(mapping(a)) } })
+  def tryAdvance(f: java.util.function.LongConsumer): Boolean = underlying.tryAdvance(new java.util.function.IntConsumer{ def accept(a: Int): Unit = { f.accept(mapping(a)) } })
   def trySplit(): Spliterator.OfLong = {
     val undersplit = underlying.trySplit()
     if (undersplit == null) null
@@ -144,7 +144,7 @@ class StepperTest {
   }
 
   @Test
-  def stepping() {
+  def stepping(): Unit = {
     sources.foreach{ case (i, s) => assert((0 until i).forall{ j => s.hasStep && s.nextStep == j } && !s.hasStep) }
     sources.foreach{ case (i, s) => 
       val set = collection.mutable.BitSet.empty
@@ -160,7 +160,7 @@ class StepperTest {
   }
 
   @Test
-  def trying() {
+  def trying(): Unit = {
     sources.foreach{ case (i,s) => 
       val set = collection.mutable.BitSet.empty
       while (s.tryStep{ y => assert(!(set contains y)); set += y }) {}
@@ -180,7 +180,7 @@ class StepperTest {
   }
 
   @Test
-  def substepping() {
+  def substepping(): Unit = {
     sources.foreach{ case (i,s) =>
       val ss = s.substep
       assertEquals(ss == null, i < 2)
@@ -196,32 +196,32 @@ class StepperTest {
   }
 
   @Test
-  def characteristically() {
+  def characteristically(): Unit = {
     val expected = Stepper.Sized | Stepper.SubSized | Stepper.Ordered
     sources.foreach{ case (_,s) => assertEquals(s.characteristics, expected)}
     sources.foreach{ case (_,s) => subs(0)(s)(x => { assertEquals(x.characteristics, expected); 0 }, _ + _) }
   }
 
   @Test
-  def knownSizes() {
+  def knownSizes(): Unit = {
     sources.foreach{ case (i,s) => assertEquals(i.toLong, s.knownSize) }
     sources.foreach{ case (i,s) => if (i > 0) subs(0)(s)(x => { assertEquals(x.knownSize, 1L); 0 }, _ + _) }
   }
 
   @Test
-  def count_only() {
+  def count_only(): Unit = {
     sources.foreach{ case (i, s) => assertEquals(i, s.count) }
     sources.foreach{ case (i, s) => assertEquals(i, subs(0)(s)(_.count.toInt, _ + _)) }
   }
 
   @Test
-  def count_conditionally() {
+  def count_conditionally(): Unit = {
     sources.foreach{ case (i, s) => assertEquals((0 until i).count(_ % 3 == 0), s.count(_ % 3 == 0)) }
     sources.foreach{ case (i, s) => assertEquals((0 until i).count(_ % 3 == 0), subs(0)(s)(_.count(_ % 3 == 0).toInt, _ + _)) }
   }
 
   @Test
-  def existence() {
+  def existence(): Unit = {
     sources.foreach{ case (i, s) => assert(i > 0 == s.exists(_ >= 0)) }
     sources.foreach{ case (i, s) => assert(i > 16 == s.exists(_ % 17 == 16)) }
     sources.foreach{ case (i, s) => assert(i > 0 == subs(false)(s)(_.exists(_ >= 0), _ || _)) }
@@ -229,7 +229,7 @@ class StepperTest {
   }
 
   @Test
-  def finding() {
+  def finding(): Unit = {
     for (k <- 0 until 100) {
       (sources zip sources).foreach{ case ((i,s), (j,t)) =>
         val x = util.Random.nextInt(math.min(i,j)+3)
@@ -242,7 +242,7 @@ class StepperTest {
   }
 
   @Test
-  def folding() {
+  def folding(): Unit = {
     sources.foreach{ case (i,s) => assertEquals((0 until i).mkString, s.fold("")(_ + _.toString)) }
     sources.foreach{ case (i,s) => assertEquals((0 until i).mkString, subs("")(s)(_.fold("")(_ + _.toString), _ + _)) }
     sources.foreach{ case (i,s) => assertEquals((0 until i).map(_.toDouble).sum, s.fold(0.0)(_ + _), 1e-10) }
@@ -250,7 +250,7 @@ class StepperTest {
   }
 
   @Test
-  def foldingUntil() {
+  def foldingUntil(): Unit = {
     def expected(i: Int) = (0 until i).scan(0)(_ + _).dropWhile(_ < 6*i).headOption.getOrElse((0 until i).sum)
     sources.foreach{ case (i,s) => assertEquals(expected(i), s.foldTo(0)(_ + _)(_ >= 6*i)) }
     sources.foreach{ case (_,s) => assertEquals(-1, s.foldTo(-1)(_ * _)(_ => true)) }
@@ -262,7 +262,7 @@ class StepperTest {
   }
 
   @Test
-  def foreaching() {
+  def foreaching(): Unit = {
     sources.foreach{ case (i,s) =>
       val clq = new java.util.concurrent.ConcurrentLinkedQueue[String]
       s.foreach( clq add _.toString )
@@ -276,7 +276,7 @@ class StepperTest {
   }
 
   @Test
-  def reducing() {
+  def reducing(): Unit = {
     sources.foreach{ case (i,s) => 
       if (i==0) assertEquals(s.hasStep, false)
       else assertEquals((0 until i).sum, s.reduce(_ + _))
@@ -287,19 +287,19 @@ class StepperTest {
   }
 
   @Test
-  def iterating() {
+  def iterating(): Unit = {
     sources.foreach{ case (i, s) => assert(Iterator.range(0,i) sameElements s.iterator) }
   }
 
   @Test
-  def spliterating() {
+  def spliterating(): Unit = {
     sources.foreach{ case (i,s) => 
       var sum = 0
-      s.spliterator.forEachRemaining(new java.util.function.Consumer[Int]{ def accept(i: Int) { sum += i } })
+      s.spliterator.forEachRemaining(new java.util.function.Consumer[Int]{ def accept(i: Int): Unit = { sum += i } })
       assertEquals(sum, (0 until i).sum)
     }
     sources.foreach{ case (i,s) => 
-      val sum = subs(0)(s)(x => { var sm = 0; x.spliterator.forEachRemaining(new java.util.function.Consumer[Int]{ def accept(i: Int) { sm += i } }); sm }, _ + _)
+      val sum = subs(0)(s)(x => { var sm = 0; x.spliterator.forEachRemaining(new java.util.function.Consumer[Int]{ def accept(i: Int): Unit = { sm += i } }); sm }, _ + _)
       assertEquals(sum, (0 until i).sum)
     }
   }

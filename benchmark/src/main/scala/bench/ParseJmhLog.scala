@@ -63,7 +63,7 @@ object ParseJmhLog {
     "mdtc" -> "map/filter/take trio"
   )
 
-  private def ensure(satisfied: Boolean)(not: => Unit) {
+  private def ensure(satisfied: Boolean)(not: => Unit): Unit = {
     if (!satisfied) {
       not
       assert(satisfied)
