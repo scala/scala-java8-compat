@@ -38,7 +38,7 @@ object Generator {
 
   def sayArrayI(oa: Option[Array[Int]]) = oa match { case Some(a) => a.mkString("Array(", ",", ")"); case _ => "" }
 
-  def agreement(target: java.io.File, sizes: Option[Array[Int]] = None) {
+  def agreement(target: java.io.File, sizes: Option[Array[Int]] = None): Unit = {
     val q = "\""
     if (target.exists) throw new java.io.IOException("Generator will not write to existing file: " + target.getPath)
     writeTo(target){ pr =>
@@ -102,7 +102,7 @@ object Generator {
     }
   }
 
-  def quickBenchWithThyme(target: java.io.File, sizes: Option[Array[Int]] = None) {
+  def quickBenchWithThyme(target: java.io.File, sizes: Option[Array[Int]] = None): Unit = {
     val q = "\""
     if (target.exists) throw new java.io.IOException("Generator will not write to existing file: " + target.getPath)
     writeTo(target){ pr =>
@@ -179,7 +179,7 @@ object Generator {
     }
   }
 
-  def jmhBench(target: java.io.File = new java.io.File("JmhBench.scala"), sizes: Option[Array[Int]] = Some(jmhsizes)) {
+  def jmhBench(target: java.io.File = new java.io.File("JmhBench.scala"), sizes: Option[Array[Int]] = Some(jmhsizes)): Unit = {
     val q = "\""
     if (target.exists) throw new java.io.IOException("Generator will not write to existing file: " + target.getPath)
     writeTo(target){ pr =>

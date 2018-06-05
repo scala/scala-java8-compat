@@ -12,10 +12,10 @@ import scala.compat.java8.converterImpl.MakesStepper
 
 class StreamConvertersTest {
 
-  def assertEq[A](a1: A, a2: A, s: String) { assertEquals(s, a1, a2) }  // Weird order normally!
-  def assertEq[A](a1: A, a2: A) { assertEq(a1, a2, "not equal") }
-  def assert(b: Boolean) { assertTrue(b) }
-  def assert(b: Boolean, s: String) { assertTrue(s, b) }
+  def assertEq[A](a1: A, a2: A, s: String): Unit = { assertEquals(s, a1, a2) }  // Weird order normally!
+  def assertEq[A](a1: A, a2: A): Unit = { assertEq(a1, a2, "not equal") }
+  def assert(b: Boolean): Unit = { assertTrue(b) }
+  def assert(b: Boolean, s: String): Unit = { assertTrue(s, b) }
 
   def arrayO(n: Int) = (1 to n).map(_.toString).toArray
   def arrayD(n: Int) = (1 to n).map(_.toDouble).toArray
@@ -30,7 +30,7 @@ class StreamConvertersTest {
   val ns = Vector(0, 1, 2, 12, 15, 16, 17, 31, 32, 33, 151, 1298, 7159)
   
   @Test
-  def streamAccumulate() {
+  def streamAccumulate(): Unit = {
     for (n <- ns) {
       val vecO = arrayO(n).toVector
       val accO = newStream(n).parallel.accumulate
@@ -84,7 +84,7 @@ class StreamConvertersTest {
   }
 
   @Test
-  def streamToScala() {
+  def streamToScala(): Unit = {
     for (n <- ns) {
       val vecO = arrayO(n).toVector
       assertEq(vecO, newStream(n).toScala[Vector])
@@ -105,7 +105,7 @@ class StreamConvertersTest {
   }
 
   @Test
-  def streamUnbox() {
+  def streamUnbox(): Unit = {
     assert(newDoubleStream(1).boxed.unboxed.isInstanceOf[DoubleStream])
     assert(newIntStream(1).boxed.unboxed.isInstanceOf[IntStream])
     assert(newLongStream(1).boxed.unboxed.isInstanceOf[LongStream])
@@ -131,7 +131,7 @@ class StreamConvertersTest {
   def hsetL(n: Int) = genhset(arrayL(n))
 
   @Test
-  def scalaToStream() {
+  def scalaToStream(): Unit = {
     for (n <- ns) {
       val arrO = arrayO(n)
       val seqO = arrO.toSeq

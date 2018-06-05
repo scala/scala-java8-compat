@@ -38,45 +38,45 @@ class StepConvertersTest {
     }
   }
 
-  def _eh_[X](x: => X)(implicit correctSpec: SpecCheck) { 
+  def _eh_[X](x: => X)(implicit correctSpec: SpecCheck): Unit = { 
     assertTrue(x.isInstanceOf[Stepper[_]])
     correctSpec.assert(x)
   }
 
-  def IFFY[X](x: => X)(implicit correctSpec: SpecCheck) {
+  def IFFY[X](x: => X)(implicit correctSpec: SpecCheck): Unit = {
     assertTrue(x.isInstanceOf[Stepper[_]])
     correctSpec.assert(x)
     assertTrue(isAcc(x))
   }
 
-  def Okay[X](x: => X)(implicit correctSpec: SpecCheck) {
+  def Okay[X](x: => X)(implicit correctSpec: SpecCheck): Unit = {
     assertTrue(x.isInstanceOf[Stepper[_]])
     correctSpec.assert(x)
     assertTrue(!isAcc(x))
     assertTrue(isLin(x))
   }
 
-  def Fine[X](x: => X)(implicit correctSpec: SpecCheck) {
+  def Fine[X](x: => X)(implicit correctSpec: SpecCheck): Unit = {
     assertTrue(x.isInstanceOf[Stepper[_]])
     correctSpec.assert(x)
     assertTrue(!isAcc(x))
   }
 
-  def good[X](x: => X)(implicit correctSpec: SpecCheck) {
+  def good[X](x: => X)(implicit correctSpec: SpecCheck): Unit = {
     assertTrue(x.isInstanceOf[Stepper[_]])
     correctSpec.assert(x)
     assertTrue(!isAcc(x))
     assertTrue(!isLin(x))
   }
 
-  def Tell[X](x: => X)(implicit correctSpec: SpecCheck) {
+  def Tell[X](x: => X)(implicit correctSpec: SpecCheck): Unit = {
     println(x.getClass.getName + " -> " + isAcc(x))
     assertTrue(x.isInstanceOf[Stepper[_]])
     correctSpec.assert(x)
   }
 
   @Test
-  def comprehensivelyGeneric() {
+  def comprehensivelyGeneric(): Unit = {
     implicit val spec = SpecCheck(_.isInstanceOf[AnyStepper[_]])
 
     // Collection section
@@ -210,7 +210,7 @@ class StepConvertersTest {
   }
 
   @Test
-  def comprehensivelyDouble() {
+  def comprehensivelyDouble(): Unit = {
     implicit val spec = SpecCheck(_.isInstanceOf[DoubleStepper])
     //Double-specific tests
 
@@ -323,7 +323,7 @@ class StepConvertersTest {
   }
 
   @Test
-  def comprehensivelyInt() {
+  def comprehensivelyInt(): Unit = {
     implicit val spec = SpecCheck(_.isInstanceOf[IntStepper], x => s"$x should be an IntStepper")
 
     // Int-specific tests
@@ -446,7 +446,7 @@ class StepConvertersTest {
   }
 
   @Test
-  def shortWidening() {
+  def shortWidening(): Unit = {
     implicit val spec = SpecCheck(_.isInstanceOf[IntStepper], x => s"$x should be an IntStepper")
 
     good( Array[Short](654321.toShort).stepper )
@@ -461,7 +461,7 @@ class StepConvertersTest {
   }
 
   @Test
-  def comprehensivelyLong() {
+  def comprehensivelyLong(): Unit = {
     implicit val spec = SpecCheck(_.isInstanceOf[LongStepper])
 
     // Long-specific tests
@@ -584,7 +584,7 @@ class StepConvertersTest {
  }
 
   @Test
-  def comprehensivelySpecific() {
+  def comprehensivelySpecific(): Unit = {
     implicit val spec = SpecCheck(_.isInstanceOf[IntStepper], x => s"$x should be an IntStepper")
 
     good( ci.NumericRange(277: Short, 279: Short, 1: Short).stepper )

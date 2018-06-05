@@ -212,10 +212,10 @@ object Accumulator {
   def supplier[A] = new java.util.function.Supplier[Accumulator[A]]{ def get: Accumulator[A] = new Accumulator[A] }
 
   /** A `BiConsumer` that adds an element to an `Accumulator`, suitable for use with `java.util.stream.Stream`'s `collect` method. */
-  def adder[A] = new java.util.function.BiConsumer[Accumulator[A], A]{ def accept(ac: Accumulator[A], a: A) { ac += a } }
+  def adder[A] = new java.util.function.BiConsumer[Accumulator[A], A]{ def accept(ac: Accumulator[A], a: A): Unit = { ac += a } }
 
   /** A `BiConsumer` that merges `Accumulator`s, suitable for use with `java.util.stream.Stream`'s `collect` method. */
-  def merger[A] = new java.util.function.BiConsumer[Accumulator[A], Accumulator[A]]{ def accept(a1: Accumulator[A], a2: Accumulator[A]) { a1 drain a2 } }
+  def merger[A] = new java.util.function.BiConsumer[Accumulator[A], Accumulator[A]]{ def accept(a1: Accumulator[A], a2: Accumulator[A]): Unit = { a1 drain a2 } }
 
   /** Builds an `Accumulator` from any `TraversableOnce` */
   def from[A](source: TraversableOnce[A]) = {
@@ -290,7 +290,7 @@ private[java8] class AccumulatorStepper[A](private val acc: Accumulator[A]) exte
     }
 
   // Overridden for efficiency
-  override def foreach(f: A => Unit) {
+  override def foreach(f: A => Unit): Unit = {
     while (N > 0) {
       if (i >= n) loadMore()
       val i0 = i
@@ -304,7 +304,7 @@ private[java8] class AccumulatorStepper[A](private val acc: Accumulator[A]) exte
   }
 
   // Overridden for efficiency
-  override def forEachRemaining(f: java.util.function.Consumer[_ >: A]) {
+  override def forEachRemaining(f: java.util.function.Consumer[_ >: A]): Unit = {
     while (N > 0) {
       if (i >= n) loadMore()
       val i0 = i

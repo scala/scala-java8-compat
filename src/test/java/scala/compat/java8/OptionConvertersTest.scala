@@ -11,7 +11,7 @@ class OptionConvertersTest {
   import OptionConverters._
   
   @Test
-  def scalaToEverything() {
+  def scalaToEverything(): Unit = {
     val o = Option("fish")
     val n = (None: Option[String])
     val od = Option(2.7)
@@ -37,7 +37,7 @@ class OptionConvertersTest {
   }
   
   @Test
-  def javaGenericToEverything() {
+  def javaGenericToEverything(): Unit = {
     val o = Optional.of("fish")
     val n = Optional.empty[String]
     val od = Optional.of(2.7)
@@ -63,7 +63,7 @@ class OptionConvertersTest {
   }
   
   @Test
-  def javaOptionalDoubleToEverything() {
+  def javaOptionalDoubleToEverything(): Unit = {
     val o = OptionalDouble.of(2.7)
     val n = OptionalDouble.empty
     assertEquals(o.asScala, Option(o.getAsDouble))
@@ -73,7 +73,7 @@ class OptionConvertersTest {
   }
   
   @Test
-  def javaOptionalIntToEverything() {
+  def javaOptionalIntToEverything(): Unit = {
     val o = OptionalInt.of(4)
     val n = OptionalInt.empty
     assertEquals(o.asScala, Option(o.getAsInt))
@@ -83,7 +83,7 @@ class OptionConvertersTest {
   }
   
   @Test
-  def javaOptionalLongToEverything() {
+  def javaOptionalLongToEverything(): Unit = {
     val o = OptionalLong.of(-1)
     val n = OptionalLong.empty
     assertEquals(o.asScala, Option(o.getAsLong))
@@ -93,7 +93,7 @@ class OptionConvertersTest {
   }
   
   @Test
-  def nonExtensionConversions() {
+  def nonExtensionConversions(): Unit = {
     assertEquals(toScala(Optional.of("fish")), Option("fish"))
     assertEquals(toScala(Optional.empty[String]), None)
     assertEquals(toJava(Option("fish")), Optional.of("fish"))

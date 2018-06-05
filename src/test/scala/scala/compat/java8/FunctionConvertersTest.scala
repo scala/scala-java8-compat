@@ -28,9 +28,9 @@ class FunctionConvertersTest {
 
   // BiConsumer tests; conceptually widens to BiFunction, narrows to ObjLongConsumer
   @Test
-  def test_BiConsumer() {
-    val bic1 = new BiConsumer[String, File]{ def accept(s: String, f: File) { save((s,f)) } }
-    val bic2 = new BiConsumer[Int, Long]{ def accept(i: Int, l: Long) { save((i,l)) } }
+  def test_BiConsumer(): Unit = {
+    val bic1 = new BiConsumer[String, File]{ def accept(s: String, f: File): Unit = { save((s,f)) } }
+    val bic2 = new BiConsumer[Int, Long]{ def accept(i: Int, l: Long): Unit = { save((i,l)) } }
     val sbic = (s: String, f: File) => { save((s,f)); () }
     val zbic = (i: Int, l: Long) => { save((i,l)); () }
     def jbic[A, B](bic: BiConsumer[A, B])(a: A, b: B) = { bic.accept(a,b); recall == ((a,b)) }
@@ -48,7 +48,7 @@ class FunctionConvertersTest {
 
   // BiFunction tests; conceptually narrows to any of the Bi functions or to ObjLongConsumer etc
   @Test
-  def test_BiFunction() {
+  def test_BiFunction(): Unit = {
     val bif1 = new BiFunction[String, File, (String, File)]{ def apply(s: String, f: File) = (s,f) }
     val bif2 = new BiFunction[Int, Long, Double]{ def apply(i: Int, l: Long) = i.toDouble*l }
     val sbif = (s: String, f: File) => (s,f)
@@ -67,7 +67,7 @@ class FunctionConvertersTest {
 
   // BinaryOperator tests; actually widens to BiFunction and conceptually narrows to IntBinaryOperator etc.
   @Test
-  def test_BinaryOperator() {
+  def test_BinaryOperator(): Unit = {
     val bop1 = new BinaryOperator[String]{ def apply(s: String, t: String) = s + t }
     val bop2 = new BinaryOperator[Int]{ def apply(i: Int, j: Int) = i + j }
     val sbop = (s: String, t: String) => s + t
@@ -86,7 +86,7 @@ class FunctionConvertersTest {
 
   // BiPredicate tests; conceptually widens to BiFunction.  Does not narrow (no IntBiPredicate or the like).
   @Test
-  def test_BiPredicate() {
+  def test_BiPredicate(): Unit = {
     val bip1 = new BiPredicate[String, File]{ def test(s: String, f: File) = s == f.getName }
     val bip2 = new BiPredicate[Int, Long]{ def test(i: Int, l: Long) = i == l }
     val sbip = (s: String, f: File) => s == f.getName
@@ -105,7 +105,7 @@ class FunctionConvertersTest {
 
   // BooleanSupplier tests; conceptually widens to Supplier and Function.
   @Test
-  def test_BooleanSupplier() {
+  def test_BooleanSupplier(): Unit = {
     val bsup = new BooleanSupplier{ def getAsBoolean = true }
     val sbup = () => true
     def foo(bs: BooleanSupplier) = bs.getAsBoolean
@@ -119,9 +119,9 @@ class FunctionConvertersTest {
 
   // Consumer tests; conceptually widens to Function and narrows to IntConsumer etc.
   @Test
-  def test_Consumer() {
-    val con1 = new Consumer[String]{ def accept(s: String) { save(s) } }
-    val con2 = new Consumer[Int]{ def accept(i: Int) { save(i) } }
+  def test_Consumer(): Unit = {
+    val con1 = new Consumer[String]{ def accept(s: String): Unit = { save(s) } }
+    val con2 = new Consumer[Int]{ def accept(i: Int): Unit = { save(i) } }
     val scon = (s: String) => { save(s); () }
     val zcon = (i: Int) => { save(i); () }
     def jcon[A](c: Consumer[A])(a: A) = { c.accept(a); recall == a }
@@ -138,7 +138,7 @@ class FunctionConvertersTest {
 
   // DoubleBinaryOperator tests; conceptually widens to BinaryOperator, ToDoubleBiFunction, and BiFunction
   @Test
-  def test_DoubleBinaryOperator() {
+  def test_DoubleBinaryOperator(): Unit = {
     val dbop = new DoubleBinaryOperator{ def applyAsDouble(a: Double, b: Double) = a*b }
     val sdbo = (a: Double, b: Double) => a*b
     def foo(dbo: DoubleBinaryOperator)(a: Double, b: Double) = dbo.applyAsDouble(a,b)
@@ -152,8 +152,8 @@ class FunctionConvertersTest {
 
   // DoubleConsumer tests; conceptually widens to Consumer and Function
   @Test
-  def test_DoubleConsumer() {
-    val dcon = new DoubleConsumer{ def accept(value: Double) { save(value) } }
+  def test_DoubleConsumer(): Unit = {
+    val dcon = new DoubleConsumer{ def accept(value: Double): Unit = { save(value) } }
     val sdco = (d: Double) => { save(d); () }
     def jf(dc: DoubleConsumer)(d: Double) = { dc.accept(d); recall == d }
     def sf(f: Double => Unit)(d: Double) = { f(d); recall == d }
@@ -165,7 +165,7 @@ class FunctionConvertersTest {
 
   // DoubleFunction tests; conceptually widens to Function, narrows to DoubleUnaryOperator and DoubleToIntFunction etc.
   @Test
-  def test_DoubleFunction() {
+  def test_DoubleFunction(): Unit = {
     val dfn1 = new DoubleFunction[String]{ def apply(value: Double) = f"$value%.3f" }
     val dfn2 = new DoubleFunction[Int]{ def apply(value: Double) = math.ceil(value).toInt }
     val sdfn = (d: Double) => f"$d%.3f"
@@ -184,7 +184,7 @@ class FunctionConvertersTest {
 
   // DoublePredicate tests; conceptually widens to DoubleFunction, Predicate, and Function
   @Test
-  def test_DoublePredicate() {
+  def test_DoublePredicate(): Unit = {
     val dprd = new DoublePredicate{ def test(value: Double) = value > 0 }
     val sdpr = (d: Double) => d > 0
     def foo(dp: DoublePredicate)(d: Double) = dp.test(d)
@@ -198,7 +198,7 @@ class FunctionConvertersTest {
 
   // DoubleSupplier tests; conceptually widens to Supplier and Function
   @Test
-  def test_DoubleSupplier() {
+  def test_DoubleSupplier(): Unit = {
     val dsup = new DoubleSupplier{ def getAsDouble = 22.0/7 }
     val sdsu = () => 22.0/7
     def foo(ds: DoubleSupplier) = ds.getAsDouble
@@ -212,7 +212,7 @@ class FunctionConvertersTest {
 
   // DoubleToIntFunction tests; conceptually widens to DoubleFunction and Function
   @Test
-  def test_DoubleToIntFunction() {
+  def test_DoubleToIntFunction(): Unit = {
     val d2if = new DoubleToIntFunction{ def applyAsInt(value: Double) = math.ceil(value).toInt }
     val sd2i = (d: Double) => math.ceil(d).toInt
     def foo(di: DoubleToIntFunction)(d: Double) = di.applyAsInt(d)
@@ -226,7 +226,7 @@ class FunctionConvertersTest {
 
   // DoubleToLongFunction tests; conceptually widens to DoubleFunction and Function
   @Test
-  def test_DoubleToLongFunction() {
+  def test_DoubleToLongFunction(): Unit = {
     val d2lf = new DoubleToLongFunction{ def applyAsLong(value: Double) = java.lang.Double.doubleToRawLongBits(value) }
     val sd2l = (d: Double) => java.lang.Double.doubleToRawLongBits(d)
     def foo(dl: DoubleToLongFunction)(d: Double) = dl.applyAsLong(d)
@@ -240,7 +240,7 @@ class FunctionConvertersTest {
 
   // DoubleUnaryOperator tests; conceptually widens to DoubleFunction and ToDoubleFunction and Function
   @Test
-  def test_DoubleUnaryOperator() {
+  def test_DoubleUnaryOperator(): Unit = {
     val duop = new DoubleUnaryOperator{ def applyAsDouble(value: Double) = 1.0 - value }
     val sduo = (d: Double) => 1.0 - d
     def foo(du: DoubleUnaryOperator)(d: Double) = du.applyAsDouble(d)
@@ -254,7 +254,7 @@ class FunctionConvertersTest {
 
   // Function tests; conceptually narrows to everything except BiFunction and its conceptual subclasses
   @Test
-  def test_Function() {
+  def test_Function(): Unit = {
     val fun1 = new Function[String, File]{ def apply(s: String): File = new File(s) }
     val fun2 = new Function[Int, Long]{ def apply(i: Int): Long = ((i.toLong)<<32) | i }
     def sfun = (s: String) => new File(s)
@@ -283,7 +283,7 @@ class FunctionConvertersTest {
 
   // IntBinaryOperator tests; conceptually widens to BinaryOperator, ToIntBiFunction, and BiFunction
   @Test
-  def test_IntBinaryOperator() {
+  def test_IntBinaryOperator(): Unit = {
     val ibop = new IntBinaryOperator{ def applyAsInt(a: Int, b: Int) = a ^ b }
     val sibo = (i: Int, j: Int) => i ^ j
     def foo(ibo: IntBinaryOperator)(a: Int, b: Int) = ibo.applyAsInt(a,b)
@@ -297,8 +297,8 @@ class FunctionConvertersTest {
 
   // IntConsumer tests; conceptually widens to Consumer and Function
   @Test
-  def test_IntConsumer() {
-    val icon = new IntConsumer{ def accept(i: Int) { save(i) } }
+  def test_IntConsumer(): Unit = {
+    val icon = new IntConsumer{ def accept(i: Int): Unit = { save(i) } }
     val sico = (i: Int) => { save(i); () }
     def jf(ic: IntConsumer)(d: Int) = { ic.accept(d); recall == d }
     def sf(f: Int => Unit)(d: Int) = { f(d); recall == d }
@@ -310,7 +310,7 @@ class FunctionConvertersTest {
 
   // IntFunction tests; conceptually widens to Function
   @Test
-  def test_IntFunction() {
+  def test_IntFunction(): Unit = {
     val ifn1 = new IntFunction[String]{ def apply(i: Int) = "!"*i }
     val ifn2 = new IntFunction[Long]{ def apply(i: Int) = ((i.toLong) << 32) | i }
     val sifn = (i: Int) => "!"*i
@@ -329,7 +329,7 @@ class FunctionConvertersTest {
 
   // IntPredicate tests; conceptually widens to IntFunction, Predicate, and Function
   @Test
-  def test_IntPredicate() {
+  def test_IntPredicate(): Unit = {
     val iprd = new IntPredicate{ def test(i: Int) = i < 0 }
     val sipr = (i: Int) => i < 0
     def foo(ip: IntPredicate)(d: Int) = ip.test(d)
@@ -343,7 +343,7 @@ class FunctionConvertersTest {
 
   // IntSupplier tests; conceptually widens to Supplier and Function
   @Test
-  def test_IntSupplier() {
+  def test_IntSupplier(): Unit = {
     val isup = new IntSupplier{ def getAsInt = 42 }
     val sisu = () => 42
     def foo(ds: IntSupplier) = ds.getAsInt
@@ -357,7 +357,7 @@ class FunctionConvertersTest {
 
   // IntToDoubleFunction tests; conceptually widens to ToDoubleFunction, IntFunction, and Function
   @Test
-  def test_IntToDoubleFunction() {
+  def test_IntToDoubleFunction(): Unit = {
     val i2df = new IntToDoubleFunction{ def applyAsDouble(i: Int) = i + 0.1*i }
     def si2d = (i: Int) => i + 0.1*i
     def foo(id: IntToDoubleFunction)(i: Int) = id.applyAsDouble(i)
@@ -371,7 +371,7 @@ class FunctionConvertersTest {
 
   // IntToLongFunction tests; conceptually widens to ToLongFunction, IntFunction, and Function
   @Test
-  def test_IntToLongFunction() {
+  def test_IntToLongFunction(): Unit = {
     val i2lf = new IntToLongFunction { def applyAsLong(i: Int) = (i.toLong << 32) | i }
     val si2l = (i: Int) => (i.toLong << 32) | i
     def foo(il: IntToLongFunction)(d: Int) = il.applyAsLong(d)
@@ -385,7 +385,7 @@ class FunctionConvertersTest {
 
   // IntUnaryOperator tests; conceptually widens to ToIntFunction, IntFunction, and Function
   @Test
-  def test_IntUnaryOperator() {
+  def test_IntUnaryOperator(): Unit = {
     val iuop = new IntUnaryOperator{ def applyAsInt(i: Int) = ~i }
     val siuo = (i: Int) => ~i
     def foo(iu: IntUnaryOperator)(d: Int) = iu.applyAsInt(d)
@@ -399,7 +399,7 @@ class FunctionConvertersTest {
 
   // LongBinaryOperator tests; conceptually widens to ToLongFunction, LongFunction, and Function
   @Test
-  def test_LongBinaryOperator() {
+  def test_LongBinaryOperator(): Unit = {
     val lbop = new LongBinaryOperator{ def applyAsLong(a: Long, b: Long) = a | b }
     val slbo = (a: Long, b: Long) => a | b
     def foo(lbo: LongBinaryOperator)(a: Long, b: Long) = lbo.applyAsLong(a,b)
@@ -413,8 +413,8 @@ class FunctionConvertersTest {
 
   // LongConsumer tests; conceptually widens to Consumer and Function
   @Test
-  def test_LongConsumer() {
-    val lcon = new LongConsumer{ def accept(l: Long) { save(l) } }
+  def test_LongConsumer(): Unit = {
+    val lcon = new LongConsumer{ def accept(l: Long): Unit = { save(l) } }
     val slco = (l: Long) => { save(l); () }
     def jf(lc: LongConsumer)(d: Long) = { lc.accept(d); recall == d }
     def sf(f: Long => Unit)(d: Long) = { f(d); recall == d }
@@ -426,7 +426,7 @@ class FunctionConvertersTest {
 
   // LongFunction tests; conceptually widens to Function
   @Test
-  def test_LongFunction() {
+  def test_LongFunction(): Unit = {
     val lfn1 = new LongFunction[String]{ def apply(l: Long) = l.toString }
     val lfn2 = new LongFunction[Int]{ def apply(l: Long) = (l & 0xFFFFFF).toInt }
     val slfn = (l: Long) => l.toString
@@ -445,7 +445,7 @@ class FunctionConvertersTest {
 
   // LongPredicate tests; conceptually widens to LongFunction and Predicate and Function
   @Test
-  def test_LongPredicate() {
+  def test_LongPredicate(): Unit = {
     val lprd = new LongPredicate{ def test(l: Long) = l < 1 }
     val slpr = (l: Long) => l < 1
     def foo(lp: LongPredicate)(d: Long) = lp.test(d)
@@ -459,7 +459,7 @@ class FunctionConvertersTest {
 
   // LongSupplier tests; conceptually widens to ToLongFunction and Supplier and Function
   @Test
-  def test_LongSupplier() {
+  def test_LongSupplier(): Unit = {
     val lsup = new LongSupplier{ def getAsLong = 1000000000000L }
     val slsu = () => 1000000000000L
     def foo(ls: LongSupplier) = ls.getAsLong
@@ -473,7 +473,7 @@ class FunctionConvertersTest {
 
   // LongToDoubleFunction tests; conceptually widens to ToDoubleFunction, LongFunction, and Function
   @Test
-  def test_LongToDoubleFunction() {
+  def test_LongToDoubleFunction(): Unit = {
     val l2df = new LongToDoubleFunction{ def applyAsDouble(l: Long) = l + 1e-4*l }
     def sl2d = (l: Long) => l + 1e-4*l
     def foo(ld: LongToDoubleFunction)(l: Long) = ld.applyAsDouble(l)
@@ -487,7 +487,7 @@ class FunctionConvertersTest {
 
   // LongToIntFunction tests; conceptually widens to ToIntFunction, LongFunction, and Function
   @Test
-  def test_LongToIntFunction() {
+  def test_LongToIntFunction(): Unit = {
     val l2if = new LongToIntFunction{ def applyAsInt(l :Long) = (l & 0xFFFFFF).toInt }
     val sl2i = (l: Long) => (l & 0xFFFFFF).toInt
     def foo(li: LongToIntFunction)(l: Long) = li.applyAsInt(l)
@@ -501,7 +501,7 @@ class FunctionConvertersTest {
 
   // LongUnaryOperator tests; conceptually widens to LongFunction, ToLongFunction, and Function
   @Test
-  def test_LongUnaryOperator() {
+  def test_LongUnaryOperator(): Unit = {
     val luop = new LongUnaryOperator{ def applyAsLong(l: Long) = -l }
     val sluo = (l: Long) => -l
     def foo(du: LongUnaryOperator)(l: Long) = du.applyAsLong(l)
@@ -515,9 +515,9 @@ class FunctionConvertersTest {
 
   // ObjDoubleConsumer tests; conceptually widens to Consumer and BiFunction
   @Test
-  def test_ObjDoubleConsumer() {
-    val odc1 = new ObjDoubleConsumer[String]{ def accept(s: String, d: Double) { save((s,d)) } }
-    val odc2 = new ObjDoubleConsumer[Int]{ def accept(i: Int, d: Double) { save((i,d)) } }
+  def test_ObjDoubleConsumer(): Unit = {
+    val odc1 = new ObjDoubleConsumer[String]{ def accept(s: String, d: Double): Unit = { save((s,d)) } }
+    val odc2 = new ObjDoubleConsumer[Int]{ def accept(i: Int, d: Double): Unit = { save((i,d)) } }
     val sodc = (s: String, d: Double) => { save((s,d)); () }
     val zodc = (i: Int, d: Double) => { save((i,d)); () }
     def jf1(odc: ObjDoubleConsumer[String])(s: String, d: Double) = { odc.accept(s,d); recall == ((s,d)) }
@@ -540,9 +540,9 @@ class FunctionConvertersTest {
 
   // ObjIntConsumer tests; conceptually widens to Consumer and BiFunction
   @Test
-  def test_ObjIntConsumer() {
-    val oic1 = new ObjIntConsumer[String]{ def accept(s: String, i: Int) { save((s,i)) } }
-    val oic2 = new ObjIntConsumer[Int]{ def accept(j: Int, i: Int) { save((j,i)) } }
+  def test_ObjIntConsumer(): Unit = {
+    val oic1 = new ObjIntConsumer[String]{ def accept(s: String, i: Int): Unit = { save((s,i)) } }
+    val oic2 = new ObjIntConsumer[Int]{ def accept(j: Int, i: Int): Unit = { save((j,i)) } }
     val soic = (s: String, i: Int) => { save((s,i)); () }
     val zoic = (j: Int, i: Int) => { save((j,i)); () }
     def jf1(oic: ObjIntConsumer[String])(s: String, i: Int) = { oic.accept(s,i); recall == ((s,i)) }
@@ -565,9 +565,9 @@ class FunctionConvertersTest {
 
   // ObjLongConsumer tests; conceptually widens to Consumer and BiFunction
   @Test
-  def test_ObjLongConsumer() {
-    val olc1 = new ObjLongConsumer[String]{ def accept(s: String, l: Long) { save((s,l)) } }
-    val olc2 = new ObjLongConsumer[Int]{ def accept(i: Int, l: Long) { save((i,l)) } }
+  def test_ObjLongConsumer(): Unit = {
+    val olc1 = new ObjLongConsumer[String]{ def accept(s: String, l: Long): Unit = { save((s,l)) } }
+    val olc2 = new ObjLongConsumer[Int]{ def accept(i: Int, l: Long): Unit = { save((i,l)) } }
     val solc = (s: String, l: Long) => { save((s,l)); () }
     val zolc = (i: Int, l: Long) => { save((i,l)); () }
     def jf1(olc: ObjLongConsumer[String])(s: String, l: Long) = { olc.accept(s,l); recall == ((s,l)) }
@@ -590,7 +590,7 @@ class FunctionConvertersTest {
 
   // Predicate tests; conceptually widens to Function and narrows to IntPredicate etc.
   @Test
-  def test_Predicate() {
+  def test_Predicate(): Unit = {
     val prd1 = new Predicate[String]{ def test(s: String) = s.isEmpty }
     val prd2 = new Predicate[Int]{ def test(i: Int) = i < 0 }
     def sprd = (s: String) => s.isEmpty
@@ -612,7 +612,7 @@ class FunctionConvertersTest {
 
   // Supplier tests; conceptually widens to Function and narrows to IntSupplier etc.
   @Test
-  def test_Supplier() {
+  def test_Supplier(): Unit = {
     val sup1 = new Supplier[String]{ def get = "halibut" }
     val sup2 = new Supplier[Int]{ def get = 17 }
     val ssup = () => "halibut"
@@ -636,7 +636,7 @@ class FunctionConvertersTest {
 
   // ToDoubleBiFunction tests; conceptually widens to BiFunction and narrows to DoubleBinaryOperator
   @Test
-  def test_ToDoubleBiFunction() {
+  def test_ToDoubleBiFunction(): Unit = {
     {
       val bfd1 = new ToDoubleBiFunction[String, File]{ def applyAsDouble(s: String, f: File) = s.length.toDouble * f.getName.length }
       val sbfd = (s: String, f: File) => s.length.toDouble * f.getName.length
@@ -666,7 +666,7 @@ class FunctionConvertersTest {
 
   // ToDoubleFunction tests; conceptually widens to Function and narrows to DoubleUnaryOperator, IntToDoubleFunction, etc.
   @Test
-  def test_ToDoubleFunction() {
+  def test_ToDoubleFunction(): Unit = {
     {
       val fnd1 = new ToDoubleFunction[String]{ def applyAsDouble(s: String) = s.length / (s.headOption.getOrElse(0: Char)+1).toDouble }
       val sfnd = (s: String) => s.length / (s.headOption.getOrElse(0: Char)+1).toDouble
@@ -694,7 +694,7 @@ class FunctionConvertersTest {
 
   // ToIntBiFunction tests; conceptually widens to BiFunction and narrows to IntBinaryOperator
   @Test
-  def test_ToIntBiFunction() {
+  def test_ToIntBiFunction(): Unit = {
     {
       val bfi1 = new ToIntBiFunction[String, File]{ def applyAsInt(s: String, f: File) = s.length + f.getName.length }
       val sbfi = (s: String, f: File) => s.length.toInt + f.getName.length
@@ -723,7 +723,7 @@ class FunctionConvertersTest {
 
   // ToIntFunction tests; conceptually widens to Function and narrows to IntUnaryOperator, etc..
   @Test
-  def test_ToIntFunction() {
+  def test_ToIntFunction(): Unit = {
     {
       val fni1 = new ToIntFunction[String]{ def applyAsInt(s: String) = s.length }
       val sfni = (s: String) => s.length
@@ -751,7 +751,7 @@ class FunctionConvertersTest {
 
   // ToLongBiFunction tests; conceptually widens to BiFunction and narrows to LongBinaryOperator
   @Test
-  def test_ToLongBiFunction() {
+  def test_ToLongBiFunction(): Unit = {
     {
       val bfl1 = new ToLongBiFunction[String, File]{ def applyAsLong(s: String, f: File) = s.length * f.getName.length }
       val sbfl = (s: String, f: File) => s.length.toLong * f.getName.length
@@ -780,7 +780,7 @@ class FunctionConvertersTest {
 
   // ToLongFunction tests; conceptually widens to Function and narrows to LongUnaryOperator, LongToIntFunction etc..
   @Test
-  def test_ToLongFunction() {
+  def test_ToLongFunction(): Unit = {
     {
       val fnl1 = new ToLongFunction[String]{ def applyAsLong(s: String) = s.length.toLong << 16 }
       val sfnl = (s: String) => s.length.toLong << 16
@@ -808,7 +808,7 @@ class FunctionConvertersTest {
 
   // UnaryOperator tests; actually widens to Function and conceptually narrows to IntUnaryOperator etc..
   @Test
-  def test_UnaryOperator() {
+  def test_UnaryOperator(): Unit = {
     {
       val uop1 = new UnaryOperator[String]{ def apply(s: String) = s.toUpperCase }
       val suop = (s: String) => s.toUpperCase

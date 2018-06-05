@@ -213,13 +213,13 @@ object IntAccumulator {
   def supplier = new java.util.function.Supplier[IntAccumulator]{ def get: IntAccumulator = new IntAccumulator }
   
   /** A `BiConsumer` that adds an element to an `Accumulator`, suitable for use with `java.util.stream.IntStream`'s `collect` method. */
-  def adder = new java.util.function.ObjIntConsumer[IntAccumulator]{ def accept(ac: IntAccumulator, a: Int) { ac += a } }
+  def adder = new java.util.function.ObjIntConsumer[IntAccumulator]{ def accept(ac: IntAccumulator, a: Int): Unit = { ac += a } }
 
   /** A `BiConsumer` that adds a boxed `Int` to an `IntAccumulator`, suitable for use with `java.util.stream.Stream`'s `collect` method. */
-  def boxedAdder = new java.util.function.BiConsumer[IntAccumulator, Int]{ def accept(ac: IntAccumulator, a: Int) { ac += a } }
+  def boxedAdder = new java.util.function.BiConsumer[IntAccumulator, Int]{ def accept(ac: IntAccumulator, a: Int): Unit = { ac += a } }
   
   /** A `BiConsumer` that merges `IntAccumulator`s, suitable for use with `java.util.stream.IntStream`'s `collect` method.  Suitable for `Stream[Int]` also. */
-  def merger = new java.util.function.BiConsumer[IntAccumulator, IntAccumulator]{ def accept(a1: IntAccumulator, a2: IntAccumulator) { a1 drain a2 } }
+  def merger = new java.util.function.BiConsumer[IntAccumulator, IntAccumulator]{ def accept(a1: IntAccumulator, a2: IntAccumulator): Unit = { a1 drain a2 } }
 
   /** Builds an `IntAccumulator` from any `Int`-valued `TraversableOnce` */
   def from[A](source: TraversableOnce[Int]) = {
@@ -294,7 +294,7 @@ private[java8] class IntAccumulatorStepper(private val acc: IntAccumulator) exte
     }  
 
   // Overridden for efficiency
-  override def foreach(f: Int => Unit) {
+  override def foreach(f: Int => Unit): Unit = {
     while (N > 0) {
       if (i >= n) loadMore()
       val i0 = i
@@ -308,7 +308,7 @@ private[java8] class IntAccumulatorStepper(private val acc: IntAccumulator) exte
   }
 
   // Overridden for efficiency
-  override def forEachRemaining(f: java.util.function.IntConsumer) {
+  override def forEachRemaining(f: java.util.function.IntConsumer): Unit = {
     while (N > 0) {
       if (i >= n) loadMore()
       val i0 = i
