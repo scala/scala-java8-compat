@@ -161,7 +161,7 @@ as the collection can (in some cases) be built in parallel.
 
 Because the wrappers are invoked based on the static type of the collection, there are also cases where parallelization
 is inefficient when interfacing with Java 8 Streams (e.g. when a collection is typed as `Seq[String]` so might have linear
-access like `List`, but actually is a `WrappedArray[String]` that can be efficiently parallelized) but can be efficient
+access like `List`, but actually is an `ArraySeq[String]` that can be efficiently parallelized) but can be efficient
 with Scala parallel collections.  The `parStream` method is only available when the static type is known to be compatible
 with rapid parallel operation; `seqStream` can be parallelized by using `.parallel`, but may or may not be efficient.
 

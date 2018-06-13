@@ -195,19 +195,19 @@ with converterImpl.Priority1AccumulatorConverters
     def parStream: LongStream = seqStream.parallel
   }
 
-  implicit final class EnrichDoubleWrappedArrayWithStream(private val a: collection.mutable.WrappedArray[Double])
+  implicit final class EnrichDoubleArraySeqWithStream(private val a: collection.mutable.ArraySeq[Double])
     extends AnyVal with MakesSequentialStream[Double, DoubleStream] with MakesParallelStream[Double, DoubleStream] {
     def seqStream: DoubleStream = java.util.Arrays.stream(a.array)
     def parStream: DoubleStream = seqStream.parallel
   }
 
-  implicit final class EnrichIntWrappedArrayWithStream(private val a: collection.mutable.WrappedArray[Int])
+  implicit final class EnrichIntArraySeqWithStream(private val a: collection.mutable.ArraySeq[Int])
     extends AnyVal with MakesSequentialStream[Int, IntStream] with MakesParallelStream[Int, IntStream] {
     def seqStream: IntStream = java.util.Arrays.stream(a.array)
     def parStream: IntStream = seqStream.parallel
   }
 
-  implicit final class EnrichLongWrappedArrayWithStream(private val a: collection.mutable.WrappedArray[Long])
+  implicit final class EnrichLongArraySeqWithStream(private val a: collection.mutable.ArraySeq[Long])
     extends AnyVal with MakesSequentialStream[Long, LongStream] with MakesParallelStream[Long, LongStream] {
     def seqStream: LongStream = java.util.Arrays.stream(a.array)
     def parStream: LongStream = seqStream.parallel

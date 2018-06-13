@@ -153,7 +153,7 @@ class StepConvertersTest {
     Okay( cm.AnyRefMap[String,String]("fish" -> "salmon").keyStepper )
     Okay( cm.AnyRefMap[String,String]("fish" -> "salmon").valueStepper )
     good( cm.ArrayBuffer[String]("salmon").stepper )
-    good( (Array("salmon"): cm.WrappedArray[String]).stepper )
+    good( (Array("salmon"): cm.ArraySeq[String]).stepper )
     good( cm.ArraySeq[String]("salmon").stepper )
     _eh_( cm.ArrayStack[String]("salmon").stepper )
     Okay( (cm.ArrayBuffer[String]("salmon"): cm.Buffer[String]).stepper )
@@ -192,7 +192,6 @@ class StepConvertersTest {
     Okay( cm.WeakHashMap[String, String]("fish" -> "salmon").stepper )
     Okay( cm.WeakHashMap[String, String]("fish" -> "salmon").keyStepper )
     Okay( cm.WeakHashMap[String, String]("fish" -> "salmon").valueStepper )
-    good( (Array("salmon"): cm.WrappedArray[String]).stepper )
 
     // Java 6 converters section
 
@@ -272,7 +271,7 @@ class StepConvertersTest {
     Okay( (cm.HashSet[Double](3.14159): cm.AbstractSet[Double]).stepper )
     Okay( cm.AnyRefMap[String,Double]("fish" -> 3.14159).valueStepper )
     good( cm.ArrayBuffer[Double](3.14159).stepper )
-    good( (Array(3.14159): cm.WrappedArray[Double]).stepper )
+    good( (Array(3.14159): cm.ArraySeq[Double]).stepper )
     good( cm.ArraySeq[Double](3.14159).stepper )
     _eh_( cm.ArrayStack[Double](3.14159).stepper )
     Okay( (cm.ArrayBuffer[Double](3.14159): cm.Buffer[Double]).stepper )
@@ -304,7 +303,6 @@ class StepConvertersTest {
     Okay( cm.UnrolledBuffer[Double](3.14159).stepper )
     Okay( cm.WeakHashMap[Double, Double](2.718281828 -> 3.14159).keyStepper )
     Okay( cm.WeakHashMap[Double, Double](2.718281828 -> 3.14159).valueStepper )
-    good( (Array(3.14159): cm.WrappedArray[Double]).stepper )
 
     // Java 6 converters section
 
@@ -392,7 +390,7 @@ class StepConvertersTest {
     Okay( (cm.HashSet[Int](654321): cm.AbstractSet[Int]).stepper )
     Okay( cm.AnyRefMap[String, Int]("fish" -> 654321).valueStepper )
     good( cm.ArrayBuffer[Int](654321).stepper )
-    good( (Array(654321): cm.WrappedArray[Int]).stepper )
+    good( (Array(654321): cm.ArraySeq[Int]).stepper )
     good( cm.ArraySeq[Int](654321).stepper )
     _eh_( cm.ArrayStack[Int](654321).stepper )
     Okay( (cm.ArrayBuffer[Int](654321): cm.Buffer[Int]).stepper )
@@ -424,7 +422,6 @@ class StepConvertersTest {
     Okay( cm.UnrolledBuffer[Int](654321).stepper )
     Okay( cm.WeakHashMap[Int, Int](0xDEEDED -> 654321).keyStepper )
     Okay( cm.WeakHashMap[Int, Int](0xDEEDED -> 654321).valueStepper )
-    good( (Array(654321): cm.WrappedArray[Int]).stepper )
 
     // Java 6 converters section
 
@@ -440,12 +437,12 @@ class StepConvertersTest {
     implicit val spec = SpecCheck(_.isInstanceOf[IntStepper], x => s"$x should be an IntStepper")
 
     good( Array[Short](654321.toShort).stepper )
-    good( (Array[Short](654321.toShort): cm.WrappedArray[Short]).stepper )
+    good( (Array[Short](654321.toShort): cm.ArraySeq[Short]).stepper )
 
     //TODO: None of these currently work because there are no native Stepper implementations:
 
     //good( ci.NumericRange(123456.toShort, 123458.toShort, 1.toShort).stepper )
-    //good( ((Array[Short](654321.toShort): cm.WrappedArray[Short]): cm.ArrayLike[Short, cm.WrappedArray[Short]]).stepper )
+    //good( ((Array[Short](654321.toShort): cm.ArraySeq[Short]): cm.ArrayLike[Short, cm.ArraySeq[Short]]).stepper )
     //good( (Array[Short](654321.toShort): cm.ArrayOps[Short]).stepper )
     //good( cm.ResizableArray[Short](654321.toShort).stepper )
   }
@@ -526,7 +523,7 @@ class StepConvertersTest {
     Okay( (cm.HashSet[Long](0x123456789L): cm.AbstractSet[Long]).stepper )
     Okay( cm.AnyRefMap[String,Long]("fish" -> 0x123456789L).valueStepper )
     good( cm.ArrayBuffer[Long](0x123456789L).stepper )
-    good( (Array(0x123456789L): cm.WrappedArray[Long]).stepper )
+    good( (Array(0x123456789L): cm.ArraySeq[Long]).stepper )
     good( cm.ArraySeq[Long](0x123456789L).stepper )
     _eh_( cm.ArrayStack[Long](0x123456789L).stepper )
     Okay( (cm.ArrayBuffer[Long](0x123456789L): cm.Buffer[Long]).stepper )
@@ -559,7 +556,6 @@ class StepConvertersTest {
     Okay( cm.UnrolledBuffer[Long](0x123456789L).stepper )
     Okay( cm.WeakHashMap[Long, Long](1234567654321L -> 0x123456789L).keyStepper )
     Okay( cm.WeakHashMap[Long, Long](1234567654321L -> 0x123456789L).valueStepper )
-    good( (Array(0x123456789L): cm.WrappedArray[Long]).stepper )
 
     // Java 6 converters section
 
