@@ -6,10 +6,7 @@ jdk:
   - oraclejdk8
 
 scala:
-  # no 2.13 for now in cross-build because of
-  # https://github.com/scala/scala-java8-compat/issues/97
-  - 2.11.12
-  - 2.12.6
+  - 2.13.0-M4
 
 env:
   global:

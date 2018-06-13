@@ -173,9 +173,9 @@ final class LongAccumulator extends AccumulatorLike[Long, LongAccumulator] { sel
     * Note that the target collection is not specialized.
     * Usage example: `acc.to[Vector]`
     */
-  final def to[Coll[_]](implicit cbf: collection.generic.CanBuildFrom[Nothing, Long, Coll[Long]]): Coll[Long] = {
+  final def to[Coll[_]](implicit factory: collection.Factory[Long, Coll[Long]]): Coll[Long] = {
     if (totalSize > Int.MaxValue) throw new IllegalArgumentException("Too many elements accumulated for a Scala collection: "+totalSize.toString)
-    val b = cbf()
+    val b = factory.newBuilder
     b.sizeHint(totalSize.toInt)
     var h = 0
     var pv = 0L
@@ -215,10 +215,10 @@ object LongAccumulator {
   /** A `BiConsumer` that merges `LongAccumulator`s, suitable for use with `java.util.stream.LongStream`'s `collect` method.  Suitable for `Stream[Long]` also. */
   def merger = new java.util.function.BiConsumer[LongAccumulator, LongAccumulator]{ def accept(a1: LongAccumulator, a2: LongAccumulator): Unit = { a1 drain a2 } }
 
-  /** Builds a `LongAccumulator` from any `Long`-valued `TraversableOnce` */
-  def from[A](source: TraversableOnce[Long]) = {
+  /** Builds a `LongAccumulator` from any `Long`-valued `IterableOnce` */
+  def from[A](source: IterableOnce[Long]) = {
     val a = new LongAccumulator
-    source.foreach(a += _)
+    source.iterator.foreach(a += _)
     a
   }
 }

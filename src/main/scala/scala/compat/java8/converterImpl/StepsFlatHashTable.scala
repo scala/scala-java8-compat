@@ -39,7 +39,7 @@ extends StepsLongLikeGapped[StepsLongFlatHashTable](_underlying, _i0, _iN) {
 // Value class adapters //
 //////////////////////////
 
-final class RichFlatHashTableCanStep[T](private val underlying: collection.mutable.FlatHashTable[T]) extends AnyVal with MakesStepper[T, EfficientSubstep] {
+final class RichHashSetCanStep[T](private val underlying: collection.mutable.HashSet[T]) extends AnyVal with MakesStepper[T, EfficientSubstep] {
   override def stepper[S <: Stepper[_]](implicit ss: StepperShape[T, S]) = {
     val tbl = CollectionInternals.getTable(underlying)
     ((ss.shape: @switch) match {

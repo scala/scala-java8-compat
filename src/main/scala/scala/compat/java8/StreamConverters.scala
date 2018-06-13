@@ -92,10 +92,10 @@ trait Priority1StreamConverters extends Priority2StreamConverters {
   implicit class RichStream[A](stream: Stream[A]) {
     def accumulate = stream.collect(Accumulator.supplier[A], Accumulator.adder[A], Accumulator.merger[A])
     
-    def toScala[Coll[_]](implicit cbf: collection.generic.CanBuildFrom[Nothing, A, Coll[A]]): Coll[A] = {
-      if (stream.isParallel) accumulate.to[Coll](cbf)
+    def toScala[Coll[_]](implicit factory: collection.Factory[A, Coll[A]]): Coll[A] = {
+      if (stream.isParallel) accumulate.to[Coll](factory)
       else {
-        val b = cbf()
+        val b = factory.newBuilder
         stream.forEachOrdered(new java.util.function.Consumer[A]{ def accept(a: A): Unit = { b += a } })
         b.result()
       }
@@ -264,10 +264,10 @@ with converterImpl.Priority1AccumulatorConverters
   implicit final class RichDoubleStream(private val stream: DoubleStream) extends AnyVal {
     def accumulate = stream.collect(DoubleAccumulator.supplier, DoubleAccumulator.adder, DoubleAccumulator.merger)
     
-    def toScala[Coll[_]](implicit cbf: collection.generic.CanBuildFrom[Nothing, Double, Coll[Double]]): Coll[Double] = {
-      if (stream.isParallel) accumulate.to[Coll](cbf)
+    def toScala[Coll[_]](implicit factory: collection.Factory[Double, Coll[Double]]): Coll[Double] = {
+      if (stream.isParallel) accumulate.to[Coll](factory)
       else {
-        val b = cbf()
+        val b = factory.newBuilder
         stream.forEachOrdered(new java.util.function.DoubleConsumer{ def accept(d: Double): Unit = { b += d } })
         b.result()
       }
@@ -277,10 +277,10 @@ with converterImpl.Priority1AccumulatorConverters
   implicit final class RichIntStream(private val stream: IntStream) extends AnyVal {
     def accumulate = stream.collect(IntAccumulator.supplier, IntAccumulator.adder, IntAccumulator.merger)
 
-    def toScala[Coll[_]](implicit cbf: collection.generic.CanBuildFrom[Nothing, Int, Coll[Int]]): Coll[Int] = {
-      if (stream.isParallel) accumulate.to[Coll](cbf)
+    def toScala[Coll[_]](implicit factory: collection.Factory[Int, Coll[Int]]): Coll[Int] = {
+      if (stream.isParallel) accumulate.to[Coll](factory)
       else {
-        val b = cbf()
+        val b = factory.newBuilder
         stream.forEachOrdered(new java.util.function.IntConsumer{ def accept(d: Int): Unit = { b += d } })
         b.result()
       }
@@ -290,10 +290,10 @@ with converterImpl.Priority1AccumulatorConverters
   implicit final class RichLongStream(private val stream: LongStream) extends AnyVal {
     def accumulate = stream.collect(LongAccumulator.supplier, LongAccumulator.adder, LongAccumulator.merger)
 
-    def toScala[Coll[_]](implicit cbf: collection.generic.CanBuildFrom[Nothing, Long, Coll[Long]]): Coll[Long] = {
-      if (stream.isParallel) accumulate.to[Coll](cbf)
+    def toScala[Coll[_]](implicit factory: collection.Factory[Long, Coll[Long]]): Coll[Long] = {
+      if (stream.isParallel) accumulate.to[Coll](factory)
       else {
-        val b = cbf()
+        val b = factory.newBuilder
         stream.forEachOrdered(new java.util.function.LongConsumer{ def accept(d: Long): Unit = { b += d } })
         b.result()
       }

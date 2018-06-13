@@ -1,8 +1,6 @@
 import ScalaModulePlugin._
 
-// no 2.13 for now in cross-build because of
-// https://github.com/scala/scala-java8-compat/issues/97
-crossScalaVersions in ThisBuild := List("2.12.6", "2.11.12")
+crossScalaVersions in ThisBuild := List("2.13.0-M4")
 
 val disableDocs = sys.props("nodocs") == "true"
 

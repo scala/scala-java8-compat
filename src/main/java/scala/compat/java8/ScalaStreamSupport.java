@@ -29,7 +29,7 @@ public class ScalaStreamSupport {
      * @return     A Stream view of the collection which, by default, executes sequentially.
      */
     public static <T> Stream<T> stream(scala.collection.IndexedSeq<T> coll) {
-        return StreamSupport.stream(new StepsAnyIndexedSeq<T>(coll, 0, coll.length()), false);
+        return StreamSupport.stream(new StepsAnyIndexedSeq<T>((scala.collection.IndexedSeq)coll, 0, coll.length()), false);
     }
 
     /** 
@@ -90,7 +90,7 @@ public class ScalaStreamSupport {
      * @return     A Stream view of the collection which, by default, executes sequentially.
      */
     public static <K> Stream<K> streamKeys(scala.collection.mutable.HashMap<K, ?> coll) {
-        scala.collection.mutable.HashEntry[] tbl = CollectionInternals.getTable(coll);
+        Object[] tbl = CollectionInternals.getTable(coll);
         return StreamSupport.stream(new StepsAnyHashTableKey(tbl, 0, tbl.length), false);
     }
 
@@ -103,7 +103,7 @@ public class ScalaStreamSupport {
      * @return     A Stream view of the collection which, by default, executes sequentially.
      */
     public static <V> Stream<V> streamValues(scala.collection.mutable.HashMap<? super Object, V> coll) {
-        scala.collection.mutable.HashEntry[] tbl = CollectionInternals.getTable(coll);
+        Object[] tbl = CollectionInternals.getTable(coll);
         return StreamSupport.stream(new StepsAnyDefaultHashTableValue(tbl, 0, tbl.length), false);
     }
 
@@ -117,7 +117,7 @@ public class ScalaStreamSupport {
      * @return     A Stream view of the collection which, by default, executes sequentially.
      */
     public static <K, V> Stream< scala.Tuple2<K, V> > stream(scala.collection.mutable.HashMap<K, V> coll) {
-        scala.collection.mutable.HashEntry< K, scala.collection.mutable.DefaultEntry<K, V> >[] tbl = 
+        Object[] tbl =
             CollectionInternals.getTable(coll);
         return StreamSupport.stream(new StepsAnyDefaultHashTable<K, V>(tbl, 0, tbl.length), false);
     }
@@ -226,7 +226,7 @@ public class ScalaStreamSupport {
      * @param coll The collection to traverse
      * @return     A Stream view of the collection which, by default, executes sequentially.
      */
-    public static <T> Stream<T> streamAccumulated(scala.collection.TraversableOnce<T> coll) {
+    public static <T> Stream<T> streamAccumulated(scala.collection.IterableOnce<T> coll) {
         scala.compat.java8.collectionImpl.Accumulator<T> acc = scala.compat.java8.collectionImpl.Accumulator.from(coll);
         return StreamSupport.stream(acc.spliterator(), false);
     }
@@ -321,7 +321,7 @@ public class ScalaStreamSupport {
      * @return     A DoubleStream view of the collection which, by default, executes sequentially.
      */
     public static DoubleStream doubleStreamKeys(scala.collection.mutable.HashMap<Double, ?> coll) {
-        scala.collection.mutable.HashEntry[] tbl = CollectionInternals.getTable(coll);
+        Object[] tbl = CollectionInternals.getTable(coll);
         return StreamSupport.doubleStream(new StepsDoubleHashTableKey(tbl, 0, tbl.length), false);
     }
 
@@ -334,7 +334,7 @@ public class ScalaStreamSupport {
      * @return     A DoubleStream view of the collection which, by default, executes sequentially.
      */
     public static DoubleStream doubleStreamValues(scala.collection.mutable.HashMap<? super Object, Double> coll) {
-        scala.collection.mutable.HashEntry[] tbl = CollectionInternals.getTable(coll);
+        Object[] tbl = CollectionInternals.getTable(coll);
         return StreamSupport.doubleStream(new StepsDoubleDefaultHashTableValue(tbl, 0, tbl.length), false);
     }
 
@@ -432,9 +432,9 @@ public class ScalaStreamSupport {
      * @param coll The collection to traverse
      * @return     A Stream view of the collection which, by default, executes sequentially.
      */
-    public static DoubleStream doubleStreamAccumulated(scala.collection.TraversableOnce<Double> coll) {
+    public static DoubleStream doubleStreamAccumulated(scala.collection.IterableOnce<Double> coll) {
         scala.compat.java8.collectionImpl.DoubleAccumulator acc = 
-          scala.compat.java8.collectionImpl.DoubleAccumulator.from((scala.collection.TraversableOnce)coll);
+          scala.compat.java8.collectionImpl.DoubleAccumulator.from((scala.collection.IterableOnce)coll);
         return StreamSupport.doubleStream(acc.spliterator(), false);
     }
 
@@ -557,7 +557,7 @@ public class ScalaStreamSupport {
      * @return     A IntStream view of the collection which, by default, executes sequentially.
      */
     public static IntStream intStreamKeys(scala.collection.mutable.HashMap<Integer, ?> coll) {
-        scala.collection.mutable.HashEntry[] tbl = CollectionInternals.getTable(coll);
+        Object[] tbl = CollectionInternals.getTable(coll);
         return StreamSupport.intStream(new StepsIntHashTableKey(tbl, 0, tbl.length), false);
     }
 
@@ -570,7 +570,7 @@ public class ScalaStreamSupport {
      * @return     A IntStream view of the collection which, by default, executes sequentially.
      */
     public static IntStream intStreamValues(scala.collection.mutable.HashMap<? super Object, Integer> coll) {
-        scala.collection.mutable.HashEntry[] tbl = CollectionInternals.getTable(coll);
+        Object[] tbl = CollectionInternals.getTable(coll);
         return StreamSupport.intStream(new StepsIntDefaultHashTableValue(tbl, 0, tbl.length), false);
     }
 
@@ -668,9 +668,9 @@ public class ScalaStreamSupport {
      * @param coll The collection to traverse
      * @return     A Stream view of the collection which, by default, executes sequentially.
      */
-    public static IntStream intStreamAccumulated(scala.collection.TraversableOnce<Integer> coll) {
+    public static IntStream intStreamAccumulated(scala.collection.IterableOnce<Integer> coll) {
         scala.compat.java8.collectionImpl.IntAccumulator acc = 
-          scala.compat.java8.collectionImpl.IntAccumulator.from((scala.collection.TraversableOnce)coll);
+          scala.compat.java8.collectionImpl.IntAccumulator.from((scala.collection.IterableOnce)coll);
         return StreamSupport.intStream(acc.spliterator(), false);
     }
 
@@ -766,7 +766,7 @@ public class ScalaStreamSupport {
      * @return     A LongStream view of the collection which, by default, executes sequentially.
      */
     public static LongStream longStreamKeys(scala.collection.mutable.HashMap<Long, ?> coll) {
-        scala.collection.mutable.HashEntry[] tbl = CollectionInternals.getTable(coll);
+        Object[] tbl = CollectionInternals.getTable(coll);
         return StreamSupport.longStream(new StepsLongHashTableKey(tbl, 0, tbl.length), false);
     }
 
@@ -779,7 +779,7 @@ public class ScalaStreamSupport {
      * @return     A LongStream view of the collection which, by default, executes sequentially.
      */
     public static LongStream longStreamValues(scala.collection.mutable.HashMap<? super Object, Long> coll) {
-        scala.collection.mutable.HashEntry[] tbl = CollectionInternals.getTable(coll);
+        Object[] tbl = CollectionInternals.getTable(coll);
         return StreamSupport.longStream(new StepsLongDefaultHashTableValue(tbl, 0, tbl.length), false);
     }
 
@@ -877,9 +877,9 @@ public class ScalaStreamSupport {
      * @param coll The collection to traverse
      * @return     A Stream view of the collection which, by default, executes sequentially.
      */
-    public static LongStream longStreamAccumulated(scala.collection.TraversableOnce<Long> coll) {
+    public static LongStream longStreamAccumulated(scala.collection.IterableOnce<Long> coll) {
         scala.compat.java8.collectionImpl.LongAccumulator acc = 
-          scala.compat.java8.collectionImpl.LongAccumulator.from((scala.collection.TraversableOnce)coll);
+          scala.compat.java8.collectionImpl.LongAccumulator.from((scala.collection.IterableOnce)coll);
         return StreamSupport.longStream(acc.spliterator(), false);
     }
 

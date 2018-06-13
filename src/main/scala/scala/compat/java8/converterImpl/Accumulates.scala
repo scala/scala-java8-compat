@@ -6,34 +6,34 @@ trait AccumulatesFromStepper[@specialized(Double, Int, Long) A, Acc <: Accumulat
   def apply(stepper: Stepper[A]): Acc
 }
 
-final class CollectionCanAccumulate[A](private val underlying: TraversableOnce[A]) extends AnyVal {
+final class CollectionCanAccumulate[A](private val underlying: IterableOnce[A]) extends AnyVal {
   def accumulate: Accumulator[A] = {
     val a = new Accumulator[A]
-    underlying.foreach(a += _)
+    underlying.iterator.foreach(a += _)
     a
   }
 }
 
-final class AccumulateDoubleCollection(private val underlying: TraversableOnce[Double]) extends AnyVal {
+final class AccumulateDoubleCollection(private val underlying: IterableOnce[Double]) extends AnyVal {
   def accumulate: DoubleAccumulator = {
     val da = new DoubleAccumulator
-    underlying.foreach(da += _)
+    underlying.iterator.foreach(da += _)
     da
   }
 }
 
-final class AccumulateIntCollection(private val underlying: TraversableOnce[Int]) extends AnyVal {
+final class AccumulateIntCollection(private val underlying: IterableOnce[Int]) extends AnyVal {
   def accumulate: IntAccumulator = {
     val da = new IntAccumulator
-    underlying.foreach(da += _)
+    underlying.iterator.foreach(da += _)
     da
   }
 }
 
-final class AccumulateLongCollection(private val underlying: TraversableOnce[Long]) extends AnyVal {
+final class AccumulateLongCollection(private val underlying: IterableOnce[Long]) extends AnyVal {
   def accumulate: LongAccumulator = {
     val da = new LongAccumulator
-    underlying.foreach(da += _)
+    underlying.iterator.foreach(da += _)
     da
   }
 }

@@ -177,9 +177,9 @@ final class Accumulator[A] extends AccumulatorLike[A, Accumulator[A]] { self =>
   /** Copies the elements in this `Accumulator` to a specified collection.
     * Usage example: `acc.to[Vector]`
     */
-  final def to[Coll[_]](implicit cbf: collection.generic.CanBuildFrom[Nothing, A, Coll[A]]): Coll[A] = {
+  final def to[Coll[_]](implicit factory: collection.Factory[A, Coll[A]]): Coll[A] = {
     if (totalSize > Int.MaxValue) throw new IllegalArgumentException("Too many elements accumulated for a Scala collection: "+totalSize.toString)
-    val b = cbf()
+    val b = factory.newBuilder
     b.sizeHint(totalSize.toInt)
     var h = 0
     var pv = 0L
@@ -217,10 +217,10 @@ object Accumulator {
   /** A `BiConsumer` that merges `Accumulator`s, suitable for use with `java.util.stream.Stream`'s `collect` method. */
   def merger[A] = new java.util.function.BiConsumer[Accumulator[A], Accumulator[A]]{ def accept(a1: Accumulator[A], a2: Accumulator[A]): Unit = { a1 drain a2 } }
 
-  /** Builds an `Accumulator` from any `TraversableOnce` */
-  def from[A](source: TraversableOnce[A]) = {
+  /** Builds an `Accumulator` from any `IterableOnce` */
+  def from[A](source: IterableOnce[A]) = {
     val a = new Accumulator[A]
-    source.foreach(a += _)
+    source.iterator.foreach(a += _)
     a
   }
 }
