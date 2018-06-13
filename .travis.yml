@@ -1,5 +1,16 @@
 language: scala
+
 sudo: false
+
+jdk:
+  - oraclejdk8
+
+scala:
+  # no 2.13 for now in cross-build because of
+  # https://github.com/scala/scala-java8-compat/issues/97
+  - 2.11.12
+  - 2.12.6
+
 env:
   global:
     # PGP_PASSPHRASE
@@ -8,10 +19,10 @@ env:
     - secure: "lx2qFeFxh9AFmyHR7hH4Qf9flIEx8VgYj6ebzuxp1cc1ZZiXHC1256x0bHFDUH9bhJACOazOrco/+v6MBAriBkWxLBc98FrC6OkVeQMFW2ffWSBuHRclilKsQA/Lsgc81Wg+WV105hOqUNAkTXgroblInNt+KS+DhC/8FVoh9ZY="
     # SONA_PASS
     - secure: "FZC+FZnBNeklA150vW5QDZJ5J7t+DExJrgyXWM46Wh0MobjH8cvydgC3qatItb0rDBV8l7zO1LDwl2KEi92aefw2a8E49z6qVOHgUXiI3SAx7M0UO0FFeKPmTXCLcBlbnGLcUqNjIZfuIEufQvPblKTl8qN4eMmcMn9jsNzJr28="
+
 script:
   - admin/build.sh
-jdk:
-  - oraclejdk8
+
 notifications:
   email:
     - jason.zaugg@lightbend.com
