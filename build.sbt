@@ -103,8 +103,7 @@ lazy val root = (project in file(".")).
     }
   ).
   settings(
-    sources in (Compile,doc) := Seq.empty,
-    publishArtifact in (Compile, packageDoc) := false).
+    sources in (Compile,doc) := Seq(baseDirectory.value / "src" / "DocDummy.scala")).
 /*  settings(
     (inConfig(JavaDoc)(Defaults.configSettings) ++ (if (disableDocs) Nil else Seq(
       packageDoc in Compile := (packageDoc in JavaDoc).value,
