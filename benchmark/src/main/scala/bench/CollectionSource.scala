@@ -256,7 +256,7 @@ package object generate {
 
   class MuqThings(val sizes: Array[Int]) extends AbstractThings[collection.mutable.Queue]("mutable.Queue") {}
 
-  class WraThings(val sizes: Array[Int]) extends AbstractThings[collection.mutable.WrappedArray]("mutable.WrappedArray") {}
+  class AsqThings(val sizes: Array[Int]) extends AbstractThings[collection.mutable.ArraySeq]("mutable.ArraySeq") {}
 
   class JixThings(val sizes: Array[Int]) extends AbstractThings[java.util.ArrayList]("java.util.ArrayList") {}
 
@@ -279,7 +279,7 @@ package object generate {
     lazy val lhs = new LhsThings(sizes)
     lazy val prq = new PrqThings(sizes)
     lazy val muq = new MuqThings(sizes)
-    lazy val wra = new WraThings(sizes)
+    lazy val asq = new AsqThings(sizes)
     lazy val jix = new JixThings(sizes)
     lazy val jln = new JlnThings(sizes)
   }

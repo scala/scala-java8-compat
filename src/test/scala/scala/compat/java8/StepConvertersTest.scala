@@ -4,7 +4,6 @@ import org.junit.Test
 import org.junit.Assert._
 
 class StepConvertersTest {
-  import java.util._
   import collectionImpl._
   import converterImpl._
   import StreamConverters._   // Includes StepConverters!
@@ -96,9 +95,9 @@ class StepConvertersTest {
     Okay( co.SortedMap[String, String]("fish" -> "salmon").keyStepper )
     Okay( co.SortedMap[String, String]("fish" -> "salmon").valueStepper )
     Okay( co.SortedSet[String]("salmon").stepper )
-    IFFY( co.Traversable[String]("salmon").accumulate.stepper )
-    IFFY( (co.Iterator[String]("salmon"): co.TraversableOnce[String]).accumulate.stepper )
-    IFFY( co.Traversable[String]("salmon").view.accumulate.stepper )
+    IFFY( co.Iterable[String]("salmon").accumulate.stepper )
+    IFFY( (co.Iterator[String]("salmon"): co.IterableOnce[String]).accumulate.stepper )
+    IFFY( co.Iterable[String]("salmon").view.accumulate.stepper )
 
     // Immutable section
     Okay( ci.::("salmon", Nil).stepper )
@@ -131,10 +130,11 @@ class StepConvertersTest {
     Okay( ci.SortedMap[String, String]("fish" -> "salmon").keyStepper )
     Okay( ci.SortedMap[String, String]("fish" -> "salmon").valueStepper )
     Okay( ci.SortedSet[String]("salmon").stepper )
-    Okay( ci.Stack[String]("salmon").stepper )
     Okay( ci.Stream[String]("salmon").stepper )
     _eh_( ci.Stream[String]("salmon").view.stepper )
-    IFFY( ci.Traversable[String]("salmon").accumulate.stepper )
+    Okay( ci.LazyList[String]("salmon").stepper )
+    _eh_( ci.LazyList[String]("salmon").view.stepper )
+    IFFY( ci.Iterable[String]("salmon").accumulate.stepper )
     Okay( ci.TreeMap[String, String]("fish" -> "salmon").stepper )
     Okay( ci.TreeMap[String, String]("fish" -> "salmon").keyStepper )
     Okay( ci.TreeMap[String, String]("fish" -> "salmon").valueStepper )
@@ -153,8 +153,7 @@ class StepConvertersTest {
     Okay( cm.AnyRefMap[String,String]("fish" -> "salmon").keyStepper )
     Okay( cm.AnyRefMap[String,String]("fish" -> "salmon").valueStepper )
     good( cm.ArrayBuffer[String]("salmon").stepper )
-    good( ((Array("salmon"): cm.WrappedArray[String]): cm.ArrayLike[String, cm.WrappedArray[String]]).stepper )
-    good( (Array("salmon"): cm.ArrayOps[String]).stepper )
+    good( (Array("salmon"): cm.ArraySeq[String]).stepper )
     good( cm.ArraySeq[String]("salmon").stepper )
     _eh_( cm.ArrayStack[String]("salmon").stepper )
     Okay( (cm.ArrayBuffer[String]("salmon"): cm.Buffer[String]).stepper )
@@ -165,7 +164,6 @@ class StepConvertersTest {
     good( cm.IndexedSeq[String]("salmon").stepper )
     good( cm.IndexedSeq[String]("salmon").view.stepper )
     Okay( cm.Iterable[String]("salmon").stepper )
-    Okay( cm.LinearSeq[String]("salmon").stepper )
     good( cm.LinkedHashMap[String, String]("fish" -> "salmon").stepper )
     good( cm.LinkedHashMap[String, String]("fish" -> "salmon").keyStepper )
     good( cm.LinkedHashMap[String, String]("fish" -> "salmon").valueStepper )
@@ -179,24 +177,21 @@ class StepConvertersTest {
     Okay( cm.Map[String, String]("fish" -> "salmon").stepper )
     Okay( cm.Map[String, String]("fish" -> "salmon").keyStepper )
     Okay( cm.Map[String, String]("fish" -> "salmon").valueStepper )
-    Okay( cm.MutableList[String]("salmon").stepper )
     Okay( cm.OpenHashMap[String, String]("fish" -> "salmon").stepper )
     Okay( cm.OpenHashMap[String, String]("fish" -> "salmon").keyStepper )
     Okay( cm.OpenHashMap[String, String]("fish" -> "salmon").valueStepper )
     Okay( cm.PriorityQueue[String]("salmon").stepper )
-    Okay( cm.Queue[String]("salmon").stepper )
-    good( cm.ResizableArray[String]("salmon").stepper )
+    Fine( cm.Queue[String]("salmon").stepper ) // Used to be `Good` in 2.12, in 2.13 `Queue` is no longer a `LinearSeq`
     Okay( cm.Seq[String]("salmon").stepper )
     Okay( cm.Set[String]("salmon").stepper )
     Okay( cm.SortedSet[String]("salmon").stepper )
-    Okay( cm.Stack[String]("salmon").stepper )
-    IFFY( cm.Traversable[String]("salmon").accumulate.stepper )
+    Fine( cm.Stack[String]("salmon").stepper ) // Used to be `Good` in 2.12, in 2.13 `Stack` is no longer a `LinearSeq`
+    IFFY( cm.Iterable[String]("salmon").accumulate.stepper )
     Okay( cm.TreeSet[String]("salmon").stepper )
     Okay( cm.UnrolledBuffer[String]("salmon").stepper )
     Okay( cm.WeakHashMap[String, String]("fish" -> "salmon").stepper )
     Okay( cm.WeakHashMap[String, String]("fish" -> "salmon").keyStepper )
     Okay( cm.WeakHashMap[String, String]("fish" -> "salmon").valueStepper )
-    good( (Array("salmon"): cm.WrappedArray[String]).stepper )
 
     // Java 6 converters section
 
@@ -229,9 +224,9 @@ class StepConvertersTest {
     Okay( co.SortedMap[Double, Double](2.718281828 -> 3.14159).keyStepper )
     Okay( co.SortedMap[Double, Double](2.718281828 -> 3.14159).valueStepper )
     Okay( co.SortedSet[Double](3.14159).stepper )
-    IFFY( co.Traversable[Double](3.14159).accumulate.stepper )
-    IFFY( (co.Iterator[Double](3.14159): co.TraversableOnce[Double]).accumulate.stepper )
-    IFFY( co.Traversable[Double](3.14159).view.accumulate.stepper )
+    IFFY( co.Iterable[Double](3.14159).accumulate.stepper )
+    IFFY( (co.Iterator[Double](3.14159): co.IterableOnce[Double]).accumulate.stepper )
+    IFFY( co.Iterable[Double](3.14159).view.accumulate.stepper )
 
     // Immutable section
     Okay( ci.::(3.14159, Nil).stepper )
@@ -257,10 +252,11 @@ class StepConvertersTest {
     Okay( ci.SortedMap[Double, Double](2.718281828 -> 3.14159).keyStepper )
     Okay( ci.SortedMap[Double, Double](2.718281828 -> 3.14159).valueStepper )
     Okay( ci.SortedSet[Double](3.14159).stepper )
-    Okay( ci.Stack[Double](3.14159).stepper )
     Okay( ci.Stream[Double](3.14159).stepper )
     _eh_( ci.Stream[Double](3.14159).view.stepper )
-    IFFY( ci.Traversable[Double](3.14159).accumulate.stepper )
+    Okay( ci.LazyList[Double](3.14159).stepper )
+    _eh_( ci.LazyList[Double](3.14159).view.stepper )
+    IFFY( ci.Iterable[Double](3.14159).accumulate.stepper )
     Okay( ci.TreeMap[Double, Double](2.718281828 -> 3.14159).keyStepper )
     Okay( ci.TreeMap[Double, Double](2.718281828 -> 3.14159).valueStepper )
     Okay( ci.TreeSet[Double](3.14159).stepper )
@@ -275,8 +271,7 @@ class StepConvertersTest {
     Okay( (cm.HashSet[Double](3.14159): cm.AbstractSet[Double]).stepper )
     Okay( cm.AnyRefMap[String,Double]("fish" -> 3.14159).valueStepper )
     good( cm.ArrayBuffer[Double](3.14159).stepper )
-    good( ((Array(3.14159): cm.WrappedArray[Double]): cm.ArrayLike[Double, cm.WrappedArray[Double]]).stepper )
-    good( (Array(3.14159): cm.ArrayOps[Double]).stepper )
+    good( (Array(3.14159): cm.ArraySeq[Double]).stepper )
     good( cm.ArraySeq[Double](3.14159).stepper )
     _eh_( cm.ArrayStack[Double](3.14159).stepper )
     Okay( (cm.ArrayBuffer[Double](3.14159): cm.Buffer[Double]).stepper )
@@ -286,7 +281,6 @@ class StepConvertersTest {
     good( cm.IndexedSeq[Double](3.14159).stepper )
     good( cm.IndexedSeq[Double](3.14159).view.stepper )
     Okay( cm.Iterable[Double](3.14159).stepper )
-    Okay( cm.LinearSeq[Double](3.14159).stepper )
     good( cm.LinkedHashMap[Double, Double](2.718281828 -> 3.14159).keyStepper )
     good( cm.LinkedHashMap[Double, Double](2.718281828 -> 3.14159).valueStepper )
     Okay( cm.LinkedHashSet[Double](3.14159).stepper )
@@ -296,22 +290,19 @@ class StepConvertersTest {
     Okay( cm.LongMap[Double](9876543210L -> 3.14159).valueStepper )
     Okay( cm.Map[Double, Double](2.718281828 -> 3.14159).keyStepper )
     Okay( cm.Map[Double, Double](2.718281828 -> 3.14159).valueStepper )
-    Okay( cm.MutableList[Double](3.14159).stepper )
     Okay( cm.OpenHashMap[Double, Double](2.718281828 -> 3.14159).keyStepper )
     Okay( cm.OpenHashMap[Double, Double](2.718281828 -> 3.14159).valueStepper )
     Okay( cm.PriorityQueue[Double](3.14159).stepper )
-    Okay( cm.Queue[Double](3.14159).stepper )
-    good( cm.ResizableArray[Double](3.14159).stepper )
+    Fine( cm.Queue[Double](3.14159).stepper ) // Used to be `Good` in 2.12, in 2.13 `Queue` is no longer a `LinearSeq`
     Okay( cm.Seq[Double](3.14159).stepper )
     Okay( cm.Set[Double](3.14159).stepper )
     Okay( cm.SortedSet[Double](3.14159).stepper )
-    Okay( cm.Stack[Double](3.14159).stepper )
-    IFFY( cm.Traversable[Double](3.14159).accumulate.stepper )
+    Fine( cm.Stack[Double](3.14159).stepper ) // Used to be `Good` in 2.12, in 2.13 `Stack` is no longer a `LinearSeq`
+    IFFY( cm.Iterable[Double](3.14159).accumulate.stepper )
     Okay( cm.TreeSet[Double](3.14159).stepper )
     Okay( cm.UnrolledBuffer[Double](3.14159).stepper )
     Okay( cm.WeakHashMap[Double, Double](2.718281828 -> 3.14159).keyStepper )
     Okay( cm.WeakHashMap[Double, Double](2.718281828 -> 3.14159).valueStepper )
-    good( (Array(3.14159): cm.WrappedArray[Double]).stepper )
 
     // Java 6 converters section
 
@@ -351,9 +342,9 @@ class StepConvertersTest {
     Okay( co.SortedMap[Int, Int](0xDEEDED -> 654321).keyStepper )
     Okay( co.SortedMap[Int, Int](0xDEEDED -> 654321).valueStepper )
     Okay( co.SortedSet[Int](654321).stepper )
-    IFFY( co.Traversable[Int](654321).accumulate.stepper )
-    IFFY( (co.Iterator[Int](654321): co.TraversableOnce[Int]).accumulate.stepper )
-    IFFY( co.Traversable[Int](654321).view.accumulate.stepper )
+    IFFY( co.Iterable[Int](654321).accumulate.stepper )
+    IFFY( (co.Iterator[Int](654321): co.IterableOnce[Int]).accumulate.stepper )
+    IFFY( co.Iterable[Int](654321).view.accumulate.stepper )
 
     // Immutable section
     Okay( ci.::(654321, Nil).stepper )
@@ -380,10 +371,11 @@ class StepConvertersTest {
     Okay( ci.SortedMap[Int, Int](0xDEEDED -> 654321).keyStepper )
     Okay( ci.SortedMap[Int, Int](0xDEEDED -> 654321).valueStepper )
     Okay( ci.SortedSet[Int](654321).stepper )
-    Okay( ci.Stack[Int](654321).stepper )
     Okay( ci.Stream[Int](654321).stepper )
     _eh_( ci.Stream[Int](654321).view.stepper )
-    IFFY( ci.Traversable[Int](654321).accumulate.stepper )
+    Okay( ci.LazyList[Int](654321).stepper )
+    _eh_( ci.LazyList[Int](654321).view.stepper )
+    IFFY( ci.Iterable[Int](654321).accumulate.stepper )
     Okay( ci.TreeMap[Int, Int](0xDEEDED -> 654321).keyStepper )
     Okay( ci.TreeMap[Int, Int](0xDEEDED -> 654321).valueStepper )
     Okay( ci.TreeSet[Int](654321).stepper )
@@ -398,8 +390,7 @@ class StepConvertersTest {
     Okay( (cm.HashSet[Int](654321): cm.AbstractSet[Int]).stepper )
     Okay( cm.AnyRefMap[String, Int]("fish" -> 654321).valueStepper )
     good( cm.ArrayBuffer[Int](654321).stepper )
-    good( ((Array(654321): cm.WrappedArray[Int]): cm.ArrayLike[Int, cm.WrappedArray[Int]]).stepper )
-    good( (Array(654321): cm.ArrayOps[Int]).stepper )
+    good( (Array(654321): cm.ArraySeq[Int]).stepper )
     good( cm.ArraySeq[Int](654321).stepper )
     _eh_( cm.ArrayStack[Int](654321).stepper )
     Okay( (cm.ArrayBuffer[Int](654321): cm.Buffer[Int]).stepper )
@@ -409,7 +400,6 @@ class StepConvertersTest {
     good( cm.IndexedSeq[Int](654321).stepper )
     good( cm.IndexedSeq[Int](654321).view.stepper )
     Okay( cm.Iterable[Int](654321).stepper )
-    Okay( cm.LinearSeq[Int](654321).stepper )
     good( cm.LinkedHashMap[Int, Int](0xDEEDED -> 654321).keyStepper )
     good( cm.LinkedHashMap[Int, Int](0xDEEDED -> 654321).valueStepper )
     Okay( cm.LinkedHashSet[Int](654321).stepper )
@@ -419,22 +409,19 @@ class StepConvertersTest {
     Okay( cm.LongMap[Int](9876543210L -> 654321).valueStepper )
     Okay( cm.Map[Int, Int](0xDEEDED -> 654321).keyStepper )
     Okay( cm.Map[Int, Int](0xDEEDED -> 654321).valueStepper )
-    Okay( cm.MutableList[Int](654321).stepper )
     Okay( cm.OpenHashMap[Int, Int](0xDEEDED -> 654321).keyStepper )
     Okay( cm.OpenHashMap[Int, Int](0xDEEDED -> 654321).valueStepper )
     Okay( cm.PriorityQueue[Int](654321).stepper )
-    Okay( cm.Queue[Int](654321).stepper )
-    good( cm.ResizableArray[Int](654321).stepper )
+    Fine( cm.Queue[Int](654321).stepper ) // Used to be `Good` in 2.12, in 2.13 `Queue` is no longer a `LinearSeq`
     Okay( cm.Seq[Int](654321).stepper )
     Okay( cm.Set[Int](654321).stepper )
     Okay( cm.SortedSet[Int](654321).stepper )
-    Okay( cm.Stack[Int](654321).stepper )
-    IFFY( cm.Traversable[Int](654321).accumulate.stepper )
+    Fine( cm.Stack[Int](654321).stepper ) // Used to be `Good` in 2.12, in 2.13 `Stack` is no longer a `LinearSeq`
+    IFFY( cm.Iterable[Int](654321).accumulate.stepper )
     Okay( cm.TreeSet[Int](654321).stepper )
     Okay( cm.UnrolledBuffer[Int](654321).stepper )
     Okay( cm.WeakHashMap[Int, Int](0xDEEDED -> 654321).keyStepper )
     Okay( cm.WeakHashMap[Int, Int](0xDEEDED -> 654321).valueStepper )
-    good( (Array(654321): cm.WrappedArray[Int]).stepper )
 
     // Java 6 converters section
 
@@ -450,12 +437,12 @@ class StepConvertersTest {
     implicit val spec = SpecCheck(_.isInstanceOf[IntStepper], x => s"$x should be an IntStepper")
 
     good( Array[Short](654321.toShort).stepper )
-    good( (Array[Short](654321.toShort): cm.WrappedArray[Short]).stepper )
+    good( (Array[Short](654321.toShort): cm.ArraySeq[Short]).stepper )
 
     //TODO: None of these currently work because there are no native Stepper implementations:
 
     //good( ci.NumericRange(123456.toShort, 123458.toShort, 1.toShort).stepper )
-    //good( ((Array[Short](654321.toShort): cm.WrappedArray[Short]): cm.ArrayLike[Short, cm.WrappedArray[Short]]).stepper )
+    //good( ((Array[Short](654321.toShort): cm.ArraySeq[Short]): cm.ArrayLike[Short, cm.ArraySeq[Short]]).stepper )
     //good( (Array[Short](654321.toShort): cm.ArrayOps[Short]).stepper )
     //good( cm.ResizableArray[Short](654321.toShort).stepper )
   }
@@ -488,9 +475,9 @@ class StepConvertersTest {
     Okay( co.SortedMap[Long, Long](1234567654321L -> 0x123456789L).keyStepper )
     Okay( co.SortedMap[Long, Long](1234567654321L -> 0x123456789L).valueStepper )
     Okay( co.SortedSet[Long](0x123456789L).stepper )
-    IFFY( co.Traversable[Long](0x123456789L).accumulate.stepper )
-    IFFY( (co.Iterator[Long](0x123456789L): co.TraversableOnce[Long]).accumulate.stepper )
-    IFFY( co.Traversable[Long](0x123456789L).view.accumulate.stepper )
+    IFFY( co.Iterable[Long](0x123456789L).accumulate.stepper )
+    IFFY( (co.Iterator[Long](0x123456789L): co.IterableOnce[Long]).accumulate.stepper )
+    IFFY( co.Iterable[Long](0x123456789L).view.accumulate.stepper )
 
     // Immutable section
     Okay( ci.::(0x123456789L, Nil).stepper )
@@ -517,10 +504,11 @@ class StepConvertersTest {
     Okay( ci.SortedMap[Long, Long](1234567654321L -> 0x123456789L).keyStepper )
     Okay( ci.SortedMap[Long, Long](1234567654321L -> 0x123456789L).valueStepper )
     Okay( ci.SortedSet[Long](0x123456789L).stepper )
-    Okay( ci.Stack[Long](0x123456789L).stepper )
     Okay( ci.Stream[Long](0x123456789L).stepper )
     _eh_( ci.Stream[Long](0x123456789L).view.stepper )
-    IFFY( ci.Traversable[Long](0x123456789L).accumulate.stepper )
+    Okay( ci.LazyList[Long](0x123456789L).stepper )
+    _eh_( ci.LazyList[Long](0x123456789L).view.stepper )
+    IFFY( ci.Iterable[Long](0x123456789L).accumulate.stepper )
     Okay( ci.TreeMap[Long, Long](1234567654321L -> 0x123456789L).keyStepper )
     Okay( ci.TreeMap[Long, Long](1234567654321L -> 0x123456789L).valueStepper )
     Okay( ci.TreeSet[Long](0x123456789L).stepper )
@@ -535,8 +523,7 @@ class StepConvertersTest {
     Okay( (cm.HashSet[Long](0x123456789L): cm.AbstractSet[Long]).stepper )
     Okay( cm.AnyRefMap[String,Long]("fish" -> 0x123456789L).valueStepper )
     good( cm.ArrayBuffer[Long](0x123456789L).stepper )
-    good( ((Array(0x123456789L): cm.WrappedArray[Long]): cm.ArrayLike[Long, cm.WrappedArray[Long]]).stepper )
-    good( (Array(0x123456789L): cm.ArrayOps[Long]).stepper )
+    good( (Array(0x123456789L): cm.ArraySeq[Long]).stepper )
     good( cm.ArraySeq[Long](0x123456789L).stepper )
     _eh_( cm.ArrayStack[Long](0x123456789L).stepper )
     Okay( (cm.ArrayBuffer[Long](0x123456789L): cm.Buffer[Long]).stepper )
@@ -546,7 +533,6 @@ class StepConvertersTest {
     good( cm.IndexedSeq[Long](0x123456789L).stepper )
     good( cm.IndexedSeq[Long](0x123456789L).view.stepper )
     Okay( cm.Iterable[Long](0x123456789L).stepper )
-    Okay( cm.LinearSeq[Long](0x123456789L).stepper )
     good( cm.LinkedHashMap[Long, Long](1234567654321L -> 0x123456789L).keyStepper )
     good( cm.LinkedHashMap[Long, Long](1234567654321L -> 0x123456789L).valueStepper )
     Okay( cm.LinkedHashSet[Long](0x123456789L).stepper )
@@ -557,22 +543,19 @@ class StepConvertersTest {
     Okay( cm.LongMap[Long](9876543210L -> 0x123456789L).valueStepper )
     Okay( cm.Map[Long, Long](1234567654321L -> 0x123456789L).keyStepper )
     Okay( cm.Map[Long, Long](1234567654321L -> 0x123456789L).valueStepper )
-    Okay( cm.MutableList[Long](0x123456789L).stepper )
     Okay( cm.OpenHashMap[Long, Long](1234567654321L -> 0x123456789L).keyStepper )
     Okay( cm.OpenHashMap[Long, Long](1234567654321L -> 0x123456789L).valueStepper )
     Okay( cm.PriorityQueue[Long](0x123456789L).stepper )
-    Okay( cm.Queue[Long](0x123456789L).stepper )
-    good( cm.ResizableArray[Long](0x123456789L).stepper )
+    Fine( cm.Queue[Long](0x123456789L).stepper ) // Used to be `Good` in 2.12, in 2.13 `Queue` is no longer a `LinearSeq`
     Okay( cm.Seq[Long](0x123456789L).stepper )
     Okay( cm.Set[Long](0x123456789L).stepper )
     Okay( cm.SortedSet[Long](0x123456789L).stepper )
-    Okay( cm.Stack[Long](0x123456789L).stepper )
-    IFFY( cm.Traversable[Long](0x123456789L).accumulate.stepper )
+    Fine( cm.Stack[Long](0x123456789L).stepper ) // Used to be `Good` in 2.12, in 2.13 `Stack` is no longer a `LinearSeq`
+    IFFY( cm.Iterable[Long](0x123456789L).accumulate.stepper )
     Okay( cm.TreeSet[Long](0x123456789L).stepper )
     Okay( cm.UnrolledBuffer[Long](0x123456789L).stepper )
     Okay( cm.WeakHashMap[Long, Long](1234567654321L -> 0x123456789L).keyStepper )
     Okay( cm.WeakHashMap[Long, Long](1234567654321L -> 0x123456789L).valueStepper )
-    good( (Array(0x123456789L): cm.WrappedArray[Long]).stepper )
 
     // Java 6 converters section
 
@@ -588,7 +571,6 @@ class StepConvertersTest {
     implicit val spec = SpecCheck(_.isInstanceOf[IntStepper], x => s"$x should be an IntStepper")
 
     good( ci.NumericRange(277: Short, 279: Short, 1: Short).stepper )
-    good( ("salmon": ci.StringOps).stepper )
     good( ("salmon": ci.WrappedString).stepper )
   }
 }

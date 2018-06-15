@@ -167,8 +167,8 @@ trait StepperLike[@specialized(Double, Int, Long) A, +CC] { self: CC =>
   }
 
   /** Returns a Scala collection of the type requested. */
-  def to[Coll[_]](implicit cbf: collection.generic.CanBuildFrom[Nothing, A, Coll[A]]): Coll[A] = {
-    val b = cbf()
+  def to[Coll[_]](implicit factory: collection.Factory[A, Coll[A]]): Coll[A] = {
+    val b = factory.newBuilder
     while (hasStep) b += nextStep
     b.result()
   }

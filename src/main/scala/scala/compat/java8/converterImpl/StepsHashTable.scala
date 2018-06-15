@@ -13,124 +13,124 @@ import Stepper._
 
 // Steppers for keys (type of HashEntry doesn't matter)
 
-private[java8] class StepsAnyHashTableKey[K](_underlying: Array[collection.mutable.HashEntry[K, _]], _i0: Int, _iN: Int)
-extends StepsLikeGapped[K, StepsAnyHashTableKey[K]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
-  def next() = if (currentEntry eq null) throwNSEE else { val ans = currentEntry.asInstanceOf[collection.mutable.HashEntry[K, _]].key; currentEntry = currentEntry.asInstanceOf[collection.mutable.HashEntry[K, _]].next.asInstanceOf[AnyRef]; ans }
-  def semiclone(half: Int) = new StepsAnyHashTableKey[K](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, _]]], i0, half)
+private[java8] class StepsAnyHashTableKey[K](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+extends StepsLikeGapped[K, StepsAnyHashTableKey[K]](_underlying, _i0, _iN) {
+  def next() = if (currentEntry eq null) throwNSEE else { val ans = CollectionInternals.hashEntryKey[K](currentEntry); currentEntry = CollectionInternals.hashEntryNext(currentEntry); ans }
+  def semiclone(half: Int) = new StepsAnyHashTableKey[K](underlying, i0, half)
 }
 
-private[java8] class StepsDoubleHashTableKey(_underlying: Array[collection.mutable.HashEntry[Double, _]], _i0: Int, _iN: Int)
-extends StepsDoubleLikeGapped[StepsDoubleHashTableKey](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
-  def nextDouble() = if (currentEntry eq null) throwNSEE else { val ans = currentEntry.asInstanceOf[collection.mutable.HashEntry[Double, _]].key; currentEntry = currentEntry.asInstanceOf[collection.mutable.HashEntry[Double, _]].next.asInstanceOf[AnyRef]; ans }
-  def semiclone(half: Int) = new StepsDoubleHashTableKey(underlying.asInstanceOf[Array[collection.mutable.HashEntry[Double, _]]], i0, half)
+private[java8] class StepsDoubleHashTableKey(_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+extends StepsDoubleLikeGapped[StepsDoubleHashTableKey](_underlying, _i0, _iN) {
+  def nextDouble() = if (currentEntry eq null) throwNSEE else { val ans = CollectionInternals.hashEntryKey[Double](currentEntry); currentEntry = CollectionInternals.hashEntryNext(currentEntry); ans }
+  def semiclone(half: Int) = new StepsDoubleHashTableKey(underlying, i0, half)
 }
 
-private[java8] class StepsIntHashTableKey(_underlying: Array[collection.mutable.HashEntry[Int, _]], _i0: Int, _iN: Int)
-extends StepsIntLikeGapped[StepsIntHashTableKey](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
-  def nextInt() = if (currentEntry eq null) throwNSEE else { val ans = currentEntry.asInstanceOf[collection.mutable.HashEntry[Int, _]].key; currentEntry = currentEntry.asInstanceOf[collection.mutable.HashEntry[Int, _]].next.asInstanceOf[AnyRef]; ans }
-  def semiclone(half: Int) = new StepsIntHashTableKey(underlying.asInstanceOf[Array[collection.mutable.HashEntry[Int, _]]], i0, half)
+private[java8] class StepsIntHashTableKey(_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+extends StepsIntLikeGapped[StepsIntHashTableKey](_underlying, _i0, _iN) {
+  def nextInt() = if (currentEntry eq null) throwNSEE else { val ans = CollectionInternals.hashEntryKey[Int](currentEntry); currentEntry = CollectionInternals.hashEntryNext(currentEntry); ans }
+  def semiclone(half: Int) = new StepsIntHashTableKey(underlying, i0, half)
 }
 
-private[java8] class StepsLongHashTableKey(_underlying: Array[collection.mutable.HashEntry[Long, _]], _i0: Int, _iN: Int)
-extends StepsLongLikeGapped[StepsLongHashTableKey](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
-  def nextLong() = if (currentEntry eq null) throwNSEE else { val ans = currentEntry.asInstanceOf[collection.mutable.HashEntry[Long, _]].key; currentEntry = currentEntry.asInstanceOf[collection.mutable.HashEntry[Long, _]].next.asInstanceOf[AnyRef]; ans }
-  def semiclone(half: Int) = new StepsLongHashTableKey(underlying.asInstanceOf[Array[collection.mutable.HashEntry[Long, _]]], i0, half)
+private[java8] class StepsLongHashTableKey(_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+extends StepsLongLikeGapped[StepsLongHashTableKey](_underlying, _i0, _iN) {
+  def nextLong() = if (currentEntry eq null) throwNSEE else { val ans = CollectionInternals.hashEntryKey[Long](currentEntry); currentEntry = CollectionInternals.hashEntryNext(currentEntry); ans }
+  def semiclone(half: Int) = new StepsLongHashTableKey(underlying, i0, half)
 }
 
 // Steppers for entries stored in DefaultEntry HashEntry
 // (both for key-value pair and for values alone)
 
-private[java8] class StepsAnyDefaultHashTable[K, V](_underlying: Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, V]]], _i0: Int, _iN: Int)
-extends StepsLikeGapped[(K, V), StepsAnyDefaultHashTable[K, V]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+private[java8] class StepsAnyDefaultHashTable[K, V](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+extends StepsLikeGapped[(K, V), StepsAnyDefaultHashTable[K, V]](_underlying, _i0, _iN) {
   def next() = 
     if (currentEntry eq null) throwNSEE
-    else { val de = currentEntry.asInstanceOf[collection.mutable.DefaultEntry[K, V]]; currentEntry = de.next; (de.key, de.value) }
+    else { val e = currentEntry; currentEntry = CollectionInternals.hashEntryNext(e); (CollectionInternals.hashEntryKey[K](e), CollectionInternals.defaultEntryValue[V](e)) }
   def semiclone(half: Int) =
-    new StepsAnyDefaultHashTable[K, V](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, V]]]], i0, half)
+    new StepsAnyDefaultHashTable[K, V](underlying, i0, half)
 }
 
-private[java8] class StepsAnyDefaultHashTableValue[K, V](_underlying: Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, V]]], _i0: Int, _iN: Int)
-extends StepsLikeGapped[V, StepsAnyDefaultHashTableValue[K, V]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+private[java8] class StepsAnyDefaultHashTableValue[K, V](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+extends StepsLikeGapped[V, StepsAnyDefaultHashTableValue[K, V]](_underlying, _i0, _iN) {
   def next() = 
     if (currentEntry eq null) throwNSEE
-    else { val de = currentEntry.asInstanceOf[collection.mutable.DefaultEntry[K, V]]; currentEntry = de.next; de.value }
+    else { val e = currentEntry; currentEntry = CollectionInternals.hashEntryNext(e); CollectionInternals.defaultEntryValue[V](e) }
   def semiclone(half: Int) =
-    new StepsAnyDefaultHashTableValue[K, V](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, V]]]], i0, half)
+    new StepsAnyDefaultHashTableValue[K, V](underlying, i0, half)
 }
 
-private[java8] class StepsDoubleDefaultHashTableValue[K](_underlying: Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, Double]]], _i0: Int, _iN: Int)
-extends StepsDoubleLikeGapped[StepsDoubleDefaultHashTableValue[K]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+private[java8] class StepsDoubleDefaultHashTableValue[K](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+extends StepsDoubleLikeGapped[StepsDoubleDefaultHashTableValue[K]](_underlying, _i0, _iN) {
   def nextDouble() = 
     if (currentEntry eq null) throwNSEE
-    else { val de = currentEntry.asInstanceOf[collection.mutable.DefaultEntry[K, Double]]; currentEntry = de.next; de.value }
+    else { val e = currentEntry; currentEntry = CollectionInternals.hashEntryNext(e); CollectionInternals.defaultEntryValue[Double](e) }
   def semiclone(half: Int) =
-    new StepsDoubleDefaultHashTableValue[K](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, Double]]]], i0, half)
+    new StepsDoubleDefaultHashTableValue[K](underlying, i0, half)
 }
 
-private[java8] class StepsIntDefaultHashTableValue[K](_underlying: Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, Int]]], _i0: Int, _iN: Int)
-extends StepsIntLikeGapped[StepsIntDefaultHashTableValue[K]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+private[java8] class StepsIntDefaultHashTableValue[K](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+extends StepsIntLikeGapped[StepsIntDefaultHashTableValue[K]](_underlying, _i0, _iN) {
   def nextInt() = 
     if (currentEntry eq null) throwNSEE
-    else { val de = currentEntry.asInstanceOf[collection.mutable.DefaultEntry[K, Int]]; currentEntry = de.next; de.value }
+    else { val e = currentEntry; currentEntry = CollectionInternals.hashEntryNext(e); CollectionInternals.defaultEntryValue[Int](e) }
   def semiclone(half: Int) =
-    new StepsIntDefaultHashTableValue[K](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, Int]]]], i0, half)
+    new StepsIntDefaultHashTableValue[K](underlying, i0, half)
 }
 
-private[java8] class StepsLongDefaultHashTableValue[K](_underlying: Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, Long]]], _i0: Int, _iN: Int)
-extends StepsLongLikeGapped[StepsLongDefaultHashTableValue[K]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+private[java8] class StepsLongDefaultHashTableValue[K](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+extends StepsLongLikeGapped[StepsLongDefaultHashTableValue[K]](_underlying, _i0, _iN) {
   def nextLong() = 
     if (currentEntry eq null) throwNSEE
-    else { val de = currentEntry.asInstanceOf[collection.mutable.DefaultEntry[K, Long]]; currentEntry = de.next; de.value }
+    else { val e = currentEntry; currentEntry = CollectionInternals.hashEntryNext(e); CollectionInternals.defaultEntryValue[Long](e) }
   def semiclone(half: Int) =
-    new StepsLongDefaultHashTableValue[K](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, Long]]]], i0, half)
+    new StepsLongDefaultHashTableValue[K](underlying, i0, half)
 }
 
 // Steppers for entries stored in LinkedEntry HashEntry
 // (both for key-value pair and for values alone)
 
-private[java8] class StepsAnyLinkedHashTable[K, V](_underlying: Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, V]]], _i0: Int, _iN: Int)
-extends StepsLikeGapped[(K, V), StepsAnyLinkedHashTable[K, V]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+private[java8] class StepsAnyLinkedHashTable[K, V](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+extends StepsLikeGapped[(K, V), StepsAnyLinkedHashTable[K, V]](_underlying, _i0, _iN) {
   def next() = 
     if (currentEntry eq null) throwNSEE
-    else { val de = currentEntry.asInstanceOf[collection.mutable.LinkedEntry[K, V]]; currentEntry = de.next; (de.key, de.value) }
+    else { val e = currentEntry; currentEntry = CollectionInternals.hashEntryNext(e); (CollectionInternals.hashEntryKey[K](e), CollectionInternals.linkedEntryValue[V](e)) }
   def semiclone(half: Int) =
-    new StepsAnyLinkedHashTable[K, V](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, V]]]], i0, half)
+    new StepsAnyLinkedHashTable[K, V](underlying, i0, half)
 }
 
-private[java8] class StepsAnyLinkedHashTableValue[K, V](_underlying: Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, V]]], _i0: Int, _iN: Int)
-extends StepsLikeGapped[V, StepsAnyLinkedHashTableValue[K, V]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+private[java8] class StepsAnyLinkedHashTableValue[K, V](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+extends StepsLikeGapped[V, StepsAnyLinkedHashTableValue[K, V]](_underlying, _i0, _iN) {
   def next() = 
     if (currentEntry eq null) throwNSEE
-    else { val de = currentEntry.asInstanceOf[collection.mutable.LinkedEntry[K, V]]; currentEntry = de.next; de.value }
+    else { val e = currentEntry; currentEntry = CollectionInternals.hashEntryNext(e); CollectionInternals.linkedEntryValue[V](e) }
   def semiclone(half: Int) =
-    new StepsAnyLinkedHashTableValue[K, V](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, V]]]], i0, half)
+    new StepsAnyLinkedHashTableValue[K, V](underlying, i0, half)
 }
 
-private[java8] class StepsDoubleLinkedHashTableValue[K](_underlying: Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, Double]]], _i0: Int, _iN: Int)
-extends StepsDoubleLikeGapped[StepsDoubleLinkedHashTableValue[K]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+private[java8] class StepsDoubleLinkedHashTableValue[K](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+extends StepsDoubleLikeGapped[StepsDoubleLinkedHashTableValue[K]](_underlying, _i0, _iN) {
   def nextDouble() = 
     if (currentEntry eq null) throwNSEE
-    else { val de = currentEntry.asInstanceOf[collection.mutable.LinkedEntry[K, Double]]; currentEntry = de.next; de.value }
+    else { val e = currentEntry; currentEntry = CollectionInternals.hashEntryNext(e); CollectionInternals.linkedEntryValue[Double](e) }
   def semiclone(half: Int) =
-    new StepsDoubleLinkedHashTableValue[K](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, Double]]]], i0, half)
+    new StepsDoubleLinkedHashTableValue[K](underlying, i0, half)
 }
 
-private[java8] class StepsIntLinkedHashTableValue[K](_underlying: Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, Int]]], _i0: Int, _iN: Int)
-extends StepsIntLikeGapped[StepsIntLinkedHashTableValue[K]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+private[java8] class StepsIntLinkedHashTableValue[K](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+extends StepsIntLikeGapped[StepsIntLinkedHashTableValue[K]](_underlying, _i0, _iN) {
   def nextInt() = 
     if (currentEntry eq null) throwNSEE
-    else { val de = currentEntry.asInstanceOf[collection.mutable.LinkedEntry[K, Int]]; currentEntry = de.next; de.value }
+    else { val e = currentEntry; currentEntry = CollectionInternals.hashEntryNext(e); CollectionInternals.linkedEntryValue[Int](e) }
   def semiclone(half: Int) =
-    new StepsIntLinkedHashTableValue[K](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, Int]]]], i0, half)
+    new StepsIntLinkedHashTableValue[K](underlying, i0, half)
 }
 
-private[java8] class StepsLongLinkedHashTableValue[K](_underlying: Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, Long]]], _i0: Int, _iN: Int)
-extends StepsLongLikeGapped[StepsLongLinkedHashTableValue[K]](_underlying.asInstanceOf[Array[AnyRef]], _i0, _iN) {
+private[java8] class StepsLongLinkedHashTableValue[K](_underlying: Array[AnyRef], _i0: Int, _iN: Int)
+extends StepsLongLikeGapped[StepsLongLinkedHashTableValue[K]](_underlying, _i0, _iN) {
   def nextLong() = 
     if (currentEntry eq null) throwNSEE
-    else { val de = currentEntry.asInstanceOf[collection.mutable.LinkedEntry[K, Long]]; currentEntry = de.next; de.value }
+    else { val e = currentEntry; currentEntry = CollectionInternals.hashEntryNext(e); CollectionInternals.linkedEntryValue[Long](e) }
   def semiclone(half: Int) =
-    new StepsLongLinkedHashTableValue[K](underlying.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, Long]]]], i0, half)
+    new StepsLongLinkedHashTableValue[K](underlying, i0, half)
 }
 
 
@@ -140,58 +140,58 @@ extends StepsLongLikeGapped[StepsLongLinkedHashTableValue[K]](_underlying.asInst
 
 // Steppers for entries stored in DefaultEntry HashEntry
 
-final class RichDefaultHashTableCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, V]]) extends AnyVal with MakesKeyValueStepper[K, V, EfficientSubstep] with MakesStepper[(K, V), EfficientSubstep] {
+final class RichHashMapCanStep[K, V](private val underlying: collection.mutable.HashMap[K, V]) extends AnyVal with MakesKeyValueStepper[K, V, EfficientSubstep] with MakesStepper[(K, V), EfficientSubstep] {
   def stepper[S <: Stepper[_]](implicit ss: StepperShape[(K, V), S]) = {
-    val tbl = CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, V]](underlying)
+    val tbl = CollectionInternals.getTable[K, V](underlying)
     new StepsAnyDefaultHashTable(tbl, 0, tbl.length).asInstanceOf[S with EfficientSubstep]
   }
 
   def keyStepper[S <: Stepper[_]](implicit ss: StepperShape[K, S]) = {
-    val tbl = CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, V]](underlying)
+    val tbl = CollectionInternals.getTable[K, V](underlying)
     ((ss.shape: @switch) match {
-      case StepperShape.IntValue    => new StepsIntHashTableKey   (tbl.asInstanceOf[Array[collection.mutable.HashEntry[Int,    _]]], 0, tbl.length)
-      case StepperShape.LongValue   => new StepsLongHashTableKey  (tbl.asInstanceOf[Array[collection.mutable.HashEntry[Long,   _]]], 0, tbl.length)
-      case StepperShape.DoubleValue => new StepsDoubleHashTableKey(tbl.asInstanceOf[Array[collection.mutable.HashEntry[Double, _]]], 0, tbl.length)
-      case _            => ss.parUnbox(new StepsAnyHashTableKey   (tbl.asInstanceOf[Array[collection.mutable.HashEntry[K,      _]]], 0, tbl.length))
+      case StepperShape.IntValue    => new StepsIntHashTableKey   (tbl, 0, tbl.length)
+      case StepperShape.LongValue   => new StepsLongHashTableKey  (tbl, 0, tbl.length)
+      case StepperShape.DoubleValue => new StepsDoubleHashTableKey(tbl, 0, tbl.length)
+      case _            => ss.parUnbox(new StepsAnyHashTableKey   (tbl, 0, tbl.length))
     }).asInstanceOf[S with EfficientSubstep]
   }
 
   def valueStepper[S <: Stepper[_]](implicit ss: StepperShape[V, S]) = {
-    val tbl = CollectionInternals.getTable[K, collection.mutable.DefaultEntry[K, V]](underlying)
+    val tbl = CollectionInternals.getTable[K, V](underlying)
     ((ss.shape: @switch) match {
-      case StepperShape.IntValue    => new StepsIntDefaultHashTableValue   (tbl.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, Int   ]]]], 0, tbl.length)
-      case StepperShape.LongValue   => new StepsLongDefaultHashTableValue  (tbl.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, Long  ]]]], 0, tbl.length)
-      case StepperShape.DoubleValue => new StepsDoubleDefaultHashTableValue(tbl.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.DefaultEntry[K, Double]]]], 0, tbl.length)
-      case _            => ss.parUnbox(new StepsAnyDefaultHashTableValue   (tbl,                                                                                                  0, tbl.length))
+      case StepperShape.IntValue    => new StepsIntDefaultHashTableValue   (tbl, 0, tbl.length)
+      case StepperShape.LongValue   => new StepsLongDefaultHashTableValue  (tbl, 0, tbl.length)
+      case StepperShape.DoubleValue => new StepsDoubleDefaultHashTableValue(tbl, 0, tbl.length)
+      case _            => ss.parUnbox(new StepsAnyDefaultHashTableValue   (tbl, 0, tbl.length))
     }).asInstanceOf[S with EfficientSubstep]
   }
 }
 
 // Steppers for entries stored in LinkedEntry HashEntry
 
-final class RichLinkedHashTableCanStep[K, V](private val underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, V]]) extends AnyVal with MakesKeyValueStepper[K, V, EfficientSubstep] with MakesStepper[(K, V), EfficientSubstep] {
+final class RichLinkedHashMapCanStep[K, V](private val underlying: collection.mutable.LinkedHashMap[K, V]) extends AnyVal with MakesKeyValueStepper[K, V, EfficientSubstep] with MakesStepper[(K, V), EfficientSubstep] {
   def stepper[S <: Stepper[_]](implicit ss: StepperShape[(K, V), S]) = {
-    val tbl = CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, V]](underlying)
+    val tbl = CollectionInternals.getTable[K, V](underlying)
     new StepsAnyLinkedHashTable(tbl, 0, tbl.length).asInstanceOf[S with EfficientSubstep]
   }
 
   def keyStepper[S <: Stepper[_]](implicit ss: StepperShape[K, S]) = {
-    val tbl = CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, V]](underlying)
+    val tbl = CollectionInternals.getTable[K, V](underlying)
     ((ss.shape: @switch) match {
-      case StepperShape.IntValue    => new StepsIntHashTableKey   (tbl.asInstanceOf[Array[collection.mutable.HashEntry[Int,    _]]], 0, tbl.length)
-      case StepperShape.LongValue   => new StepsLongHashTableKey  (tbl.asInstanceOf[Array[collection.mutable.HashEntry[Long,   _]]], 0, tbl.length)
-      case StepperShape.DoubleValue => new StepsDoubleHashTableKey(tbl.asInstanceOf[Array[collection.mutable.HashEntry[Double, _]]], 0, tbl.length)
-      case _            => ss.parUnbox(new StepsAnyHashTableKey   (tbl.asInstanceOf[Array[collection.mutable.HashEntry[K,      _]]], 0, tbl.length))
+      case StepperShape.IntValue    => new StepsIntHashTableKey   (tbl, 0, tbl.length)
+      case StepperShape.LongValue   => new StepsLongHashTableKey  (tbl, 0, tbl.length)
+      case StepperShape.DoubleValue => new StepsDoubleHashTableKey(tbl, 0, tbl.length)
+      case _            => ss.parUnbox(new StepsAnyHashTableKey   (tbl, 0, tbl.length))
     }).asInstanceOf[S with EfficientSubstep]
   }
 
   def valueStepper[S <: Stepper[_]](implicit ss: StepperShape[V, S]) = {
-    val tbl = CollectionInternals.getTable[K, collection.mutable.LinkedEntry[K, V]](underlying)
+    val tbl = CollectionInternals.getTable[K, V](underlying)
     ((ss.shape: @switch) match {
-      case StepperShape.IntValue    => new StepsIntLinkedHashTableValue   (tbl.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, Int   ]]]], 0, tbl.length)
-      case StepperShape.LongValue   => new StepsLongLinkedHashTableValue  (tbl.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, Long  ]]]], 0, tbl.length)
-      case StepperShape.DoubleValue => new StepsDoubleLinkedHashTableValue(tbl.asInstanceOf[Array[collection.mutable.HashEntry[K, collection.mutable.LinkedEntry[K, Double]]]], 0, tbl.length)
-      case _            => ss.parUnbox(new StepsAnyLinkedHashTableValue   (tbl,                                                                                                  0, tbl.length))
+      case StepperShape.IntValue    => new StepsIntLinkedHashTableValue   (tbl, 0, tbl.length)
+      case StepperShape.LongValue   => new StepsLongLinkedHashTableValue  (tbl, 0, tbl.length)
+      case StepperShape.DoubleValue => new StepsDoubleLinkedHashTableValue(tbl, 0, tbl.length)
+      case _            => ss.parUnbox(new StepsAnyLinkedHashTableValue   (tbl, 0, tbl.length))
     }).asInstanceOf[S with EfficientSubstep]
   }
 }

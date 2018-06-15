@@ -178,9 +178,9 @@ final class IntAccumulator extends AccumulatorLike[Int, IntAccumulator] { self =
     * Note that the target collection is not specialized.
     * Usage example: `acc.to[Vector]`
     */
-  final def to[Coll[_]](implicit cbf: collection.generic.CanBuildFrom[Nothing, Int, Coll[Int]]): Coll[Int] = {
+  final def to[Coll[_]](implicit factory: collection.Factory[Int, Coll[Int]]): Coll[Int] = {
     if (totalSize > Int.MaxValue) throw new IllegalArgumentException("Too many elements accumulated for a Scala collection: "+totalSize.toString)
-    val b = cbf()
+    val b = factory.newBuilder
     b.sizeHint(totalSize.toInt)
     var h = 0
     var pv = 0L
@@ -221,10 +221,10 @@ object IntAccumulator {
   /** A `BiConsumer` that merges `IntAccumulator`s, suitable for use with `java.util.stream.IntStream`'s `collect` method.  Suitable for `Stream[Int]` also. */
   def merger = new java.util.function.BiConsumer[IntAccumulator, IntAccumulator]{ def accept(a1: IntAccumulator, a2: IntAccumulator): Unit = { a1 drain a2 } }
 
-  /** Builds an `IntAccumulator` from any `Int`-valued `TraversableOnce` */
-  def from[A](source: TraversableOnce[Int]) = {
+  /** Builds an `IntAccumulator` from any `Int`-valued `IterableOnce` */
+  def from[A](source: IterableOnce[Int]) = {
     val a = new IntAccumulator
-    source.foreach(a += _)
+    source.iterator.foreach(a += _)
     a
   }
 }

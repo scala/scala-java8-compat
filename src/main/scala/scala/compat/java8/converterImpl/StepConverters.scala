@@ -9,15 +9,15 @@ trait Priority3StepConverters {
 
 trait Priority2StepConverters extends Priority3StepConverters {
   implicit def richLinearSeqCanStep[A](underlying: collection.LinearSeq[A]) = new RichLinearSeqCanStep[A](underlying)
-  implicit def richIndexedSeqCanStep[A](underlying: collection.IndexedSeqLike[A, _]) = new RichIndexedSeqCanStep[A](underlying)
+  implicit def richIndexedSeqCanStep[A](underlying: collection.IndexedSeqOps[A, Any, _]) = new RichIndexedSeqCanStep[A](underlying)
 }
 
 trait Priority1StepConverters extends Priority2StepConverters {
-  implicit def richDefaultHashTableCanStep[K, V](underlying: collection.mutable.HashTable[K, collection.mutable.DefaultEntry[K, V]]) = new RichDefaultHashTableCanStep[K, V](underlying)
-  implicit def richLinkedHashTableCanStep[K, V](underlying: collection.mutable.HashTable[K, collection.mutable.LinkedEntry[K, V]]) = new RichLinkedHashTableCanStep[K, V](underlying)
+  implicit def richDefaultHashMapCanStep[K, V](underlying: collection.mutable.HashMap[K, V]) = new RichHashMapCanStep[K, V](underlying)
+  implicit def richLinkedHashMapCanStep[K, V](underlying: collection.mutable.LinkedHashMap[K, V]) = new RichLinkedHashMapCanStep[K, V](underlying)
   implicit def richArrayCanStep[A](underlying: Array[A]) = new RichArrayCanStep[A](underlying)
-  implicit def richWrappedArrayCanStep[A](underlying: collection.mutable.WrappedArray[A]) = new RichArrayCanStep[A](underlying.array)
-  implicit def richFlatHashTableCanStep[A](underlying: collection.mutable.FlatHashTable[A]) = new RichFlatHashTableCanStep[A](underlying)
+  implicit def richArraySeqCanStep[A](underlying: collection.mutable.ArraySeq[A]) = new RichArrayCanStep[A](underlying.array)
+  implicit def richHashSetCanStep[A](underlying: collection.mutable.HashSet[A]) = new RichHashSetCanStep[A](underlying)
   implicit def richIteratorCanStep[A](underlying: Iterator[A]) = new RichIteratorCanStep(underlying)
   implicit def richImmHashMapCanStep[K, V](underlying: collection.immutable.HashMap[K, V]) = new RichImmHashMapCanStep[K, V](underlying)
   implicit def richImmHashSetCanStep[A](underlying: collection.immutable.HashSet[A]) = new RichImmHashSetCanStep[A](underlying)

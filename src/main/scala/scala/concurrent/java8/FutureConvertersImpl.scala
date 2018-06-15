@@ -5,7 +5,7 @@ package scala.concurrent.java8
 
 // Located in this package to access private[concurrent] members
 
-import scala.concurrent.{ Future, ExecutionContext }
+import scala.concurrent.Future
 import java.util.concurrent._
 import scala.concurrent.impl.Promise.DefaultPromise
 import scala.util.{ Try, Success, Failure }

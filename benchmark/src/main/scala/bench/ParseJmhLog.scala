@@ -24,7 +24,7 @@ object ParseJmhLog {
     "stm" -> "collection.immutable.Stream",
     "trs" -> "collection.immutable.TreeSet",
     "vec" -> "collection.immutable.Vector",
-    "wra" -> "collection.mutable.WrappedArray",
+    "asq" -> "collection.mutable.ArraySeq",
     "jix" -> "java.util.ArrayList",
     "jln" -> "java.util.LinkedList"
   )

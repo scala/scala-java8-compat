@@ -111,15 +111,15 @@ class StreamConvertersTest {
     assert(newLongStream(1).boxed.unboxed.isInstanceOf[LongStream])
   }
 
-  import collection.mutable.{ ArrayBuffer, WrappedArray }
+  import collection.mutable.{ ArrayBuffer, ArraySeq }
   def abufO(n: Int) = { val ab = new ArrayBuffer[String]; arrayO(n).foreach(ab += _); ab }
   def abufD(n: Int) = { val ab = new ArrayBuffer[Double]; arrayD(n).foreach(ab += _); ab }
   def abufI(n: Int) = { val ab = new ArrayBuffer[Int]; arrayI(n).foreach(ab += _); ab }
   def abufL(n: Int) = { val ab = new ArrayBuffer[Long]; arrayL(n).foreach(ab += _); ab }
-  def wrapO(n: Int): WrappedArray[String] = arrayO(n)
-  def wrapD(n: Int): WrappedArray[Double] = arrayD(n)
-  def wrapI(n: Int): WrappedArray[Int] = arrayI(n)
-  def wrapL(n: Int): WrappedArray[Long] = arrayL(n)
+  def wrapO(n: Int): ArraySeq[String] = arrayO(n)
+  def wrapD(n: Int): ArraySeq[Double] = arrayD(n)
+  def wrapI(n: Int): ArraySeq[Int] = arrayI(n)
+  def wrapL(n: Int): ArraySeq[Long] = arrayL(n)
   def vectO(n: Int) = arrayO(n).toVector
   def vectD(n: Int) = arrayD(n).toVector
   def vectI(n: Int) = arrayI(n).toVector
@@ -257,10 +257,10 @@ class StreamConvertersTest {
 
   @Test
   def streamMaterialization(): Unit = {
-    val coll = collection.mutable.WrappedArray.make[Int](Array(1,2,3))
-    val streamize = implicitly[collection.mutable.WrappedArray[Int] => MakesSequentialStream[Int, IntStream]]
-    assertTrue(streamize(coll).getClass.getName.contains("EnrichIntWrappedArrayWithStream"))
-    val steppize = implicitly[collection.mutable.WrappedArray[Int] => MakesStepper[Int, Any]]
+    val coll = collection.mutable.ArraySeq.make[Int](Array(1,2,3))
+    val streamize = implicitly[collection.mutable.ArraySeq[Int] => MakesSequentialStream[Int, IntStream]]
+    assertTrue(streamize(coll).getClass.getName.contains("EnrichIntArraySeqWithStream"))
+    val steppize = implicitly[collection.mutable.ArraySeq[Int] => MakesStepper[Int, Any]]
     assertTrue(steppize(coll).getClass.getName.contains("RichArrayCanStep"))
     val stepper = steppize(coll).stepper
     assertTrue(stepper.getClass.getName.contains("StepsIntArray"))

@@ -1,12 +1,10 @@
 import ScalaModulePlugin._
 
-// no 2.13 for now in cross-build because of
-// https://github.com/scala/scala-java8-compat/issues/97
-crossScalaVersions in ThisBuild := List("2.12.6", "2.11.12")
+crossScalaVersions in ThisBuild := List("2.13.0-M4")
 
 val disableDocs = sys.props("nodocs") == "true"
 
-lazy val JavaDoc = config("genjavadoc") extend Compile
+//lazy val JavaDoc = config("genjavadoc") extend Compile
 
 def jwrite(dir: java.io.File, pck: String = "scala/compat/java8")(name: String, content: String) = {
   val f = dir / pck / s"${name}.java"
@@ -105,6 +103,9 @@ lazy val root = (project in file(".")).
     }
   ).
   settings(
+    sources in (Compile,doc) := Seq.empty,
+    publishArtifact in (Compile, packageDoc) := false).
+/*  settings(
     (inConfig(JavaDoc)(Defaults.configSettings) ++ (if (disableDocs) Nil else Seq(
       packageDoc in Compile := (packageDoc in JavaDoc).value,
       sources in JavaDoc := {
@@ -118,7 +119,7 @@ lazy val root = (project in file(".")).
       libraryDependencies += compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.11" cross CrossVersion.full),
       scalacOptions in Compile += "-P:genjavadoc:out=" + (target.value / "java")
     ))): _*
-  ).
+  ).*/
   settings(
     initialCommands :=
     """|import scala.concurrent._

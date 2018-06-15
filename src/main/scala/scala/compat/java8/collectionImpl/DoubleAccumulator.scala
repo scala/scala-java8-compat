@@ -173,9 +173,9 @@ final class DoubleAccumulator extends AccumulatorLike[Double, DoubleAccumulator]
     * Note that the target collection is not specialized.
     * Usage example: `acc.to[Vector]`
     */
-  final def to[Coll[_]](implicit cbf: collection.generic.CanBuildFrom[Nothing, Double, Coll[Double]]): Coll[Double] = {
+  final def to[Coll[_]](implicit factory: collection.Factory[Double, Coll[Double]]): Coll[Double] = {
     if (totalSize > Int.MaxValue) throw new IllegalArgumentException("Too many elements accumulated for a Scala collection: "+totalSize.toString)
-    val b = cbf()
+    val b = factory.newBuilder
     b.sizeHint(totalSize.toInt)
     var h = 0
     var pv = 0L
@@ -214,10 +214,10 @@ object DoubleAccumulator {
   /** A `BiConsumer` that merges `DoubleAccumulator`s, suitable for use with `java.util.stream.DoubleStream`'s `collect` method.  Suitable for `Stream[Double]` also. */
   def merger = new java.util.function.BiConsumer[DoubleAccumulator, DoubleAccumulator]{ def accept(a1: DoubleAccumulator, a2: DoubleAccumulator): Unit = { a1 drain a2 } }
 
-  /** Builds a `DoubleAccumulator` from any `Double`-valued `TraversableOnce` */
-  def from[A](source: TraversableOnce[Double]) = {
+  /** Builds a `DoubleAccumulator` from any `Double`-valued `IterableOnce` */
+  def from[A](source: IterableOnce[Double]) = {
     val a = new DoubleAccumulator
-    source.foreach(a += _)
+    source.iterator.foreach(a += _)
     a
   }
 }

@@ -5,13 +5,13 @@ import language.implicitConversions
 import scala.compat.java8.collectionImpl._
 
 trait Priority3AccumulatorConverters {
-  implicit def collectionCanAccumulate[A](underlying: TraversableOnce[A]) = new CollectionCanAccumulate[A](underlying)
+  implicit def collectionCanAccumulate[A](underlying: IterableOnce[A]) = new CollectionCanAccumulate[A](underlying)
 }
 
 trait Priority2AccumulatorConverters extends Priority3AccumulatorConverters {
-  implicit def accumulateDoubleCollection(underlying: TraversableOnce[Double]) = new AccumulateDoubleCollection(underlying)
-  implicit def accumulateIntCollection(underlying: TraversableOnce[Int]) = new AccumulateIntCollection(underlying)
-  implicit def accumulateLongCollection(underlying: TraversableOnce[Long]) = new AccumulateLongCollection(underlying)
+  implicit def accumulateDoubleCollection(underlying: IterableOnce[Double]) = new AccumulateDoubleCollection(underlying)
+  implicit def accumulateIntCollection(underlying: IterableOnce[Int]) = new AccumulateIntCollection(underlying)
+  implicit def accumulateLongCollection(underlying: IterableOnce[Long]) = new AccumulateLongCollection(underlying)
   implicit def accumulateAnyArray[A](underlying: Array[A]) = new AccumulateAnyArray(underlying)
 }
 
