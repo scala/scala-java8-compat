@@ -1,6 +1,8 @@
-package scala.compat.java8.converterImpl
+package scala.compat.java8
+package converterImpl
 
 import language.implicitConversions
+import scala.reflect.ClassTag
 
 trait Priority3StepConverters {
   implicit def richIterableCanStep[A](underlying: Iterable[A]) = new RichIterableCanStep(underlying)
@@ -16,7 +18,7 @@ trait Priority1StepConverters extends Priority2StepConverters {
   implicit def richDefaultHashMapCanStep[K, V](underlying: collection.mutable.HashMap[K, V]) = new RichHashMapCanStep[K, V](underlying)
   implicit def richLinkedHashMapCanStep[K, V](underlying: collection.mutable.LinkedHashMap[K, V]) = new RichLinkedHashMapCanStep[K, V](underlying)
   implicit def richArrayCanStep[A](underlying: Array[A]) = new RichArrayCanStep[A](underlying)
-  implicit def richArraySeqCanStep[A](underlying: collection.mutable.ArraySeq[A]) = new RichArrayCanStep[A](underlying.array)
+  implicit def richArraySeqCanStep[A: ClassTag](underlying: collection.mutable.ArraySeq[A]) = new RichArrayCanStep[A](StreamConverters.unsafeArrayIfPossible(underlying))
   implicit def richHashSetCanStep[A](underlying: collection.mutable.HashSet[A]) = new RichHashSetCanStep[A](underlying)
   implicit def richIteratorCanStep[A](underlying: Iterator[A]) = new RichIteratorCanStep(underlying)
   implicit def richImmHashMapCanStep[K, V](underlying: collection.immutable.HashMap[K, V]) = new RichImmHashMapCanStep[K, V](underlying)
