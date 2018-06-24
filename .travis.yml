@@ -4,6 +4,7 @@ sudo: false
 
 jdk:
   - oraclejdk8
+  - oraclejdk10
 
 scala:
   # no 2.13 for now in cross-build because of
