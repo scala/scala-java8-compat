@@ -221,52 +221,58 @@ with converterImpl.Priority1AccumulatorConverters
     def parStream: LongStream = seqStream.parallel
   }
 
-  implicit val primitiveAccumulateDoubleStream = new PrimitiveStreamAccumulator[Stream[Double], DoubleAccumulator] {
-    def streamAccumulate(stream: Stream[Double]): DoubleAccumulator = 
-      stream.collect(DoubleAccumulator.supplier, DoubleAccumulator.boxedAdder, DoubleAccumulator.merger)
-  }
-  
-  implicit val primitiveAccumulateDoubleStream2 =
+  implicit val primitiveAccumulateDoubleStream: PrimitiveStreamAccumulator[Stream[Double], DoubleAccumulator] =
+    new PrimitiveStreamAccumulator[Stream[Double], DoubleAccumulator] {
+      def streamAccumulate(stream: Stream[Double]): DoubleAccumulator =
+        stream.collect(DoubleAccumulator.supplier, DoubleAccumulator.boxedAdder, DoubleAccumulator.merger)
+    }
+
+  implicit val primitiveAccumulateDoubleStream2: PrimitiveStreamAccumulator[Stream[java.lang.Double], DoubleAccumulator] =
     primitiveAccumulateDoubleStream.asInstanceOf[PrimitiveStreamAccumulator[Stream[java.lang.Double], DoubleAccumulator]]
-    
-  implicit val primitiveUnboxDoubleStream = new PrimitiveStreamUnboxer[Double, DoubleStream] {
-    def apply(boxed: Stream[Double]): DoubleStream = 
-      boxed.mapToDouble(new java.util.function.ToDoubleFunction[Double]{ def applyAsDouble(d: Double) = d })
-  }
-  
-  implicit val primitiveUnboxDoubleStream2 =
+
+  implicit val primitiveUnboxDoubleStream: PrimitiveStreamUnboxer[Double, DoubleStream] =
+    new PrimitiveStreamUnboxer[Double, DoubleStream] {
+      def apply(boxed: Stream[Double]): DoubleStream =
+        boxed.mapToDouble(new java.util.function.ToDoubleFunction[Double]{ def applyAsDouble(d: Double) = d })
+    }
+
+  implicit val primitiveUnboxDoubleStream2: PrimitiveStreamUnboxer[java.lang.Double, DoubleStream] =
     primitiveUnboxDoubleStream.asInstanceOf[PrimitiveStreamUnboxer[java.lang.Double, DoubleStream]]
-  
-  implicit val primitiveAccumulateIntStream = new PrimitiveStreamAccumulator[Stream[Int], IntAccumulator] { 
-    def streamAccumulate(stream: Stream[Int]): IntAccumulator = 
-      stream.collect(IntAccumulator.supplier, IntAccumulator.boxedAdder, IntAccumulator.merger)
-  }
 
-  implicit val primitiveAccumulateIntStream2 =
+  implicit val primitiveAccumulateIntStream: PrimitiveStreamAccumulator[Stream[Int], IntAccumulator] =
+    new PrimitiveStreamAccumulator[Stream[Int], IntAccumulator] {
+      def streamAccumulate(stream: Stream[Int]): IntAccumulator =
+        stream.collect(IntAccumulator.supplier, IntAccumulator.boxedAdder, IntAccumulator.merger)
+    }
+
+  implicit val primitiveAccumulateIntStream2: PrimitiveStreamAccumulator[Stream[java.lang.Integer], IntAccumulator] =
     primitiveAccumulateIntStream.asInstanceOf[PrimitiveStreamAccumulator[Stream[java.lang.Integer], IntAccumulator]]
-  
-  implicit val primitiveUnboxIntStream = new PrimitiveStreamUnboxer[Int, IntStream] {
-    def apply(boxed: Stream[Int]): IntStream = 
-      boxed.mapToInt(new java.util.function.ToIntFunction[Int]{ def applyAsInt(d: Int) = d })
-  }
-  
-  implicit val primitiveUnboxIntStream2 =
-    primitiveUnboxIntStream.asInstanceOf[PrimitiveStreamUnboxer[java.lang.Integer, IntStream]]
-  
-  implicit val primitiveAccumulateLongStream = new PrimitiveStreamAccumulator[Stream[Long], LongAccumulator] { 
-    def streamAccumulate(stream: Stream[Long]): LongAccumulator = 
-      stream.collect(LongAccumulator.supplier, LongAccumulator.boxedAdder, LongAccumulator.merger)
-  }
 
-  implicit val primitiveAccumulateLongStream2 =
+  implicit val primitiveUnboxIntStream: PrimitiveStreamUnboxer[Int, IntStream] =
+    new PrimitiveStreamUnboxer[Int, IntStream] {
+      def apply(boxed: Stream[Int]): IntStream =
+        boxed.mapToInt(new java.util.function.ToIntFunction[Int]{ def applyAsInt(d: Int) = d })
+    }
+
+  implicit val primitiveUnboxIntStream2: PrimitiveStreamUnboxer[java.lang.Integer, IntStream] =
+    primitiveUnboxIntStream.asInstanceOf[PrimitiveStreamUnboxer[java.lang.Integer, IntStream]]
+
+  implicit val primitiveAccumulateLongStream: PrimitiveStreamAccumulator[Stream[Long], LongAccumulator] =
+    new PrimitiveStreamAccumulator[Stream[Long], LongAccumulator] {
+      def streamAccumulate(stream: Stream[Long]): LongAccumulator =
+        stream.collect(LongAccumulator.supplier, LongAccumulator.boxedAdder, LongAccumulator.merger)
+    }
+
+  implicit val primitiveAccumulateLongStream2: PrimitiveStreamAccumulator[Stream[java.lang.Long], LongAccumulator] =
     primitiveAccumulateLongStream.asInstanceOf[PrimitiveStreamAccumulator[Stream[java.lang.Long], LongAccumulator]]
-  
-  implicit val primitiveUnboxLongStream = new PrimitiveStreamUnboxer[Long, LongStream] {
-    def apply(boxed: Stream[Long]): LongStream = 
-      boxed.mapToLong(new java.util.function.ToLongFunction[Long]{ def applyAsLong(d: Long) = d })
-  }
-  
-  implicit val primitiveUnboxLongStream2 =
+
+  implicit val primitiveUnboxLongStream: PrimitiveStreamUnboxer[Long, LongStream] =
+    new PrimitiveStreamUnboxer[Long, LongStream] {
+      def apply(boxed: Stream[Long]): LongStream =
+        boxed.mapToLong(new java.util.function.ToLongFunction[Long]{ def applyAsLong(d: Long) = d })
+    }
+
+  implicit val primitiveUnboxLongStream2: PrimitiveStreamUnboxer[java.lang.Long, LongStream] =
     primitiveUnboxLongStream.asInstanceOf[PrimitiveStreamUnboxer[java.lang.Long, LongStream]]
   
   implicit final class RichDoubleStream(private val stream: DoubleStream) extends AnyVal {
@@ -308,27 +314,30 @@ with converterImpl.Priority1AccumulatorConverters
     }
   }
 
-  implicit val accumulateDoubleStepper = new AccumulatesFromStepper[Double, DoubleAccumulator] {
-    def apply(stepper: Stepper[Double]) = {
-      val a = new DoubleAccumulator
-      while (stepper.hasStep) a += stepper.nextStep
-      a
+  implicit val accumulateDoubleStepper: AccumulatesFromStepper[Double, DoubleAccumulator] =
+    new AccumulatesFromStepper[Double, DoubleAccumulator] {
+      def apply(stepper: Stepper[Double]) = {
+        val a = new DoubleAccumulator
+        while (stepper.hasStep) a += stepper.nextStep
+        a
+      }
     }
-  }
 
-  implicit val accumulateIntStepper = new AccumulatesFromStepper[Int, IntAccumulator] {
-    def apply(stepper: Stepper[Int]) = {
-      val a = new IntAccumulator
-      while (stepper.hasStep) a += stepper.nextStep
-      a
+  implicit val accumulateIntStepper: AccumulatesFromStepper[Int, IntAccumulator] =
+    new AccumulatesFromStepper[Int, IntAccumulator] {
+      def apply(stepper: Stepper[Int]) = {
+        val a = new IntAccumulator
+        while (stepper.hasStep) a += stepper.nextStep
+        a
+      }
     }
-  }
 
-  implicit val accumulateLongStepper = new AccumulatesFromStepper[Long, LongAccumulator] {
-    def apply(stepper: Stepper[Long]) = {
-      val a = new LongAccumulator
-      while (stepper.hasStep) a += stepper.nextStep
-      a
+  implicit val accumulateLongStepper: AccumulatesFromStepper[Long, LongAccumulator] =
+    new AccumulatesFromStepper[Long, LongAccumulator] {
+      def apply(stepper: Stepper[Long]) = {
+        val a = new LongAccumulator
+        while (stepper.hasStep) a += stepper.nextStep
+        a
+      }
     }
-  }
 }
