@@ -5,6 +5,7 @@ import scala.language.higherKinds
 import java.util.stream._
 import scala.compat.java8.collectionImpl._
 import scala.compat.java8.converterImpl._
+import scala.reflect.ClassTag
 
 /** Classes or objects implementing this trait create streams suitable for sequential use */
 trait MakesSequentialStream[T, SS <: java.util.stream.BaseStream[_, SS]] extends Any {
@@ -177,6 +178,13 @@ extends Priority1StreamConverters
 with converterImpl.Priority1StepConverters
 with converterImpl.Priority1AccumulatorConverters
 {
+  private[java8] def unsafeArrayIfPossible[A](a: collection.mutable.ArraySeq[A])(implicit c: ClassTag[A]): Array[A] = {
+    if (a.elemTag == c)
+      a.array.asInstanceOf[Array[A]]
+    else
+      a.toArray
+  }
+
   implicit final class EnrichDoubleArrayWithStream(private val a: Array[Double])
   extends AnyVal with MakesSequentialStream[Double, DoubleStream] with MakesParallelStream[Double, DoubleStream] {
     def seqStream: DoubleStream = java.util.Arrays.stream(a)
@@ -197,19 +205,19 @@ with converterImpl.Priority1AccumulatorConverters
 
   implicit final class EnrichDoubleArraySeqWithStream(private val a: collection.mutable.ArraySeq[Double])
     extends AnyVal with MakesSequentialStream[Double, DoubleStream] with MakesParallelStream[Double, DoubleStream] {
-    def seqStream: DoubleStream = java.util.Arrays.stream(a.array)
+    def seqStream: DoubleStream = java.util.Arrays.stream(unsafeArrayIfPossible(a))
     def parStream: DoubleStream = seqStream.parallel
   }
 
   implicit final class EnrichIntArraySeqWithStream(private val a: collection.mutable.ArraySeq[Int])
     extends AnyVal with MakesSequentialStream[Int, IntStream] with MakesParallelStream[Int, IntStream] {
-    def seqStream: IntStream = java.util.Arrays.stream(a.array)
+    def seqStream: IntStream = java.util.Arrays.stream(unsafeArrayIfPossible(a))
     def parStream: IntStream = seqStream.parallel
   }
 
   implicit final class EnrichLongArraySeqWithStream(private val a: collection.mutable.ArraySeq[Long])
     extends AnyVal with MakesSequentialStream[Long, LongStream] with MakesParallelStream[Long, LongStream] {
-    def seqStream: LongStream = java.util.Arrays.stream(a.array)
+    def seqStream: LongStream = java.util.Arrays.stream(unsafeArrayIfPossible(a))
     def parStream: LongStream = seqStream.parallel
   }
 
