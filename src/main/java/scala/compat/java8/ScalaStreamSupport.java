@@ -33,43 +33,6 @@ public class ScalaStreamSupport {
     }
 
     /** 
-     * Generates a Stream that traverses the keys of a scala.collection.immutable.HashMap.
-     * <p>
-     * Both sequential and parallel operations will be efficient.
-     *
-     * @param coll The immutable.HashMap to traverse
-     * @return     A Stream view of the collection which, by default, executes sequentially.
-     */
-    public static <K> Stream<K> streamKeys(scala.collection.immutable.HashMap<K, ? super Object> coll) {
-        return StreamSupport.stream(new StepsAnyImmHashMapKey<K, Object>(coll, 0, coll.size()), false);
-    }
-
-    /** 
-     * Generates a Stream that traverses the values of a scala.collection.immutable.HashMap.
-     * <p>
-     * Both sequential and parallel operations will be efficient.
-     *
-     * @param coll The immutable.HashMap to traverse
-     * @return     A Stream view of the collection which, by default, executes sequentially.
-     */
-    public static <V> Stream<V> streamValues(scala.collection.immutable.HashMap<? super Object, V> coll) {
-        return StreamSupport.stream(new StepsAnyImmHashMapValue<Object, V>(coll, 0, coll.size()), false);
-    }
-
-    /** 
-     * Generates a Stream that traverses the key-value pairs of a scala.collection.immutable.HashMap.
-     * The key-value pairs are presented as instances of scala.Tuple2.
-     * <p>
-     * Both sequential and parallel operations will be efficient.
-     *
-     * @param coll The immutable.HashMap to traverse
-     * @return     A Stream view of the collection which, by default, executes sequentially.
-     */
-    public static <K, V> Stream< scala.Tuple2<K, V> > stream(scala.collection.immutable.HashMap<K, V> coll) {
-        return StreamSupport.stream(new StepsAnyImmHashMap<K, V>(coll, 0, coll.size()), false);
-    }
-
-    /** 
      * Generates a Stream that traverses a scala.collection.immutable.HashSet.
      * <p>
      * Both sequential and parallel operations will be efficient.
@@ -273,30 +236,6 @@ public class ScalaStreamSupport {
      */
     public static DoubleStream doubleStream(scala.collection.IndexedSeq<Double> coll) {
         return StreamSupport.doubleStream(new StepsDoubleIndexedSeq(coll, 0, coll.length()), false);
-    }
-
-    /** 
-     * Generates a DoubleStream that traverses double-valued keys of a scala.collection.immutable.HashMap.
-     * <p>
-     * Both sequential and parallel operations will be efficient.
-     *
-     * @param coll The immutable.HashMap to traverse
-     * @return     A DoubleStream view of the collection which, by default, executes sequentially.
-     */
-    public static DoubleStream doubleStreamKeys(scala.collection.immutable.HashMap<Double, ? super Object> coll) {
-        return StreamSupport.doubleStream(new StepsDoubleImmHashMapKey(coll, 0, coll.size()), false);
-    }
-
-    /** 
-     * Generates a DoubleStream that traverses double-valued values of a scala.collection.immutable.HashMap.
-     * <p>
-     * Both sequential and parallel operations will be efficient.
-     *
-     * @param coll The immutable.HashMap to traverse
-     * @return     A DoubleStream view of the collection which, by default, executes sequentially.
-     */
-    public static DoubleStream doubleStreamValues(scala.collection.immutable.HashMap<? super Object, Double> coll) {
-        return StreamSupport.doubleStream(new StepsDoubleImmHashMapValue(coll, 0, coll.size()), false);
     }
 
     /** 
@@ -512,30 +451,6 @@ public class ScalaStreamSupport {
     }
 
     /** 
-     * Generates a IntStream that traverses int-valued keys of a scala.collection.immutable.HashMap.
-     * <p>
-     * Both sequential and parallel operations will be efficient.
-     *
-     * @param coll The immutable.HashMap to traverse
-     * @return     A IntStream view of the collection which, by default, executes sequentially.
-     */
-    public static IntStream intStreamKeys(scala.collection.immutable.HashMap<Integer, ? super Object> coll) {
-        return StreamSupport.intStream(new StepsIntImmHashMapKey(coll, 0, coll.size()), false);
-    }
-
-    /** 
-     * Generates a IntStream that traverses int-valued values of a scala.collection.immutable.HashMap.
-     * <p>
-     * Both sequential and parallel operations will be efficient.
-     *
-     * @param coll The immutable.HashMap to traverse
-     * @return     A IntStream view of the collection which, by default, executes sequentially.
-     */
-    public static IntStream intStreamValues(scala.collection.immutable.HashMap<? super Object, Integer> coll) {
-        return StreamSupport.intStream(new StepsIntImmHashMapValue(coll, 0, coll.size()), false);
-    }
-
-    /** 
      * Generates a IntStream that traverses a scala.collection.immutable.HashSet of Ints.
      * <p>
      * Both sequential and parallel operations will be efficient.
@@ -718,30 +633,6 @@ public class ScalaStreamSupport {
      */
     public static LongStream longStream(scala.collection.IndexedSeq<Long> coll) {
         return StreamSupport.longStream(new StepsLongIndexedSeq(coll, 0, coll.length()), false);
-    }
-
-    /** 
-     * Generates a LongStream that traverses long-valued keys of a scala.collection.immutable.HashMap.
-     * <p>
-     * Both sequential and parallel operations will be efficient.
-     *
-     * @param coll The immutable.HashMap to traverse
-     * @return     A LongStream view of the collection which, by default, executes sequentially.
-     */
-    public static LongStream longStreamKeys(scala.collection.immutable.HashMap<Long, ? super Object> coll) {
-        return StreamSupport.longStream(new StepsLongImmHashMapKey(coll, 0, coll.size()), false);
-    }
-
-    /** 
-     * Generates a LongStream that traverses long-valued values of a scala.collection.immutable.HashMap.
-     * <p>
-     * Both sequential and parallel operations will be efficient.
-     *
-     * @param coll The immutable.HashMap to traverse
-     * @return     A LongStream view of the collection which, by default, executes sequentially.
-     */
-    public static LongStream longStreamValues(scala.collection.immutable.HashMap<? super Object, Long> coll) {
-        return StreamSupport.longStream(new StepsLongImmHashMapValue(coll, 0, coll.size()), false);
     }
 
     /** 

@@ -31,8 +31,6 @@ trait Priority1StepConverters extends Priority2StepConverters {
     new RichHashSetCanStep[A](underlying)
   implicit def richIteratorCanStep[A](underlying: Iterator[A]): RichIteratorCanStep[A] =
     new RichIteratorCanStep(underlying)
-  implicit def richImmHashMapCanStep[K, V](underlying: collection.immutable.HashMap[K, V]): RichImmHashMapCanStep[K, V] =
-    new RichImmHashMapCanStep[K, V](underlying)
   implicit def richImmHashSetCanStep[A](underlying: collection.immutable.HashSet[A]): RichImmHashSetCanStep[A] =
     new RichImmHashSetCanStep[A](underlying)
   implicit def richNumericRangeCanStep[T](underlying: collection.immutable.NumericRange[T]): RichNumericRangeCanStep[T] =
