@@ -198,4 +198,16 @@ object FutureConverters {
      */
     def toScala: Future[T] = FutureConverters.toScala(__self)
   }
+  
+  /**
+   * Wrap a Java Future result in Scala Future using implicit ExecutionContext
+   *
+   * @return a Scala Future with the Java Future result
+   *
+   */
+  def toScala[T](f: java.util.concurrent.Future[T])(implicit ec: ExecutionContext): Future[T] = {
+    Future {
+      f.get()
+    }(ec)
+  }
 }
