@@ -58,12 +58,12 @@ object WrapFnGen {
   }
 
   implicit class SplitMyLinesAndStuff(s: String) {
-    def toVec = s.lines.toVector
+    def toVec = s.linesIterator.toVector
     def nonBlank = s.trim.length > 0
   }
 
   implicit class TreeToText(t: Tree) {
-    def text = showCode(t).replace("$", "").lines.toVector
+    def text = showCode(t).replace("$", "").linesIterator.toVector
   }
 
   case class Prioritized(lines: Vector[String], priority: Int) {
@@ -288,7 +288,7 @@ object WrapFnGen {
   def sameText(f: java.io.File, text: String): Boolean = {
     val x = scala.io.Source.fromFile(f)
     val lines = try { x.getLines.toVector } finally { x.close }
-    lines.iterator.filter(_.nonBlank) == text.lines.filter(_.nonBlank)
+    lines.iterator.filter(_.nonBlank) == text.linesIterator.filter(_.nonBlank)
   }
 
   def write(f: java.io.File, text: String): Unit = {
