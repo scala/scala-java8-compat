@@ -97,12 +97,7 @@ lazy val root = (project in file(".")).
         sys.error("Java 8 or higher is required for this project.")
     },
 
-    publishArtifact in packageDoc := !disableDocs,
-
-    sources in (Compile, doc) := {
-      val orig = (sources in (Compile, doc)).value
-      orig.filterNot(_.getName.endsWith(".java")) // raw types not cooked by scaladoc: https://issues.scala-lang.org/browse/SI-8449
-    }
+    publishArtifact in packageDoc := !disableDocs
   ).
   settings(
     (inConfig(JavaDoc)(Defaults.configSettings) ++ (if (disableDocs) Nil else Seq(
