@@ -11,7 +11,7 @@ import scala.concurrent.impl.Promise.DefaultPromise
 import scala.util.{ Try, Success, Failure }
 import java.util.function.{ BiConsumer, Function ⇒ JF, Consumer, BiFunction }
 
-// TODO: make thie private[scala] when genjavadoc allows for that.
+// TODO: make this private[scala] when genjavadoc allows for that.
 object FuturesConvertersImpl {
   def InternalCallbackExecutor = Future.InternalCallbackExecutor
 
