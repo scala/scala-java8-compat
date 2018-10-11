@@ -52,7 +52,7 @@ lazy val root = (project in file(".")).
 
     libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.4" % "test",
 
-    libraryDependencies += "com.novocode" % "junit-interface" % "0.10" % "test",
+    libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test",
 
     mimaPreviousVersion := None,
 
