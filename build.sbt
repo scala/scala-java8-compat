@@ -48,7 +48,7 @@ lazy val root = (project in file(".")).
 
     OsgiKeys.privatePackage := List("scala.concurrent.java8.*"),
 
-    libraryDependencies += "junit" % "junit" % "4.11" % "test",
+    libraryDependencies += "junit" % "junit" % "4.12" % "test",
 
     libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.4" % "test",
 
