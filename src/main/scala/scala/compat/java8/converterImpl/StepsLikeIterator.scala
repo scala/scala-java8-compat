@@ -19,7 +19,7 @@ import Stepper._
 private[java8] abstract class AbstractStepsLikeIterator[A, SP >: Null <: Stepper[A], Semi <: SP](final protected var underlying: Iterator[A]) {
   final protected var nextChunkSize = 16
   final protected var proxied: SP = null
-  def semiclone(): Semi        // Must initialize with null iterator!
+  protected def semiclone(): Semi        // Must initialize with null iterator!
   def characteristics(): Int = if (proxied ne null) Ordered | Sized | SubSized else Ordered
   def estimateSize(): Long = if (proxied ne null) proxied.knownSize else Long.MaxValue
   def hasNext(): Boolean = if (proxied ne null) proxied.hasStep else underlying.hasNext

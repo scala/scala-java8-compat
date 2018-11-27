@@ -26,7 +26,7 @@ extends StepsIntLikeSliced[Array[Long], StepsIntBitSet](_underlying, _i0, _iN) {
   private var mask: Long = (-1L) << (i & 0x3F)
   private var cache: Long = underlying(i >>> 6)
   private var found: Boolean = false
-  def semiclone(half: Int) = {
+  protected def semiclone(half: Int) = {
     val ans = new StepsIntBitSet(underlying, i, half)
     i = half
     mask = (-1L) << (i & 0x3F)
@@ -50,8 +50,7 @@ extends StepsIntLikeSliced[Array[Long], StepsIntBitSet](_underlying, _i0, _iN) {
     if (i < 0 || i >= iN) {
       i = iN
       false
-    }
-    else {
+    } else {
       found = true
       true
     }

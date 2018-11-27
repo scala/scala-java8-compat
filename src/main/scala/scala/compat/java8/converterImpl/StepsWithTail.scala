@@ -37,7 +37,7 @@ private[java8] abstract class AbstractStepsWithTail[CC >: Null, Sub >: Null, Sem
     }
     this
   }
-  def semiclone(chunk: Int): Semi
+  protected def semiclone(chunk: Int): Semi
   def characteristics(): Int = if (maxN < Int.MaxValue) Ordered | Sized | SubSized else Ordered
   def estimateSize(): Long = if (maxN < Int.MaxValue) maxN else Long.MaxValue
   def hasNext(): Boolean = if (maxN < Int.MaxValue) maxN > 0 else if (myIsEmpty(underlying)) { maxN = 0; false } else true

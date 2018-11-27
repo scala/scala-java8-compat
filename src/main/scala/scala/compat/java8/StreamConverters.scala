@@ -103,7 +103,7 @@ trait Priority2StreamConverters {
 
 trait Priority1StreamConverters extends Priority2StreamConverters {
   implicit class RichStream[A](stream: Stream[A]) {
-    def accumulate = stream.collect(Accumulator.supplier[A], Accumulator.adder[A], Accumulator.merger[A])
+    def accumulate: Accumulator[A] = stream.collect(Accumulator.supplier[A], Accumulator.adder[A], Accumulator.merger[A])
     
     def toScala[Coll[_]](implicit factory: collection.Factory[A, Coll[A]]): Coll[A] = {
       if (stream.isParallel) accumulate.to[Coll](factory)

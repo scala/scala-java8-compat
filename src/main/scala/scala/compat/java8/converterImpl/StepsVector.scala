@@ -116,7 +116,7 @@ with StepsVectorLike[A] {
     i0 += 1
     data(index).asInstanceOf[A]
   } else throwNSEE
-  def semiclone(half: Int) = {
+  protected def semiclone(half: Int) = {
     val ans = new StepsAnyVector(underlying, i0, half)
     index = 32
     index1 = 32
@@ -137,7 +137,7 @@ with StepsVectorLike[Double] {
     i0 += 1
     data(index).asInstanceOf[Double]
   } else throwNSEE
-  def semiclone(half: Int) = {
+  protected def semiclone(half: Int) = {
     val ans = new StepsDoubleVector(underlying, i0, half)
     index = 32
     index1 = 32
@@ -158,7 +158,7 @@ with StepsVectorLike[Int] {
     i0 += 1
     data(index).asInstanceOf[Int]
   } else throwNSEE
-  def semiclone(half: Int) = {
+  protected def semiclone(half: Int) = {
     val ans = new StepsIntVector(underlying, i0, half)
     index = 32
     index1 = 32
@@ -179,7 +179,7 @@ with StepsVectorLike[Long] {
     i0 += 1
     data(index).asInstanceOf[Long]
   } else throwNSEE
-  def semiclone(half: Int) = {
+  protected def semiclone(half: Int) = {
     val ans = new StepsLongVector(underlying, i0, half)
     index = 32
     index1 = 32

@@ -23,7 +23,7 @@ import Stepper._
 private[java8] class StepperStringChar(underlying: CharSequence, _i0: Int, _iN: Int)
   extends StepsIntLikeIndexed[StepperStringChar](_i0, _iN) {
   def nextInt() = if (hasNext()) { val j = i0; i0 += 1; underlying.charAt(j) } else throwNSEE
-  def semiclone(half: Int) = new StepperStringChar(underlying, i0, half)
+  protected def semiclone(half: Int) = new StepperStringChar(underlying, i0, half)
 }
 
 private[java8] class StepperStringCodePoint(underlying: String, var i0: Int, var iN: Int) extends IntStepper with EfficientSubstep {

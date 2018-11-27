@@ -23,7 +23,7 @@ private[java8] abstract class AbstractStepsLikeSliced[Coll, Sub >: Null, Semi <:
   extends EfficientSubstep {
 
   protected var i0: Int = i
-  def semiclone(halfHint: Int): Semi  // Must really do all the work for both this and cloned collection!
+  protected def semiclone(halfHint: Int): Semi  // Must really do all the work for both this and cloned collection!
   def characteristics(): Int = Ordered
   def estimateSize(): Long = iN - i
   def substep(): Sub = if (estimateSize > 0) semiclone((iN + i) >>> 1) else null

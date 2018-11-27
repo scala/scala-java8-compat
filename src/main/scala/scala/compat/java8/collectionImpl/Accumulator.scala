@@ -19,11 +19,14 @@ import scala.language.higherKinds
   * Accumulators can contain more than `Int.MaxValue` elements.
   */
 final class Accumulator[A] extends AccumulatorLike[A, Accumulator[A]] { self =>
+  // Elements are added to `current`. Once full, it's added to `history`, and a new `current` is
+  // created with `nextBlockSize` (which depends on `totalSize`).
+  // `cumul(i)` is `(0 until i).map(history(_).length)`
   private[java8] var current: Array[AnyRef] = Accumulator.emptyAnyRefArray
   private[java8] var history: Array[Array[AnyRef]] = Accumulator.emptyAnyRefArrayArray
   private[java8] var cumul: Array[Long] = Accumulator.emptyLongArray
-  
-  private[java8] def cumulative(i: Int) = cumul(i)
+
+  private[java8] def cumulative(i: Int): Long = cumul(i)
     
   private def expand(): Unit = {
     if (index > 0) {

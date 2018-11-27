@@ -25,7 +25,7 @@ private[java8] abstract class AbstractStepsLikeGapped[Sub >: Null, Semi <: Sub](
   extends EfficientSubstep {
 
   protected var currentEntry: AnyRef = null
-  def semiclone(half: Int): Semi
+  protected def semiclone(half: Int): Semi
   def characteristics(): Int = Ordered
   def estimateSize(): Long = if (!hasNext) 0 else iN - i0
   def hasNext(): Boolean = currentEntry != null || (i0 < iN && {

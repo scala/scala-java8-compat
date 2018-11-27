@@ -44,7 +44,7 @@ import java.util.Spliterator
   * {{{
   * val s = Stepper.of(Vector(1,2,3,4))
   * if (s.hasStep) println(s.nextStep)      //  Prints 1
-  * println(s.tryStep(i => println(i*i)))   //  Prints 4, then true
+  * println(s.tryStep(i => println(i*i)))   //  Prints 2, then true
   * s.substep.foreach(println)              //  Prints 3
   * println(s.count(_ > 3))                 //  Prints 4
   * println(s.hasStep)                      //  Prints `false`

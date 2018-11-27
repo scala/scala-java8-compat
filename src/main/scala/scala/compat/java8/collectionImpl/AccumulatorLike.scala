@@ -31,7 +31,7 @@ trait AccumulatorLike[@specialized(Double, Int, Long) A, AC] {
   }
   
   /** Size of the accumulated collection, as a `Long` */
-  final def size = totalSize
+  final def size: Long = totalSize
   
   /** Remove all accumulated elements from this accumulator. */
   def clear(): Unit = {

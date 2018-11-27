@@ -19,7 +19,7 @@ import Stepper._
 private[java8] abstract class AbstractStepsLikeIndexed[Sub >: Null, Semi <: Sub](protected var i0: Int, protected var iN: Int)
   extends EfficientSubstep {
 
-  def semiclone(half: Int): Semi
+  protected def semiclone(half: Int): Semi
   def characteristics(): Int = Ordered + Sized + SubSized
   def estimateSize(): Long = iN - i0
   def hasNext(): Boolean = i0 < iN
