@@ -34,7 +34,7 @@ extends StepsIntLikeSliced[Array[Long], StepsIntBitSet](_underlying, _i0, _iN) {
     found = false
     ans
   }
-  def hasNext(): Boolean = found || ((i < iN) && {
+  def hasNext: Boolean = found || ((i < iN) && {
     while ((mask & cache) == 0) {
       i += java.lang.Long.numberOfLeadingZeros(~mask)
       if (i < 0 || i >= iN) { i = iN; return false }

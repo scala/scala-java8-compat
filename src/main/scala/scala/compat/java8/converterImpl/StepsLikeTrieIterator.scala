@@ -21,8 +21,8 @@ import Stepper._
 private[java8] trait AbstractStepsLikeTrieIterator[A, Sub >: Null, Semi >: Null <: Sub with AbstractStepsLikeTrieIterator[A, Sub, _]]
 extends AbstractStepsLikeSliced[Iterator[A], Sub, Semi] {
   protected def demiclone(it: Iterator[A], N: Int): Semi
-  override def characteristics() = Immutable
-  def hasNext(): Boolean = underlying.hasNext
+  override def characteristics = Immutable
+  def hasNext: Boolean = underlying.hasNext
   protected def semiclone(halfHint: Int): Semi =
     if (!underlying.hasNext || i > iN-2) null
     else scala.compat.java8.runtime.CollectionInternals.trieIteratorSplit(underlying) match {

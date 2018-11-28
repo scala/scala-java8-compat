@@ -53,7 +53,7 @@ class IncStepperB(private val size0: Long) extends TryStepper[Int] {
 class IncSpliterator(private val size0: Long) extends Spliterator.OfInt {
   if (size0 < 0) throw new IllegalArgumentException("Size must be >= 0L")
   private var i = 0L
-  def characteristics() = Stepper.Sized | Stepper.SubSized | Stepper.Ordered
+  def characteristics = Stepper.Sized | Stepper.SubSized | Stepper.Ordered
   def estimateSize() = math.max(0L, size0 - i)
   def tryAdvance(f: java.util.function.IntConsumer): Boolean = if (i >= size0) false else { f.accept(i.toInt); i += 1; true }
   def trySplit(): Spliterator.OfInt = if (i+1 >= size0) null else {
@@ -157,12 +157,12 @@ class StepperTest {
 
   @Test
   def stepping(): Unit = {
-    sources.foreach{ case (i, s) => assert((0 until i).forall{ j => s.hasStep && s.nextStep == j } && !s.hasStep) }
+    sources.foreach{ case (i, s) => assert((0 until i).forall{ j => s.hasStep && s.nextStep() == j } && !s.hasStep) }
     sources.foreach{ case (i, s) => 
       val set = collection.mutable.BitSet.empty
       subs(0)(s)(
         { x => 
-          while (x.hasStep) { val y = x.nextStep; assert(!(set contains y)); set += y }
+          while (x.hasStep) { val y = x.nextStep(); assert(!(set contains y)); set += y }
           0
         },
         _ + _
@@ -194,16 +194,16 @@ class StepperTest {
   @Test
   def substepping(): Unit = {
     sources.foreach{ case (i,s) =>
-      val ss = s.substep
+      val ss = s.substep()
       assertEquals(ss == null, i < 2)
       if (ss != null) {
         assertTrue(s.hasStep)
         assertTrue(ss.hasStep)
-        val c1 = s.count
-        val c2 = ss.count
+        val c1 = s.count()
+        val c2 = ss.count()
         assertEquals(s"$i != $c1 + $c2 from ${s.getClass.getName}", i, c1 + c2)
       }
-      else assertEquals(i, s.count)
+      else assertEquals(i, s.count())
     }
   }
 
@@ -222,8 +222,8 @@ class StepperTest {
 
   @Test
   def count_only(): Unit = {
-    sources.foreach{ case (i, s) => assertEquals(i, s.count) }
-    sources.foreach{ case (i, s) => assertEquals(i, subs(0)(s)(_.count.toInt, _ + _)) }
+    sources.foreach{ case (i, s) => assertEquals(i, s.count()) }
+    sources.foreach{ case (i, s) => assertEquals(i, subs(0)(s)(_.count().toInt, _ + _)) }
   }
 
   @Test
@@ -267,7 +267,7 @@ class StepperTest {
     sources.foreach{ case (i,s) => assertEquals(expected(i), s.foldTo(0)(_ + _)(_ >= 6*i)) }
     sources.foreach{ case (_,s) => assertEquals(-1, s.foldTo(-1)(_ * _)(_ => true)) }
     sources.foreach{ case (i,s) =>
-      val ss = s.substep
+      val ss = s.substep()
       val x = s.foldTo( if (ss == null) 0 else ss.foldTo(0)(_ + _)(_ >= 6*i) )(_ + _)(_ >= 6*i)
       assertEquals(expected(i), x)
     }

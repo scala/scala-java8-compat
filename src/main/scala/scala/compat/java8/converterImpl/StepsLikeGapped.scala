@@ -26,9 +26,9 @@ private[java8] abstract class AbstractStepsLikeGapped[Sub >: Null, Semi <: Sub](
 
   protected var currentEntry: AnyRef = null
   protected def semiclone(half: Int): Semi
-  def characteristics(): Int = Ordered
+  def characteristics: Int = Ordered
   def estimateSize(): Long = if (!hasNext) 0 else iN - i0
-  def hasNext(): Boolean = currentEntry != null || (i0 < iN && {
+  def hasNext: Boolean = currentEntry != null || (i0 < iN && {
       do { currentEntry = underlying(i0); i0 += 1 } while (currentEntry == null && i0 < iN)
       currentEntry != null
     })

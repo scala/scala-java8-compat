@@ -20,9 +20,9 @@ private[java8] abstract class AbstractStepsLikeIndexed[Sub >: Null, Semi <: Sub]
   extends EfficientSubstep {
 
   protected def semiclone(half: Int): Semi
-  def characteristics(): Int = Ordered + Sized + SubSized
+  def characteristics: Int = Ordered + Sized + SubSized
   def estimateSize(): Long = iN - i0
-  def hasNext(): Boolean = i0 < iN
+  def hasNext: Boolean = i0 < iN
   def substep(): Sub = {
     if (iN-1 > i0) {
       val half = (i0+iN) >>> 1

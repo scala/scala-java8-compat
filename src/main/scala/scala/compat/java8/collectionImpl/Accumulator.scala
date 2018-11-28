@@ -121,7 +121,7 @@ final class Accumulator[A] extends AccumulatorLike[A, Accumulator[A]] { self =>
       history((w >>> 32).toInt)((w & 0xFFFFFFFFL).toInt).asInstanceOf[A]
     }
   }
-  
+
   /** Retrieves the `ix`th element, using an `Int` index. */
   final def apply(i: Int): A = apply(i.toLong)
   
@@ -266,13 +266,13 @@ private[java8] class AccumulatorStepper[A](private val acc: Accumulator[A]) exte
     i = 0
   }
   
-  def characteristics() = ORDERED | SIZED | SUBSIZED
+  def characteristics = ORDERED | SIZED | SUBSIZED
   
   def estimateSize = N
 
   def hasNext = N > 0
 
-  def next: A =
+  def next(): A =
     if (N <= 0) throw new NoSuchElementException("Next in empty Stepper")
     else {
       if (i >= n) loadMore()

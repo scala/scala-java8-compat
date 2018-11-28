@@ -20,9 +20,9 @@ private[java8] abstract class AbstractStepsLikeIterator[A, SP >: Null <: Stepper
   final protected var nextChunkSize = 16
   final protected var proxied: SP = null
   protected def semiclone(): Semi        // Must initialize with null iterator!
-  def characteristics(): Int = if (proxied ne null) Ordered | Sized | SubSized else Ordered
+  def characteristics: Int = if (proxied ne null) Ordered | Sized | SubSized else Ordered
   def estimateSize(): Long = if (proxied ne null) proxied.knownSize else Long.MaxValue
-  def hasNext(): Boolean = if (proxied ne null) proxied.hasStep else underlying.hasNext
+  def hasNext: Boolean = if (proxied ne null) proxied.hasStep else underlying.hasNext
 }
 
 /** Abstracts the operation of stepping over an iterator (that needs to be cached when splitting) */
@@ -30,14 +30,14 @@ private[java8] abstract class StepsLikeIterator[A, SLI >: Null <: StepsLikeItera
   extends AbstractStepsLikeIterator[A, AnyStepper[A], SLI](_underlying)
   with AnyStepper[A]
 {
-  override def substep(): AnyStepper[A] = if (proxied ne null) proxied.substep else {
+  override def substep(): AnyStepper[A] = if (proxied ne null) proxied.substep() else {
     val acc = new Accumulator[A]
     var i = 0
     val n = (nextChunkSize & 0xFFFFFFFC)
-    while (i < n && underlying.hasNext) { acc += underlying.next; i += 1 }
+    while (i < n && underlying.hasNext) { acc += underlying.next(); i += 1 }
     if (i < n || !underlying.hasNext) {
       proxied = acc.stepper
-      proxied.substep
+      proxied.substep()
     }
     else {
       val ans = semiclone()
@@ -53,14 +53,14 @@ private[java8] abstract class StepsDoubleLikeIterator[SLI >: Null <: StepsDouble
   extends AbstractStepsLikeIterator[Double, DoubleStepper, SLI](_underlying)
   with DoubleStepper
 {
-  override def substep(): DoubleStepper = if (proxied ne null) proxied.substep else {
+  override def substep(): DoubleStepper = if (proxied ne null) proxied.substep() else {
     val acc = new DoubleAccumulator
     var i = 0
     val n = (nextChunkSize & 0xFFFFFFFC)
-    while (i < n && underlying.hasNext) { acc += underlying.next; i += 1 }
+    while (i < n && underlying.hasNext) { acc += underlying.next(); i += 1 }
     if (i < n || !underlying.hasNext) {
       proxied = acc.stepper
-      proxied.substep
+      proxied.substep()
     }
     else {
       val ans = semiclone()
@@ -76,14 +76,14 @@ private[java8] abstract class StepsIntLikeIterator[SLI >: Null <: StepsIntLikeIt
   extends AbstractStepsLikeIterator[Int, IntStepper, SLI](_underlying)
   with IntStepper
 {
-  override def substep(): IntStepper = if (proxied ne null) proxied.substep else {
+  override def substep(): IntStepper = if (proxied ne null) proxied.substep() else {
     val acc = new IntAccumulator
     var i = 0
     val n = (nextChunkSize & 0xFFFFFFFC)
-    while (i < n && underlying.hasNext) { acc += underlying.next; i += 1 }
+    while (i < n && underlying.hasNext) { acc += underlying.next(); i += 1 }
     if (i < n || !underlying.hasNext) {
       proxied = acc.stepper
-      proxied.substep
+      proxied.substep()
     }
     else {
       val ans = semiclone()
@@ -99,14 +99,14 @@ private[java8] abstract class StepsLongLikeIterator[SLI >: Null <: StepsLongLike
   extends AbstractStepsLikeIterator[Long, LongStepper, SLI](_underlying)
   with LongStepper
 {
-  override def substep: LongStepper = if (proxied ne null) proxied.substep else {
+  override def substep(): LongStepper = if (proxied ne null) proxied.substep() else {
     val acc = new LongAccumulator
     var i = 0
     val n = (nextChunkSize & 0xFFFFFFFC)
-    while (i < n && underlying.hasNext) { acc += underlying.next; i += 1 }
+    while (i < n && underlying.hasNext) { acc += underlying.next(); i += 1 }
     if (i < n || !underlying.hasNext) {
       proxied = acc.stepper
-      proxied.substep
+      proxied.substep()
     }
     else {
       val ans = semiclone()

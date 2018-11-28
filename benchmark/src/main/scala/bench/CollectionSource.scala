@@ -233,7 +233,7 @@ package object generate {
     implicit val arrayIntToIterator: (Array[Int] => Iterator[Int]) = (a: Array[Int]) => new Iterator[Int] {
       private[this] var i = 0
       def hasNext = i < a.length
-      def next = if (hasNext) { var ans = a(i); i += 1; ans } else throw new NoSuchElementException(i.toString)
+      def next() = if (hasNext) { var ans = a(i); i += 1; ans } else throw new NoSuchElementException(i.toString)
     }
     implicit val arrayStringToIterator: (Array[String] => Iterator[String]) = _.iterator
   }

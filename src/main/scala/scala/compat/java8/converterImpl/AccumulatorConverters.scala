@@ -40,7 +40,7 @@ private[java8] object PrivateAccumulatorConverters {
   val genericAccumulateAnyStepper: AccumulatesFromStepper[Any, Accumulator[Any]] = new AccumulatesFromStepper[Any, Accumulator[Any]] {
     def apply(stepper: Stepper[Any]) = {
       val a = new Accumulator[Any]
-      while (stepper.hasStep) a += stepper.nextStep
+      while (stepper.hasStep) a += stepper.nextStep()
       a
     }
   }

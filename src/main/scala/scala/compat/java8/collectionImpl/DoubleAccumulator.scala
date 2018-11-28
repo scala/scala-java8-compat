@@ -260,13 +260,13 @@ private[java8] class DoubleAccumulatorStepper(private val acc: DoubleAccumulator
     i = 0
   }
     
-  def characteristics() = ORDERED | SIZED | SUBSIZED | NONNULL
+  def characteristics = ORDERED | SIZED | SUBSIZED | NONNULL
   
   def estimateSize = N
 
   def hasNext = N > 0
 
-  def nextDouble: Double =
+  def nextDouble(): Double =
     if (n <= 0) throw new NoSuchElementException("next on empty Stepper")
     else {
       if (i >= n) loadMore()

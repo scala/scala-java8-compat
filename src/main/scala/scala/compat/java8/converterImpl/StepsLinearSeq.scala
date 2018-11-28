@@ -26,7 +26,7 @@ private[java8] class StepsAnyLinearSeq[A](_underlying: collection.LinearSeq[A], 
 extends StepsWithTail[A, collection.LinearSeq[A], StepsAnyLinearSeq[A]](_underlying, _maxN) {
   protected def myIsEmpty(cc: collection.LinearSeq[A]): Boolean = cc.isEmpty
   protected def myTailOf(cc: collection.LinearSeq[A]) = cc.tail
-  def next() = if (hasNext()) { maxN -= 1; val ans = underlying.head; underlying = underlying.tail; ans } else throwNSEE
+  def next() = if (hasNext) { maxN -= 1; val ans = underlying.head; underlying = underlying.tail; ans } else throwNSEE
   protected def semiclone(half: Int) = new StepsAnyLinearSeq[A](underlying, half)
 }
 
@@ -34,7 +34,7 @@ private[java8] class StepsDoubleLinearSeq(_underlying: collection.LinearSeq[Doub
 extends StepsDoubleWithTail[collection.LinearSeq[Double], StepsDoubleLinearSeq](_underlying, _maxN) {
   protected def myIsEmpty(cc: collection.LinearSeq[Double]): Boolean = cc.isEmpty
   protected def myTailOf(cc: collection.LinearSeq[Double]) = cc.tail
-  def nextDouble() = if (hasNext()) { maxN -= 1; val ans = underlying.head; underlying = underlying.tail; ans } else throwNSEE
+  def nextDouble() = if (hasNext) { maxN -= 1; val ans = underlying.head; underlying = underlying.tail; ans } else throwNSEE
   protected def semiclone(half: Int) = new StepsDoubleLinearSeq(underlying, half)
 }
 
@@ -42,7 +42,7 @@ private[java8] class StepsIntLinearSeq(_underlying: collection.LinearSeq[Int], _
 extends StepsIntWithTail[collection.LinearSeq[Int], StepsIntLinearSeq](_underlying, _maxN) {
   protected def myIsEmpty(cc: collection.LinearSeq[Int]): Boolean = cc.isEmpty
   protected def myTailOf(cc: collection.LinearSeq[Int]) = cc.tail
-  def nextInt() = if (hasNext()) { maxN -= 1; val ans = underlying.head; underlying = underlying.tail; ans } else throwNSEE
+  def nextInt() = if (hasNext) { maxN -= 1; val ans = underlying.head; underlying = underlying.tail; ans } else throwNSEE
   protected def semiclone(half: Int) = new StepsIntLinearSeq(underlying, half)
 }
 
@@ -50,7 +50,7 @@ private[java8] class StepsLongLinearSeq(_underlying: collection.LinearSeq[Long],
 extends StepsLongWithTail[collection.LinearSeq[Long], StepsLongLinearSeq](_underlying, _maxN) {
   protected def myIsEmpty(cc: collection.LinearSeq[Long]): Boolean = cc.isEmpty
   protected def myTailOf(cc: collection.LinearSeq[Long]) = cc.tail
-  def nextLong() = if (hasNext()) { maxN -= 1; val ans = underlying.head; underlying = underlying.tail; ans } else throwNSEE
+  def nextLong() = if (hasNext) { maxN -= 1; val ans = underlying.head; underlying = underlying.tail; ans } else throwNSEE
   protected def semiclone(half: Int) = new StepsLongLinearSeq(underlying, half)
 }
 

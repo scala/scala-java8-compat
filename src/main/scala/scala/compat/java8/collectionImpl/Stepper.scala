@@ -43,7 +43,7 @@ import java.util.Spliterator
   * Example:
   * {{{
   * val s = Stepper.of(Vector(1,2,3,4))
-  * if (s.hasStep) println(s.nextStep)      //  Prints 1
+  * if (s.hasStep) println(s.nextStep())    //  Prints 1
   * println(s.tryStep(i => println(i*i)))   //  Prints 2, then true
   * s.substep.foreach(println)              //  Prints 3
   * println(s.count(_ > 3))                 //  Prints 4
@@ -80,7 +80,7 @@ trait StepperLike[@specialized(Double, Int, Long) A, +CC] { self: CC =>
     * guaranteed to be any safer than modification of any generic mutable collection, and if the underlying collection is ordered by
     * virtue of sorting, `Stepper` will not keep track of that fact.
     */
-  def characteristics(): Int
+  def characteristics: Int
 
   /** Returns the size of the collection, if known exactly, or `-1` if not. */
   def knownSize: Long
@@ -105,7 +105,7 @@ trait StepperLike[@specialized(Double, Int, Long) A, +CC] { self: CC =>
   def substep(): CC
 
   /** Warns this `Stepper` that it is likely to be used in a parallel context (used for efficiency only) */
-  def anticipateParallelism: this.type = this
+  def anticipateParallelism(): this.type = this
   
 
   ////
@@ -117,48 +117,48 @@ trait StepperLike[@specialized(Double, Int, Long) A, +CC] { self: CC =>
     * iterate over the elements.
     */
   def count(): Long = knownSize match {
-    case x if x < 0 => var n = 0L; while (hasStep) { nextStep; n += 1 }; n
+    case x if x < 0 => var n = 0L; while (hasStep) { nextStep(); n += 1 }; n
     case x => x
   }
 
   /** Consumes all remaining elements in this `Stepper` and counts how many satisfy condition `p`.
     * This is a terminal operation.
     */
-  def count(p: A => Boolean): Long = { var n = 0L; while (hasStep) { if (p(nextStep)) n += 1 }; n }
+  def count(p: A => Boolean): Long = { var n = 0L; while (hasStep) { if (p(nextStep())) n += 1 }; n }
 
   /** Searches for an element that satisfies condition `p`.  If none are found, it returns `false`.
     * This is a terminal operation.
     */
-  def exists(p: A => Boolean): Boolean = { while(hasStep) { if (p(nextStep)) return true }; false }
+  def exists(p: A => Boolean): Boolean = { while(hasStep) { if (p(nextStep())) return true }; false }
 
   /** Searches for an element that satisifes condition `p`, returning it wrapped in `Some` if one is found, or `None` otherwise.
     * This is a terminal operation.
     */
-  def find(p: A => Boolean): Option[A] = { while (hasStep) { val a = nextStep; if (p(a)) return Some(a) }; None }
+  def find(p: A => Boolean): Option[A] = { while (hasStep) { val a = nextStep(); if (p(a)) return Some(a) }; None }
 
   /** Repeatedly applies `op` to propagate an initial value `zero` through all elements of the collection.
     * Traversal order is left-to-right.
     * This is a terminal operation.
     */
-  def fold[@specialized(Double, Int, Long) B](zero: B)(op: (B, A) => B) = { var b = zero; while (hasStep) { b = op(b, nextStep) }; b }
+  def fold[@specialized(Double, Int, Long) B](zero: B)(op: (B, A) => B) = { var b = zero; while (hasStep) { b = op(b, nextStep()) }; b }
 
   /** Repeatedly applies `op` to propagate an initial value `zero` through the collection until a condition `p` is met.
     * If `p` is never met, the result of the last operation is returned.
     * This is a terminal operation.
     */
-  def foldTo[@specialized(Double, Int, Long) B](zero: B)(op: (B, A) => B)(p: B => Boolean) = { var b = zero; while (!p(b) && hasStep) { b = op(b, nextStep) }; b }
+  def foldTo[@specialized(Double, Int, Long) B](zero: B)(op: (B, A) => B)(p: B => Boolean) = { var b = zero; while (!p(b) && hasStep) { b = op(b, nextStep()) }; b }
 
   /** Applies `f` to every remaining element in the collection.
     * This is a terminal operation.
     */
-  def foreach(f: A => Unit): Unit = { while (hasStep) f(nextStep) }
+  def foreach(f: A => Unit): Unit = { while (hasStep) f(nextStep()) }
 
   /** Repeatedly merges elements with `op` until only a single element remains.
     * Throws an exception if the `Stepper` is empty.
     * Merging occurs from left to right.
     * This is a terminal operation.
     */
-  def reduce(op: (A, A) => A): A = { var a = nextStep; while (hasStep) { a = op(a, nextStep) }; a }
+  def reduce(op: (A, A) => A): A = { var a = nextStep(); while (hasStep) { a = op(a, nextStep()) }; a }
 
 
   ////
@@ -175,13 +175,13 @@ trait StepperLike[@specialized(Double, Int, Long) A, +CC] { self: CC =>
     */
   def iterator: Iterator[A] = new scala.collection.AbstractIterator[A] {
     def hasNext = self.hasStep
-    def next = self.nextStep
+    def next() = self.nextStep()
   }
 
   /** Returns a Scala collection of the type requested. */
   def to[Coll[_]](implicit factory: collection.Factory[A, Coll[A]]): Coll[A] = {
     val b = factory.newBuilder
-    while (hasStep) b += nextStep
+    while (hasStep) b += nextStep()
     b.result()
   }
 }
@@ -193,7 +193,7 @@ trait NextStepper[@specialized(Double, Int, Long) A] extends Stepper[A] with Ste
   def spliterator: Spliterator[A] = new ProxySpliteratorViaNext[A](this)
 }
 private[collectionImpl] class ProxySpliteratorViaNext[A](underlying: NextStepper[A]) extends Spliterator[A] {
-  def characteristics() = underlying.characteristics
+  def characteristics = underlying.characteristics
   def estimateSize() = underlying.knownSize
   def tryAdvance(f: java.util.function.Consumer[_ >: A]): Boolean = if (underlying.hasStep) { f.accept(underlying.nextStep()); true } else false
   def trySplit() = underlying.substep() match { case null => null; case x => new ProxySpliteratorViaNext[A](x) }
@@ -213,7 +213,7 @@ trait TryStepper[@specialized(Double, Int, Long) A] extends Stepper[A] with Step
     myCacheIsFull
   }
   final def hasStep = myCacheIsFull || load()
-  final def nextStep = {
+  final def nextStep() = {
     if (!myCacheIsFull) {
       load()
       if (!myCacheIsFull) Stepper.throwNSEE
@@ -232,7 +232,7 @@ trait TryStepper[@specialized(Double, Int, Long) A] extends Stepper[A] with Step
   def spliterator: Spliterator[A] = new ProxySpliteratorViaTry[A](this)
 }
 private[collectionImpl] class ProxySpliteratorViaTry[A](underlying: TryStepper[A]) extends Spliterator[A] {
-  def characteristics() = underlying.characteristics
+  def characteristics = underlying.characteristics
   def estimateSize() = underlying.knownSize
   def tryAdvance(f: java.util.function.Consumer[_ >: A]): Boolean = underlying.tryStep(a => f.accept(a))
   override def forEachRemaining(f: java.util.function.Consumer[_ >: A]): Unit = { underlying.foreach(a => f.accept(a)) }
@@ -241,13 +241,13 @@ private[collectionImpl] class ProxySpliteratorViaTry[A](underlying: TryStepper[A
 
 /** Any `AnyStepper` combines the functionality of a Java `Iterator`, a Java `Spliterator`, and a `Stepper`. */
 trait AnyStepper[A] extends Stepper[A] with java.util.Iterator[A] with Spliterator[A] with StepperLike[A, AnyStepper[A]] {
-  override def forEachRemaining(c: java.util.function.Consumer[_ >: A]): Unit = { while (hasNext) { c.accept(next) } }
-  def hasStep = hasNext()
+  override def forEachRemaining(c: java.util.function.Consumer[_ >: A]): Unit = { while (hasNext) { c.accept(next()) } }
+  def hasStep = hasNext
   def knownSize = getExactSizeIfKnown
-  def nextStep = next
-  def tryAdvance(c: java.util.function.Consumer[_ >: A]): Boolean = if (hasNext) { c.accept(next); true } else false
-  def tryStep(f: A => Unit): Boolean = if (hasNext) { f(next); true } else false
-  def trySplit() = substep
+  def nextStep() = next()
+  def tryAdvance(c: java.util.function.Consumer[_ >: A]): Boolean = if (hasNext) { c.accept(next()); true } else false
+  def tryStep(f: A => Unit): Boolean = if (hasNext) { f(next()); true } else false
+  def trySplit() = substep()
   override def spliterator: Spliterator[A] = this
   def seqStream: java.util.stream.Stream[A] = java.util.stream.StreamSupport.stream(this, false)
   def parStream: java.util.stream.Stream[A] = java.util.stream.StreamSupport.stream(this, true)
@@ -255,25 +255,25 @@ trait AnyStepper[A] extends Stepper[A] with java.util.Iterator[A] with Spliterat
 
 private[collectionImpl] object AnyStepper {
   final class BoxedDoubleStepper(st: DoubleStepper) extends AnyStepper[Double] {
-    def hasNext(): Boolean = st.hasNext()
+    def hasNext: Boolean = st.hasNext
     def next(): Double = st.next()
-    def characteristics(): Int = st.characteristics()
+    def characteristics: Int = st.characteristics
     def estimateSize(): Long = st.estimateSize()
     def substep(): AnyStepper[Double] = new BoxedDoubleStepper(st.substep())
   }
 
   final class BoxedIntStepper(st: IntStepper) extends AnyStepper[Int] {
-    def hasNext(): Boolean = st.hasNext()
+    def hasNext: Boolean = st.hasNext
     def next(): Int = st.next()
-    def characteristics(): Int = st.characteristics()
+    def characteristics: Int = st.characteristics
     def estimateSize(): Long = st.estimateSize()
     def substep(): AnyStepper[Int] = new BoxedIntStepper(st.substep())
   }
 
   final class BoxedLongStepper(st: LongStepper) extends AnyStepper[Long] {
-    def hasNext(): Boolean = st.hasNext()
+    def hasNext: Boolean = st.hasNext
     def next(): Long = st.next()
-    def characteristics(): Int = st.characteristics()
+    def characteristics: Int = st.characteristics
     def estimateSize(): Long = st.estimateSize()
     def substep(): AnyStepper[Long] = new BoxedLongStepper(st.substep())
   }
@@ -283,13 +283,13 @@ private[collectionImpl] object AnyStepper {
 trait DoubleStepper extends Stepper[Double] with java.util.PrimitiveIterator.OfDouble with Spliterator.OfDouble with StepperLike[Double, DoubleStepper] {
   override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Double]): Unit = { while (hasNext) { c.accept(java.lang.Double.valueOf(nextDouble)) } }
   override def forEachRemaining(c: java.util.function.DoubleConsumer): Unit = { while (hasNext) { c.accept(nextDouble) } }
-  def hasStep = hasNext()
+  def hasStep = hasNext
   def knownSize = getExactSizeIfKnown
-  def nextStep = nextDouble
+  def nextStep() = nextDouble
   override def tryAdvance(c: java.util.function.Consumer[_ >: java.lang.Double]): Boolean = if (hasNext) { c.accept(java.lang.Double.valueOf(nextDouble)); true } else false
   def tryAdvance(c: java.util.function.DoubleConsumer): Boolean = if (hasNext) { c.accept(nextDouble); true } else false
   def tryStep(f: Double => Unit): Boolean = if (hasNext) { f(nextDouble); true } else false
-  def trySplit() = substep
+  def trySplit() = substep()
   override def spliterator: Spliterator[Double] = this.asInstanceOf[Spliterator[Double]]  // Scala and Java disagree about whether it's java.lang.Double or double
   def seqStream: java.util.stream.DoubleStream = java.util.stream.StreamSupport.doubleStream(this, false)
   def parStream: java.util.stream.DoubleStream = java.util.stream.StreamSupport.doubleStream(this, true)
@@ -299,13 +299,13 @@ trait DoubleStepper extends Stepper[Double] with java.util.PrimitiveIterator.OfD
 trait IntStepper extends Stepper[Int] with java.util.PrimitiveIterator.OfInt with Spliterator.OfInt with StepperLike[Int, IntStepper] {
   override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Integer]): Unit = { while (hasNext) { c.accept(java.lang.Integer.valueOf(nextInt)) } }
   override def forEachRemaining(c: java.util.function.IntConsumer): Unit = { while (hasNext) { c.accept(nextInt) } }
-  def hasStep = hasNext()
+  def hasStep = hasNext
   def knownSize = getExactSizeIfKnown
-  def nextStep = nextInt
+  def nextStep() = nextInt
   override def tryAdvance(c: java.util.function.Consumer[_ >: java.lang.Integer]): Boolean = if (hasNext) { c.accept(java.lang.Integer.valueOf(nextInt)); true } else false
   def tryAdvance(c: java.util.function.IntConsumer): Boolean = if (hasNext) { c.accept(nextInt); true } else false
   def tryStep(f: Int => Unit): Boolean = if (hasNext) { f(nextInt); true } else false
-  def trySplit() = substep
+  def trySplit() = substep()
   override def spliterator: Spliterator[Int] = this.asInstanceOf[Spliterator[Int]]  // Scala and Java disagree about whether it's java.lang.Integer or int
   def seqStream: java.util.stream.IntStream = java.util.stream.StreamSupport.intStream(this, false)
   def parStream: java.util.stream.IntStream = java.util.stream.StreamSupport.intStream(this, true)
@@ -315,13 +315,13 @@ trait IntStepper extends Stepper[Int] with java.util.PrimitiveIterator.OfInt wit
 trait LongStepper extends Stepper[Long] with java.util.PrimitiveIterator.OfLong with Spliterator.OfLong with StepperLike[Long, LongStepper] {
   override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Long]): Unit = { while (hasNext) { c.accept(java.lang.Long.valueOf(nextLong)) } }
   override def forEachRemaining(c: java.util.function.LongConsumer): Unit = { while (hasNext) { c.accept(nextLong) } }
-  def hasStep = hasNext()
+  def hasStep = hasNext
   def knownSize = getExactSizeIfKnown
-  def nextStep = nextLong
+  def nextStep() = nextLong
   override def tryAdvance(c: java.util.function.Consumer[_ >: java.lang.Long]): Boolean = if (hasNext) { c.accept(java.lang.Long.valueOf(nextLong)); true } else false
   def tryAdvance(c: java.util.function.LongConsumer): Boolean = if (hasNext) { c.accept(nextLong); true } else false
   def tryStep(f: Long => Unit): Boolean = if (hasNext) { f(nextLong); true } else false
-  def trySplit() = substep
+  def trySplit() = substep()
   override def spliterator: Spliterator[Long] = this.asInstanceOf[Spliterator[Long]]  // Scala and Java disagree about whether it's java.lang.Long or long
   def seqStream: java.util.stream.LongStream = java.util.stream.StreamSupport.longStream(this, false)
   def parStream: java.util.stream.LongStream = java.util.stream.StreamSupport.longStream(this, true)
@@ -378,7 +378,7 @@ object Stepper {
       sp.forEachRemaining(c)
     }
     def hasNext = cached || loadCache
-    def next = {
+    def next() = {
       if (!hasNext) throwNSEE
       val ans = cache
       cache = null.asInstanceOf[A]
@@ -429,7 +429,7 @@ object Stepper {
       sp.forEachRemaining(c)
     }
     def hasNext = cached || loadCache
-    def nextDouble = {
+    def nextDouble() = {
       if (!hasNext) throwNSEE
       val ans = cache
       cached = false
@@ -478,7 +478,7 @@ object Stepper {
       sp.forEachRemaining(c)
     }
     def hasNext = cached || loadCache
-    def nextInt = {
+    def nextInt() = {
       if (!hasNext) throwNSEE
       val ans = cache
       cached = false
@@ -527,7 +527,7 @@ object Stepper {
       sp.forEachRemaining(c)
     }
     def hasNext = cached || loadCache
-    def nextLong = {
+    def nextLong() = {
       if (!hasNext) throwNSEE
       val ans = cache
       cached = false
@@ -584,57 +584,57 @@ object Stepper {
    * (see for example StepsIntArray and StepsWidenedByteArray). */
 
   private[java8] class UnboxingDoubleStepper(st: AnyStepper[Double]) extends DoubleStepper {
-    def hasNext(): Boolean = st.hasNext()
+    def hasNext: Boolean = st.hasNext
     def nextDouble(): Double = st.next()
-    def characteristics(): Int = st.characteristics()
+    def characteristics: Int = st.characteristics
     def estimateSize(): Long = st.estimateSize()
     def substep(): DoubleStepper = new UnboxingDoubleStepper(st.substep())
   }
 
   private[java8] class UnboxingIntStepper(st: AnyStepper[Int]) extends IntStepper {
-    def hasNext(): Boolean = st.hasNext()
+    def hasNext: Boolean = st.hasNext
     def nextInt(): Int = st.next()
-    def characteristics(): Int = st.characteristics()
+    def characteristics: Int = st.characteristics
     def estimateSize(): Long = st.estimateSize()
     def substep(): IntStepper = new UnboxingIntStepper(st.substep())
   }
 
   private[java8] class UnboxingLongStepper(st: AnyStepper[Long]) extends LongStepper {
-    def hasNext(): Boolean = st.hasNext()
+    def hasNext: Boolean = st.hasNext
     def nextLong(): Long = st.next()
-    def characteristics(): Int = st.characteristics()
+    def characteristics: Int = st.characteristics
     def estimateSize(): Long = st.estimateSize()
     def substep(): LongStepper = new UnboxingLongStepper(st.substep())
   }
 
   private[java8] class UnboxingByteStepper(st: AnyStepper[Byte]) extends IntStepper {
-    def hasNext(): Boolean = st.hasNext()
+    def hasNext: Boolean = st.hasNext
     def nextInt(): Int = st.next()
-    def characteristics(): Int = st.characteristics() | NonNull
+    def characteristics: Int = st.characteristics | NonNull
     def estimateSize(): Long = st.estimateSize()
     def substep(): IntStepper = new UnboxingByteStepper(st.substep())
   }
 
   private[java8] class UnboxingCharStepper(st: AnyStepper[Char]) extends IntStepper {
-    def hasNext(): Boolean = st.hasNext()
+    def hasNext: Boolean = st.hasNext
     def nextInt(): Int = st.next()
-    def characteristics(): Int = st.characteristics() | NonNull
+    def characteristics: Int = st.characteristics | NonNull
     def estimateSize(): Long = st.estimateSize()
     def substep(): IntStepper = new UnboxingCharStepper(st.substep())
   }
 
   private[java8] class UnboxingShortStepper(st: AnyStepper[Short]) extends IntStepper {
-    def hasNext(): Boolean = st.hasNext()
+    def hasNext: Boolean = st.hasNext
     def nextInt(): Int = st.next()
-    def characteristics(): Int = st.characteristics() | NonNull
+    def characteristics: Int = st.characteristics | NonNull
     def estimateSize(): Long = st.estimateSize()
     def substep(): IntStepper = new UnboxingShortStepper(st.substep())
   }
 
   private[java8] class UnboxingFloatStepper(st: AnyStepper[Float]) extends DoubleStepper {
-    def hasNext(): Boolean = st.hasNext()
+    def hasNext: Boolean = st.hasNext
     def nextDouble(): Double = st.next()
-    def characteristics(): Int = st.characteristics() | NonNull
+    def characteristics: Int = st.characteristics | NonNull
     def estimateSize(): Long = st.estimateSize()
     def substep(): DoubleStepper = new UnboxingFloatStepper(st.substep())
   }

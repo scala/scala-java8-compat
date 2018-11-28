@@ -267,13 +267,13 @@ private[java8] class IntAccumulatorStepper(private val acc: IntAccumulator) exte
     i = 0
   }
   
-  def characteristics() = ORDERED | SIZED | SUBSIZED | NONNULL
+  def characteristics = ORDERED | SIZED | SUBSIZED | NONNULL
   
   def estimateSize = N
 
   def hasNext = N > 0
 
-  def nextInt: Int = 
+  def nextInt(): Int =
     if (N <= 0) throw new NoSuchElementException("next on empty Stepper")
     else {
       if (i >= n) loadMore()

@@ -51,7 +51,7 @@ trait StreamShapeLowPriority {
     final def fromStepper     (mk: MakesStepper[T, _],            par: Boolean): S = stream(mk.stepper,      par)
     final def fromKeyStepper  (mk: MakesKeyValueStepper[T, _, _], par: Boolean): S = stream(mk.keyStepper,   par)
     final def fromValueStepper(mk: MakesKeyValueStepper[_, T, _], par: Boolean): S = stream(mk.valueStepper, par)
-    @inline private[this] def stream(st: St, par: Boolean): S = mkStream(if(par) st.anticipateParallelism else st, par)
+    @inline private[this] def stream(st: St, par: Boolean): S = mkStream(if(par) st.anticipateParallelism() else st, par)
     protected[this] def mkStream(st: St, par: Boolean): S
   }
   protected[this] def intStreamShape[T](implicit ss: StepperShape[T, IntStepper]): StreamShape[T, IntStream] = new BaseStreamShape[T, IntStream, IntStepper] {
@@ -330,7 +330,7 @@ with converterImpl.Priority1AccumulatorConverters
     new AccumulatesFromStepper[Double, DoubleAccumulator] {
       def apply(stepper: Stepper[Double]) = {
         val a = new DoubleAccumulator
-        while (stepper.hasStep) a += stepper.nextStep
+        while (stepper.hasStep) a += stepper.nextStep()
         a
       }
     }
@@ -339,7 +339,7 @@ with converterImpl.Priority1AccumulatorConverters
     new AccumulatesFromStepper[Int, IntAccumulator] {
       def apply(stepper: Stepper[Int]) = {
         val a = new IntAccumulator
-        while (stepper.hasStep) a += stepper.nextStep
+        while (stepper.hasStep) a += stepper.nextStep()
         a
       }
     }
@@ -348,7 +348,7 @@ with converterImpl.Priority1AccumulatorConverters
     new AccumulatesFromStepper[Long, LongAccumulator] {
       def apply(stepper: Stepper[Long]) = {
         val a = new LongAccumulator
-        while (stepper.hasStep) a += stepper.nextStep
+        while (stepper.hasStep) a += stepper.nextStep()
         a
       }
     }

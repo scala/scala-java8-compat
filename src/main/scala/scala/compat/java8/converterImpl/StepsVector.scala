@@ -110,7 +110,7 @@ with StepsVectorLike[A] {
   protected val myVector = if (CollectionInternals.getDirt(underlying)) null else underlying
   protected val myVectorIterator = if (myVector == null) underlying.iterator else null
   protected val myVectorLength = underlying.length
-  def next() = if (hasNext()) {
+  def next() = if (hasNext) {
     index += 1
     if (index >= 32) advanceData(i0)
     i0 += 1
@@ -131,7 +131,7 @@ with StepsVectorLike[Double] {
   protected val myVector = if (CollectionInternals.getDirt(underlying)) null else underlying
   protected val myVectorIterator = if (myVector == null) underlying.iterator else null
   protected val myVectorLength = underlying.length
-  def nextDouble() = if (hasNext()) {
+  def nextDouble() = if (hasNext) {
     index += 1
     if (index >= 32) advanceData(i0)
     i0 += 1
@@ -152,7 +152,7 @@ with StepsVectorLike[Int] {
   protected val myVector = if (CollectionInternals.getDirt(underlying)) null else underlying
   protected val myVectorIterator = if (myVector == null) underlying.iterator else null
   protected val myVectorLength = underlying.length
-  def nextInt() = if (hasNext()) {
+  def nextInt() = if (hasNext) {
     index += 1
     if (index >= 32) advanceData(i0)
     i0 += 1
@@ -173,7 +173,7 @@ with StepsVectorLike[Long] {
   protected val myVector = if (CollectionInternals.getDirt(underlying)) null else underlying
   protected val myVectorIterator = if (myVector == null) underlying.iterator else null
   protected val myVectorLength = underlying.length
-  def nextLong() = if (hasNext()) {
+  def nextLong() = if (hasNext) {
     index += 1
     if (index >= 32) advanceData(i0)
     i0 += 1
