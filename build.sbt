@@ -24,6 +24,10 @@ def osgiExport(scalaVersion: String, version: String) = {
 lazy val commonSettings = Seq(
   organization := "org.scala-lang.modules",
   version := "0.9.1-SNAPSHOT",
+
+  // this line could be removed after https://github.com/scala/sbt-scala-module/issues/48 is fixed
+  licenses := Seq(("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0"))),
+
   scalacOptions ++= Seq("-feature", "-deprecation", "-unchecked")
 )
 
