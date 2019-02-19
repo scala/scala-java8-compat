@@ -38,7 +38,7 @@ import java.util.function.Consumer
  * {{{
  * import java.util.concurrent.CompletionStage;
  * import scala.concurrent.Future;
- * import static scala.concurrent.java8.FutureConverter.*;
+ * import static scala.concurrent.java8.FutureConverters.*;
  *
  * final CompletionStage<String> cs = ... // from an async Java API
  * final Future<String> f = toScala(cs);
