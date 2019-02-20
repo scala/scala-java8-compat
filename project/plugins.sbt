@@ -5,4 +5,4 @@ scalacOptions ++= (sys.props("java.specification.version") match {
   case _ => Seq("-Xfatal-warnings")
 })
 
-addSbtPlugin("org.scala-lang.modules" % "sbt-scala-module" % "1.0.14")
+addSbtPlugin("org.scala-lang.modules" % "sbt-scala-module" % "2.0.0")
