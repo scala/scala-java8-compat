@@ -25,9 +25,6 @@ lazy val commonSettings = Seq(
   organization := "org.scala-lang.modules",
   version := "0.9.1-SNAPSHOT",
 
-  // this line could be removed after https://github.com/scala/sbt-scala-module/issues/48 is fixed
-  licenses := Seq(("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0"))),
-
   scalacOptions ++= Seq("-feature", "-deprecation", "-unchecked")
 )
 
@@ -70,7 +67,6 @@ lazy val root = (project in file(".")).
       val runTarget = (mainClass in Compile in fnGen).value getOrElse "No main class defined for function conversion generator"
       val classPath = (fullClasspath in Compile in fnGen).value
       runner.value.run(runTarget, classPath.files, args, streams.value.log)
-        .foreach(sys.error)
       (out ** "*.scala").get
     }.taskValue,
 
