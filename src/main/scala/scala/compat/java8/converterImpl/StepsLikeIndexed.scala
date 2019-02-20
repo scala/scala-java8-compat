@@ -44,16 +44,19 @@ private[java8] abstract class StepsLikeIndexed[A, STA >: Null <: StepsLikeIndexe
 private[java8] abstract class StepsDoubleLikeIndexed[STD >: Null <: StepsDoubleLikeIndexed[_]](_i0: Int, _iN: Int)
   extends AbstractStepsLikeIndexed[DoubleStepper, STD](_i0, _iN)
   with DoubleStepper
+  with java.util.Spliterator.OfDouble  // Compiler wants this for mixin forwarder
 {}
 
 /** Abstracts the operation of stepping over an indexable collection of Ints */
 private[java8] abstract class StepsIntLikeIndexed[STI >: Null <: StepsIntLikeIndexed[_]](_i0: Int, _iN: Int)
   extends AbstractStepsLikeIndexed[IntStepper, STI](_i0, _iN)
   with IntStepper
+  with java.util.Spliterator.OfInt  // Compiler wants this for mixin forwarder
 {}
 
 /** Abstracts the operation of stepping over an indexable collection of Longs */
 private[java8] abstract class StepsLongLikeIndexed[STL >: Null <: StepsLongLikeIndexed[_]](_i0: Int, _iN: Int)
   extends AbstractStepsLikeIndexed[LongStepper, STL](_i0, _iN)
   with LongStepper
+  with java.util.Spliterator.OfLong  // Compiler wants this for mixin forwarder
 {}
