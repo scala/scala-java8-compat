@@ -4,7 +4,10 @@ import ScalaModulePlugin._
 // https://github.com/scala/scala-java8-compat/issues/97
 crossScalaVersions in ThisBuild := List("2.12.8", "2.11.12")
 
-val disableDocs = sys.props("nodocs") == "true"
+val disableDocs =
+  sys.props("nodocs") == "true" ||
+    // can't build doc on JDK 11 until sbt/sbt#4350 is fixed
+    !sys.props("java.version").startsWith("1.")
 
 lazy val JavaDoc = config("genjavadoc") extend Compile
 
