@@ -2,7 +2,10 @@ import ScalaModulePlugin._
 
 crossScalaVersions in ThisBuild := List("2.13.0-M5")
 
-val disableDocs = sys.props("nodocs") == "true"
+val disableDocs =
+  sys.props("nodocs") == "true" ||
+    // can't build doc on JDK 11 until sbt/sbt#4350 is fixed
+    !sys.props("java.version").startsWith("1.")
 
 lazy val JavaDoc = config("genjavadoc") extend Compile
 
