@@ -46,11 +46,11 @@ lazy val root = (project in file(".")).
 
     OsgiKeys.privatePackage := List("scala.concurrent.java8.*"),
 
-    libraryDependencies += "junit" % "junit" % "4.11" % "test",
+    libraryDependencies += "junit" % "junit" % "4.12" % "test",
 
-    libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.4" % "test",
+    libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.8.1" % "test",
 
-    libraryDependencies += "com.novocode" % "junit-interface" % "0.10" % "test",
+    libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test",
 
     mimaPreviousVersion := None,
 
@@ -95,12 +95,7 @@ lazy val root = (project in file(".")).
         sys.error("Java 8 or higher is required for this project.")
     },
 
-    publishArtifact in packageDoc := !disableDocs,
-
-    sources in (Compile, doc) := {
-      val orig = (sources in (Compile, doc)).value
-      orig.filterNot(_.getName.endsWith(".java")) // raw types not cooked by scaladoc: https://issues.scala-lang.org/browse/SI-8449
-    }
+    publishArtifact in packageDoc := !disableDocs
   ).
   settings(
     (inConfig(JavaDoc)(Defaults.configSettings) ++ (if (disableDocs) Nil else Seq(
