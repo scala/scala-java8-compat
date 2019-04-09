@@ -14,74 +14,34 @@ package scala.compat.java8.converterImpl
 
 import scala.compat.java8.collectionImpl._
 
-trait AccumulatesFromStepper[@specialized(Double, Int, Long) A, Acc <: AccumulatorLike[A, Acc]] {
-  def apply(stepper: Stepper[A]): Acc
-}
-
 final class CollectionCanAccumulate[A](private val underlying: IterableOnce[A]) extends AnyVal {
-  def accumulate: Accumulator[A] = {
-    val a = new Accumulator[A]
-    underlying.iterator.foreach(a += _)
-    a
-  }
+  def accumulate: Accumulator[A] = underlying.iterator.to(Accumulator)
 }
 
 final class AccumulateDoubleCollection(private val underlying: IterableOnce[Double]) extends AnyVal {
-  def accumulate: DoubleAccumulator = {
-    val da = new DoubleAccumulator
-    underlying.iterator.foreach(da += _)
-    da
-  }
+  def accumulate: DoubleAccumulator = underlying.iterator.to(DoubleAccumulator)
 }
 
 final class AccumulateIntCollection(private val underlying: IterableOnce[Int]) extends AnyVal {
-  def accumulate: IntAccumulator = {
-    val da = new IntAccumulator
-    underlying.iterator.foreach(da += _)
-    da
-  }
+  def accumulate: IntAccumulator = underlying.iterator.to(IntAccumulator)
 }
 
 final class AccumulateLongCollection(private val underlying: IterableOnce[Long]) extends AnyVal {
-  def accumulate: LongAccumulator = {
-    val da = new LongAccumulator
-    underlying.iterator.foreach(da += _)
-    da
-  }
+  def accumulate: LongAccumulator = underlying.iterator.to(LongAccumulator)
 }
 
 final class AccumulateAnyArray[A](private val underlying: Array[A]) extends AnyVal {
-  def accumulate: Accumulator[A] = {
-    val a = new Accumulator[A]
-    var i = 0
-    while (i < underlying.length) { a += underlying(i); i += 1 }
-    a
-  }
+  def accumulate: Accumulator[A] = underlying.to(Accumulator)
 }
 
 final class AccumulateDoubleArray(private val underlying: Array[Double]) extends AnyVal {
-  def accumulate: DoubleAccumulator = {
-    val da = new DoubleAccumulator
-    var i = 0
-    while (i < underlying.length) { da += underlying(i); i += 1 }
-    da
-  }
+  def accumulate: DoubleAccumulator = underlying.to(DoubleAccumulator)
 }
 
 final class AccumulateIntArray(private val underlying: Array[Int]) extends AnyVal {
-  def accumulate: IntAccumulator = {
-    val da = new IntAccumulator
-    var i = 0
-    while (i < underlying.length) { da += underlying(i); i += 1 }
-    da
-  }
+  def accumulate: IntAccumulator = underlying.to(IntAccumulator)
 }
 
 final class AccumulateLongArray(private val underlying: Array[Long]) extends AnyVal {
-  def accumulate: LongAccumulator = {
-    val da = new LongAccumulator
-    var i = 0
-    while (i < underlying.length) { da += underlying(i); i += 1 }
-    da
-  }
+  def accumulate: LongAccumulator = underlying.to(LongAccumulator)
 }

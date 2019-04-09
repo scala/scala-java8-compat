@@ -22,19 +22,7 @@ class StepConvertersTest {
   import scala.{ collection => co }
   import collection.{ mutable => cm, immutable => ci, concurrent => cc }
 
-  def isAcc[X](x: X): Boolean = x match {
-    case _: AccumulatorStepper[_] => true
-    case _: DoubleAccumulatorStepper => true
-    case _: IntAccumulatorStepper => true
-    case _: LongAccumulatorStepper => true
-    case _ => false
-  }
-
-  def isLin[X](x: X): Boolean = x match {
-    case _: AbstractStepsLikeIterator[_, _, _] => true
-    case _: AbstractStepsWithTail[_, _, _] => true
-    case _ => false
-  }
+  def isAcc[X](x: X): Boolean = x.getClass.getSimpleName.contains("AccumulatorStepper")
 
   trait SpecCheck {
     def check[X](x: X): Boolean
@@ -64,7 +52,6 @@ class StepConvertersTest {
     assertTrue(x.isInstanceOf[Stepper[_]])
     correctSpec.assert(x)
     assertTrue(!isAcc(x))
-    assertTrue(isLin(x))
   }
 
   def Fine[X](x: => X)(implicit correctSpec: SpecCheck): Unit = {
@@ -77,7 +64,6 @@ class StepConvertersTest {
     assertTrue(x.isInstanceOf[Stepper[_]])
     correctSpec.assert(x)
     assertTrue(!isAcc(x))
-    assertTrue(!isLin(x))
   }
 
   def Tell[X](x: => X)(implicit correctSpec: SpecCheck): Unit = {
