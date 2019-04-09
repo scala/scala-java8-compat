@@ -68,7 +68,7 @@ object FutureConverters {
       case p: P[T] => p.wrapped
       case _ =>
         val cf = new CF[T](f)
-        implicit val ec = InternalCallbackExecutor
+        implicit val ec = ExecutionContext.parasitic
         f onComplete cf
         cf
     }

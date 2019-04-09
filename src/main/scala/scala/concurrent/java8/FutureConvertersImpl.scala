@@ -22,8 +22,6 @@ import java.util.function.{ BiConsumer, Function ⇒ JF, Consumer, BiFunction }
 
 // TODO: make this private[scala] when genjavadoc allows for that.
 object FuturesConvertersImpl {
-  def InternalCallbackExecutor = Future.InternalCallbackExecutor
-
   class CF[T](val wrapped: Future[T]) extends CompletableFuture[T] with (Try[T] => Unit) {
     override def apply(t: Try[T]): Unit = t match {
       case Success(v) ⇒ complete(v)
