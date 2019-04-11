@@ -1,6 +1,20 @@
+/*
+ * Scala (https://www.scala-lang.org)
+ *
+ * Copyright EPFL and Lightbend, Inc.
+ *
+ * Licensed under Apache License 2.0
+ * (http://www.apache.org/licenses/LICENSE-2.0).
+ *
+ * See the NOTICE file distributed with this work for
+ * additional information regarding copyright ownership.
+ */
+
 package scala.compat.java8.converterImpl
 
 import scala.annotation.switch
+
+import scala.collection.immutable.VectorIterator
 
 import scala.compat.java8.collectionImpl._
 import scala.compat.java8.runtime._
@@ -13,20 +27,27 @@ import Stepper._
 
 private[java8] trait StepsVectorLike[A] {
   protected def myVector: Vector[A]
+  protected def myVectorIterator: VectorIterator[A]
+  protected def myVectorLength: Int
   protected var index: Int = 32
   protected var data: Array[AnyRef] = null
   protected var index1: Int = 32
   protected var data1: Array[AnyRef] = null
   protected final def advanceData(iX: Int): Unit = {
     index1 += 1
-    if (index >= 32) initTo(iX)
+    if (index >= 32) {
+      if (myVector != null) initTo(iX)
+      else initVpTo(iX)
+    }
     else {
       data = data1(index1).asInstanceOf[Array[AnyRef]]
       index = 0
     }
   }
   protected final def initTo(iX: Int): Unit = {
-    myVector.length match {
+    // WARNING--initVpTo is an exact copy of this except for the type!  If you change one you must change the other!
+    // (Manually specialized this way for speed.)
+    myVectorLength match {
       case x if x <=  0x20 => 
         index = iX
         data = CollectionInternals.getDisplay0(myVector)
@@ -52,12 +73,43 @@ private[java8] trait StepsVectorLike[A] {
         data = data1(index1).asInstanceOf[Array[AnyRef]]
     }
   }
+  protected final def initVpTo(iX: Int): Unit = {
+    // WARNING--this is an exact copy of initTo!  If you change one you must change the other!
+    // (Manually specialized this way for speed.)
+    myVectorLength match {
+      case x if x <=  0x20 => 
+        index = iX
+        data = CollectionInternals.getDisplay0(myVectorIterator)
+      case x if x <= 0x400 => 
+        index1 = iX >>> 5
+        data1 = CollectionInternals.getDisplay1(myVectorIterator)
+        index = iX & 0x1F
+        data = data1(index1).asInstanceOf[Array[AnyRef]]
+      case x =>
+        var N = 0
+        var dataN: Array[AnyRef] = 
+          if      (x <=    0x8000) { N = 2; CollectionInternals.getDisplay2(myVectorIterator) }
+          else if (x <=  0x100000) { N = 3; CollectionInternals.getDisplay3(myVectorIterator) }
+          else if (x <= 0x2000000) { N = 4; CollectionInternals.getDisplay4(myVectorIterator) }
+          else  /*x <= 0x40000000*/{ N = 5; CollectionInternals.getDisplay5(myVectorIterator) }
+        while (N > 2) {
+          dataN = dataN((iX >>> (5*N))&0x1F).asInstanceOf[Array[AnyRef]]
+          N -= 1
+        }
+        index1 = (iX >>> 5) & 0x1F
+        data1 = dataN((iX >>> 10) & 0x1F).asInstanceOf[Array[AnyRef]]
+        index = iX & 0x1F
+        data = data1(index1).asInstanceOf[Array[AnyRef]]
+    }
+  }
 }
 
 private[java8] class StepsAnyVector[A](underlying: Vector[A], _i0: Int, _iN: Int)
 extends StepsLikeIndexed[A, StepsAnyVector[A]](_i0, _iN) 
 with StepsVectorLike[A] {
-  protected def myVector = underlying
+  protected val myVector = if (CollectionInternals.getDirt(underlying)) null else underlying
+  protected val myVectorIterator = if (myVector == null) underlying.iterator else null
+  protected val myVectorLength = underlying.length
   def next() = if (hasNext()) {
     index += 1
     if (index >= 32) advanceData(i0)
@@ -76,7 +128,9 @@ with StepsVectorLike[A] {
 private[java8] class StepsDoubleVector(underlying: Vector[Double], _i0: Int, _iN: Int)
 extends StepsDoubleLikeIndexed[StepsDoubleVector](_i0, _iN)
 with StepsVectorLike[Double] {
-  protected def myVector = underlying
+  protected val myVector = if (CollectionInternals.getDirt(underlying)) null else underlying
+  protected val myVectorIterator = if (myVector == null) underlying.iterator else null
+  protected val myVectorLength = underlying.length
   def nextDouble() = if (hasNext()) {
     index += 1
     if (index >= 32) advanceData(i0)
@@ -95,7 +149,9 @@ with StepsVectorLike[Double] {
 private[java8] class StepsIntVector(underlying: Vector[Int], _i0: Int, _iN: Int)
 extends StepsIntLikeIndexed[StepsIntVector](_i0, _iN)
 with StepsVectorLike[Int] {
-  protected def myVector = underlying
+  protected val myVector = if (CollectionInternals.getDirt(underlying)) null else underlying
+  protected val myVectorIterator = if (myVector == null) underlying.iterator else null
+  protected val myVectorLength = underlying.length
   def nextInt() = if (hasNext()) {
     index += 1
     if (index >= 32) advanceData(i0)
@@ -114,7 +170,9 @@ with StepsVectorLike[Int] {
 private[java8] class StepsLongVector(underlying: Vector[Long], _i0: Int, _iN: Int)
 extends StepsLongLikeIndexed[StepsLongVector](_i0, _iN)
 with StepsVectorLike[Long] {
-  protected def myVector = underlying
+  protected val myVector = if (CollectionInternals.getDirt(underlying)) null else underlying
+  protected val myVectorIterator = if (myVector == null) underlying.iterator else null
+  protected val myVectorLength = underlying.length
   def nextLong() = if (hasNext()) {
     index += 1
     if (index >= 32) advanceData(i0)

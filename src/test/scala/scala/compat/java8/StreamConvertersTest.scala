@@ -1,3 +1,15 @@
+/*
+ * Scala (https://www.scala-lang.org)
+ *
+ * Copyright EPFL and Lightbend, Inc.
+ *
+ * Licensed under Apache License 2.0
+ * (http://www.apache.org/licenses/LICENSE-2.0).
+ *
+ * See the NOTICE file distributed with this work for
+ * additional information regarding copyright ownership.
+ */
+
 package scala.compat.java8
 
 import scala.language.higherKinds
@@ -275,5 +287,33 @@ class StreamConvertersTest {
     assertTrue(steppize2(coll2).getClass.getName.contains("RichVectorCanStep"))
     val stepper2 = steppize2(coll2).stepper
     assertTrue(stepper2.getClass.getName.contains("StepsIntVector"))
+  }
+
+  @Test
+  def issue_87(): Unit = {
+    // Vectors that are generated from other vectors tend _not_ to
+    // have all their display vectors consistent; the cached vectors
+    // are correct, but the higher-level vector does _not_ contain
+    // the cached vector in the correct place (for efficiency)!  This
+    // is called being "dirty", and needs to be handled specially.
+    val dirtyDisplayVector = Vector.fill(120)("a").slice(0, 40)
+    val shouldNotNPE =
+      dirtyDisplayVector.seqStream.collect(Collectors.toList())
+    assertEq(shouldNotNPE.toArray(new Array[String](0)).toVector, dirtyDisplayVector, "Vector[Any].seqStream (with dirty display)")
+
+    val dirtyDisplayVectorInt = Vector.fill(120)(999).slice(0, 40)
+    val shouldNotNPEInt =
+      dirtyDisplayVectorInt.seqStream.sum()
+    assertEq(shouldNotNPEInt, dirtyDisplayVectorInt.sum, "Vector[Int].seqStream (with dirty display)")
+
+    val dirtyDisplayVectorLong = Vector.fill(120)(99999999999L).slice(0, 40)
+    val shouldNotNPELong =
+      dirtyDisplayVectorLong.seqStream.sum()
+    assertEq(shouldNotNPELong, dirtyDisplayVectorLong.sum, "Vector[Long].seqStream (with dirty display)")
+
+    val dirtyDisplayVectorDouble = Vector.fill(120)(0.1).slice(0, 40)
+    val shouldNotNPEDouble =
+      math.rint(dirtyDisplayVectorDouble.seqStream.sum() * 10)
+    assertEq(shouldNotNPEDouble, math.rint(dirtyDisplayVectorDouble.sum * 10), "Vector[Double].seqStream (with dirty display)")
   }
 }

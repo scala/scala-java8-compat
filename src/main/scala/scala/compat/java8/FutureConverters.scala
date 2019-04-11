@@ -1,6 +1,15 @@
 /*
- * Copyright (C) 2012-2015 Lightbend Inc. <http://www.lightbend.com>
+ * Scala (https://www.scala-lang.org)
+ *
+ * Copyright EPFL and Lightbend, Inc.
+ *
+ * Licensed under Apache License 2.0
+ * (http://www.apache.org/licenses/LICENSE-2.0).
+ *
+ * See the NOTICE file distributed with this work for
+ * additional information regarding copyright ownership.
  */
+
 package scala.compat.java8
 
 import scala.language.implicitConversions
@@ -29,7 +38,7 @@ import java.util.function.Consumer
  * {{{
  * import java.util.concurrent.CompletionStage;
  * import scala.concurrent.Future;
- * import static scala.concurrent.java8.FutureConverter.*;
+ * import static scala.concurrent.java8.FutureConverters.*;
  *
  * final CompletionStage<String> cs = ... // from an async Java API
  * final Future<String> f = toScala(cs);
