@@ -268,7 +268,7 @@ Example of conversions from the Java type ways:
 
 ```scala
 import scala.concurrent.duration._
-import scala.compat.java8.DurationConverters
+import scala.compat.java8.DurationConverters._
 
 val javaDuration: java.time.Duration = 5.seconds.toJava
 val finiteDuration: FiniteDuration = javaDuration.toScala
