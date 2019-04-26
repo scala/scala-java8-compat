@@ -1,3 +1,15 @@
+/*
+ * Scala (https://www.scala-lang.org)
+ *
+ * Copyright EPFL and Lightbend, Inc.
+ *
+ * Licensed under Apache License 2.0
+ * (http://www.apache.org/licenses/LICENSE-2.0).
+ *
+ * See the NOTICE file distributed with this work for
+ * additional information regarding copyright ownership.
+ */
+
 package bench
 
 import java.util.stream._
@@ -221,7 +233,7 @@ package object generate {
     implicit val arrayIntToIterator: (Array[Int] => Iterator[Int]) = (a: Array[Int]) => new Iterator[Int] {
       private[this] var i = 0
       def hasNext = i < a.length
-      def next = if (hasNext) { var ans = a(i); i += 1; ans } else throw new NoSuchElementException(i.toString)
+      def next() = if (hasNext) { var ans = a(i); i += 1; ans } else throw new NoSuchElementException(i.toString)
     }
     implicit val arrayStringToIterator: (Array[String] => Iterator[String]) = _.iterator
   }

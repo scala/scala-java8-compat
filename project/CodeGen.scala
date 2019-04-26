@@ -1,5 +1,13 @@
 /*
- * Copyright (C) 2012-2016 Lightbend Inc. <https://www.lightbend.com>
+ * Scala (https://www.scala-lang.org)
+ *
+ * Copyright EPFL and Lightbend, Inc.
+ *
+ * Licensed under Apache License 2.0
+ * (http://www.apache.org/licenses/LICENSE-2.0).
+ *
+ * See the NOTICE file distributed with this work for
+ * additional information regarding copyright ownership.
  */
 
 sealed abstract class Type(val code: Char, val prim: String, val ref: String) {
@@ -511,9 +519,9 @@ object CodeGen {
 
     val specialized =
       List("V", "V,IJFD", "V,IJD,IJD").flatMap(specialize).map { case (i, a, sp) =>
-        s"  public static scala.Function$i<$a> procSpecialized(JFunction$i$sp f) { return f; }" } ++
+        s"  public static scala.Function$i<$a> procSpecialized(JFunction$i$sp f) { return (scala.Function$i<$a>)(Object)f; }" } ++
       List("BSIJCFDZ", "ZIFJD,IJFD", "ZIFJD,IJD,IJD").flatMap(specialize).map { case (i, a, sp) =>
-        s"  public static scala.Function$i<$a> funcSpecialized(JFunction$i$sp f) { return f; }" }
+        s"  public static scala.Function$i<$a> funcSpecialized(JFunction$i$sp f) { return (scala.Function$i<$a>)(Object)f; }" }
 
     (blocks.map(_._1) ++ blocks.map(_._2)) :+
       ( "JFunction",

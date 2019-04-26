@@ -1,6 +1,15 @@
 /*
- * Copyright (C) 2012-2015 Lightbend Inc. <http://www.lightbend.com>
+ * Scala (https://www.scala-lang.org)
+ *
+ * Copyright EPFL and Lightbend, Inc.
+ *
+ * Licensed under Apache License 2.0
+ * (http://www.apache.org/licenses/LICENSE-2.0).
+ *
+ * See the NOTICE file distributed with this work for
+ * additional information regarding copyright ownership.
  */
+
 package scala.concurrent.java8
 
 // Located in this package to access private[concurrent] members
@@ -13,8 +22,6 @@ import java.util.function.{ BiConsumer, Function ⇒ JF, Consumer, BiFunction }
 
 // TODO: make this private[scala] when genjavadoc allows for that.
 object FuturesConvertersImpl {
-  def InternalCallbackExecutor = Future.InternalCallbackExecutor
-
   class CF[T](val wrapped: Future[T]) extends CompletableFuture[T] with (Try[T] => Unit) {
     override def apply(t: Try[T]): Unit = t match {
       case Success(v) ⇒ complete(v)

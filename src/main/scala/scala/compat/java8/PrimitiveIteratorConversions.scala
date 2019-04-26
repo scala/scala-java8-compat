@@ -1,6 +1,15 @@
 /*
- * Copyright (C) 2012-2015 Lightbend Inc. <http://www.lightbend.com>
+ * Scala (https://www.scala-lang.org)
+ *
+ * Copyright EPFL and Lightbend, Inc.
+ *
+ * Licensed under Apache License 2.0
+ * (http://www.apache.org/licenses/LICENSE-2.0).
+ *
+ * See the NOTICE file distributed with this work for
+ * additional information regarding copyright ownership.
  */
+
 package scala.compat.java8
 
 import java.util.{ Iterator => JIterator, PrimitiveIterator }
@@ -44,10 +53,10 @@ object PrimitiveIteratorConverters {
       def nextDouble() = it.next()
       override def remove(): Unit = { throw new UnsupportedOperationException("remove on scala.collection.Iterator") }
       override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Double]): Unit = {
-        while (it.hasNext) c.accept(it.next)
+        while (it.hasNext) c.accept(it.next())
       }
       override def forEachRemaining(c: java.util.function.DoubleConsumer): Unit = {
-        while (it.hasNext) c.accept(it.next)
+        while (it.hasNext) c.accept(it.next())
       }
     }
   }
@@ -65,10 +74,10 @@ object PrimitiveIteratorConverters {
       def nextInt() = it.next()
       override def remove(): Unit = { throw new UnsupportedOperationException("remove on scala.collection.Iterator") }
       override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Integer]): Unit = {
-        while (it.hasNext) c.accept(it.next)
+        while (it.hasNext) c.accept(it.next())
       }
       override def forEachRemaining(c: java.util.function.IntConsumer): Unit = {
-        while (it.hasNext) c.accept(it.next)
+        while (it.hasNext) c.accept(it.next())
       }
     }
   }
@@ -86,10 +95,10 @@ object PrimitiveIteratorConverters {
       def nextLong() = it.next()
       override def remove(): Unit = { throw new UnsupportedOperationException("remove on scala.collection.Iterator") }
       override def forEachRemaining(c: java.util.function.Consumer[_ >: java.lang.Long]): Unit = {
-        while (it.hasNext) c.accept(it.next)
+        while (it.hasNext) c.accept(it.next())
       }
       override def forEachRemaining(c: java.util.function.LongConsumer): Unit = {
-        while (it.hasNext) c.accept(it.next)
+        while (it.hasNext) c.accept(it.next())
       }
     }
   }
