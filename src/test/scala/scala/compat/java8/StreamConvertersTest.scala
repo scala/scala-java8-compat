@@ -159,7 +159,7 @@ class StreamConvertersTest {
       val hsO = hsetO(n)
       // Seems like a lot of boilerplate, but we need it to test implicit resolution
       assertEq(seqO, seqO.seqStream.toScala[Seq])
-//      assertEq(seqO, seqO.stepper.parStream.toScala[Seq]  // Must go through stepper if we're unsure whether we can parallelize well
+//      assertEq(seqO, seqO.stepper.parStream.toScala[Seq])  // Must go through stepper if we're unsure whether we can parallelize well
       assertEq(seqO, arrO.seqStream.toScala[Seq])
       assertEq(seqO, arrO.parStream.toScala[Seq])
       assertEq(seqO, abO.seqStream.toScala[Seq])
@@ -168,8 +168,8 @@ class StreamConvertersTest {
       assertEq(seqO, wrO.parStream.toScala[Seq])
       assertEq(seqO, vecO.seqStream.toScala[Seq])
       assertEq(seqO, vecO.parStream.toScala[Seq])
-//      assertEq(seqO, hsO.seqStream.toScala[Seq]sortBy(_.toInt))
-//      assertEq(seqO, hsO.parStream.toScala[Seq]sortBy(_.toInt))
+//      assertEq(seqO, hsO.seqStream.toScala[Seq].sortBy(_.toInt))
+//      assertEq(seqO, hsO.parStream.toScala[Seq].sortBy(_.toInt))
 
       val arrD = arrayD(n)
       val seqD = arrD.toSeq
@@ -178,7 +178,7 @@ class StreamConvertersTest {
       val vecD = vectD(n)
       val hsD = hsetD(n)
       assertEq(seqD, seqD.seqStream.toScala[Seq])
-//      assertEq(seqD, seqD.stepper.parStream.toScala[Seq]
+//      assertEq(seqD, seqD.stepper.parStream.toScala[Seq])
       assertEq(seqD, arrD.seqStream.toScala[Seq])
       assertEq(seqD, arrD.parStream.toScala[Seq])
       assert(arrD.seqStream.isInstanceOf[DoubleStream])
@@ -195,8 +195,8 @@ class StreamConvertersTest {
       assertEq(seqD, vecD.parStream.toScala[Seq])
       assert(vecD.seqStream.isInstanceOf[DoubleStream])
       assert(vecD.parStream.isInstanceOf[DoubleStream])
-//      assertEq(seqD, hsD.seqStream.toScala[Seq]sorted)
-//      assertEq(seqD, hsD.parStream.toScala[Seq]sorted)
+//      assertEq(seqD, hsD.seqStream.toScala[Seq].sorted)
+//      assertEq(seqD, hsD.parStream.toScala[Seq].sorted)
 //      assert(hsD.seqStream.isInstanceOf[DoubleStream])
 //      assert(hsD.parStream.isInstanceOf[DoubleStream])
 
@@ -207,7 +207,7 @@ class StreamConvertersTest {
       val vecI = vectI(n)
       val hsI = hsetI(n)
       assertEq(seqI, seqI.seqStream.toScala[Seq])
-//      assertEq(seqI, seqI.stepper.parStream.toScala[Seq]
+//      assertEq(seqI, seqI.stepper.parStream.toScala[Seq])
       assertEq(seqI, arrI.seqStream.toScala[Seq])
       assertEq(seqI, arrI.parStream.toScala[Seq])
       assert(arrI.seqStream.isInstanceOf[IntStream])
@@ -224,8 +224,8 @@ class StreamConvertersTest {
       assertEq(seqI, vecI.parStream.toScala[Seq])
       assert(vecI.seqStream.isInstanceOf[IntStream])
       assert(vecI.parStream.isInstanceOf[IntStream])
-//      assertEq(seqI, hsI.seqStream.toScala[Seq]sorted)
-//      assertEq(seqI, hsI.parStream.toScala[Seq]sorted)
+//      assertEq(seqI, hsI.seqStream.toScala[Seq].sorted)
+//      assertEq(seqI, hsI.parStream.toScala[Seq].sorted)
 //      assert(hsI.seqStream.isInstanceOf[IntStream])
 //      assert(hsI.parStream.isInstanceOf[IntStream])
 
@@ -236,7 +236,7 @@ class StreamConvertersTest {
       val vecL = vectL(n)
       val hsL = hsetL(n)
       assertEq(seqL, seqL.seqStream.toScala[Seq])
-//      assertEq(seqL, seqL.stepper.parStream.toScala[Seq]
+//      assertEq(seqL, seqL.stepper.parStream.toScala[Seq])
       assertEq(seqL, arrL.seqStream.toScala[Seq])
       assertEq(seqL, arrL.parStream.toScala[Seq])
       assert(arrL.seqStream.isInstanceOf[LongStream])
@@ -253,8 +253,8 @@ class StreamConvertersTest {
       assertEq(seqD, wrD.parStream.toScala[Seq])
       assert(vecL.seqStream.isInstanceOf[LongStream])
       assert(vecL.parStream.isInstanceOf[LongStream])
-//      assertEq(seqL, hsL.seqStream.toScala[Seq]sorted)
-//      assertEq(seqL, hsL.parStream.toScala[Seq]sorted)
+//      assertEq(seqL, hsL.seqStream.toScala[Seq].sorted)
+//      assertEq(seqL, hsL.parStream.toScala[Seq].sorted)
 //      assert(hsL.seqStream.isInstanceOf[LongStream])
 //      assert(hsL.parStream.isInstanceOf[LongStream])
     }
