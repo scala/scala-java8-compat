@@ -216,14 +216,14 @@ trait StreamExtensions {
     /**
       * Copy the elements of this stream into a Scala collection.
       *
-      * Converting a parallel streams to an [[Accumulator]] using `stream.toScalaFactory(Accumulator)`
+      * Converting a parallel streams to an [[scala.jdk.Accumulator]] using `stream.toScalaFactory(Accumulator)`
       * builds the result in parallel.
       *
       * A `toScalaFactory(Accumulator)` call automatically converts streams of boxed integers, longs or
-      * doubles are converted to the primitive accumulators ([[IntAccumulator]], etc.).
+      * doubles are converted to the primitive accumulators ([[scala.jdk.IntAccumulator]], etc.).
       *
       * When converting a parallel stream to a different Scala collection, the stream is first
-      * converted into an [[Accumulator]], which supports parallel building. The accumulator is
+      * converted into an [[scala.jdk.Accumulator]], which supports parallel building. The accumulator is
       * then converted to the target collection. Note that the stream is processed eagerly while
       * building the accumulator, even if the target collection is lazy.
       *
@@ -243,11 +243,11 @@ trait StreamExtensions {
     /**
       * Copy the elements of this stream into a Scala collection.
       *
-      * For parallel streams, using [[accumulate]] is recommended as it builds the [[Accumulator]]
+      * For parallel streams, using [[accumulate]] is recommended as it builds the [[scala.jdk.Accumulator]]
       * in parallel.
       *
       * When converting a parallel stream to a different Scala collection, the stream is first
-      * converted into an [[Accumulator]], which supports parallel building. The accumulator is
+      * converted into an [[scala.jdk.Accumulator]], which supports parallel building. The accumulator is
       * then converted to the target collection. Note that the stream is processed eagerly while
       * building the accumulator, even if the target collection is lazy.
       *
@@ -295,14 +295,14 @@ trait StreamExtensions {
     /**
       * Copy the elements of this stream into a Scala collection.
       *
-      * Converting a parallel streams to an [[Accumulator]] using `stream.toScalaFactory(Accumulator)`
+      * Converting a parallel streams to an [[scala.jdk.Accumulator]] using `stream.toScalaFactory(Accumulator)`
       * builds the result in parallel.
       *
       * A `toScalaFactory(Accumulator)` call automatically converts the `IntStream` to a primitive
-      * [[IntAccumulator]].
+      * [[scala.jdk.IntAccumulator]].
       *
       * When converting a parallel stream to a different Scala collection, the stream is first
-      * converted into an [[Accumulator]], which supports parallel building. The accumulator is
+      * converted into an [[scala.jdk.Accumulator]], which supports parallel building. The accumulator is
       * then converted to the target collection. Note that the stream is processed eagerly while
       * building the accumulator, even if the target collection is lazy.
       *
@@ -320,11 +320,11 @@ trait StreamExtensions {
     /**
       * Copy the elements of this stream into a Scala collection.
       *
-      * For parallel streams, using [[accumulate]] is recommended as it builds the [[IntAccumulator]]
+      * For parallel streams, using [[accumulate]] is recommended as it builds the [[scala.jdk.IntAccumulator]]
       * in parallel.
       *
       * When converting a parallel stream to a different Scala collection, the stream is first
-      * converted into an [[Accumulator]], which supports parallel building. The accumulator is
+      * converted into an [[scala.jdk.Accumulator]], which supports parallel building. The accumulator is
       * then converted to the target collection. Note that the stream is processed eagerly while
       * building the accumulator, even if the target collection is lazy.
       *
@@ -343,14 +343,14 @@ trait StreamExtensions {
     /**
       * Copy the elements of this stream into a Scala collection.
       *
-      * Converting a parallel streams to an [[Accumulator]] using `stream.toScalaFactory(Accumulator)`
+      * Converting a parallel streams to an [[scala.jdk.Accumulator]] using `stream.toScalaFactory(Accumulator)`
       * builds the result in parallel.
       *
       * A `toScalaFactory(Accumulator)` call automatically converts the `LongStream` to a primitive
-      * [[LongAccumulator]].
+      * [[scala.jdk.LongAccumulator]].
       *
       * When converting a parallel stream to a different Scala collection, the stream is first
-      * converted into an [[Accumulator]], which supports parallel building. The accumulator is
+      * converted into an [[scala.jdk.Accumulator]], which supports parallel building. The accumulator is
       * then converted to the target collection. Note that the stream is processed eagerly while
       * building the accumulator, even if the target collection is lazy.
       *
@@ -368,11 +368,11 @@ trait StreamExtensions {
     /**
       * Copy the elements of this stream into a Scala collection.
       *
-      * For parallel streams, using [[accumulate]] is recommended as it builds the [[LongAccumulator]]
+      * For parallel streams, using [[accumulate]] is recommended as it builds the [[scala.jdk.LongAccumulator]]
       * in parallel.
       *
       * When converting a parallel stream to a different Scala collection, the stream is first
-      * converted into an [[Accumulator]], which supports parallel building. The accumulator is
+      * converted into an [[scala.jdk.Accumulator]], which supports parallel building. The accumulator is
       * then converted to the target collection. Note that the stream is processed eagerly while
       * building the accumulator, even if the target collection is lazy.
       *
@@ -391,14 +391,14 @@ trait StreamExtensions {
     /**
       * Copy the elements of this stream into a Scala collection.
       *
-      * Converting a parallel streams to an [[Accumulator]] using `stream.toScalaFactory(Accumulator)`
+      * Converting a parallel streams to an [[scala.jdk.Accumulator]] using `stream.toScalaFactory(Accumulator)`
       * builds the result in parallel.
       *
       * A `toScalaFactory(Accumulator)` call automatically converts the `DoubleStream` to a primitive
-      * [[DoubleAccumulator]].
+      * [[scala.jdk.DoubleAccumulator]].
       *
       * When converting a parallel stream to a different Scala collection, the stream is first
-      * converted into an [[Accumulator]], which supports parallel building. The accumulator is
+      * converted into an [[scala.jdk.Accumulator]], which supports parallel building. The accumulator is
       * then converted to the target collection. Note that the stream is processed eagerly while
       * building the accumulator, even if the target collection is lazy.
       *
@@ -416,11 +416,11 @@ trait StreamExtensions {
     /**
       * Copy the elements of this stream into a Scala collection.
       *
-      * For parallel streams, using [[accumulate]] is recommended as it builds the [[DoubleAccumulator]]
+      * For parallel streams, using [[accumulate]] is recommended as it builds the [[scala.jdk.DoubleAccumulator]]
       * in parallel.
       *
       * When converting a parallel stream to a different Scala collection, the stream is first
-      * converted into an [[Accumulator]], which supports parallel building. The accumulator is
+      * converted into an [[scala.jdk.Accumulator]], which supports parallel building. The accumulator is
       * then converted to the target collection. Note that the stream is processed eagerly while
       * building the accumulator, even if the target collection is lazy.
       *
