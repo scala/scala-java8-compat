@@ -15,7 +15,7 @@ package scala.compat.java8;
 import java.util.stream.*;
 
 import scala.collection.*;
-import scala.jdk.StreamConverters;
+import scala.jdk.javaapi.StreamConverters;
 
 /**
  * This class contains static utility methods for creating Java Streams from Scala Collections, similar
@@ -142,7 +142,7 @@ public class ScalaStreamSupport {
      * @return     A DoubleStream view of the collection which, by default, executes sequentially.
      */
     public static DoubleStream doubleStream(IterableOnce<Double> coll) {
-        return StreamConverters.asJavaSeqDoubleStream((IterableOnce<Object>)(Object)coll);
+        return StreamConverters.asJavaSeqDoubleStream(coll);
     }
 
     /**
@@ -183,7 +183,7 @@ public class ScalaStreamSupport {
      * @return     A DoubleStream view of the collection which, by default, executes sequentially.
      */
     public static DoubleStream doubleStreamAccumulated(IterableOnce<Double> coll) {
-        return StreamConverters.asJavaSeqDoubleStream(scala.jdk.DoubleAccumulator$.MODULE$.fromSpecific((IterableOnce<Object>)(Object)coll));
+        return StreamConverters.asJavaSeqDoubleStream((IterableOnce<Double>)(Object)scala.jdk.DoubleAccumulator$.MODULE$.fromSpecific((IterableOnce<Object>)(Object)coll));
     }
 
     /**
@@ -196,7 +196,7 @@ public class ScalaStreamSupport {
      * @return     A DoubleStream view of the collection which, by default, executes sequentially.
      */
     public static DoubleStream doubleStreamAccumulatedKeys(Map<Double, ?> coll) {
-        return StreamConverters.asJavaSeqDoubleStream(scala.jdk.DoubleAccumulator$.MODULE$.fromSpecific((IterableOnce<Object>)(Object)coll.keysIterator()));
+        return StreamConverters.asJavaSeqDoubleStream((IterableOnce<Double>)(Object)scala.jdk.DoubleAccumulator$.MODULE$.fromSpecific((IterableOnce<Object>)(Object)coll.keysIterator()));
     }
 
     /**
@@ -209,7 +209,7 @@ public class ScalaStreamSupport {
      * @return     A DoubleStream view of the collection which, by default, executes sequentially.
      */
     public static DoubleStream doubleStreamAccumulatedValues(Map<?, Double> coll) {
-        return StreamConverters.asJavaSeqDoubleStream(scala.jdk.DoubleAccumulator$.MODULE$.fromSpecific((IterableOnce<Object>)(Object)coll.valuesIterator()));
+        return StreamConverters.asJavaSeqDoubleStream((IterableOnce<Double>)(Object)scala.jdk.DoubleAccumulator$.MODULE$.fromSpecific((IterableOnce<Object>)(Object)coll.valuesIterator()));
     }
 
     /////////////////
@@ -227,7 +227,7 @@ public class ScalaStreamSupport {
      * @return     A IntStream view of the collection which, by default, executes sequentially.
      */
     public static IntStream intStream(IterableOnce<Integer> coll) {
-        return StreamConverters.asJavaSeqIntStream((IterableOnce<Object>)(Object)coll);
+        return StreamConverters.asJavaSeqIntStream(coll);
     }
 
     /**
@@ -268,7 +268,7 @@ public class ScalaStreamSupport {
      * @return     A IntStream view of the collection which, by default, executes sequentially.
      */
     public static IntStream intStreamAccumulated(IterableOnce<Integer> coll) {
-        return StreamConverters.asJavaSeqIntStream(scala.jdk.IntAccumulator$.MODULE$.fromSpecific((IterableOnce<Object>)(Object)coll));
+        return StreamConverters.asJavaSeqIntStream((IterableOnce<Integer>)(Object)scala.jdk.IntAccumulator$.MODULE$.fromSpecific((IterableOnce<Object>)(Object)coll));
     }
 
     /**
@@ -281,7 +281,7 @@ public class ScalaStreamSupport {
      * @return     A IntStream view of the collection which, by default, executes sequentially.
      */
     public static IntStream intStreamAccumulatedKeys(Map<Integer, ?> coll) {
-        return StreamConverters.asJavaSeqIntStream(scala.jdk.IntAccumulator$.MODULE$.fromSpecific((IterableOnce<Object>)(Object)coll.keysIterator()));
+        return StreamConverters.asJavaSeqIntStream((IterableOnce<Integer>)(Object)scala.jdk.IntAccumulator$.MODULE$.fromSpecific((IterableOnce<Object>)(Object)coll.keysIterator()));
     }
 
     /**
@@ -294,7 +294,7 @@ public class ScalaStreamSupport {
      * @return     A IntStream view of the collection which, by default, executes sequentially.
      */
     public static IntStream intStreamAccumulatedValues(Map<?, Integer> coll) {
-        return StreamConverters.asJavaSeqIntStream(scala.jdk.IntAccumulator$.MODULE$.fromSpecific((IterableOnce<Object>)(Object)coll.valuesIterator()));
+        return StreamConverters.asJavaSeqIntStream((IterableOnce<Integer>)(Object)scala.jdk.IntAccumulator$.MODULE$.fromSpecific((IterableOnce<Object>)(Object)coll.valuesIterator()));
     }
 
     //////////////////
@@ -312,7 +312,7 @@ public class ScalaStreamSupport {
      * @return     A LongStream view of the collection which, by default, executes sequentially.
      */
     public static LongStream longStream(IterableOnce<Long> coll) {
-        return StreamConverters.asJavaSeqLongStream((IterableOnce<Object>)(Object)coll);
+        return StreamConverters.asJavaSeqLongStream(coll);
     }
 
     /**
@@ -353,7 +353,7 @@ public class ScalaStreamSupport {
      * @return     A LongStream view of the collection which, by default, executes sequentially.
      */
     public static LongStream longStreamAccumulated(IterableOnce<Long> coll) {
-        return StreamConverters.asJavaSeqLongStream(scala.jdk.LongAccumulator$.MODULE$.fromSpecific((IterableOnce<Object>)(Object)coll));
+        return StreamConverters.asJavaSeqLongStream((IterableOnce<Long>)(Object)scala.jdk.LongAccumulator$.MODULE$.fromSpecific((IterableOnce<Object>)(Object)coll));
     }
 
     /**
@@ -366,7 +366,7 @@ public class ScalaStreamSupport {
      * @return     A LongStream view of the collection which, by default, executes sequentially.
      */
     public static LongStream longStreamAccumulatedKeys(Map<Long, ?> coll) {
-        return StreamConverters.asJavaSeqLongStream(scala.jdk.LongAccumulator$.MODULE$.fromSpecific((IterableOnce<Object>)(Object)coll.keysIterator()));
+        return StreamConverters.asJavaSeqLongStream((IterableOnce<Long>)(Object)scala.jdk.LongAccumulator$.MODULE$.fromSpecific((IterableOnce<Object>)(Object)coll.keysIterator()));
     }
 
     /**
@@ -379,6 +379,6 @@ public class ScalaStreamSupport {
      * @return     A LongStream view of the collection which, by default, executes sequentially.
      */
     public static LongStream longStreamAccumulatedValues(Map<?, Long> coll) {
-        return StreamConverters.asJavaSeqLongStream(scala.jdk.LongAccumulator$.MODULE$.fromSpecific((IterableOnce<Object>)(Object)coll.valuesIterator()));
+        return StreamConverters.asJavaSeqLongStream((IterableOnce<Long>)(Object)scala.jdk.LongAccumulator$.MODULE$.fromSpecific((IterableOnce<Object>)(Object)coll.valuesIterator()));
     }
 }

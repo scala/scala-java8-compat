@@ -1,6 +1,6 @@
 import ScalaModulePlugin._
 
-crossScalaVersions in ThisBuild := List("2.13.0-RC1")
+crossScalaVersions in ThisBuild := List("2.13.0-RC2")
 
 val disableDocs =
   sys.props("nodocs") == "true" ||

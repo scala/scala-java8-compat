@@ -21,11 +21,11 @@ import scala.collection.{IterableOnce, Stepper, StepperShape}
 import scala.compat.java8.converterImpl._
 import scala.jdk._
 import scala.language.higherKinds
-import scala.jdk.CollectionConverters.Ops._
+import scala.jdk.CollectionConverters._
 
 
 /** Defines extension methods to create Java Streams for Scala collections, available through
-  * [[scala.jdk.StreamConverters.Ops]].
+  * [[scala.compat.java8.StreamConverters]].
   */
 trait StreamExtensions {
   implicit def richStepper[A](s: Stepper[A]): StepperExtensions[A] = new StepperExtensions[A](s)
