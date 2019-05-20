@@ -7,7 +7,7 @@ jdk:
   - openjdk11
 
 scala:
-  - 2.13.0-RC1
+  - 2.13.0-RC2
 
 env:
   global:

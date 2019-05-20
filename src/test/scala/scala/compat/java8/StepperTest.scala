@@ -65,7 +65,7 @@ class MappingStepper[@specialized (Double, Int, Long) A, @specialized(Double, In
 
   override def estimateSize: Long = underlying.estimateSize
 
-  override def javaIterator: util.Iterator[_] = new util.Iterator[B] {
+  override def javaIterator[_ >: B]: util.Iterator[_] = new util.Iterator[B] {
     override def hasNext: Boolean = underlying.hasStep
     override def next(): B = mapping(underlying.nextStep())
   }
@@ -74,7 +74,7 @@ class MappingStepper[@specialized (Double, Int, Long) A, @specialized(Double, In
     if (undersub == null) null
     else new MappingStepper(undersub, mapping)
   }
-  def spliterator: Spliterator[_] = new MappingSpliterator[A, B](underlying.spliterator.asInstanceOf[Spliterator[A]], mapping)
+  def spliterator[_ >: B]: Spliterator[_] = new MappingSpliterator[A, B](underlying.spliterator.asInstanceOf[Spliterator[A]], mapping)
 }
 
 class MappingSpliterator[A, B](private val underlying: Spliterator[A], mapping: A => B) extends Spliterator[B] {
