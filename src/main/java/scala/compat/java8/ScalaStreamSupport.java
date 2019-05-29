@@ -71,7 +71,7 @@ public class ScalaStreamSupport {
      * @return     A Stream view of the collection which, by default, executes sequentially.
      */
     public static <V> Stream<V> streamValues(Map<?, V> coll) {
-        return StreamSupport.stream(coll.<V, AnyStepper<V>>valueStepper(StepperShape.anyStepperShape()).spliterator(), false);
+        return StreamSupport.stream(coll.<AnyStepper<V>>valueStepper(StepperShape.anyStepperShape()).spliterator(), false);
     }
 
     /** 
