@@ -63,7 +63,7 @@ object FutureConverters {
    * @return a CompletionStage that runs all callbacks asynchronously and does
    * not support the CompletableFuture interface
    */
-  def toJava[T](f: Future[T]): CompletionStage[T] = {
+  def toJava[T, U <: T](f: Future[U]): CompletionStage[T] = {
     f match {
       case p: P[T] => p.wrapped
       case _ =>
