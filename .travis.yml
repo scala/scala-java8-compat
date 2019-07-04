@@ -1,14 +1,11 @@
 language: scala
 
-sudo: false
-
 jdk:
-  - oraclejdk8
+  - openjdk8
   - openjdk11
 
 scala:
-  # no 2.13 for now in cross-build because of
-  # https://github.com/scala/scala-java8-compat/issues/97
+  # note that 2.13 is on the 2.13.x branch instead
   - 2.11.12
   - 2.12.8
 
