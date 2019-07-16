@@ -14,20 +14,19 @@ package scala.concurrent.java8
 
 // Located in this package to access private[concurrent] members
 
-import scala.concurrent.{ Future, ExecutionContext }
 import java.util.concurrent._
+import java.util.function.{BiConsumer, BiFunction, Consumer, Function => JF}
+
+import scala.concurrent.Future
 import scala.concurrent.impl.Promise.DefaultPromise
-import scala.util.{ Try, Success, Failure }
-import java.util.function.{ BiConsumer, Function ⇒ JF, Consumer, BiFunction }
+import scala.util.{Failure, Success, Try}
 
 // TODO: make this private[scala] when genjavadoc allows for that.
 object FuturesConvertersImpl {
-  def InternalCallbackExecutor = Future.InternalCallbackExecutor
-
   class CF[T](val wrapped: Future[T]) extends CompletableFuture[T] with (Try[T] => Unit) {
     override def apply(t: Try[T]): Unit = t match {
-      case Success(v) ⇒ complete(v)
-      case Failure(e) ⇒ completeExceptionally(e)
+      case Success(v) => complete(v)
+      case Failure(e) => completeExceptionally(e)
     }
 
     /*
@@ -67,7 +66,7 @@ object FuturesConvertersImpl {
               try {
                 fn(e).asInstanceOf[AnyRef]
               } catch {
-                case thr: Throwable ⇒ cf.completeExceptionally(thr); this
+                case thr: Throwable => cf.completeExceptionally(thr); this
               }
             if (n ne this) cf.complete(n.asInstanceOf[T])
           }

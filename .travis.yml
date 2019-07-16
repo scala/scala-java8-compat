@@ -1,9 +1,9 @@
 language: scala
 
 scala:
-  # note that 2.13 is on the 2.13.x branch instead
-  - 2.11.12
+  - 2.13.0
   - 2.12.8
+  - 2.11.12
 
 env:
   global:

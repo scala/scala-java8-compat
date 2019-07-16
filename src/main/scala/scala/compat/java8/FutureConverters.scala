@@ -15,6 +15,7 @@ package scala.compat.java8
 import scala.language.implicitConversions
 
 import scala.concurrent.java8.FuturesConvertersImpl._
+import scala.concurrent.java8.FuturesConvertersImplCompat._
 import scala.concurrent.{ Future, Promise, ExecutionContext, ExecutionContextExecutorService, ExecutionContextExecutor }
 import java.util.concurrent.{ CompletionStage, Executor, ExecutorService }
 import java.util.function.Consumer

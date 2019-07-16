@@ -519,9 +519,9 @@ object CodeGen {
 
     val specialized =
       List("V", "V,IJFD", "V,IJD,IJD").flatMap(specialize).map { case (i, a, sp) =>
-        s"  public static scala.Function$i<$a> procSpecialized(JFunction$i$sp f) { return f; }" } ++
+        s"  public static scala.Function$i<$a> procSpecialized(JFunction$i$sp f) { return (scala.Function$i<$a>)(Object)f; }" } ++
       List("BSIJCFDZ", "ZIFJD,IJFD", "ZIFJD,IJD,IJD").flatMap(specialize).map { case (i, a, sp) =>
-        s"  public static scala.Function$i<$a> funcSpecialized(JFunction$i$sp f) { return f; }" }
+        s"  public static scala.Function$i<$a> funcSpecialized(JFunction$i$sp f) { return (scala.Function$i<$a>)(Object)f; }" }
 
     (blocks.map(_._1) ++ blocks.map(_._2)) :+
       ( "JFunction",

@@ -15,8 +15,9 @@ package scala.compat.java8.runtime
 import java.lang.invoke._
 
 /**
- * This class is only intended to be called by synthetic `$deserializeLambda$` method that the Scala 2.12
- * compiler will add to classes hosting lambdas.
+ * This class is only intended to be called by synthetic `$deserializeLambda$` method that the
+ * Scala 2.11 compiler will add to classes hosting lambdas. In Scala 2.12+, it's part of the
+ * standard library.
  *
  * It is not intended to be consumed directly.
  */
