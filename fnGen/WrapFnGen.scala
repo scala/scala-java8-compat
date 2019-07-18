@@ -245,7 +245,7 @@ object WrapFnGen {
           numberedA ++= scalaTargs.map(_.toString).collect{ case An(digits) if (digits.length < 10) => digits.toInt }
           val scalafnTnames = (jfn.pTypes :+ jfn.rType).zipWithIndex.map{
             case (pt, i) if (i < jfn.pTypes.length && pt.isFinalType) || (!pt.isFinalType && jfn.pTypes.take(i).exists(_ == pt)) =>
-              val j = Iterator.from(i).dropWhile(numberedA).next
+              val j = Iterator.from(i).dropWhile(numberedA).next()
               val genericName = TypeName(s"A$j")
               numberedA += j
               evidences += ((genericName, pt.typeSymbol.name.toTypeName))
@@ -309,6 +309,6 @@ object WrapFnGen {
 
   def main(args: Array[String]): Unit = {
     val names = args.iterator.map(x => new java.io.File(x))
-    write(names.next, converterContents)
+    write(names.next(), converterContents)
   }
 }
