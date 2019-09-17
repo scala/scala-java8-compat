@@ -131,7 +131,7 @@ lazy val root = (project in file(".")).
       },
       javacOptions in JavaDoc := Seq(),
       artifactName in packageDoc in JavaDoc := ((sv, mod, art) => "" + mod.name + "_" + sv.binary + "-" + mod.revision + "-javadoc.jar"),
-      libraryDependencies += compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.13" cross CrossVersion.full),
+      libraryDependencies += compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.14" cross CrossVersion.full),
       scalacOptions in Compile += "-P:genjavadoc:out=" + (target.value / "java")
     ))): _*
   ).
