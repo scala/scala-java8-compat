@@ -1,25 +1,17 @@
 language: scala
 
 scala:
-  - 2.13.0
-  - 2.12.8
   - 2.11.12
+  - 2.12.8
+  - 2.13.0
 
 env:
-  global:
-    # PGP_PASSPHRASE
-    - secure: "BzgzRZLYa52rS/hBfzf43b++CfDhdcd3Mmu8tsyBHgThSQOd2YBLbV5kWD8aYVFKVHfW7XX0PTe3F+rR/fFZqGItE6o8Px0Y7Vzb5pqjlaQdxFEJ+WrsnshS0xuAKZ7OwVHRp+d+jznaCwRxEo2vpW3ko1OPAJ8cxfhVL/4C1I0="
-    # SONA_USER
-    - secure: "lx2qFeFxh9AFmyHR7hH4Qf9flIEx8VgYj6ebzuxp1cc1ZZiXHC1256x0bHFDUH9bhJACOazOrco/+v6MBAriBkWxLBc98FrC6OkVeQMFW2ffWSBuHRclilKsQA/Lsgc81Wg+WV105hOqUNAkTXgroblInNt+KS+DhC/8FVoh9ZY="
-    # SONA_PASS
-    - secure: "FZC+FZnBNeklA150vW5QDZJ5J7t+DExJrgyXWM46Wh0MobjH8cvydgC3qatItb0rDBV8l7zO1LDwl2KEi92aefw2a8E49z6qVOHgUXiI3SAx7M0UO0FFeKPmTXCLcBlbnGLcUqNjIZfuIEufQvPblKTl8qN4eMmcMn9jsNzJr28="
-  matrix:
-    - ADOPTOPENJDK=8
-    - ADOPTOPENJDK=11
+  - ADOPTOPENJDK=8
+  - ADOPTOPENJDK=11
 
 before_install:
   # adding $HOME/.sdkman to cache would create an empty directory, which interferes with the initial installation
-  - "[[ -d $HOME/.sdkman/bin/ ]] || rm -rf $HOME/.sdkman/"
+  - "[[ -d $HOME/.sdkman/bin ]] || rm -rf $HOME/.sdkman/"
   - curl -sL https://get.sdkman.io | bash
   - echo sdkman_auto_answer=true > $HOME/.sdkman/etc/config
   - source "$HOME/.sdkman/bin/sdkman-init.sh"
@@ -28,10 +20,9 @@ install:
   - sdk install java $(sdk list java | grep -o "$ADOPTOPENJDK\.[0-9\.]*hs-adpt" | head -1)
   - unset JAVA_HOME
   - java -Xmx32m -version
-  - javac -J-Xmx32m -version
+  - git fetch --tags # get all tags for sbt-dynver
 
-script:
-  - admin/build.sh
+script: ./build.sh
 
 notifications:
   email:
@@ -39,10 +30,12 @@ notifications:
     - seth.tisue@lightbend.com
 
 before_cache:
-  - find $HOME/.sbt -name "*.lock" | xargs rm
-  - find $HOME/.ivy2/cache -name "ivydata-*.properties" | xargs rm
+  - rm -f $HOME/.ivy2/.sbt.ivy.lock
+  - find $HOME/.ivy2/cache     -name "ivydata-*.properties" | xargs rm
+  - find $HOME/.sbt            -name "*.lock"               | xargs rm
 cache:
   directories:
     - $HOME/.ivy2/cache
     - $HOME/.sbt
+    - $HOME/.cache/coursier
     - $HOME/.sdkman

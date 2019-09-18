@@ -1,10 +1,6 @@
-import ScalaModulePlugin._
-
-crossScalaVersions in ThisBuild := List("2.13.0", "2.12.8", "2.11.12")
-
 val disableDocs =
   sys.props("nodocs") == "true" ||
-    // can't build doc on JDK 11 until sbt/sbt#4350 is fixed
+    // on jdk 11 https://github.com/scala/scala-java8-compat/issues/160, seems to fail the build (not on 8)
     !sys.props("java.version").startsWith("1.")
 
 lazy val JavaDoc = config("genjavadoc") extend Compile
@@ -23,9 +19,6 @@ def osgiExport(scalaVersion: String, version: String) = {
 }
 
 lazy val commonSettings = Seq(
-  organization := "org.scala-lang.modules",
-  version := "0.9.1-SNAPSHOT",
-
   scalacOptions ++= Seq("-feature", "-deprecation", "-unchecked"),
 
   unmanagedSourceDirectories in Compile ++= {
@@ -49,21 +42,22 @@ lazy val commonSettings = Seq(
   },
 )
 
-lazy val fnGen = (project in file("fnGen")).
-  settings(commonSettings: _*).
-  settings(
+lazy val fnGen = (project in file("fnGen"))
+  .settings(commonSettings)
+  .settings(
     fork in run := true,  // Needed if you run this project directly
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
     libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
   )
 
-lazy val root = (project in file(".")).
-  settings(scalaModuleSettings: _*).
-  settings(commonSettings: _*).
-  settings(
+lazy val scalaJava8Compat = (project in file("."))
+  .settings(ScalaModulePlugin.scalaModuleSettings)
+  .settings(ScalaModulePlugin.scalaModuleSettingsJVM)
+  .settings(commonSettings)
+  .settings(
     name := "scala-java8-compat"
-  ).
-  settings(
+  )
+  .settings(
     fork := true, // This must be set so that runner task is forked when it runs fnGen and the compiler gets a proper classpath
 
     OsgiKeys.exportPackage := osgiExport(scalaVersion.value, version.value),
@@ -76,7 +70,7 @@ lazy val root = (project in file(".")).
 
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test",
 
-    mimaPreviousVersion := None,
+    scalaModuleMimaPreviousVersion := None,
 
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-a"),
 
@@ -119,23 +113,26 @@ lazy val root = (project in file(".")).
     },
 
     publishArtifact in packageDoc := !disableDocs
-  ).
-  settings(
-    (inConfig(JavaDoc)(Defaults.configSettings) ++ (if (disableDocs) Nil else Seq(
-      packageDoc in Compile := (packageDoc in JavaDoc).value,
-      sources in JavaDoc := {
-        val allJavaSources =
-          (target.value / "java" ** "*.java").get ++
-            (sources in Compile).value.filter(_.getName.endsWith(".java"))
-        allJavaSources.filterNot(_.getName.contains("FuturesConvertersImpl.java")) // this file triggers bugs in genjavadoc
-      },
-      javacOptions in JavaDoc := Seq(),
-      artifactName in packageDoc in JavaDoc := ((sv, mod, art) => "" + mod.name + "_" + sv.binary + "-" + mod.revision + "-javadoc.jar"),
-      libraryDependencies += compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.13" cross CrossVersion.full),
-      scalacOptions in Compile += "-P:genjavadoc:out=" + (target.value / "java")
-    ))): _*
-  ).
-  settings(
+  )
+  .settings(
+    inConfig(JavaDoc)(Defaults.configSettings) ++ {
+      if (disableDocs) Nil
+      else Seq(
+        packageDoc in Compile := (packageDoc in JavaDoc).value,
+        sources in JavaDoc := {
+          val allJavaSources =
+            (target.value / "java" ** "*.java").get ++
+              (sources in Compile).value.filter(_.getName.endsWith(".java"))
+          allJavaSources.filterNot(_.getName.contains("FuturesConvertersImpl.java")) // this file triggers bugs in genjavadoc
+        },
+        javacOptions in JavaDoc := Seq(),
+        artifactName in packageDoc in JavaDoc := ((sv, mod, art) => "" + mod.name + "_" + sv.binary + "-" + mod.revision + "-javadoc.jar"),
+        libraryDependencies += compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.13" cross CrossVersion.full),
+        scalacOptions in Compile += "-P:genjavadoc:out=" + (target.value / "java")
+      )
+    }
+  )
+  .settings(
     initialCommands :=
     """|import scala.concurrent._
        |import ExecutionContext.Implicits.global
