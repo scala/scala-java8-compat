@@ -52,7 +52,7 @@ lazy val fnGen = (project in file("fnGen"))
 
 lazy val scalaJava8Compat = (project in file("."))
   .settings(ScalaModulePlugin.scalaModuleSettings)
-  .settings(ScalaModulePlugin.scalaModuleSettingsJVM)
+  .settings(ScalaModulePlugin.scalaModuleOsgiSettings)
   .settings(commonSettings)
   .settings(
     name := "scala-java8-compat"
