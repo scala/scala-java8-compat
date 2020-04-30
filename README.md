@@ -5,6 +5,8 @@ A Java 8 compatibility kit for Scala.
 
 The API is currently still experimental: we do not yet guarantee source or binary compatibility with future releases.
 
+Scaladoc is [here](https://javadoc.io/doc/org.scala-lang.modules/scala-java8-compat_2.13/latest/index.html).
+
 ## Functional Interfaces for Scala functions
 
 A set of [Functional Interfaces](https://docs.oracle.com/javase/8/docs/api/java/lang/FunctionalInterface.html)
@@ -283,5 +285,3 @@ import scala.concurrent.duration.FiniteDuration;
 DurationConverters.toScala(Duration.of(5, ChronoUnit.SECONDS));
 DurationConverters.toJava(FiniteDuration.create(5, TimeUnit.SECONDS));
 ```
-
-
