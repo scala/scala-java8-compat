@@ -5,7 +5,7 @@ A Java 8 compatibility kit for Scala.
 
 The API is currently still experimental: we do not yet guarantee source or binary compatibility with future releases.
 
-Scaladoc is [here](https://javadoc.io/doc/org.scala-lang.modules/scala-java8-compat_2.13/latest/index.html).
+Javadoc is [here](https://javadoc.io/doc/org.scala-lang.modules/scala-java8-compat_2.13/latest/index.html).
 
 ## Functional Interfaces for Scala functions
 
