@@ -93,6 +93,8 @@ class Example {
 
 ## Converters between `scala.concurrent` and `java.util.concurrent`
 
+Conversion between Java's concurrency primitives (`CompletionStage` and `CompletableFuture`) and the Scala concurrency primitives (`Promise` and `Future`) is enabled with `scala.compat.java8.FutureConverters` singleton object:
+
  - [API](src/main/scala/scala/compat/java8/FutureConverters.scala)
  - [Test Cases](src/test/java/scala/compat/java8/FutureConvertersTest.java)
 
