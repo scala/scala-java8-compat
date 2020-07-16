@@ -66,7 +66,7 @@ lazy val scalaJava8Compat = (project in file("."))
 
     libraryDependencies += "junit" % "junit" % "4.13" % "test",
 
-    libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.10" % "test",
+    libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.11" % "test",
 
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test",
 
