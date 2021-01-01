@@ -65,17 +65,11 @@ lazy val scalaJava8Compat = (project in file("."))
 
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test",
 
-    mimaBinaryIssueFilters ++= {
-      import com.typesafe.tools.mima.core._, ProblemFilters._
-      Seq(
-        // bah
-        exclude[IncompatibleSignatureProblem]("*"),
-        // mysterious -- see scala/scala-java8-compat#211
-        exclude[DirectMissingMethodProblem  ]("scala.compat.java8.Priority1FunctionConverters.enrichAsJavaIntFunction"),
-        exclude[ReversedMissingMethodProblem]("scala.compat.java8.Priority1FunctionConverters.enrichAsJavaIntFunction"),
-        exclude[DirectMissingMethodProblem  ]("scala.compat.java8.FunctionConverters.package.enrichAsJavaIntFunction" ),
-        exclude[ReversedMissingMethodProblem]("scala.compat.java8.FunctionConverters.package.enrichAsJavaIntFunction" ),
-      )
+    // see https://github.com/scala/scala-java8-compat/issues/247
+    versionPolicyPreviousVersions := versionPolicyPreviousVersions.value.flatMap {
+      case VersionNumber(Seq(0, _*), _, _) => Nil
+      case VersionNumber(Seq(1, 0, n, _*), _, _) if n <= 1 => Nil
+      case v => Seq(v)
     },
 
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-a"),
