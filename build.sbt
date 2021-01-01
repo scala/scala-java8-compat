@@ -65,8 +65,6 @@ lazy val scalaJava8Compat = (project in file("."))
     scalaModuleAutomaticModuleName := Some("scala.compat.java8"),
   )
   .settings(
-    fork := true, // This must be set so that runner task is forked when it runs fnGen and the compiler gets a proper classpath
-
     OsgiKeys.exportPackage := osgiExport(scalaVersion.value, version.value),
 
     OsgiKeys.privatePackage := List("scala.concurrent.java8.*"),
@@ -93,14 +91,9 @@ lazy val scalaJava8Compat = (project in file("."))
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-a"),
 
     (Compile / sourceGenerators) += Def.task {
-      val out = (Compile / sourceManaged).value
-      if (!out.exists) IO.createDirectory(out)
-      val canon = out.getCanonicalPath
-      val args = (new File(canon, "FunctionConverters.scala")).toString :: Nil
-      val runTarget = (fnGen / Compile / mainClass).value getOrElse "No main class defined for function conversion generator"
-      val classPath = (fnGen / Compile / fullClasspath).value
-      runner.value.run(runTarget, classPath.files, args, streams.value.log)
-      (out ** "*.scala").get
+      val f = (Compile / sourceManaged).value / "FunctionConverters.scala"
+      IO.write(f, WrapFnGen.code)
+      Seq(f)
     }.taskValue,
 
     Compile / sourceGenerators += Def.task {
