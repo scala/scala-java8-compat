@@ -46,16 +46,6 @@ lazy val commonSettings = Seq(
   },
 )
 
-lazy val fnGen = (project in file("fnGen"))
-  .settings(commonSettings)
-  .settings(
-    crossScalaVersions := Seq("2.12.15"),
-    scalaVersion := crossScalaVersions.value.head,
-    run / fork := true,  // Needed if you run this project directly
-    libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-    libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
-  )
-
 lazy val scalaJava8Compat = (project in file("."))
   .settings(ScalaModulePlugin.scalaModuleSettings)
   .settings(ScalaModulePlugin.scalaModuleOsgiSettings)
