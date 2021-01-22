@@ -296,7 +296,7 @@ object CodeGen {
   private val copyright =
     """
     |/*
-    | * Copyright (C) 2012-2016 Lightbend Inc. <https://www.lightbend.com>
+    | * Copyright (C) Lightbend Inc. <https://www.lightbend.com>
     | */""".stripMargin.trim
 
   private def function0SpecMethods = {
