@@ -125,7 +125,7 @@ lazy val scalaJava8Compat = (project in file("."))
               (sources in Compile).value.filter(_.getName.endsWith(".java"))
           allJavaSources.filterNot(_.getName.contains("FuturesConvertersImpl.java")) // this file triggers bugs in genjavadoc
         },
-        javacOptions in JavaDoc := Seq(),
+        javacOptions in JavaDoc := Seq("-Xdoclint:none"),
         artifactName in packageDoc in JavaDoc := ((sv, mod, art) => "" + mod.name + "_" + sv.binary + "-" + mod.revision + "-javadoc.jar"),
         libraryDependencies += compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.16" cross CrossVersion.full),
         scalacOptions in Compile += "-P:genjavadoc:out=" + (target.value / "java")
