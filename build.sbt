@@ -64,7 +64,7 @@ lazy val scalaJava8Compat = (project in file("."))
 
     OsgiKeys.privatePackage := List("scala.concurrent.java8.*"),
 
-    libraryDependencies += "junit" % "junit" % "4.13.1" % "test",
+    libraryDependencies += "junit" % "junit" % "4.13.2" % "test",
 
     libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.11" % "test",
 
