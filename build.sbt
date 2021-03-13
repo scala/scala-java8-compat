@@ -18,6 +18,9 @@ def osgiExport(scalaVersion: String, version: String) = {
   }) ++ Seq(s"scala.compat.java8.*;version=${version}")
 }
 
+ThisBuild / versionScheme := Some("early-semver")
+ThisBuild / versionPolicyIntention := Compatibility.BinaryAndSourceCompatible
+
 lazy val commonSettings = Seq(
   scalacOptions ++= Seq("-feature", "-deprecation", "-unchecked"),
 
@@ -70,7 +73,23 @@ lazy val scalaJava8Compat = (project in file("."))
 
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test",
 
-    scalaModuleMimaPreviousVersion := None,
+    // we're still in 0.x land so we could choose to break bincompat,
+    // but let's at least be aware when we're doing it. also we should
+    // think about going 1.0, it's been a while
+    scalaModuleMimaPreviousVersion := Some("0.9.1"),
+
+    mimaBinaryIssueFilters ++= {
+      import com.typesafe.tools.mima.core._, ProblemFilters._
+      Seq(
+        // bah
+        exclude[IncompatibleSignatureProblem]("*"),
+        // mysterious -- see scala/scala-java8-compat#211
+        exclude[DirectMissingMethodProblem  ]("scala.compat.java8.Priority1FunctionConverters.enrichAsJavaIntFunction"),
+        exclude[ReversedMissingMethodProblem]("scala.compat.java8.Priority1FunctionConverters.enrichAsJavaIntFunction"),
+        exclude[DirectMissingMethodProblem  ]("scala.compat.java8.FunctionConverters.package.enrichAsJavaIntFunction" ),
+        exclude[ReversedMissingMethodProblem]("scala.compat.java8.FunctionConverters.package.enrichAsJavaIntFunction" ),
+      )
+    },
 
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-a"),
 
