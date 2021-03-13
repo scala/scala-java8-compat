@@ -78,6 +78,19 @@ lazy val scalaJava8Compat = (project in file("."))
     // think about going 1.0, it's been a while
     scalaModuleMimaPreviousVersion := Some("0.9.1"),
 
+    mimaBinaryIssueFilters ++= {
+      import com.typesafe.tools.mima.core._, ProblemFilters._
+      Seq(
+        // bah
+        exclude[IncompatibleSignatureProblem]("*"),
+        // mysterious -- see scala/scala-java8-compat#211
+        exclude[DirectMissingMethodProblem  ]("scala.compat.java8.Priority1FunctionConverters.enrichAsJavaIntFunction"),
+        exclude[ReversedMissingMethodProblem]("scala.compat.java8.Priority1FunctionConverters.enrichAsJavaIntFunction"),
+        exclude[DirectMissingMethodProblem  ]("scala.compat.java8.FunctionConverters.package.enrichAsJavaIntFunction" ),
+        exclude[ReversedMissingMethodProblem]("scala.compat.java8.FunctionConverters.package.enrichAsJavaIntFunction" ),
+      )
+    },
+
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-a"),
 
     (sourceGenerators in Compile) += Def.task {
