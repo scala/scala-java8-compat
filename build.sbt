@@ -27,9 +27,9 @@ lazy val commonSettings = Seq(
   Compile / unmanagedSourceDirectories ++= {
     (Compile / unmanagedSourceDirectories).value.flatMap { dir =>
       CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, 13)) => Seq(file(dir.getPath ++ "-2.13+"))
         case Some((2, 11)) => Seq(file(dir.getPath ++ "-2.13-"), file(dir.getPath ++ "-2.11"))
-        case _             => Seq(file(dir.getPath ++ "-2.13-"))
+        case Some((2, 12)) => Seq(file(dir.getPath ++ "-2.13-"))
+        case _             => Seq(file(dir.getPath ++ "-2.13+"))
       }
     }
   },
@@ -37,9 +37,9 @@ lazy val commonSettings = Seq(
   Test / unmanagedSourceDirectories ++= {
     (Test / unmanagedSourceDirectories).value.flatMap { dir =>
       CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, 13)) => Seq(file(dir.getPath ++ "-2.13+"))
         case Some((2, 11)) => Seq(file(dir.getPath ++ "-2.13-"), file(dir.getPath ++ "-2.11"))
-        case _             => Seq(file(dir.getPath ++ "-2.13-"))
+        case Some((2, 12)) => Seq(file(dir.getPath ++ "-2.13-"))
+        case _             => Seq(file(dir.getPath ++ "-2.13+"))
       }
     }
   },
@@ -48,6 +48,8 @@ lazy val commonSettings = Seq(
 lazy val fnGen = (project in file("fnGen"))
   .settings(commonSettings)
   .settings(
+    crossScalaVersions := Seq("2.12.13"),
+    scalaVersion := crossScalaVersions.value.head,
     run / fork := true,  // Needed if you run this project directly
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
     libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
@@ -73,10 +75,11 @@ lazy val scalaJava8Compat = (project in file("."))
 
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test",
 
-    // we're still in 0.x land so we could choose to break bincompat,
-    // but let's at least be aware when we're doing it. also we should
-    // think about going 1.0, it's been a while
-    scalaModuleMimaPreviousVersion := Some("0.9.1"),
+    scalaModuleMimaPreviousVersion := {
+      // pending resolution of https://github.com/scalacenter/sbt-version-policy/issues/62
+      if (isDotty.value) None
+      else Some("0.9.1")
+    },
 
     mimaBinaryIssueFilters ++= {
       import com.typesafe.tools.mima.core._, ProblemFilters._
@@ -146,8 +149,14 @@ lazy val scalaJava8Compat = (project in file("."))
         },
         JavaDoc / javacOptions := Seq("-Xdoclint:none"),
         JavaDoc / packageDoc / artifactName := ((sv, mod, art) => "" + mod.name + "_" + sv.binary + "-" + mod.revision + "-javadoc.jar"),
-        libraryDependencies += compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.16" cross CrossVersion.full),
-        Compile / scalacOptions += "-P:genjavadoc:out=" + (target.value / "java")
+        libraryDependencies ++= (
+          if (isDotty.value) Seq()
+          else Seq(compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.16" cross CrossVersion.full))
+        ),
+        Compile / scalacOptions ++= (
+          if (isDotty.value) Seq()
+          else Seq(s"""-P:genjavadoc:out=${target.value / "java"}""")
+        ),
       )
     }
   )
