@@ -24,8 +24,8 @@ ThisBuild / versionPolicyIntention := Compatibility.BinaryAndSourceCompatible
 lazy val commonSettings = Seq(
   scalacOptions ++= Seq("-feature", "-deprecation", "-unchecked"),
 
-  unmanagedSourceDirectories in Compile ++= {
-    (unmanagedSourceDirectories in Compile).value.flatMap { dir =>
+  Compile / unmanagedSourceDirectories ++= {
+    (Compile / unmanagedSourceDirectories).value.flatMap { dir =>
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, 13)) => Seq(file(dir.getPath ++ "-2.13+"))
         case Some((2, 11)) => Seq(file(dir.getPath ++ "-2.13-"), file(dir.getPath ++ "-2.11"))
@@ -34,8 +34,8 @@ lazy val commonSettings = Seq(
     }
   },
 
-  unmanagedSourceDirectories in Test ++= {
-    (unmanagedSourceDirectories in Test).value.flatMap { dir =>
+  Test / unmanagedSourceDirectories ++= {
+    (Test / unmanagedSourceDirectories).value.flatMap { dir =>
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, 13)) => Seq(file(dir.getPath ++ "-2.13+"))
         case Some((2, 11)) => Seq(file(dir.getPath ++ "-2.13-"), file(dir.getPath ++ "-2.11"))
@@ -48,7 +48,7 @@ lazy val commonSettings = Seq(
 lazy val fnGen = (project in file("fnGen"))
   .settings(commonSettings)
   .settings(
-    fork in run := true,  // Needed if you run this project directly
+    run / fork := true,  // Needed if you run this project directly
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
     libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
   )
@@ -93,19 +93,19 @@ lazy val scalaJava8Compat = (project in file("."))
 
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-a"),
 
-    (sourceGenerators in Compile) += Def.task {
-      val out = (sourceManaged in Compile).value
+    (Compile / sourceGenerators) += Def.task {
+      val out = (Compile / sourceManaged).value
       if (!out.exists) IO.createDirectory(out)
       val canon = out.getCanonicalPath
       val args = (new File(canon, "FunctionConverters.scala")).toString :: Nil
-      val runTarget = (mainClass in Compile in fnGen).value getOrElse "No main class defined for function conversion generator"
-      val classPath = (fullClasspath in Compile in fnGen).value
+      val runTarget = (fnGen / Compile / mainClass).value getOrElse "No main class defined for function conversion generator"
+      val classPath = (fnGen / Compile / fullClasspath).value
       runner.value.run(runTarget, classPath.files, args, streams.value.log)
       (out ** "*.scala").get
     }.taskValue,
 
-    sourceGenerators in Compile += Def.task {
-      val dir = (sourceManaged in Compile).value
+    Compile / sourceGenerators += Def.task {
+      val dir = (Compile / sourceManaged).value
       val write = jwrite(dir) _
       if(scalaVersion.value.startsWith("2.11.")) {
         Seq(write("JFunction", CodeGen.factory)) ++
@@ -118,8 +118,8 @@ lazy val scalaJava8Compat = (project in file("."))
       } else CodeGen.create212.map(write.tupled)
     }.taskValue,
 
-    sourceGenerators in Test += Def.task {
-      Seq(jwrite((sourceManaged in Test).value)("TestApi", CodeGen.testApi))
+    Test / sourceGenerators += Def.task {
+      Seq(jwrite((Test / sourceManaged).value)("TestApi", CodeGen.testApi))
     }.taskValue,
 
     initialize := {
@@ -131,23 +131,23 @@ lazy val scalaJava8Compat = (project in file("."))
         sys.error("Java 8 or higher is required for this project.")
     },
 
-    publishArtifact in packageDoc := !disableDocs
+    packageDoc / publishArtifact := !disableDocs
   )
   .settings(
     inConfig(JavaDoc)(Defaults.configSettings) ++ {
       if (disableDocs) Nil
       else Seq(
-        packageDoc in Compile := (packageDoc in JavaDoc).value,
-        sources in JavaDoc := {
+        Compile / packageDoc := (JavaDoc / packageDoc).value,
+        JavaDoc / sources := {
           val allJavaSources =
             (target.value / "java" ** "*.java").get ++
-              (sources in Compile).value.filter(_.getName.endsWith(".java"))
+              (Compile / sources).value.filter(_.getName.endsWith(".java"))
           allJavaSources.filterNot(_.getName.contains("FuturesConvertersImpl.java")) // this file triggers bugs in genjavadoc
         },
-        javacOptions in JavaDoc := Seq("-Xdoclint:none"),
-        artifactName in packageDoc in JavaDoc := ((sv, mod, art) => "" + mod.name + "_" + sv.binary + "-" + mod.revision + "-javadoc.jar"),
+        JavaDoc / javacOptions := Seq("-Xdoclint:none"),
+        JavaDoc / packageDoc / artifactName := ((sv, mod, art) => "" + mod.name + "_" + sv.binary + "-" + mod.revision + "-javadoc.jar"),
         libraryDependencies += compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.16" cross CrossVersion.full),
-        scalacOptions in Compile += "-P:genjavadoc:out=" + (target.value / "java")
+        Compile / scalacOptions += "-P:genjavadoc:out=" + (target.value / "java")
       )
     }
   )
