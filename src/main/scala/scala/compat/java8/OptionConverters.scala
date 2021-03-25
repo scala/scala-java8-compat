@@ -58,30 +58,33 @@ object OptionConverters {
     /** Converts from `Option` to a manually specialized variant `That` */
     def fromScala(o: Option[A]): That
   }
-  
+
   /** Implementation of creation of `OptionalDouble` from `Option[Double]` or `Optional[Double]`*/
-  implicit val specializer_OptionalDouble = new SpecializerOfOptions[Double, OptionalDouble] {
-    /** Creates an `OptionalDouble` from `Optional[Double]` */
-    def fromJava(o: Optional[Double]): OptionalDouble = if (o.isPresent) OptionalDouble.of(o.get) else OptionalDouble.empty
-    /** Creates an `OptionalDouble` from `Option[Double]` */
-    def fromScala(o: Option[Double]): OptionalDouble = o match { case Some(d) => OptionalDouble.of(d); case _ => OptionalDouble.empty }
-  }
-  
+  implicit val specializer_OptionalDouble: SpecializerOfOptions[Double, OptionalDouble] =
+    new SpecializerOfOptions[Double, OptionalDouble] {
+      /** Creates an `OptionalDouble` from `Optional[Double]` */
+      def fromJava(o: Optional[Double]): OptionalDouble = if (o.isPresent) OptionalDouble.of(o.get) else OptionalDouble.empty
+      /** Creates an `OptionalDouble` from `Option[Double]` */
+      def fromScala(o: Option[Double]): OptionalDouble = o match { case Some(d) => OptionalDouble.of(d); case _ => OptionalDouble.empty }
+    }
+
   /** Implementation of creation of `OptionalInt` from `Option[Int]` or `Optional[Int]`*/
-  implicit val specializer_OptionalInt = new SpecializerOfOptions[Int, OptionalInt] {
-    /** Creates an `OptionalInt` from `Optional[Int]` */
-    def fromJava(o: Optional[Int]): OptionalInt = if (o.isPresent) OptionalInt.of(o.get) else OptionalInt.empty
-    /** Creates an `OptionalInt` from `Option[Int]` */
-    def fromScala(o: Option[Int]): OptionalInt = o match { case Some(d) => OptionalInt.of(d); case _ => OptionalInt.empty }
-  }
-  
+  implicit val specializer_OptionalInt: SpecializerOfOptions[Int, OptionalInt] =
+    new SpecializerOfOptions[Int, OptionalInt] {
+      /** Creates an `OptionalInt` from `Optional[Int]` */
+      def fromJava(o: Optional[Int]): OptionalInt = if (o.isPresent) OptionalInt.of(o.get) else OptionalInt.empty
+      /** Creates an `OptionalInt` from `Option[Int]` */
+      def fromScala(o: Option[Int]): OptionalInt = o match { case Some(d) => OptionalInt.of(d); case _ => OptionalInt.empty }
+    }
+
   /** Implementation of creation of `OptionalLong` from `Option[Long]` or `Optional[Long]`*/
-  implicit val specializer_OptionalLong = new SpecializerOfOptions[Long, OptionalLong] {
-    /** Creates an `OptionalLong` from `Optional[Long]` */
-    def fromJava(o: Optional[Long]): OptionalLong = if (o.isPresent) OptionalLong.of(o.get) else OptionalLong.empty
-    /** Creates an `OptionalLong` from `Option[Long]` */
-    def fromScala(o: Option[Long]): OptionalLong = o match { case Some(d) => OptionalLong.of(d); case _ => OptionalLong.empty }
-  }
+  implicit val specializer_OptionalLong: SpecializerOfOptions[Long, OptionalLong] =
+    new SpecializerOfOptions[Long, OptionalLong] {
+      /** Creates an `OptionalLong` from `Optional[Long]` */
+      def fromJava(o: Optional[Long]): OptionalLong = if (o.isPresent) OptionalLong.of(o.get) else OptionalLong.empty
+      /** Creates an `OptionalLong` from `Option[Long]` */
+      def fromScala(o: Option[Long]): OptionalLong = o match { case Some(d) => OptionalLong.of(d); case _ => OptionalLong.empty }
+    }
 
   /** Provides conversions from `java.util.Optional` to Scala `Option` or primitive `java.util.Optional` types */
   implicit class RichOptionalGeneric[A](val underlying: java.util.Optional[A]) extends AnyVal {
@@ -90,7 +93,7 @@ object OptionConverters {
     /** Create a specialized primitive variant of this generic `Optional`, if an appropriate one exists */
     def asPrimitive[That](implicit specOp: SpecializerOfOptions[A, That]): That = specOp.fromJava(underlying)
   }
-  
+
   /** Provides conversions from `scala.Option` to Java `Optional` types, either generic or primitive */
   implicit class RichOptionForJava8[A](val underlying: Option[A]) extends AnyVal {
     /** Create a `java.util.Optional` version of this `Option` (not specialized) */
@@ -98,7 +101,7 @@ object OptionConverters {
     /** Create a specialized primitive `java.util.Optional` type, if an appropriate one exists */
     def asPrimitive[That](implicit specOp: SpecializerOfOptions[A, That]): That = specOp.fromScala(underlying)
   }
-  
+
   /** Provides conversions from `java.util.OptionalDouble` to the generic `Optional` and Scala `Option` */
   implicit class RichOptionalDouble(val underlying: OptionalDouble) extends AnyVal {
     /** Create a `scala.Option` version of this `OptionalDouble` */
@@ -106,7 +109,7 @@ object OptionConverters {
     /** Create a generic `java.util.Optional` version of this `OptionalDouble` */
     def asGeneric: Optional[Double] = if (underlying.isPresent) Optional.of(underlying.getAsDouble) else Optional.empty[Double]
   }
-  
+
   /** Provides conversions from `java.util.OptionalInt` to the generic `Optional` and Scala `Option` */
   implicit class RichOptionalInt(val underlying: OptionalInt) extends AnyVal {
     /** Create a `scala.Option` version of this `OptionalInt` */
@@ -114,7 +117,7 @@ object OptionConverters {
     /** Create a generic `java.util.Optional` version of this `OptionalInt` */
     def asGeneric: Optional[Int] = if (underlying.isPresent) Optional.of(underlying.getAsInt) else Optional.empty[Int]
   }
-  
+
   /** Provides conversions from `java.util.OptionalLong` to the generic `Optional` and Scala `Option` */
   implicit class RichOptionalLong(val underlying: OptionalLong) extends AnyVal {
     /** Create a `scala.Option` version of this `OptionalLong` */
@@ -122,10 +125,10 @@ object OptionConverters {
     /** Create a generic `java.util.Optional` version of this `OptionalLong` */
     def asGeneric: Optional[Long] = if (underlying.isPresent) Optional.of(underlying.getAsLong) else Optional.empty[Long]
   }
-  
+
   /** Conversion from Scala `Option` to Java `Optional` without using implicits, for convenient use from Java. */
   final def toJava[A](o: Option[A]): Optional[A] = o match { case Some(a) => Optional.ofNullable(a); case _ => Optional.empty[A] }
-  
+
   /** Conversion from Java `Optional` to Scala `Option` without using implicits, for convenient use from Java */
   final def toScala[A](o: Optional[A]): Option[A] = if (o.isPresent) Some(o.get) else None
 
