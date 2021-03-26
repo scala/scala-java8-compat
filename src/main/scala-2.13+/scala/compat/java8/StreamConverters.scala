@@ -86,7 +86,7 @@ trait StreamExtensions {
 
   implicit class MapHasParKeyValueStream[K, V, CC[X, Y] <: collection.MapOps[X, Y, collection.Map, _]](cc: CC[K, V]) {
     private type MapOpsWithEfficientKeyStepper = collection.MapOps[K, V, collection.Map, _] { def keyStepper[S <: Stepper[_]](implicit shape : StepperShape[K, S]) : S with EfficientSplit }
-    private type MapOpsWithEfficientValueStepper = collection.MapOps[K, V, collection.Map, _] { def valueStepper[V1 >: V, S <: Stepper[_]](implicit shape : StepperShape[V1, S]) : S with EfficientSplit }
+    private type MapOpsWithEfficientValueStepper = collection.MapOps[K, V, collection.Map, _] { def valueStepper[S <: Stepper[_]](implicit shape : StepperShape[V, S]) : S with EfficientSplit }
     private type MapOpsWithEfficientStepper = collection.MapOps[K, V, collection.Map, _] { def stepper[S <: Stepper[_]](implicit shape : StepperShape[(K, V), S]) : S with EfficientSplit }
 
     /** Create a parallel [[java.util.stream.Stream Java Stream]] for the keys of this map. If
