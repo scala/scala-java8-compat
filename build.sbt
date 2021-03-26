@@ -22,8 +22,6 @@ ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / versionPolicyIntention := Compatibility.BinaryAndSourceCompatible
 
 lazy val commonSettings = Seq(
-  scalacOptions ++= Seq("-feature", "-deprecation", "-unchecked"),
-
   Compile / unmanagedSourceDirectories ++= {
     (Compile / unmanagedSourceDirectories).value.flatMap { dir =>
       CrossVersion.partialVersion(scalaVersion.value) match {
@@ -33,7 +31,6 @@ lazy val commonSettings = Seq(
       }
     }
   },
-
   Test / unmanagedSourceDirectories ++= {
     (Test / unmanagedSourceDirectories).value.flatMap { dir =>
       CrossVersion.partialVersion(scalaVersion.value) match {
