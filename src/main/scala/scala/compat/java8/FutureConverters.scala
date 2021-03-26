@@ -66,7 +66,7 @@ object FutureConverters {
    */
   def toJava[T](f: Future[T]): CompletionStage[T] = {
     f match {
-      case p: P[T] => p.wrapped
+      case p: P[T @unchecked] => p.wrapped
       case _ =>
         val cf = new CF[T](f)
         implicit val ec = InternalCallbackExecutor
