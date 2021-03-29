@@ -75,7 +75,7 @@ lazy val scalaJava8Compat = (project in file("."))
     scalaModuleMimaPreviousVersion := (CrossVersion.partialVersion(scalaVersion.value) match {
       // pending resolution of https://github.com/scalacenter/sbt-version-policy/issues/62
       case Some((3, _)) => None
-      case _            => Some("0.9.1")
+      case _            => Some("1.0.0-RC1")
     }),
 
     mimaBinaryIssueFilters ++= {
