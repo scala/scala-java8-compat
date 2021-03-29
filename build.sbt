@@ -72,11 +72,11 @@ lazy val scalaJava8Compat = (project in file("."))
 
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test",
 
-    scalaModuleMimaPreviousVersion := {
+    scalaModuleMimaPreviousVersion := (CrossVersion.partialVersion(scalaVersion.value) match {
       // pending resolution of https://github.com/scalacenter/sbt-version-policy/issues/62
-      if (isDotty.value) None
-      else Some("0.9.1")
-    },
+      case Some((3, _)) => None
+      case _            => Some("0.9.1")
+    }),
 
     mimaBinaryIssueFilters ++= {
       import com.typesafe.tools.mima.core._, ProblemFilters._
@@ -146,14 +146,14 @@ lazy val scalaJava8Compat = (project in file("."))
         },
         JavaDoc / javacOptions := Seq("-Xdoclint:none"),
         JavaDoc / packageDoc / artifactName := ((sv, mod, art) => "" + mod.name + "_" + sv.binary + "-" + mod.revision + "-javadoc.jar"),
-        libraryDependencies ++= (
-          if (isDotty.value) Seq()
-          else Seq(compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.16" cross CrossVersion.full))
-        ),
-        Compile / scalacOptions ++= (
-          if (isDotty.value) Seq()
-          else Seq(s"""-P:genjavadoc:out=${target.value / "java"}""")
-        ),
+        libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
+          case Some((3, _)) => Seq()
+          case _            => Seq(compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.16" cross CrossVersion.full))
+        }),
+        Compile / scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
+          case Some((3, _)) => Seq()
+          case _            => Seq(s"""-P:genjavadoc:out=${target.value / "java"}""")
+        }),
       )
     }
   )
