@@ -25,7 +25,7 @@ isReleaseJob() {
   fi
 }
 
-projectPrefix=scalaJava8Compat
+projectPrefix=scalaJava8Compat/
 
 verPat="[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9-]+)?"
 tagPat="^v$verPat(#.*)?$"
