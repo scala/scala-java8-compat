@@ -57,7 +57,8 @@ lazy val scalaJava8Compat = (project in file("."))
   .settings(ScalaModulePlugin.scalaModuleOsgiSettings)
   .settings(commonSettings)
   .settings(
-    name := "scala-java8-compat"
+    name := "scala-java8-compat",
+    scalaModuleAutomaticModuleName := Some("scala.compat.java8"),
   )
   .settings(
     fork := true, // This must be set so that runner task is forked when it runs fnGen and the compiler gets a proper classpath
