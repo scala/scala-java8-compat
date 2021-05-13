@@ -1,11 +1,19 @@
 # scala-java8-compat [![Build Status](https://travis-ci.org/scala/scala-java8-compat.svg?branch=master)](https://travis-ci.org/scala/scala-java8-compat) [<img src="https://img.shields.io/maven-central/v/org.scala-lang.modules/scala-java8-compat_2.11.svg?label=latest%20release%20for%202.11"/>](http://search.maven.org/#search%7Cga%7C1%7Cg%3Aorg.scala-lang.modules%20a%3Ascala-java8-compat_2.11) [<img src="https://img.shields.io/maven-central/v/org.scala-lang.modules/scala-java8-compat_2.12.svg?label=latest%20release%20for%202.12"/>](http://search.maven.org/#search%7Cga%7C1%7Cg%3Aorg.scala-lang.modules%20a%3Ascala-java8-compat_2.12) [<img src="https://img.shields.io/maven-central/v/org.scala-lang.modules/scala-java8-compat_2.13.svg?label=latest%20release%20for%202.13"/>](http://search.maven.org/#search%7Cga%7C1%7Cg%3Aorg.scala-lang.modules%20a%3Ascala-java8-compat_2.13)
 
 
-A Java 8 compatibility kit for Scala.
-
-The API is currently still experimental: we do not yet guarantee source or binary compatibility with future releases.
+A Java 8 compatibility kit for Scala 2.12 and 2.11.
 
 Javadoc is [here](https://javadoc.io/doc/org.scala-lang.modules/scala-java8-compat_2.13/latest/index.html).
+
+## Do you need this?
+
+If you are using Scala 2.13 or newer only, then don't use this library!  Use the classes under `scala.jdk` instead; they were added to the standard library in 2.13.
+
+We do publish 2.13 and 3.0 artifacts of scala-java8-compat, but they're only intended to be used in projects which crossbuild with 2.12 and/or 2.11.
+
+## Maintenance status
+
+This library is community-maintained.  (The Scala team at Lightbend provides infrastructure and oversight.)
 
 ## Functional Interfaces for Scala functions
 
