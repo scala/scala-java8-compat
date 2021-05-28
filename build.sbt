@@ -45,7 +45,7 @@ lazy val commonSettings = Seq(
 lazy val fnGen = (project in file("fnGen"))
   .settings(commonSettings)
   .settings(
-    crossScalaVersions := Seq("2.12.13"),
+    crossScalaVersions := Seq("2.12.14"),
     scalaVersion := crossScalaVersions.value.head,
     run / fork := true,  // Needed if you run this project directly
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
