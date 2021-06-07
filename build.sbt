@@ -73,11 +73,7 @@ lazy val scalaJava8Compat = (project in file("."))
 
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test",
 
-    scalaModuleMimaPreviousVersion := (CrossVersion.partialVersion(scalaVersion.value) match {
-      // pending resolution of https://github.com/scalacenter/sbt-version-policy/issues/62
-      case Some((3, _)) => None
-      case _            => Some("1.0.0-RC1")
-    }),
+    scalaModuleMimaPreviousVersion := Some("1.0.0"),
 
     mimaBinaryIssueFilters ++= {
       import com.typesafe.tools.mima.core._, ProblemFilters._
