@@ -45,7 +45,7 @@ lazy val commonSettings = Seq(
 lazy val fnGen = (project in file("fnGen"))
   .settings(commonSettings)
   .settings(
-    crossScalaVersions := Seq("2.12.13"),
+    crossScalaVersions := Seq("2.12.14"),
     scalaVersion := crossScalaVersions.value.head,
     run / fork := true,  // Needed if you run this project directly
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
@@ -145,7 +145,7 @@ lazy val scalaJava8Compat = (project in file("."))
         JavaDoc / packageDoc / artifactName := ((sv, mod, art) => "" + mod.name + "_" + sv.binary + "-" + mod.revision + "-javadoc.jar"),
         libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
           case Some((3, _)) => Seq()
-          case _            => Seq(compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.16" cross CrossVersion.full))
+          case _            => Seq(compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.17" cross CrossVersion.full))
         }),
         Compile / scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
           case Some((3, _)) => Seq()
