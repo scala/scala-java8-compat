@@ -14,6 +14,14 @@ scala:
 env:
   - ADOPTOPENJDK=8
   - ADOPTOPENJDK=11
+  - ADOPTOPENJDK=17
+
+# because it hits scala/bug#12419 which will almost certainly
+# never be fixed in the 2.11.x series
+jobs:
+  exclude:
+    - scala: 2.11.12
+      env: ADOPTOPENJDK=17
 
 install:
   - git fetch --tags # get all tags for sbt-dynver
