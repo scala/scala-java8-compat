@@ -1,3 +1,6 @@
+ThisBuild / resolvers += "scala-integration" at
+  "https://scala-ci.typesafe.com/artifactory/scala-integration/"
+
 val disableDocs =
   sys.props("nodocs") == "true" ||
     // on jdk 11 https://github.com/scala/scala-java8-compat/issues/160, seems to fail the build (not on 8)
