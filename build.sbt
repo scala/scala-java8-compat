@@ -18,10 +18,8 @@ def osgiExport(scalaVersion: String, version: String) = {
   }) ++ Seq(s"scala.compat.java8.*;version=${version}")
 }
 
-ThisBuild / versionScheme := Some("early-semver")
-ThisBuild / versionPolicyIntention := Compatibility.BinaryAndSourceCompatible
-
 lazy val commonSettings = Seq(
+  versionPolicyIntention := Compatibility.BinaryAndSourceCompatible,
   Compile / unmanagedSourceDirectories ++= {
     (Compile / unmanagedSourceDirectories).value.flatMap { dir =>
       CrossVersion.partialVersion(scalaVersion.value) match {
@@ -72,8 +70,6 @@ lazy val scalaJava8Compat = (project in file("."))
     libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.12.0" % "test",
 
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test",
-
-    scalaModuleMimaPreviousVersion := Some("1.0.0"),
 
     mimaBinaryIssueFilters ++= {
       import com.typesafe.tools.mima.core._, ProblemFilters._
