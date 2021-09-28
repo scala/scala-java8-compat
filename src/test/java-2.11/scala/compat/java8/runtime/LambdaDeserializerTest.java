@@ -13,6 +13,7 @@
 package scala.compat.java8.runtime;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
 
 import java.io.Serializable;
@@ -26,26 +27,33 @@ import java.util.HashMap;
 public final class LambdaDeserializerTest {
     private LambdaHost lambdaHost = new LambdaHost();
 
+    // We skip most tests on Java 17+ because of https://github.com/scala/bug/issues/12419
+    // which we only fixed for 2.12+
+
     @Test
     public void serializationPrivate() {
+        Assume.assumeFalse(scala.util.Properties.isJavaAtLeast("17"));
         F1<Boolean, String> f1 = lambdaHost.lambdaBackedByPrivateImplMethod();
         Assert.assertEquals(f1.apply(true), reconstitute(f1).apply(true));
     }
 
     @Test
     public void serializationStatic() {
+        Assume.assumeFalse(scala.util.Properties.isJavaAtLeast("17"));
         F1<Boolean, String> f1 = lambdaHost.lambdaBackedByStaticImplMethod();
         Assert.assertEquals(f1.apply(true), reconstitute(f1).apply(true));
     }
 
     @Test
     public void serializationVirtualMethodReference() {
+        Assume.assumeFalse(scala.util.Properties.isJavaAtLeast("17"));
         F1<Boolean, String> f1 = lambdaHost.lambdaBackedByVirtualMethodReference();
         Assert.assertEquals(f1.apply(true), reconstitute(f1).apply(true));
     }
 
     @Test
     public void serializationInterfaceMethodReference() {
+        Assume.assumeFalse(scala.util.Properties.isJavaAtLeast("17"));
         F1<I, Object> f1 = lambdaHost.lambdaBackedByInterfaceMethodReference();
         I i = new I() {
         };
@@ -54,18 +62,21 @@ public final class LambdaDeserializerTest {
 
     @Test
     public void serializationStaticMethodReference() {
+        Assume.assumeFalse(scala.util.Properties.isJavaAtLeast("17"));
         F1<Boolean, String> f1 = lambdaHost.lambdaBackedByStaticMethodReference();
         Assert.assertEquals(f1.apply(true), reconstitute(f1).apply(true));
     }
 
     @Test
     public void serializationNewInvokeSpecial() {
+        Assume.assumeFalse(scala.util.Properties.isJavaAtLeast("17"));
         F0<Object> f1 = lambdaHost.lambdaBackedByConstructorCall();
         Assert.assertEquals(f1.apply(), reconstitute(f1).apply());
     }
 
     @Test
     public void uncached() {
+        Assume.assumeFalse(scala.util.Properties.isJavaAtLeast("17"));
         F0<Object> f1 = lambdaHost.lambdaBackedByConstructorCall();
         F0<Object> reconstituted1 = reconstitute(f1);
         F0<Object> reconstituted2 = reconstitute(f1);
@@ -74,6 +85,7 @@ public final class LambdaDeserializerTest {
 
     @Test
     public void cached() {
+        Assume.assumeFalse(scala.util.Properties.isJavaAtLeast("17"));
         HashMap<String, MethodHandle> cache = new HashMap<>();
         F0<Object> f1 = lambdaHost.lambdaBackedByConstructorCall();
         F0<Object> reconstituted1 = reconstitute(f1, cache);
@@ -83,6 +95,7 @@ public final class LambdaDeserializerTest {
 
     @Test
     public void cachedStatic() {
+        Assume.assumeFalse(scala.util.Properties.isJavaAtLeast("17"));
         HashMap<String, MethodHandle> cache = new HashMap<>();
         F1<Boolean, String> f1 = lambdaHost.lambdaBackedByStaticImplMethod();
         // Check that deserialization of a static lambda always returns the
