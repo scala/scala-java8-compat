@@ -18,7 +18,13 @@ def osgiExport(scalaVersion: String, version: String) = {
   }) ++ Seq(s"scala.compat.java8.*;version=${version}")
 }
 
+// shouldn't be necessary anymore after https://github.com/lampepfl/dotty/pull/13498
+// makes it into a release
+ThisBuild / libraryDependencySchemes += "org.scala-lang" %% "scala3-library" % "semver-spec"
+
 lazy val commonSettings = Seq(
+  crossScalaVersions := Seq("2.13.6", "2.12.15", "2.11.12", "3.0.2"),
+  scalaVersion := crossScalaVersions.value.head,
   versionPolicyIntention := Compatibility.BinaryAndSourceCompatible,
   Compile / unmanagedSourceDirectories ++= {
     (Compile / unmanagedSourceDirectories).value.flatMap { dir =>
@@ -141,7 +147,7 @@ lazy val scalaJava8Compat = (project in file("."))
         JavaDoc / packageDoc / artifactName := ((sv, mod, art) => "" + mod.name + "_" + sv.binary + "-" + mod.revision + "-javadoc.jar"),
         libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
           case Some((3, _)) => Seq()
-          case _            => Seq(compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.17" cross CrossVersion.full))
+          case _            => Seq(compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.18" cross CrossVersion.full))
         }),
         Compile / scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
           case Some((3, _)) => Seq()
