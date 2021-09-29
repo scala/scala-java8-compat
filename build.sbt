@@ -130,7 +130,7 @@ lazy val scalaJava8Compat = (project in file("."))
         sys.error("Java 8 or higher is required for this project.")
     },
 
-    packageDoc / publishArtifact := !disableDocs
+    packageDoc / publishArtifact := !disableDocs && !scalaVersion.value.startsWith("3.")
   )
   .settings(
     inConfig(JavaDoc)(Defaults.configSettings) ++ {
