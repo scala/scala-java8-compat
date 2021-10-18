@@ -23,7 +23,7 @@ def osgiExport(scalaVersion: String, version: String) = {
 ThisBuild / libraryDependencySchemes += "org.scala-lang" %% "scala3-library" % "semver-spec"
 
 lazy val commonSettings = Seq(
-  crossScalaVersions := Seq("2.13.6", "2.12.15", "2.11.12", "3.0.2"),
+  crossScalaVersions := Seq("2.13.6", "2.12.15", "2.11.12", "3.1.0"),
   scalaVersion := crossScalaVersions.value.head,
   versionPolicyIntention := Compatibility.BinaryAndSourceCompatible,
   Compile / unmanagedSourceDirectories ++= {
