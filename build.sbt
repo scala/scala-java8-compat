@@ -75,7 +75,7 @@ lazy val scalaJava8Compat = (project in file("."))
 
     libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.12.0" % "test",
 
-    libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test",
+    libraryDependencies += "com.github.sbt" % "junit-interface" % "0.13.2" % "test",
 
     mimaBinaryIssueFilters ++= {
       import com.typesafe.tools.mima.core._, ProblemFilters._
