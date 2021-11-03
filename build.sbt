@@ -23,7 +23,7 @@ def osgiExport(scalaVersion: String, version: String) = {
 ThisBuild / libraryDependencySchemes += "org.scala-lang" %% "scala3-library" % "semver-spec"
 
 lazy val commonSettings = Seq(
-  crossScalaVersions := Seq("2.13.6", "2.12.15", "2.11.12", "3.1.0"),
+  crossScalaVersions := Seq("2.13.7", "2.12.15", "2.11.12", "3.0.2"),
   scalaVersion := crossScalaVersions.value.head,
   versionPolicyIntention := Compatibility.BinaryAndSourceCompatible,
   Compile / unmanagedSourceDirectories ++= {
@@ -46,16 +46,6 @@ lazy val commonSettings = Seq(
   },
 )
 
-lazy val fnGen = (project in file("fnGen"))
-  .settings(commonSettings)
-  .settings(
-    crossScalaVersions := Seq("2.12.15"),
-    scalaVersion := crossScalaVersions.value.head,
-    run / fork := true,  // Needed if you run this project directly
-    libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-    libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value
-  )
-
 lazy val scalaJava8Compat = (project in file("."))
   .settings(ScalaModulePlugin.scalaModuleSettings)
   .settings(ScalaModulePlugin.scalaModuleOsgiSettings)
@@ -65,8 +55,6 @@ lazy val scalaJava8Compat = (project in file("."))
     scalaModuleAutomaticModuleName := Some("scala.compat.java8"),
   )
   .settings(
-    fork := true, // This must be set so that runner task is forked when it runs fnGen and the compiler gets a proper classpath
-
     OsgiKeys.exportPackage := osgiExport(scalaVersion.value, version.value),
 
     OsgiKeys.privatePackage := List("scala.concurrent.java8.*"),
@@ -75,32 +63,21 @@ lazy val scalaJava8Compat = (project in file("."))
 
     libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.12.0" % "test",
 
-    libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test",
+    libraryDependencies += "com.github.sbt" % "junit-interface" % "0.13.2" % "test",
 
-    mimaBinaryIssueFilters ++= {
-      import com.typesafe.tools.mima.core._, ProblemFilters._
-      Seq(
-        // bah
-        exclude[IncompatibleSignatureProblem]("*"),
-        // mysterious -- see scala/scala-java8-compat#211
-        exclude[DirectMissingMethodProblem  ]("scala.compat.java8.Priority1FunctionConverters.enrichAsJavaIntFunction"),
-        exclude[ReversedMissingMethodProblem]("scala.compat.java8.Priority1FunctionConverters.enrichAsJavaIntFunction"),
-        exclude[DirectMissingMethodProblem  ]("scala.compat.java8.FunctionConverters.package.enrichAsJavaIntFunction" ),
-        exclude[ReversedMissingMethodProblem]("scala.compat.java8.FunctionConverters.package.enrichAsJavaIntFunction" ),
-      )
+    // see https://github.com/scala/scala-java8-compat/issues/247
+    versionPolicyPreviousVersions := versionPolicyPreviousVersions.value.flatMap {
+      case VersionNumber(Seq(0, _*), _, _) => Nil
+      case VersionNumber(Seq(1, 0, n, _*), _, _) if n <= 1 => Nil
+      case v => Seq(v)
     },
 
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-a"),
 
     (Compile / sourceGenerators) += Def.task {
-      val out = (Compile / sourceManaged).value
-      if (!out.exists) IO.createDirectory(out)
-      val canon = out.getCanonicalPath
-      val args = (new File(canon, "FunctionConverters.scala")).toString :: Nil
-      val runTarget = (fnGen / Compile / mainClass).value getOrElse "No main class defined for function conversion generator"
-      val classPath = (fnGen / Compile / fullClasspath).value
-      runner.value.run(runTarget, classPath.files, args, streams.value.log)
-      (out ** "*.scala").get
+      val f = (Compile / sourceManaged).value / "FunctionConverters.scala"
+      IO.write(f, WrapFnGen.code)
+      Seq(f)
     }.taskValue,
 
     Compile / sourceGenerators += Def.task {
