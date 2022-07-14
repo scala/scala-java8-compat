@@ -18,14 +18,12 @@ def osgiExport(scalaVersion: String, version: String) = {
   }) ++ Seq(s"scala.compat.java8.*;version=${version}")
 }
 
-// shouldn't be necessary anymore after https://github.com/lampepfl/dotty/pull/13498
-// makes it into a release
-ThisBuild / libraryDependencySchemes += "org.scala-lang" %% "scala3-library" % "semver-spec"
-
 lazy val commonSettings = Seq(
-  crossScalaVersions := Seq("2.13.8", "2.12.16", "2.11.12", "3.0.2"),
+  crossScalaVersions := Seq("2.13.8", "2.12.16", "2.11.12", "3.1.3"),
   scalaVersion := crossScalaVersions.value.head,
-  versionPolicyIntention := Compatibility.BinaryAndSourceCompatible,
+  // we could make this stricter again (BinaryAndSourceCompatible)
+  // after our reference version was built on Scala 3.1.x
+  versionPolicyIntention := Compatibility.BinaryCompatible,
   Compile / unmanagedSourceDirectories ++= {
     (Compile / unmanagedSourceDirectories).value.flatMap { dir =>
       CrossVersion.partialVersion(scalaVersion.value) match {
@@ -72,6 +70,17 @@ lazy val scalaJava8Compat = (project in file("."))
       case v => Seq(v)
     },
 
+    // shouldn't be needed anymore after our reference version is a version
+    // built on Scala 3.1.x
+    mimaBinaryIssueFilters := {
+      import com.typesafe.tools.mima.core.ProblemFilters._
+      import com.typesafe.tools.mima.core._
+      Seq(
+        exclude[IncompatibleSignatureProblem]("scala.compat.java8.*"),
+        exclude[IncompatibleSignatureProblem]("scala.concurrent.java8.*"),
+      ),
+    },
+
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-a"),
 
     (Compile / sourceGenerators) += Def.task {
@@ -106,8 +115,6 @@ lazy val scalaJava8Compat = (project in file("."))
       if (Set("1.5", "1.6", "1.7") contains specVersion)
         sys.error("Java 8 or higher is required for this project.")
     },
-
-    packageDoc / publishArtifact := !disableDocs && !scalaVersion.value.startsWith("3.")
   )
   .settings(
     inConfig(JavaDoc)(Defaults.configSettings) ++ {
