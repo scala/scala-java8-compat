@@ -21,7 +21,9 @@ def osgiExport(scalaVersion: String, version: String) = {
 lazy val commonSettings = Seq(
   crossScalaVersions := Seq("2.13.8", "2.12.16", "2.11.12", "3.1.3"),
   scalaVersion := crossScalaVersions.value.head,
-  versionPolicyIntention := Compatibility.BinaryAndSourceCompatible,
+  // we could make this stricter again (BinaryAndSourceCompatible)
+  // after our reference version was built on Scala 3.1.x
+  versionPolicyIntention := Compatibility.BinaryCompatible,
   Compile / unmanagedSourceDirectories ++= {
     (Compile / unmanagedSourceDirectories).value.flatMap { dir =>
       CrossVersion.partialVersion(scalaVersion.value) match {
@@ -66,6 +68,17 @@ lazy val scalaJava8Compat = (project in file("."))
       case VersionNumber(Seq(0, _*), _, _) => Nil
       case VersionNumber(Seq(1, 0, n, _*), _, _) if n <= 1 => Nil
       case v => Seq(v)
+    },
+
+    // shouldn't be needed anymore after our reference version is a version
+    // built on Scala 3.1.x
+    mimaBinaryIssueFilters := {
+      import com.typesafe.tools.mima.core.ProblemFilters._
+      import com.typesafe.tools.mima.core._
+      Seq(
+        exclude[IncompatibleSignatureProblem]("scala.compat.java8.*"),
+        exclude[IncompatibleSignatureProblem]("scala.concurrent.java8.*"),
+      ),
     },
 
     testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-a"),
