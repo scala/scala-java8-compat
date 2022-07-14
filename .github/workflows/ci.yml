@@ -22,4 +22,4 @@ jobs:
         distribution: temurin
         java-version: ${{matrix.java}}
     - name: Test
-      run: sbt ++${{matrix.scala}} test headerCheck versionPolicyCheck package
+      run: sbt ++${{matrix.scala}} test headerCheck versionPolicyCheck publishLocal
