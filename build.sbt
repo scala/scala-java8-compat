@@ -19,7 +19,7 @@ def osgiExport(scalaVersion: String, version: String) = {
 }
 
 lazy val commonSettings = Seq(
-  crossScalaVersions := Seq("2.13.11", "2.12.18", "2.11.12", "3.3.0"),
+  crossScalaVersions := Seq("2.13.11", "2.12.18", "2.11.12", "3.3.1"),
   scalaVersion := crossScalaVersions.value.head,
   // we could make this stricter again (BinaryAndSourceCompatible)
   // after our reference version was built on Scala 3.1.x
