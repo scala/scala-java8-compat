@@ -131,7 +131,7 @@ lazy val scalaJava8Compat = (project in file("."))
         JavaDoc / packageDoc / artifactName := ((sv, mod, art) => "" + mod.name + "_" + sv.binary + "-" + mod.revision + "-javadoc.jar"),
         libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
           case Some((3, _)) => Seq()
-          case _            => Seq(compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.18" cross CrossVersion.full))
+          case _            => Seq(compilerPlugin("com.typesafe.genjavadoc" % "genjavadoc-plugin" % "0.19" cross CrossVersion.full))
         }),
         Compile / scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
           case Some((3, _)) => Seq()
