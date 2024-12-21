@@ -46,6 +46,7 @@ lazy val commonSettings = Seq(
 
 lazy val scalaJava8Compat = (project in file("."))
   .settings(ScalaModulePlugin.scalaModuleSettings)
+  .enablePlugins(SbtOsgi)
   .settings(ScalaModulePlugin.scalaModuleOsgiSettings)
   .settings(commonSettings)
   .settings(
