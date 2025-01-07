@@ -12,7 +12,7 @@ We do publish 2.13 and 3.0 artifacts of scala-java8-compat, but they're only int
 
 ## Maintenance status
 
-This library is community-maintained.  (The Scala team at Lightbend provides infrastructure and oversight.)
+This library is community-maintained.  (The Scala team at Akka provides infrastructure and oversight.)
 
 ## Functional Interfaces for Scala functions
 
