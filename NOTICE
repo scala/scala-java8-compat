@@ -1,10 +1,10 @@
 scala-java8-compat
-Copyright (c) 2002-2023 EPFL
-Copyright (c) 2011-2023 Lightbend, Inc.
+Copyright (c) 2002-2025 EPFL
+Copyright (c) 2011-2025 Lightbend, Inc. dba Akka
 
 scala-java8-compat includes software developed at
 LAMP/EPFL (https://lamp.epfl.ch/) and
-Lightbend, Inc. (https://www.lightbend.com/).
+Akka (https://akka.io/).
 
 Licensed under the Apache License, Version 2.0 (the "License").
 Unless required by applicable law or agreed to in writing, software
