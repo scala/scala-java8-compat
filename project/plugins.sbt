@@ -1,1 +1,1 @@
-addSbtPlugin("org.scala-lang.modules" % "sbt-scala-module" % "3.3.0")
+addSbtPlugin("org.scala-lang.modules" % "sbt-scala-module" % "3.4.0")
