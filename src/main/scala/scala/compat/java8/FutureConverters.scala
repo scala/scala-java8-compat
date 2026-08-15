@@ -17,7 +17,7 @@ import scala.language.implicitConversions
 import scala.concurrent.java8.FuturesConvertersImpl._
 import scala.concurrent.java8.FuturesConvertersImplCompat._
 import scala.concurrent.{ Future, Promise, ExecutionContext, ExecutionContextExecutorService, ExecutionContextExecutor }
-import java.util.concurrent.{ CompletionStage, Executor, ExecutorService }
+import java.util.concurrent.{ CompletionStage, Executor, ExecutorService, ForkJoinPool }
 import java.util.function.Consumer
 
 /**
@@ -59,16 +59,38 @@ object FutureConverters {
    * transformations to their asynchronous counterparts, i.e.
    * <code>thenRun</code> will internally call <code>thenRunAsync</code>.
    *
+   * Callbacks will run on ForkJoinPool.commonPool(), unless it does not
+   * support a parallelism level of at least two, in which case a new Thread
+   * is used.
+   *
    * @param f The Scala Future which may eventually supply the completion for
    * the returned CompletionStage
    * @return a CompletionStage that runs all callbacks asynchronously and does
    * not support the CompletableFuture interface
    */
-  def toJava[T](f: Future[T]): CompletionStage[T] = {
+  def toJava[T](f: Future[T]): CompletionStage[T] = toJava(f, ForkJoinPool.commonPool())
+
+  /**
+    * Returns a CompletionStage that will be completed with the same value or
+    * exception as the given Scala Future when that completes. Since the Future is a read-only
+    * representation, this CompletionStage does not support the
+    * <code>toCompletableFuture</code> method. The semantics of Scala Future
+    * demand that all callbacks are invoked asynchronously by default, therefore
+    * the returned CompletionStage routes all calls to synchronous
+    * transformations to their asynchronous counterparts, i.e.
+    * <code>thenRun</code> will internally call <code>thenRunAsync</code>.
+    *
+    * @param f The Scala Future which may eventually supply the completion for
+    * the returned CompletionStage
+    * @param e The Java Executor onto which schedule the callbacks
+    * @return a CompletionStage that runs all callbacks asynchronously and does
+    * not support the CompletableFuture interface
+    */
+  def toJava[T](f: Future[T], e: Executor): CompletionStage[T] = {
     f match {
       case p: P[T @unchecked] => p.wrapped
       case _ =>
-        val cf = new CF[T](f)
+        val cf = new CF[T](f, e)
         implicit val ec = InternalCallbackExecutor
         f onComplete cf
         cf
@@ -189,10 +211,30 @@ object FutureConverters {
      * transformations to their asynchronous counterparts, i.e.
      * <code>thenRun</code> will internally call <code>thenRunAsync</code>.
      *
+     * Callbacks will run on ForkJoinPool.commonPool(), unless it does not
+     * support a parallelism level of at least two, in which case a new Thread
+     * is used.
+     *
      * @return a CompletionStage that runs all callbacks asynchronously and does
      * not support the CompletableFuture interface
      */
     def toJava: CompletionStage[T] = FutureConverters.toJava(__self)
+
+    /**
+      * Returns a CompletionStage that will be completed with the same value or
+      * exception as the given Scala Future when that completes. Since the Future is a read-only
+      * representation, this CompletionStage does not support the
+      * <code>toCompletableFuture</code> method. The semantics of Scala Future
+      * demand that all callbacks are invoked asynchronously by default, therefore
+      * the returned CompletionStage routes all calls to synchronous
+      * transformations to their asynchronous counterparts, i.e.
+      * <code>thenRun</code> will internally call <code>thenRunAsync</code>.
+      *
+      * @param e The Java Executor onto which schedule the callbacks
+      * @return a CompletionStage that runs all callbacks asynchronously and does
+      * not support the CompletableFuture interface
+      */
+    def toJava(e: Executor): CompletionStage[T] = FutureConverters.toJava(__self, e)
   }
 
   implicit def CompletionStageOps[T](cs: CompletionStage[T]): CompletionStageOps[T] = new CompletionStageOps(cs)
